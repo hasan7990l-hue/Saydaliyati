@@ -41,16 +41,93 @@ function loadTheme() {
 // إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
+  console.log('🔄 تحويل إلى:', screenId);
+  
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
+    screen.style.display = 'none';
   });
   
   var target = document.getElementById(screenId);
   if (target) {
     target.classList.add('active');
+    target.style.display = 'flex';
     window.scrollTo(0, 0);
-    console.log('📱 شاشة:', screenId);
+    
+    updateBottomNav(screenId);
+    console.log('✅ تم التحويل');
+  } else {
+    console.error('❌ شاشة غير موجودة:', screenId);
   }
+}
+
+// ============================================
+// تحديث شريط التنقل السفلي
+// ============================================
+function updateBottomNav(screenId) {
+  var nav = document.getElementById('mainBottomNav');
+  if (!nav) return;
+  
+  var navScreens = ['homeScreen', 'pharmacyDashboard', 'deliveryDashboard', 'ordersScreen'];
+  
+  if (navScreens.indexOf(screenId) !== -1) {
+    nav.style.display = 'flex';
+  } else {
+    nav.style.display = 'none';
+  }
+}
+
+// ============================================
+// تبديل التبويب
+// ============================================
+function switchTab(tab) {
+  console.log('📌 تبويب:', tab);
+  
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  
+  var activeBtn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  var userType = user.type || 'patient';
+  
+  if (tab === 'home') {
+    if (userType === 'pharmacy') goToPharmacyDashboard(user);
+    else if (userType === 'delivery') goToDeliveryDashboard(user);
+    else goToPatientHome(user);
+    
+  } else if (tab === 'orders') {
+    if (userType === 'delivery') {
+      showScreen('ordersScreen');
+    } else {
+      showToast('🚧 قريباً - قائمة الطلبات');
+    }
+    
+  } else if (tab === 'notifications') {
+    showToast('🚧 قريباً - التنبيهات');
+    
+  } else if (tab === 'profile') {
+    showToast('🚧 قريباً - حسابي');
+  }
+}
+
+// ============================================
+// Toast
+// ============================================
+function showToast(message) {
+  var toast = document.createElement('div');
+  toast.className = 'toast-message';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(function() { toast.classList.add('show'); }, 50);
+  setTimeout(function() {
+    toast.classList.remove('show');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2000);
 }
 
 // ============================================
@@ -200,8 +277,7 @@ function submitPatient(event) {
   
   showSuccessMessage(
     'تم إنشاء حسابك! 🎉',
-    'أهلاً بك في صيدليتي، ' + name,
-    'homeScreen'
+    'أهلاً بك في صيدليتي، ' + name
   );
 }
 
@@ -241,8 +317,7 @@ function submitPharmacy(event) {
   
   showSuccessMessage(
     'تم استلام طلبك! ✅',
-    'سنتواصل معك خلال 24 ساعة',
-    'pharmacyDashboard'
+    'سنتواصل معك خلال 24 ساعة'
   );
 }
 
@@ -280,8 +355,7 @@ function submitDelivery(event) {
   
   showSuccessMessage(
     'مرحباً بك في فريقنا! 🛵',
-    'سنتواصل معك قريباً',
-    'deliveryDashboard'
+    'سنتواصل معك قريباً'
   );
 }
 
@@ -308,7 +382,7 @@ function validatePhone(phone) {
 // ============================================
 // رسائل النجاح والخطأ
 // ============================================
-function showSuccessMessage(title, message, nextScreen) {
+function showSuccessMessage(title, message) {
   var overlay = document.createElement('div');
   overlay.className = 'success-overlay';
   overlay.innerHTML = 
