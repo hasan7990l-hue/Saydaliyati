@@ -1,19 +1,54 @@
 // ============================================
-// صيدليتي - Premium Gold
+// صيدليتي - Clean Medical
 // ============================================
 
 console.log('✨ صيدليتي - بدأ التحميل');
 
 // ============================================
+// نظام الوضع الليلي / النهاري
+// ============================================
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme');
+  var newTheme = current === 'dark' ? 'light' : 'dark';
+  
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('saydaliyati_theme', newTheme);
+  
+  // تحديث الأيقونات
+  var icons = document.querySelectorAll('.theme-icon');
+  icons.forEach(function(icon) {
+    icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+  });
+  
+  // تحديث لون الـ theme-color
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', newTheme === 'dark' ? '#0F172A' : '#2563EB');
+  }
+  
+  console.log('🎨 الوضع:', newTheme);
+}
+
+function loadTheme() {
+  var saved = localStorage.getItem('saydaliyati_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  
+  var icons = document.querySelectorAll('.theme-icon');
+  icons.forEach(function(icon) {
+    icon.textContent = saved === 'dark' ? '☀️' : '🌙';
+  });
+  
+  console.log('📱 الوضع المحفوظ:', saved);
+}
+
+// ============================================
 // إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
-  // خفي كل الشاشات
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
   });
   
-  // أظهر الشاشة المطلوبة
   var target = document.getElementById(screenId);
   if (target) {
     target.classList.add('active');
@@ -29,13 +64,14 @@ function goToSplash() {
   showScreen('splashScreen');
 }
 
+function goToLogin() {
+  showScreen('loginScreen');
+}
+
 function goToRoleSelection() {
   showScreen('roleScreen');
 }
 
-// ============================================
-// اختيار الدور
-// ============================================
 function selectRole(role) {
   console.log('👤 دور:', role);
   
@@ -49,90 +85,148 @@ function selectRole(role) {
 }
 
 // ============================================
-// إرسال نماذج التسجيل
+// تسجيل الدخول
 // ============================================
-function submitPharmacy(event) {
-  event.preventDefault();
+function submitLogin() {
+  var phone = document.getElementById('loginPhone').value.trim();
+  var password = document.getElementById('loginPassword').value.trim();
   
-  var data = {
-    type: 'pharmacy',
-    name: document.getElementById('pharmacyName').value,
-    owner: document.getElementById('ownerName').value,
-    phone: document.getElementById('pharmacyPhone').value,
-    address: document.getElementById('pharmacyAddress').value,
-    license: document.getElementById('licenseNumber').value,
-    date: new Date().toISOString()
-  };
+  if (!phone || !password) {
+    showError('املأ كل الحقول');
+    return;
+  }
   
-  console.log('📝 تسجيل صيدلية:', data);
+  console.log('🔐 تسجيل دخول:', phone);
   
-  // حفظ في localStorage (مؤقتاً)
-  var registrations = JSON.parse(localStorage.getItem('shughli_registrations') || '[]');
-  registrations.push(data);
-  localStorage.setItem('shughli_registrations', JSON.stringify(registrations));
-  
-  showSuccessMessage('تم استلام طلب صيدليتك! ✅', 'سنتواصل معك خلال 24 ساعة');
+  // مؤقتاً - نجاح
+  showSuccessMessage(
+    'أهلاً بك مجدداً! 👋',
+    'تم تسجيل الدخول بنجاح'
+  );
 }
 
-function submitPatient(event) {
-  event.preventDefault();
+// ============================================
+// إرسال النماذج
+// ============================================
+function submitPatient() {
+  var name = document.getElementById('patientName').value.trim();
+  var phone = document.getElementById('patientPhone').value.trim();
+  var address = document.getElementById('patientAddress').value.trim();
+  var password = document.getElementById('patientPassword').value.trim();
   
-  var data = {
+  if (!name || !phone || !address || !password) {
+    showError('املأ كل الحقول المطلوبة');
+    return;
+  }
+  
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح (07XXXXXXXXX)');
+    return;
+  }
+  
+  saveRegistration({
     type: 'patient',
-    name: document.getElementById('patientName').value,
-    phone: document.getElementById('patientPhone').value,
-    address: document.getElementById('patientAddress').value,
-    date: new Date().toISOString()
-  };
+    name: name,
+    phone: phone,
+    address: address
+  });
   
-  console.log('📝 تسجيل مريض:', data);
-  
-  var registrations = JSON.parse(localStorage.getItem('shughli_registrations') || '[]');
-  registrations.push(data);
-  localStorage.setItem('shughli_registrations', JSON.stringify(registrations));
-  
-  showSuccessMessage('أهلاً بك في صيدليتي! 🎉', 'تم إنشاء حسابك بنجاح');
+  showSuccessMessage(
+    'تم إنشاء حسابك! 🎉',
+    'أهلاً بك في صيدليتي، ' + name
+  );
 }
 
-function submitDelivery(event) {
-  event.preventDefault();
+function submitPharmacy() {
+  var name = document.getElementById('pharmacyName').value.trim();
+  var owner = document.getElementById('ownerName').value.trim();
+  var phone = document.getElementById('pharmacyPhone').value.trim();
+  var address = document.getElementById('pharmacyAddress').value.trim();
+  var license = document.getElementById('licenseNumber').value.trim();
   
-  var data = {
+  if (!name || !owner || !phone || !address || !license) {
+    showError('املأ كل الحقول المطلوبة');
+    return;
+  }
+  
+  saveRegistration({
+    type: 'pharmacy',
+    name: name,
+    owner: owner,
+    phone: phone,
+    address: address,
+    license: license
+  });
+  
+  showSuccessMessage(
+    'تم استلام طلبك! ✅',
+    'سنتواصل معك خلال 24 ساعة'
+  );
+}
+
+function submitDelivery() {
+  var name = document.getElementById('deliveryName').value.trim();
+  var phone = document.getElementById('deliveryPhone').value.trim();
+  var area = document.getElementById('deliveryArea').value.trim();
+  var vehicle = document.getElementById('vehicleType').value;
+  
+  if (!name || !phone || !area || !vehicle) {
+    showError('املأ كل الحقول المطلوبة');
+    return;
+  }
+  
+  saveRegistration({
     type: 'delivery',
-    name: document.getElementById('deliveryName').value,
-    phone: document.getElementById('deliveryPhone').value,
-    area: document.getElementById('deliveryArea').value,
-    vehicle: document.getElementById('vehicleType').value,
-    date: new Date().toISOString()
-  };
+    name: name,
+    phone: phone,
+    area: area,
+    vehicle: vehicle
+  });
   
-  console.log('📝 تسجيل دليفري:', data);
-  
-  var registrations = JSON.parse(localStorage.getItem('shughli_registrations') || '[]');
-  registrations.push(data);
-  localStorage.setItem('shughli_registrations', JSON.stringify(registrations));
-  
-  showSuccessMessage('مرحباً بك في فريقنا! 🛵', 'سنتواصل معك قريباً');
+  showSuccessMessage(
+    'مرحباً بك في فريقنا! 🛵',
+    'سنتواصل معك قريباً'
+  );
 }
 
 // ============================================
-// رسالة النجاح
+// حفظ التسجيلات
+// ============================================
+function saveRegistration(data) {
+  data.date = new Date().toISOString();
+  
+  var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+  registrations.push(data);
+  localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+  
+  console.log('💾 تم الحفظ:', data);
+}
+
+// ============================================
+// التحقق من رقم الهاتف
+// ============================================
+function validatePhone(phone) {
+  return /^07[0-9]{9}$/.test(phone.replace(/\s/g, ''));
+}
+
+// ============================================
+// رسائل النجاح والخطأ
 // ============================================
 function showSuccessMessage(title, message) {
   var overlay = document.createElement('div');
   overlay.className = 'success-overlay';
   overlay.innerHTML = 
     '<div class="success-box">' +
-      '<div class="success-icon">✅</div>' +
+      '<div class="success-icon">✓</div>' +
       '<h2>' + title + '</h2>' +
       '<p>' + message + '</p>' +
-      '<button class="btn-gold" onclick="closeSuccess()">حسناً</button>' +
+      '<button class="btn-primary" onclick="closeSuccess()">حسناً</button>' +
     '</div>';
   document.body.appendChild(overlay);
   
   setTimeout(function() {
     overlay.classList.add('show');
-  }, 100);
+  }, 50);
 }
 
 function closeSuccess() {
@@ -146,11 +240,8 @@ function closeSuccess() {
   }
 }
 
-// ============================================
-// التحقق من صحة رقم الهاتف
-// ============================================
-function validatePhone(phone) {
-  return /^07[0-9]{9}$/.test(phone.replace(/\s/g, ''));
+function showError(message) {
+  alert('⚠️ ' + message);
 }
 
 // ============================================
@@ -159,54 +250,28 @@ function validatePhone(phone) {
 document.addEventListener('DOMContentLoaded', function() {
   console.log('✅ صيدليتي جاهز!');
   
-  // عرض شاشة البداية
+  loadTheme();
   showScreen('splashScreen');
   
-  // تسجيل حدث فتح التطبيق
-  if ('serviceWorker' in navigator) {
-    console.log('📱 PWA مدعوم');
-  }
+  // إضافة حدث Enter للحقول
+  document.querySelectorAll('input').forEach(function(input) {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        // البحث عن الزر في نفس النموذج
+        var form = input.closest('form');
+        if (form) {
+          var btn = form.querySelector('.btn-primary');
+          if (btn) btn.click();
+        }
+      }
+    });
+  });
 });
 
 // ============================================
-// منع التكبير على الموبايل
+// منع التكبير على الجوال
 // ============================================
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
-});
-// ربط الأزرار يدوياً (لضمان العمل)
-window.addEventListener('load', function() {
-  // زر المريض
-  var patientBtn = document.querySelector('#patientScreen .btn-gold');
-  if (patientBtn) {
-    patientBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      console.log('🖱️ زر المريض اشتغل');
-      
-      var name = document.getElementById('patientName').value;
-      var phone = document.getElementById('patientPhone').value;
-      var address = document.getElementById('patientAddress').value;
-      
-      if (!name || !phone || !address) {
-        alert('املأ كل الحقول');
-        return;
-      }
-      
-      console.log('📝 بيانات المريض:', name, phone, address);
-      
-      // حفظ في localStorage
-      var registrations = JSON.parse(localStorage.getItem('shughli_registrations') || '[]');
-      registrations.push({
-        type: 'patient',
-        name: name,
-        phone: phone,
-        address: address,
-        date: new Date().toISOString()
-      });
-      localStorage.setItem('shughli_registrations', JSON.stringify(registrations));
-      
-      alert('✅ تم إنشاء حسابك بنجاح!\nأهلاً بك في صيدليتي 🎉');
-      goToSplash();
-    });
-  }
 });
