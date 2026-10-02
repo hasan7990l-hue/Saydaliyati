@@ -165,6 +165,99 @@ body {
   align-items: center;
 }
 
+/* الشعار المتحرك */
+.animated-logo {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.logo-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 70%);
+  animation: pulseLoop 2s ease-in-out infinite;
+}
+
+.logo-pulse::before,
+.logo-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  animation: ripple 2s ease-out infinite;
+}
+
+.logo-pulse::after {
+  animation-delay: 1s;
+}
+
+@keyframes pulseLoop {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.logo-cross {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 40px rgba(37, 99, 235, 0.6),
+    0 0 80px rgba(37, 99, 235, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  animation: logoGlow 3s ease-in-out infinite;
+}
+
+.logo-cross::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  animation: rotateBorder 8s linear infinite;
+}
+
+@keyframes logoGlow {
+  0%, 100% { box-shadow: 0 0 40px rgba(37, 99, 235, 0.6), 0 0 80px rgba(37, 99, 235, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2); }
+  50% { box-shadow: 0 0 60px rgba(37, 99, 235, 0.8), 0 0 100px rgba(37, 99, 235, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.3); }
+}
+
+@keyframes rotateBorder {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cross-symbol {
+  font-size: 60px;
+  color: #FFFFFF;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  animation: crossPulse 2s ease-in-out infinite;
+}
+
+@keyframes crossPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* الشعار القديم (لاستخدامه في الصفحات) */
 .blue-logo {
   margin-bottom: 32px;
   animation: logoAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -451,53 +544,6 @@ body {
 }
 
 /* ============================================
-   منطقة الرفع
-   ============================================ */
-.upload-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.upload-group label {
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.upload-area {
-  background: var(--bg-secondary);
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.upload-area:hover {
-  border-color: var(--primary);
-  background: var(--primary-light);
-}
-
-[data-theme="dark"] .upload-area:hover {
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.upload-icon {
-  font-size: 32px;
-}
-
-.upload-text {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-/* ============================================
    رابط النموذج
    ============================================ */
 .form-link {
@@ -582,10 +628,6 @@ body {
   font-size: 14px;
   margin-bottom: 24px;
   line-height: 1.6;
-}
-
-.success-box .btn-primary {
-  margin-top: 8px;
 }
 
 /* ============================================
@@ -1275,28 +1317,4 @@ body {
   width: 22px;
   height: 22px;
   stroke: currentColor;
-  transition: all 0.3s ease;
-}
-
-.nav-btn small {
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.nav-btn.active { color: var(--primary); }
-
-.nav-btn.active svg { stroke: var(--primary); }
-
-.nav-btn:hover { color: var(--primary); }
-
-/* ============================================
-   الموبايل
-   ============================================ */
-@media (max-width: 480px) {
-  .app-name { font-size: 42px; }
-  .blue-circle { width: 120px; height: 120px; }
-  .cross { font-size: 60px; }
-  .screen-title { font-size: 22px; }
-  .screen { padding: 20px; padding-bottom: 100px; }
-  .theme-toggle { width: 42px; height: 42px; top: 16px; left: 16px; }
-   }
+  transition: all
