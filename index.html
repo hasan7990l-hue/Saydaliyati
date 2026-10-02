@@ -10,37 +10,29 @@
 </head>
 <body>
 
-  <!-- ============================================
-       شاشة البداية (Splash)
-       ============================================ -->
+  <!-- ========== شاشة البداية ========== -->
   <div class="screen active" id="splashScreen">
     <button class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-icon">🌙</span>
     </button>
-
     <div class="splash-content">
-      <div class="blue-logo">
-        <div class="blue-circle">
-          <span class="cross">✚</span>
+      <!-- شعار متحرك -->
+      <div class="animated-logo">
+        <div class="logo-pulse"></div>
+        <div class="logo-cross">
+          <span class="cross-symbol">✚</span>
         </div>
       </div>
       <h1 class="app-name">صيدليتي</h1>
       <p class="tagline">صحتك أولويتنا</p>
     </div>
-    
     <div class="splash-buttons">
-      <button class="btn-primary" onclick="goToLogin()">
-        تسجيل الدخول
-      </button>
-      <button class="btn-outline" onclick="goToRoleSelection()">
-        إنشاء حساب
-      </button>
+      <button class="btn-primary" onclick="goToLogin()">تسجيل الدخول</button>
+      <button class="btn-outline" onclick="goToRoleSelection()">إنشاء حساب</button>
     </div>
   </div>
 
-  <!-- ============================================
-       شاشة تسجيل الدخول (Login)
-       ============================================ -->
+  <!-- ========== تسجيل الدخول ========== -->
   <div class="screen" id="loginScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -48,33 +40,26 @@
         <span class="theme-icon">🌙</span>
       </button>
     </div>
-    
     <h2 class="screen-title">تسجيل الدخول</h2>
     <p class="screen-subtitle">أدخل بياناتك للدخول</p>
-    
-    <form class="blue-form" id="loginForm" onsubmit="submitLogin(event); return false;">
+    <form class="blue-form" onsubmit="submitLogin(event); return false;">
       <div class="input-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="loginPhone" placeholder="07XX XXX XXXX" required>
       </div>
-      
       <div class="input-group">
         <label>كلمة المرور *</label>
         <input type="password" id="loginPassword" placeholder="••••••••" required>
       </div>
-      
       <button type="submit" class="btn-primary">دخول</button>
     </form>
-    
     <p class="form-link">
       ما عندك حساب؟ 
       <a href="#" onclick="goToRoleSelection(); return false;">إنشاء حساب جديد</a>
     </p>
   </div>
 
-  <!-- ============================================
-       شاشة اختيار الدور (Role Selection)
-       ============================================ -->
+  <!-- ========== اختيار الدور ========== -->
   <div class="screen" id="roleScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -82,10 +67,8 @@
         <span class="theme-icon">🌙</span>
       </button>
     </div>
-    
     <h2 class="screen-title">اختر نوع الحساب</h2>
     <p class="screen-subtitle">سجل كمريض، صيدلية، أو دليفري</p>
-    
     <div class="role-cards">
       <div class="role-card" onclick="selectRole('patient')">
         <div class="role-info">
@@ -97,7 +80,6 @@
         </div>
         <span class="arrow">←</span>
       </div>
-      
       <div class="role-card" onclick="selectRole('pharmacy')">
         <div class="role-info">
           <div class="role-icon-circle green">🏥</div>
@@ -108,7 +90,6 @@
         </div>
         <span class="arrow">←</span>
       </div>
-      
       <div class="role-card" onclick="selectRole('delivery')">
         <div class="role-info">
           <div class="role-icon-circle orange">🛵</div>
@@ -122,9 +103,7 @@
     </div>
   </div>
 
-  <!-- ============================================
-       شاشة تسجيل المريض (Patient)
-       ============================================ -->
+  <!-- ========== تسجيل المريض ========== -->
   <div class="screen" id="patientScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -132,117 +111,86 @@
         <span class="theme-icon">🌙</span>
       </button>
     </div>
-    
     <h2 class="screen-title">تسجيل مريض جديد</h2>
     <p class="screen-subtitle">سجل بياناتك للبدء</p>
-    
-    <form class="blue-form" id="patientForm" onsubmit="submitPatient(event); return false;">
+    <form class="blue-form" onsubmit="submitPatient(event); return false;">
       <div class="input-group">
         <label>الاسم الكامل *</label>
         <input type="text" id="patientName" placeholder="الاسم الكامل" required>
       </div>
-      
       <div class="input-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="patientPhone" placeholder="07XX XXX XXXX" required>
       </div>
-      
       <div class="input-group">
         <label>العنوان *</label>
         <input type="text" id="patientAddress" placeholder="بغداد - الكرادة" required>
       </div>
-      
       <div class="input-group">
         <label>كلمة المرور *</label>
         <input type="password" id="patientPassword" placeholder="••••••••" required>
       </div>
-      
       <button type="submit" class="btn-primary">إنشاء الحساب</button>
     </form>
   </div>
 
-  <!-- ============================================
-       شاشة تسجيل الصيدلية (Pharmacy)
-       ============================================ -->
+  <!-- ========== تسجيل الصيدلية ========== -->
   <div class="screen" id="pharmacyScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
       <span class="progress-badge">1/3</span>
     </div>
-    
     <h2 class="screen-title">تسجيل صيدلية جديدة</h2>
     <p class="screen-subtitle">املأ البيانات وسنتواصل معك</p>
-    
-    <form class="blue-form" id="pharmacyForm" onsubmit="submitPharmacy(event); return false;">
+    <form class="blue-form" onsubmit="submitPharmacy(event); return false;">
       <div class="input-group">
         <label>اسم الصيدلية *</label>
         <input type="text" id="pharmacyName" placeholder="مثال: صيدلية النور" required>
       </div>
-      
       <div class="input-group">
         <label>اسم المالك *</label>
         <input type="text" id="ownerName" placeholder="الاسم الكامل" required>
       </div>
-      
       <div class="input-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="pharmacyPhone" placeholder="07XX XXX XXXX" required>
       </div>
-      
       <div class="input-group">
         <label>العنوان *</label>
         <input type="text" id="pharmacyAddress" placeholder="بغداد - الكرادة" required>
       </div>
-      
       <div class="input-group">
         <label>رقم الترخيص *</label>
         <input type="text" id="licenseNumber" placeholder="رقم الترخيص الرسمي" required>
       </div>
-      
       <div class="input-group">
         <label>كلمة المرور *</label>
         <input type="password" id="pharmacyPassword" placeholder="••••••••" required>
       </div>
-      
-      <div class="upload-group">
-        <label>صورة الترخيص</label>
-        <div class="upload-area">
-          <span class="upload-icon">📄</span>
-          <span class="upload-text">اضغط لرفع الصورة</span>
-        </div>
-      </div>
-      
       <button type="submit" class="btn-primary">إرسال الطلب</button>
     </form>
   </div>
 
-  <!-- ============================================
-       شاشة تسجيل الدليفري (Delivery)
-       ============================================ -->
+  <!-- ========== تسجيل الدليفري ========== -->
   <div class="screen" id="deliveryScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
     </div>
-    
     <h2 class="screen-title">تسجيل دليفري</h2>
     <p class="screen-subtitle">انضم لفريق التوصيل</p>
-    
-    <form class="blue-form" id="deliveryForm" onsubmit="submitDelivery(event); return false;">
+    <form class="blue-form" onsubmit="submitDelivery(event); return false;">
       <div class="input-group">
         <label>الاسم الكامل *</label>
         <input type="text" id="deliveryName" placeholder="الاسم الكامل" required>
       </div>
-      
       <div class="input-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="deliveryPhone" placeholder="07XX XXX XXXX" required>
       </div>
-      
       <div class="input-group">
         <label>المنطقة *</label>
         <input type="text" id="deliveryArea" placeholder="الكرادة" required>
       </div>
-      
       <div class="input-group">
         <label>نوع المركبة *</label>
         <select id="vehicleType" required>
@@ -252,20 +200,16 @@
           <option value="bicycle">دراجة هوائية</option>
         </select>
       </div>
-      
       <div class="input-group">
         <label>كلمة المرور *</label>
         <input type="password" id="deliveryPassword" placeholder="••••••••" required>
       </div>
-      
       <button type="submit" class="btn-primary">انضم الآن</button>
     </form>
   </div>
 
-  <!-- ============================================
-       الصفحة الرئيسية للمريض (Patient Home)
-       ============================================ -->
-  <div class="screen" id="homeScreen">
+  <!-- ========== الصفحة الرئيسية للمريض ========== -->
+  <div class="screen" id="homeScreen" data-nav="patient">
     <div class="home-header">
       <div class="greeting">
         <p class="greet-small">مرحباً بك</p>
@@ -321,7 +265,6 @@
         </div>
         <button class="btn-order">اطلب</button>
       </div>
-
       <div class="pharmacy-card">
         <div class="pharmacy-logo blue">ص</div>
         <div class="pharmacy-info">
@@ -335,45 +278,10 @@
         <button class="btn-order">اطلب</button>
       </div>
     </div>
-
-    <div class="bottom-nav">
-      <button class="nav-btn active">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <small>الرئيسية</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-        </svg>
-        <small>طلباتي</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <small>التنبيهات</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-        <small>حسابي</small>
-      </button>
-    </div>
   </div>
 
-  <!-- ============================================
-       لوحة تحكم الصيدلية (Pharmacy Dashboard)
-       ============================================ -->
-  <div class="screen" id="pharmacyDashboard">
+  <!-- ========== لوحة الصيدلية ========== -->
+  <div class="screen" id="pharmacyDashboard" data-nav="pharmacy">
     <div class="home-header">
       <div class="greeting">
         <p class="greet-small">مرحباً بك</p>
@@ -411,37 +319,28 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon-wrap blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
         </div>
         <span class="stat-num">12</span>
         <span class="stat-label">طلبات جديدة</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <span class="stat-num">45</span>
         <span class="stat-label">مكتملة اليوم</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"/>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <span class="stat-num">250K</span>
         <span class="stat-label">دينار اليوم</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap yellow">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
         <span class="stat-num">4.8</span>
         <span class="stat-label">تقييم</span>
@@ -470,46 +369,10 @@
         </div>
       </div>
     </div>
-
-    <div class="bottom-nav">
-      <button class="nav-btn active">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <small>الرئيسية</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-        </svg>
-        <small>الطلبات</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7"/>
-          <rect x="14" y="3" width="7" height="7"/>
-          <rect x="14" y="14" width="7" height="7"/>
-          <rect x="3" y="14" width="7" height="7"/>
-        </svg>
-        <small>المخزون</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="20" x2="18" y2="10"/>
-          <line x1="12" y1="20" x2="12" y2="4"/>
-          <line x1="6" y1="20" x2="6" y2="14"/>
-        </svg>
-        <small>التقارير</small>
-      </button>
-    </div>
   </div>
 
-  <!-- ============================================
-       لوحة تحكم الدليفري (Delivery Dashboard)
-       ============================================ -->
-  <div class="screen" id="deliveryDashboard">
+  <!-- ========== لوحة الدليفري ========== -->
+  <div class="screen" id="deliveryDashboard" data-nav="delivery">
     <div class="home-header">
       <div class="greeting">
         <p class="greet-small">مرحباً بك</p>
@@ -543,38 +406,28 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon-wrap blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
         </div>
         <span class="stat-num">12</span>
         <span class="stat-label">طلبات اليوم</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"/>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         </div>
         <span class="stat-num">45K</span>
         <span class="stat-label">أرباح اليوم</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap yellow">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
         <span class="stat-num">4.9</span>
         <span class="stat-label">تقييم</span>
       </div>
       <div class="stat-card">
         <div class="stat-icon-wrap green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="7"/>
-            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
-          </svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
         </div>
         <span class="stat-num">3</span>
         <span class="stat-label">مرات التقييم</span>
@@ -601,43 +454,10 @@
         <button class="btn-accept full">قبول الطلب</button>
       </div>
     </div>
-
-    <div class="bottom-nav">
-      <button class="nav-btn active">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-        <small>الرئيسية</small>
-      </button>
-      <button class="nav-btn" onclick="goToOrdersPage()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-        </svg>
-        <small>الطلبات</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-          <line x1="1" y1="10" x2="23" y2="10"/>
-        </svg>
-        <small>المحفظة</small>
-      </button>
-      <button class="nav-btn">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-        <small>حسابي</small>
-      </button>
-    </div>
   </div>
 
-  <!-- ============================================
-       صفحة الطلبات القريبة (Delivery Orders Page)
-       ============================================ -->
-  <div class="screen" id="ordersScreen">
+  <!-- ========== صفحة الطلبات ========== -->
+  <div class="screen" id="ordersScreen" data-nav="delivery">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDeliveryDashboard()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -673,7 +493,6 @@
         </div>
         <button class="btn-accept full">قبول الطلب</button>
       </div>
-
       <div class="order-card">
         <div class="order-top">
           <span class="order-id">طلب رقم #1235</span>
@@ -687,21 +506,41 @@
         </div>
         <button class="btn-accept full">قبول الطلب</button>
       </div>
-
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب رقم #1236</span>
-          <span class="order-status available">متاح</span>
-        </div>
-        <div class="order-info">
-          <p><strong>من:</strong> صيدلية الشفاء - الكرادة</p>
-          <p><strong>إلى:</strong> زيونة - شارع الربيعي</p>
-          <p><strong>المسافة:</strong> 4.1 كم</p>
-          <p><strong>العمولة:</strong> <span class="price">5,000</span> دينار</p>
-        </div>
-        <button class="btn-accept full">قبول الطلب</button>
-      </div>
     </div>
+  </div>
+
+  <!-- ============================================
+       شريط التنقل السفلي — مشترك
+       ============================================ -->
+  <div class="bottom-nav" id="mainBottomNav" style="display: none;">
+    <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <small>الرئيسية</small>
+    </button>
+    <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <small>الطلبات</small>
+    </button>
+    <button class="nav-btn" data-tab="notifications" onclick="switchTab('notifications')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <small>التنبيهات</small>
+    </button>
+    <button class="nav-btn" data-tab="profile" onclick="switchTab('profile')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <small>حسابي</small>
+    </button>
   </div>
 
   <script src="script.js"></script>
