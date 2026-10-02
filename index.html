@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#D4AF37">
-  <title>صيدليتي - الرعاية التي تستحقها</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#2563EB">
+  <title>صيدليتي - صحتك أولويتنا</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,18 +14,23 @@
        شاشة البداية (Splash)
        ============================================ -->
   <div class="screen active" id="splashScreen">
+    <!-- زر الوضع الليلي -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-icon">🌙</span>
+    </button>
+
     <div class="splash-content">
-      <div class="gold-logo">
-        <div class="gold-circle">
+      <div class="blue-logo">
+        <div class="blue-circle">
           <span class="cross">✚</span>
         </div>
       </div>
       <h1 class="app-name">صيدليتي</h1>
-      <p class="tagline">الرعاية التي تستحقها</p>
+      <p class="tagline">صحتك أولويتنا</p>
     </div>
     
     <div class="splash-buttons">
-      <button class="btn-gold" onclick="goToRoleSelection()">
+      <button class="btn-primary" onclick="goToLogin()">
         تسجيل الدخول
       </button>
       <button class="btn-outline" onclick="goToRoleSelection()">
@@ -35,19 +40,57 @@
   </div>
 
   <!-- ============================================
+       شاشة تسجيل الدخول (Login)
+       ============================================ -->
+  <div class="screen" id="loginScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goToSplash()">←</button>
+      <button class="theme-toggle-small" onclick="toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+    
+    <h2 class="screen-title">تسجيل الدخول</h2>
+    <p class="screen-subtitle">أدخل بياناتك للدخول</p>
+    
+    <form class="blue-form" id="loginForm">
+      <div class="input-group">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="loginPhone" placeholder="07XX XXX XXXX" required>
+      </div>
+      
+      <div class="input-group">
+        <label>كلمة المرور *</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+      
+      <button type="button" class="btn-primary" onclick="submitLogin()">دخول ✅</button>
+    </form>
+    
+    <p class="form-link">
+      ما عندك حساب؟ 
+      <a href="#" onclick="goToRoleSelection(); return false;">إنشاء حساب جديد</a>
+    </p>
+  </div>
+
+  <!-- ============================================
        شاشة اختيار الدور (Role Selection)
        ============================================ -->
   <div class="screen" id="roleScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
+      <button class="theme-toggle-small" onclick="toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
     </div>
     
     <h2 class="screen-title">اختر نوع الحساب</h2>
+    <p class="screen-subtitle">سجل كمريض، صيدلية، أو دليفري</p>
     
     <div class="role-cards">
       <div class="role-card" onclick="selectRole('patient')">
         <div class="role-info">
-          <div class="role-icon-circle">👤</div>
+          <div class="role-icon-circle blue">👤</div>
           <div class="role-text">
             <h3>مريض</h3>
             <p>اطلب دواءك من أقرب صيدلية</p>
@@ -58,7 +101,7 @@
       
       <div class="role-card" onclick="selectRole('pharmacy')">
         <div class="role-info">
-          <div class="role-icon-circle">🏥</div>
+          <div class="role-icon-circle green">🏥</div>
           <div class="role-text">
             <h3>صيدلية</h3>
             <p>سجل صيدليتك واستقبل طلبات</p>
@@ -69,7 +112,7 @@
       
       <div class="role-card" onclick="selectRole('delivery')">
         <div class="role-info">
-          <div class="role-icon-circle">🛵</div>
+          <div class="role-icon-circle orange">🛵</div>
           <div class="role-text">
             <h3>دليفري</h3>
             <p>اشتغل ووصّل الطلبات</p>
@@ -81,7 +124,46 @@
   </div>
 
   <!-- ============================================
-       شاشة تسجيل الصيدلية (Pharmacy Registration)
+       شاشة تسجيل المريض (Patient)
+       ============================================ -->
+  <div class="screen" id="patientScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goToRoleSelection()">←</button>
+      <button class="theme-toggle-small" onclick="toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+    
+    <h2 class="screen-title">تسجيل مريض جديد</h2>
+    <p class="screen-subtitle">سجل بياناتك للبدء</p>
+    
+    <form class="blue-form" id="patientForm">
+      <div class="input-group">
+        <label>الاسم الكامل *</label>
+        <input type="text" id="patientName" placeholder="الاسم الكامل" required>
+      </div>
+      
+      <div class="input-group">
+        <label>رقم الهاتف *</label>
+        <input type="tel" id="patientPhone" placeholder="07XX XXX XXXX" required>
+      </div>
+      
+      <div class="input-group">
+        <label>العنوان *</label>
+        <input type="text" id="patientAddress" placeholder="بغداد - الكرادة" required>
+      </div>
+      
+      <div class="input-group">
+        <label>كلمة المرور *</label>
+        <input type="password" id="patientPassword" placeholder="••••••••" required>
+      </div>
+      
+      <button type="button" class="btn-primary" onclick="submitPatient()">إنشاء الحساب ✅</button>
+    </form>
+  </div>
+
+  <!-- ============================================
+       شاشة تسجيل الصيدلية (Pharmacy)
        ============================================ -->
   <div class="screen" id="pharmacyScreen">
     <div class="top-bar">
@@ -90,9 +172,9 @@
     </div>
     
     <h2 class="screen-title">تسجيل صيدلية جديدة</h2>
-    <p class="screen-subtitle">املأ البيانات وسنتواصل معك قريباً</p>
+    <p class="screen-subtitle">املأ البيانات وسنتواصل معك</p>
     
-    <form class="gold-form" onsubmit="submitPharmacy(event)">
+    <form class="blue-form" id="pharmacyForm">
       <div class="input-group">
         <label>اسم الصيدلية *</label>
         <input type="text" id="pharmacyName" placeholder="مثال: صيدلية النور" required>
@@ -126,43 +208,12 @@
         </div>
       </div>
       
-      <button type="submit" class="btn-gold">إرسال الطلب ✅</button>
+      <button type="button" class="btn-primary" onclick="submitPharmacy()">إرسال الطلب ✅</button>
     </form>
   </div>
 
   <!-- ============================================
-       شاشة تسجيل المريض (Patient Registration)
-       ============================================ -->
-  <div class="screen" id="patientScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToRoleSelection()">←</button>
-    </div>
-    
-    <h2 class="screen-title">تسجيل مريض جديد</h2>
-    <p class="screen-subtitle">سجل بياناتك للبدء</p>
-    
-    <form class="gold-form" onsubmit="submitPatient(event)">
-      <div class="input-group">
-        <label>الاسم الكامل *</label>
-        <input type="text" id="patientName" placeholder="الاسم الكامل" required>
-      </div>
-      
-      <div class="input-group">
-        <label>رقم الهاتف *</label>
-        <input type="tel" id="patientPhone" placeholder="07XX XXX XXXX" required>
-      </div>
-      
-      <div class="input-group">
-        <label>العنوان *</label>
-        <input type="text" id="patientAddress" placeholder="بغداد - الكرادة" required>
-      </div>
-      
-      <button type="submit" class="btn-gold">إنشاء الحساب ✅</button>
-    </form>
-  </div>
-
-  <!-- ============================================
-       شاشة تسجيل الدليفري (Delivery Registration)
+       شاشة تسجيل الدليفري (Delivery)
        ============================================ -->
   <div class="screen" id="deliveryScreen">
     <div class="top-bar">
@@ -172,7 +223,7 @@
     <h2 class="screen-title">تسجيل دليفري</h2>
     <p class="screen-subtitle">انضم لفريق التوصيل</p>
     
-    <form class="gold-form" onsubmit="submitDelivery(event)">
+    <form class="blue-form" id="deliveryForm">
       <div class="input-group">
         <label>الاسم الكامل *</label>
         <input type="text" id="deliveryName" placeholder="الاسم الكامل" required>
@@ -198,7 +249,7 @@
         </select>
       </div>
       
-      <button type="submit" class="btn-gold">انضم الآن ✅</button>
+      <button type="button" class="btn-primary" onclick="submitDelivery()">انضم الآن ✅</button>
     </form>
   </div>
 
