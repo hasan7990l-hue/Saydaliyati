@@ -35,9 +35,6 @@
   <div class="screen" id="loginScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
-      <button class="theme-toggle-small" onclick="toggleTheme()">
-        <span class="theme-icon">🌙</span>
-      </button>
     </div>
     <h2 class="screen-title">تسجيل الدخول</h2>
     <p class="screen-subtitle">أدخل بياناتك للدخول</p>
@@ -62,9 +59,6 @@
   <div class="screen" id="roleScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
-      <button class="theme-toggle-small" onclick="toggleTheme()">
-        <span class="theme-icon">🌙</span>
-      </button>
     </div>
     <h2 class="screen-title">اختر نوع الحساب</h2>
     <p class="screen-subtitle">سجل كمريض، صيدلية، أو دليفري</p>
@@ -106,9 +100,6 @@
   <div class="screen" id="patientScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
-      <button class="theme-toggle-small" onclick="toggleTheme()">
-        <span class="theme-icon">🌙</span>
-      </button>
     </div>
     <h2 class="screen-title">تسجيل مريض جديد</h2>
     <p class="screen-subtitle">سجل بياناتك للبدء</p>
@@ -210,28 +201,12 @@
   <!-- الصفحة الرئيسية للمريض -->
   <div class="screen" id="homeScreen">
     <div class="home-header">
-      <div class="greeting">
-        <div class="mini-logo">
-          <div class="mini-pulse"></div>
-          <div class="mini-cross">✚</div>
-        </div>
-        <h2 class="greet-name" id="userGreeting">أحمد</h2>
-      </div>
-      <div class="header-left">
-        <button class="icon-btn menu-btn" onclick="openSidebar()" title="القائمة">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <button class="icon-btn" onclick="toggleTheme()">
-          <span class="theme-icon">🌙</span>
-        </button>
+      <div class="animated-logo-header">
+        <div class="mini-pulse"></div>
+        <div class="mini-cross">✚</div>
       </div>
     </div>
 
-    <!-- شريط العروض -->
     <div class="offers-section">
       <div class="section-header">
         <h3>📢 عروض من الصيدليات</h3>
@@ -296,24 +271,9 @@
   <!-- لوحة الصيدلية -->
   <div class="screen" id="pharmacyDashboard">
     <div class="home-header">
-      <div class="greeting">
-        <div class="mini-logo">
-          <div class="mini-pulse"></div>
-          <div class="mini-cross">✚</div>
-        </div>
-        <h2 class="greet-name" id="pharmacyGreeting">صيدلية النور</h2>
-      </div>
-      <div class="header-left">
-        <button class="icon-btn menu-btn" onclick="openSidebar()" title="القائمة">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <button class="icon-btn" onclick="toggleTheme()">
-          <span class="theme-icon">🌙</span>
-        </button>
+      <div class="animated-logo-header">
+        <div class="mini-pulse"></div>
+        <div class="mini-cross">✚</div>
       </div>
     </div>
 
@@ -332,7 +292,6 @@
       <button class="alert-action">عرض</button>
     </div>
 
-    <!-- أزرار الصيدلية -->
     <div class="pharmacy-actions">
       <button class="action-btn primary" onclick="openAddOfferModal()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -408,24 +367,9 @@
   <!-- لوحة الدليفري -->
   <div class="screen" id="deliveryDashboard">
     <div class="home-header">
-      <div class="greeting">
-        <div class="mini-logo">
-          <div class="mini-pulse"></div>
-          <div class="mini-cross">✚</div>
-        </div>
-        <h2 class="greet-name" id="deliveryGreeting">أحمد</h2>
-      </div>
-      <div class="header-left">
-        <button class="icon-btn menu-btn" onclick="openSidebar()" title="القائمة">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <button class="icon-btn" onclick="toggleTheme()">
-          <span class="theme-icon">🌙</span>
-        </button>
+      <div class="animated-logo-header">
+        <div class="mini-pulse"></div>
+        <div class="mini-cross">✚</div>
       </div>
     </div>
 
@@ -496,52 +440,148 @@
   <!-- صفحة الطلبات -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
-      <button class="back-btn" onclick="goToDeliveryDashboard()">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </button>
-      <button class="icon-btn" onclick="toggleTheme()">
-        <span class="theme-icon">🌙</span>
-      </button>
+      <button class="back-btn" onclick="goToDashboardByType()">←</button>
     </div>
-
-    <h2 class="screen-title">الطلبات القريبة</h2>
-    <p class="screen-subtitle">الطلبات المتاحة في منطقتك</p>
+    <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
+    <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
 
     <div class="filter-tabs">
       <button class="filter-tab active">الكل</button>
-      <button class="filter-tab">الأقرب</button>
-      <button class="filter-tab">الأعلى عمولة</button>
+      <button class="filter-tab">الجديدة</button>
+      <button class="filter-tab">المكتملة</button>
+    </div>
+
+    <div class="order-list" id="ordersListContent">
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">طلب رقم #1234</span>
+          <span class="order-status available">مكتمل</span>
+        </div>
+        <div class="order-info">
+          <p><strong>التاريخ:</strong> 2026/10/2</p>
+          <p><strong>الأدوية:</strong> 3 أدوية</p>
+          <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحة الملف الشخصي -->
+  <div class="screen" id="profileScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeAllScreens()">←</button>
+    </div>
+    <h2 class="screen-title">الملف الشخصي</h2>
+
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">👤</div>
+      <h3 id="profileName">أحمد</h3>
+      <p id="profileType">مريض</p>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <h4>الاسم الكامل</h4>
+        <p id="infoName">-</p>
+      </div>
+      <span class="arrow" onclick="editField('name')">✏️</span>
+    </div>
+
+    <div class="setting-item locked">
+      <div class="setting-info">
+        <h4>رقم الهاتف 🔒</h4>
+        <p id="infoPhone">-</p>
+      </div>
+    </div>
+
+    <div class="setting-item" id="addressItem">
+      <div class="setting-info">
+        <h4 id="addressLabel">العنوان</h4>
+        <p id="infoAddress">-</p>
+      </div>
+      <span class="arrow" onclick="editField('address')">✏️</span>
+    </div>
+
+    <div class="setting-item" id="vehicleItem">
+      <div class="setting-info">
+        <h4>نوع المركبة</h4>
+        <p id="infoVehicle">-</p>
+      </div>
+      <span class="arrow" onclick="editField('vehicle')">✏️</span>
+    </div>
+
+    <div class="setting-item" id="licenseItem">
+      <div class="setting-info">
+        <h4>رقم الترخيص 🔒</h4>
+        <p id="infoLicense">-</p>
+      </div>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-info">
+        <h4>تاريخ التسجيل</h4>
+        <p id="infoDate">-</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحة محفظة الدليفري -->
+  <div class="screen" id="walletScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeAllScreens()">←</button>
+    </div>
+    <h2 class="screen-title">محفظتي</h2>
+
+    <div class="wallet-card">
+      <p class="wallet-label">الرصيد الحالي</p>
+      <h2 class="wallet-balance">45,000 <span>دينار</span></h2>
+      <button class="btn-withdraw" onclick="showToast('🚧 قريباً - طلب سحب')">💰 طلب سحب</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon-wrap green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <span class="stat-num">12</span>
+        <span class="stat-label">طلبات اليوم</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <span class="stat-num">12K</span>
+        <span class="stat-label">أرباح اليوم</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>سجل المعاملات</h3>
+      <a href="#">عرض الكل</a>
     </div>
 
     <div class="order-list">
-      <div class="order-card highlighted">
+      <div class="order-card">
         <div class="order-top">
           <span class="order-id">طلب رقم #1234</span>
-          <span class="order-status available">متاح</span>
+          <span class="order-status available">+3,000</span>
         </div>
         <div class="order-info">
-          <p><strong>من:</strong> صيدلية النور - الكرادة</p>
+          <p><strong>التاريخ:</strong> 2026/10/2 - 3:00 م</p>
+          <p><strong>من:</strong> صيدلية النور</p>
           <p><strong>إلى:</strong> شارع 62 - الجادرية</p>
-          <p><strong>المسافة:</strong> 2.5 كم</p>
-          <p><strong>العمولة:</strong> <span class="price">3,000</span> دينار</p>
         </div>
-        <button class="btn-accept full">قبول الطلب</button>
       </div>
       <div class="order-card">
         <div class="order-top">
-          <span class="order-id">طلب رقم #1235</span>
-          <span class="order-status available">متاح</span>
+          <span class="order-id">طلب رقم #1233</span>
+          <span class="order-status available">+4,000</span>
         </div>
         <div class="order-info">
-          <p><strong>من:</strong> صيدلية الحياة - الجادرية</p>
-          <p><strong>إلى:</strong> الكرادة - محلة 909</p>
-          <p><strong>المسافة:</strong> 3.2 كم</p>
-          <p><strong>العمولة:</strong> <span class="price">4,000</span> دينار</p>
+          <p><strong>التاريخ:</strong> 2026/10/2 - 2:15 م</p>
+          <p><strong>من:</strong> صيدلية الحياة</p>
+          <p><strong>إلى:</strong> الكرادة - 909</p>
         </div>
-        <button class="btn-accept full">قبول الطلب</button>
       </div>
     </div>
   </div>
@@ -552,16 +592,19 @@
       <button class="back-btn" onclick="closeAllScreens()">←</button>
     </div>
     <h2 class="screen-title">من نحن</h2>
+
     <div class="info-card">
       <div class="info-icon">🏥</div>
       <h3>صيدليتي</h3>
       <p>منصة عراقية حديثة تربط المرضى بأقرب الصيدليات وتوصل الدواء لباب البيت.</p>
     </div>
+
     <div class="info-card">
       <div class="info-icon">🎯</div>
       <h3>رؤيتنا</h3>
       <p>أن نكون المنصة الأولى لتوصيل الأدوية في العراق، ونوفر الرعاية الصحية للجميع بسهولة.</p>
     </div>
+
     <div class="info-card">
       <div class="info-icon">💚</div>
       <h3>قيمنا</h3>
@@ -592,7 +635,7 @@
     <div class="info-card">
       <div class="info-icon">⚙️</div>
       <h3>كيف نُفّذ؟</h3>
-      <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase لقاعدة البيانات، وVercel للنشر. تصميم عصري وسريع.</p>
+      <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase لقاعدة البيانات، وVercel للنشر.</p>
     </div>
 
     <div class="info-card">
@@ -600,13 +643,6 @@
       <h3>الإصدار</h3>
       <p>الإصدار 1.0.0</p>
       <p>آخر تحديث: أكتوبر 2026</p>
-    </div>
-
-    <div class="info-card">
-      <div class="info-icon">📞</div>
-      <h3>تواصل معنا</h3>
-      <p>واتساب: +964 775 145 9130</p>
-      <p>إيميل: hasan7990l@gmail.com</p>
     </div>
   </div>
 
@@ -641,22 +677,12 @@
 
     <div class="setting-item clickable" onclick="showToast('🚧 قريباً')">
       <div class="setting-info">
-        <h4>اللغة</h4>
-        <p>العربية</p>
-      </div>
-      <span class="arrow">←</span>
-    </div>
-
-    <div class="setting-item clickable" onclick="showToast('🚧 قريباً')">
-      <div class="setting-info">
         <h4>تغيير كلمة المرور</h4>
       </div>
       <span class="arrow">←</span>
     </div>
 
-    <button class="btn-logout" onclick="logout()">
-      🚪 تسجيل الخروج
-    </button>
+    <button class="btn-logout" onclick="logout()">🚪 تسجيل الخروج</button>
   </div>
 
   <!-- القائمة الجانبية -->
@@ -675,6 +701,10 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>الملف الشخصي</span>
       </li>
+      <li onclick="openOrders()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>سجل الطلبات</span>
+      </li>
       <li onclick="openSettings()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span>الإعدادات</span>
@@ -687,7 +717,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         <span>تفاصيل التطبيق</span>
       </li>
-      <li onclick="showToast('🚧 تواصل معنا - قريباً')">
+      <li onclick="showToast('🚧 قريباً')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         <span>تواصل معنا</span>
       </li>
@@ -722,14 +752,6 @@
           <label>تاريخ الانتهاء (اختياري)</label>
           <input type="date" id="offerExpiry">
         </div>
-        <div class="input-group">
-          <label>نوع العرض</label>
-          <select id="offerType">
-            <option value="discount">خصم</option>
-            <option value="new">دواء جديد</option>
-            <option value="general">إعلان عام</option>
-          </select>
-        </div>
         <button type="submit" class="btn-primary">نشر العرض</button>
       </form>
     </div>
@@ -758,14 +780,14 @@
       </svg>
       <small>التنبيهات</small>
     </button>
-    <button class="nav-btn" data-tab="profile" onclick="switchTab('profile')">
+    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
         <circle cx="12" cy="7" r="4"/>
       </svg>
       <small>حسابي</small>
     </button>
-    <button class="nav-btn menu-btn-bottom" onclick="openSidebar()">
+    <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>
@@ -777,4 +799,4 @@
 
   <script src="script.js"></script>
 </body>
-          </html>
+  </html>
