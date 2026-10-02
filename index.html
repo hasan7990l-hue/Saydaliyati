@@ -263,7 +263,7 @@
   </div>
 
   <!-- ============================================
-       الصفحة الرئيسية (Home) - بعد الدخول
+       الصفحة الرئيسية للمريض (Patient Home)
        ============================================ -->
   <div class="screen" id="homeScreen">
     <div class="home-header">
@@ -361,6 +361,232 @@
     </div>
   </div>
 
+  <!-- ============================================
+       لوحة تحكم الصيدلية (Pharmacy Dashboard)
+       ============================================ -->
+  <div class="screen" id="pharmacyDashboard">
+    <div class="home-header">
+      <div class="greeting">
+        <p class="greet-small">مرحباً 👋</p>
+        <h2 class="greet-name" id="pharmacyGreeting">صيدلية النور</h2>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle-small" onclick="toggleTheme()">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <button class="icon-btn">🔔</button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <span class="stat-num">12</span>
+        <span class="stat-label">طلبات جديدة</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">✅</span>
+        <span class="stat-num">45</span>
+        <span class="stat-label">مكتملة اليوم</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">💰</span>
+        <span class="stat-num">250K</span>
+        <span class="stat-label">دينار اليوم</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⭐</span>
+        <span class="stat-num">4.8</span>
+        <span class="stat-label">تقييم</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>🔔 الطلبات الجديدة</h3>
+      <a href="#">عرض الكل</a>
+    </div>
+
+    <div class="order-list">
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">#1234</span>
+          <span class="order-status new">جديد</span>
+        </div>
+        <div class="order-info">
+          <p><strong>العميل:</strong> أحمد علي</p>
+          <p><strong>الأدوية:</strong> 3 أدوية</p>
+          <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn-accept">قبول</button>
+          <button class="btn-reject">رفض</button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">#1235</span>
+          <span class="order-status new">جديد</span>
+        </div>
+        <div class="order-info">
+          <p><strong>العميل:</strong> سارة محمد</p>
+          <p><strong>الأدوية:</strong> 5 أدوية</p>
+          <p><strong>الإجمالي:</strong> <span class="price">35,500</span> دينار</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn-accept">قبول</button>
+          <button class="btn-reject">رفض</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>💊 الأدوية</h3>
+      <a href="#">إدارة</a>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn">
+        <span>➕</span>
+        <small>إضافة دواء</small>
+      </button>
+      <button class="quick-btn">
+        <span>📋</span>
+        <small>المخزون</small>
+      </button>
+      <button class="quick-btn">
+        <span>⚠️</span>
+        <small>قرب الانتهاء</small>
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn active">
+        <span>🏠</span>
+        <small>الرئيسية</small>
+      </button>
+      <button class="nav-btn">
+        <span>📋</span>
+        <small>الطلبات</small>
+      </button>
+      <button class="nav-btn">
+        <span>💊</span>
+        <small>الأدوية</small>
+      </button>
+      <button class="nav-btn">
+        <span>📊</span>
+        <small>التقارير</small>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================
+       لوحة تحكم الدليفري (Delivery Dashboard)
+       ============================================ -->
+  <div class="screen" id="deliveryDashboard">
+    <div class="home-header">
+      <div class="greeting">
+        <p class="greet-small">مرحباً 🛵</p>
+        <h2 class="greet-name" id="deliveryGreeting">أحمد</h2>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle-small" onclick="toggleTheme()">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
+      </div>
+    </div>
+
+    <div class="status-toggle">
+      <div class="status-info">
+        <span class="status-dot online"></span>
+        <span>متصل - جاهز للعمل</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <span class="stat-num">12</span>
+        <span class="stat-label">طلبات اليوم</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">💰</span>
+        <span class="stat-num">45K</span>
+        <span class="stat-label">أرباح اليوم</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⭐</span>
+        <span class="stat-num">4.9</span>
+        <span class="stat-label">تقييم</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <span class="stat-num">3</span>
+        <span class="stat-label">مرات التقييم</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>🎯 طلبات قريبة منك</h3>
+      <a href="#">تحديث</a>
+    </div>
+
+    <div class="order-list">
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">#1234</span>
+          <span class="order-status available">متاح</span>
+        </div>
+        <div class="order-info">
+          <p><strong>🏥 من:</strong> صيدلية النور - الكرادة</p>
+          <p><strong>🏠 إلى:</strong> شارع 62 - الجادرية</p>
+          <p><strong>📏 المسافة:</strong> 2.5 كم</p>
+          <p><strong>💰 العمولة:</strong> <span class="price">3,000</span> دينار</p>
+        </div>
+        <button class="btn-accept full">قبول الطلب</button>
+      </div>
+
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">#1235</span>
+          <span class="order-status available">متاح</span>
+        </div>
+        <div class="order-info">
+          <p><strong>🏥 من:</strong> صيدلية الحياة - الجادرية</p>
+          <p><strong>🏠 إلى:</strong> الكرادة - محلة 909</p>
+          <p><strong>📏 المسافة:</strong> 3.2 كم</p>
+          <p><strong>💰 العمولة:</strong> <span class="price">4,000</span> دينار</p>
+        </div>
+        <button class="btn-accept full">قبول الطلب</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn active">
+        <span>🏠</span>
+        <small>الرئيسية</small>
+      </button>
+      <button class="nav-btn">
+        <span>📋</span>
+        <small>طلباتي</small>
+      </button>
+      <button class="nav-btn">
+        <span>💰</span>
+        <small>محفظتي</small>
+      </button>
+      <button class="nav-btn">
+        <span>👤</span>
+        <small>حسابي</small>
+      </button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
-</html>
+        </html>
