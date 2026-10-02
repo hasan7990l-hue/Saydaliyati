@@ -1,7 +1,63 @@
 /* ============================================
-   صيدليتي - Premium Gold Design
+   صيدليتي - Clean Medical Design
+   مع الوضع الليلي والنهاري
    ============================================ */
 
+/* ============================================
+   المتغيرات - الوضع النهاري (الافتراضي)
+   ============================================ */
+:root {
+  --bg: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-input: #FFFFFF;
+  --primary: #2563EB;
+  --primary-light: #DBEAFE;
+  --primary-hover: #1D4ED8;
+  --success: #10B981;
+  --success-light: #D1FAE5;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --text: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --border: #E2E8F0;
+  --border-focus: #2563EB;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
+  --shadow-primary: 0 8px 24px rgba(37, 99, 235, 0.25);
+}
+
+/* ============================================
+   الوضع الليلي
+   ============================================ */
+[data-theme="dark"] {
+  --bg: #0F172A;
+  --bg-card: #1E293B;
+  --bg-secondary: #1E293B;
+  --bg-input: #334155;
+  --primary: #3B82F6;
+  --primary-light: #1E40AF;
+  --primary-hover: #2563EB;
+  --success: #34D399;
+  --success-light: #064E3B;
+  --warning: #FBBF24;
+  --danger: #F87171;
+  --text: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border: #334155;
+  --border-focus: #3B82F6;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --shadow-primary: 0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+/* ============================================
+   الأساسيات
+   ============================================ */
 * {
   margin: 0;
   padding: 0;
@@ -9,26 +65,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-:root {
-  --bg-primary: #0A0A0A;
-  --bg-secondary: #1A1A1A;
-  --bg-card: #141414;
-  --gold: #D4AF37;
-  --gold-light: #F7E7CE;
-  --gold-bright: #FFD700;
-  --white: #FFFFFF;
-  --gray: #8B8B8B;
-  --gray-light: #B0B0B0;
-  --gray-dark: #4A4A4A;
-  --border-gold: rgba(212, 175, 55, 0.3);
-  --gold-gradient: linear-gradient(135deg, #D4AF37 0%, #F7E7CE 100%);
-  --gold-glow: 0 10px 40px rgba(212, 175, 55, 0.3);
+html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg-primary);
-  color: var(--white);
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   direction: rtl;
@@ -42,6 +86,7 @@ body {
   min-height: 100vh;
   padding: 24px;
   animation: fadeIn 0.4s ease;
+  background: var(--bg);
 }
 
 .screen.active {
@@ -55,14 +100,72 @@ body {
 }
 
 /* ============================================
-   شاشة البداية (Splash)
+   زر الوضع الليلي
+   ============================================ */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.theme-icon {
+  font-size: 22px;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(20deg);
+}
+
+.theme-toggle-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-small:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.theme-toggle-small .theme-icon {
+  font-size: 18px;
+}
+
+/* ============================================
+   شاشة البداية
    ============================================ */
 #splashScreen {
   justify-content: space-between;
   align-items: center;
   padding: 80px 32px 48px;
-  background: radial-gradient(ellipse at center, #1A1A1A 0%, #0A0A0A 70%);
   text-align: center;
+  position: relative;
 }
 
 .splash-content {
@@ -73,7 +176,7 @@ body {
   align-items: center;
 }
 
-.gold-logo {
+.blue-logo {
   margin-bottom: 32px;
   animation: logoAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -83,51 +186,45 @@ body {
   to { opacity: 1; transform: scale(1); }
 }
 
-.gold-circle {
+.blue-circle {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: var(--gold-gradient);
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 
-    0 0 60px rgba(212, 175, 55, 0.5),
-    inset 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-primary);
   position: relative;
 }
 
-.gold-circle::before {
+.blue-circle::before {
   content: '';
   position: absolute;
-  inset: 8px;
+  inset: 10px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .cross {
   font-size: 72px;
-  color: #0A0A0A;
+  color: #FFFFFF;
   font-weight: 900;
   line-height: 1;
 }
 
 .app-name {
-  font-size: 56px;
+  font-size: 52px;
   font-weight: 900;
-  background: var(--gold-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
   margin-bottom: 12px;
   letter-spacing: 2px;
 }
 
 .tagline {
   font-size: 18px;
-  color: var(--gray);
+  color: var(--text-secondary);
   font-weight: 600;
-  letter-spacing: 1px;
 }
 
 .splash-buttons {
@@ -141,27 +238,28 @@ body {
 /* ============================================
    الأزرار
    ============================================ */
-.btn-gold {
+.btn-primary {
   width: 100%;
   padding: 18px;
-  background: var(--gold-gradient);
-  color: #0A0A0A;
+  background: var(--primary);
+  color: #FFFFFF;
   border: none;
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 900;
-  font-family: 'Cairo', sans-serif;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: var(--gold-glow);
+  box-shadow: var(--shadow-primary);
 }
 
-.btn-gold:hover {
+.btn-primary:hover {
+  background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.35);
 }
 
-.btn-gold:active {
+.btn-primary:active {
   transform: scale(0.98);
 }
 
@@ -169,19 +267,19 @@ body {
   width: 100%;
   padding: 18px;
   background: transparent;
-  color: var(--gold);
-  border: 2px solid var(--gold);
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 900;
-  font-family: 'Cairo', sans-serif;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-  background: rgba(212, 175, 55, 0.1);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
 /* ============================================
@@ -197,7 +295,7 @@ body {
 .back-btn {
   background: transparent;
   border: none;
-  color: var(--gold);
+  color: var(--primary);
   font-size: 28px;
   cursor: pointer;
   padding: 8px;
@@ -209,12 +307,12 @@ body {
 }
 
 .progress-badge {
-  background: var(--gold-gradient);
-  color: #0A0A0A;
+  background: var(--primary);
+  color: #FFFFFF;
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 14px;
-  font-weight: 900;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* ============================================
@@ -222,21 +320,21 @@ body {
    ============================================ */
 .screen-title {
   font-size: 26px;
-  font-weight: 900;
-  color: var(--white);
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 8px;
   text-align: center;
 }
 
 .screen-subtitle {
   font-size: 14px;
-  color: var(--gray);
+  color: var(--text-secondary);
   text-align: center;
   margin-bottom: 32px;
 }
 
 /* ============================================
-   بطاقات الأدوار (Role Selection)
+   بطاقات الأدوار
    ============================================ */
 .role-cards {
   display: flex;
@@ -247,21 +345,21 @@ body {
 
 .role-card {
   background: var(--bg-card);
-  border: 1.5px solid var(--border-gold);
-  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .role-card:hover {
-  border-color: var(--gold);
-  background: var(--bg-secondary);
+  border-color: var(--primary);
   transform: translateX(-4px);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .role-info {
@@ -275,36 +373,51 @@ body {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--gold-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 26px;
   flex-shrink: 0;
+}
+
+.role-icon-circle.blue {
+  background: var(--primary-light);
+}
+
+.role-icon-circle.green {
+  background: var(--success-light);
+}
+
+.role-icon-circle.orange {
+  background: #FEF3C7;
+}
+
+[data-theme="dark"] .role-icon-circle.orange {
+  background: #78350F;
 }
 
 .role-text h3 {
   font-size: 18px;
-  font-weight: 900;
-  color: var(--white);
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
 .role-text p {
   font-size: 12px;
-  color: var(--gray);
+  color: var(--text-secondary);
 }
 
 .arrow {
-  color: var(--gold);
+  color: var(--primary);
   font-size: 24px;
   font-weight: bold;
 }
 
 /* ============================================
-   النماذج (Forms)
+   النماذج
    ============================================ */
-.gold-form {
+.blue-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -318,20 +431,20 @@ body {
 }
 
 .input-group label {
-  color: var(--gold);
+  color: var(--text);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .input-group input,
 .input-group select {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-gold);
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
   border-radius: 12px;
   padding: 14px 16px;
-  color: var(--white);
-  font-size: 16px;
-  font-family: 'Cairo', sans-serif;
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
   transition: all 0.3s ease;
   width: 100%;
 }
@@ -339,16 +452,16 @@ body {
 .input-group input:focus,
 .input-group select:focus {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .input-group input::placeholder {
-  color: var(--gray-dark);
+  color: var(--text-muted);
 }
 
 /* ============================================
-   منطقة الرفع (Upload)
+   منطقة الرفع
    ============================================ */
 .upload-group {
   display: flex;
@@ -357,14 +470,14 @@ body {
 }
 
 .upload-group label {
-  color: var(--gold);
+  color: var(--text);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .upload-area {
-  background: var(--bg-card);
-  border: 2px dashed var(--border-gold);
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border);
   border-radius: 12px;
   padding: 32px;
   display: flex;
@@ -377,8 +490,12 @@ body {
 }
 
 .upload-area:hover {
-  border-color: var(--gold);
-  background: var(--bg-secondary);
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+[data-theme="dark"] .upload-area:hover {
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .upload-icon {
@@ -386,8 +503,98 @@ body {
 }
 
 .upload-text {
-  color: var(--gray);
+  color: var(--text-secondary);
   font-size: 14px;
+}
+
+/* ============================================
+   رابط النموذج
+   ============================================ */
+.form-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.form-link a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.form-link a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   رسالة النجاح
+   ============================================ */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.success-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.success-box {
+  background: var(--bg-card);
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--success);
+  color: #FFFFFF;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.success-box h2 {
+  color: var(--text);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.success-box p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.success-box .btn-primary {
+  margin-top: 8px;
 }
 
 /* ============================================
@@ -395,10 +602,10 @@ body {
    ============================================ */
 @media (max-width: 480px) {
   .app-name {
-    font-size: 44px;
+    font-size: 42px;
   }
   
-  .gold-circle {
+  .blue-circle {
     width: 120px;
     height: 120px;
   }
@@ -410,4 +617,15 @@ body {
   .screen-title {
     font-size: 22px;
   }
-}
+  
+  .screen {
+    padding: 20px;
+  }
+  
+  .theme-toggle {
+    width: 42px;
+    height: 42px;
+    top: 16px;
+    left: 16px;
+  }
+   }
