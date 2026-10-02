@@ -68,6 +68,10 @@ function goToRoleSelection() {
   showScreen('roleScreen');
 }
 
+function goToOrdersPage() {
+  showScreen('ordersScreen');
+}
+
 function selectRole(role) {
   console.log('👤 دور:', role);
   
@@ -81,7 +85,28 @@ function selectRole(role) {
 }
 
 // ============================================
-// تسجيل الدخول (يدعم كل الأنواع)
+// التوجيه حسب نوع المستخدم
+// ============================================
+function goToPatientHome(user) {
+  var greetEl = document.getElementById('userGreeting');
+  if (greetEl) greetEl.textContent = user.name || 'أحمد';
+  showScreen('homeScreen');
+}
+
+function goToPharmacyDashboard(user) {
+  var greetEl = document.getElementById('pharmacyGreeting');
+  if (greetEl) greetEl.textContent = user.name || 'صيدلية النور';
+  showScreen('pharmacyDashboard');
+}
+
+function goToDeliveryDashboard(user) {
+  var greetEl = document.getElementById('deliveryGreeting');
+  if (greetEl) greetEl.textContent = user.name || 'أحمد';
+  showScreen('deliveryDashboard');
+}
+
+// ============================================
+// تسجيل الدخول
 // ============================================
 function submitLogin(event) {
   if (event) event.preventDefault();
@@ -117,11 +142,9 @@ function submitLogin(event) {
     if (user.type === 'pharmacy') {
       console.log('🏥 دخول صيدلية');
       goToPharmacyDashboard(user);
-      
     } else if (user.type === 'delivery') {
       console.log('🛵 دخول دليفري');
       goToDeliveryDashboard(user);
-      
     } else {
       console.log('👤 دخول مريض');
       goToPatientHome(user);
@@ -131,27 +154,6 @@ function submitLogin(event) {
   }
   
   showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
-}
-
-// ============================================
-// التوجيه حسب نوع المستخدم
-// ============================================
-function goToPatientHome(user) {
-  var greetEl = document.getElementById('userGreeting');
-  if (greetEl) greetEl.textContent = user.name || 'أحمد';
-  showScreen('homeScreen');
-}
-
-function goToPharmacyDashboard(user) {
-  var greetEl = document.getElementById('pharmacyGreeting');
-  if (greetEl) greetEl.textContent = user.name || 'صيدليتي';
-  showScreen('pharmacyDashboard');
-}
-
-function goToDeliveryDashboard(user) {
-  var greetEl = document.getElementById('deliveryGreeting');
-  if (greetEl) greetEl.textContent = user.name || 'أحمد';
-  showScreen('deliveryDashboard');
 }
 
 // ============================================
@@ -314,7 +316,7 @@ function showSuccessMessage(title, message, nextScreen) {
       '<div class="success-icon">✓</div>' +
       '<h2>' + title + '</h2>' +
       '<p>' + message + '</p>' +
-      '<button class="btn-primary" onclick="closeSuccessAndGo(\'' + nextScreen + '\')">حسناً</button>' +
+      '<button class="btn-primary" onclick="closeSuccessAndGo()">حسناً</button>' +
     '</div>';
   document.body.appendChild(overlay);
   
@@ -333,7 +335,7 @@ function closeSuccess() {
   }
 }
 
-function closeSuccessAndGo(nextScreen) {
+function closeSuccessAndGo() {
   closeSuccess();
   setTimeout(function() {
     var currentUser = localStorage.getItem('saydaliyati_current_user');
@@ -377,4 +379,11 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     showScreen('splashScreen');
   }
+});
+
+// ============================================
+// منع التكبير على الجوال
+// ============================================
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
 });
