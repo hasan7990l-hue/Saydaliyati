@@ -19,6 +19,9 @@ function toggleTheme() {
     icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
   });
   
+  var darkToggle = document.getElementById('darkModeToggle');
+  if (darkToggle) darkToggle.checked = newTheme === 'dark';
+  
   var metaTheme = document.querySelector('meta[name="theme-color"]');
   if (metaTheme) {
     metaTheme.setAttribute('content', newTheme === 'dark' ? '#0F172A' : '#2563EB');
@@ -35,6 +38,9 @@ function loadTheme() {
   icons.forEach(function(icon) {
     icon.textContent = saved === 'dark' ? '☀️' : '🌙';
   });
+  
+  var darkToggle = document.getElementById('darkModeToggle');
+  if (darkToggle) darkToggle.checked = saved === 'dark';
 }
 
 // ============================================
@@ -53,17 +59,12 @@ function showScreen(screenId) {
     target.classList.add('active');
     target.style.display = 'flex';
     window.scrollTo(0, 0);
-    
     updateBottomNav(screenId);
-    console.log('✅ تم التحويل');
   } else {
     console.error('❌ شاشة غير موجودة:', screenId);
   }
 }
 
-// ============================================
-// تحديث شريط التنقل السفلي
-// ============================================
 function updateBottomNav(screenId) {
   var nav = document.getElementById('mainBottomNav');
   if (!nav) return;
@@ -98,67 +99,84 @@ function switchTab(tab) {
     if (userType === 'pharmacy') goToPharmacyDashboard(user);
     else if (userType === 'delivery') goToDeliveryDashboard(user);
     else goToPatientHome(user);
-    
   } else if (tab === 'orders') {
     if (userType === 'delivery') {
       showScreen('ordersScreen');
     } else {
       showToast('🚧 قريباً - قائمة الطلبات');
     }
-    
   } else if (tab === 'notifications') {
     showToast('🚧 قريباً - التنبيهات');
-    
   } else if (tab === 'profile') {
-    showToast('🚧 قريباً - حسابي');
+    openSettings();
   }
 }
 
 // ============================================
-// Toast
+// القائمة الجانبية
 // ============================================
-function showToast(message) {
-  var toast = document.createElement('div');
-  toast.className = 'toast-message';
-  toast.textContent = message;
-  document.body.appendChild(toast);
+function openSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.add('active');
+  if (overlay) overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebarOverlay');
+  if (sidebar) sidebar.classList.remove('active');
+  if (overlay) overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function closeAllScreens() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  var userType = user.type || 'patient';
   
-  setTimeout(function() { toast.classList.add('show'); }, 50);
-  setTimeout(function() {
-    toast.classList.remove('show');
-    setTimeout(function() { toast.remove(); }, 300);
-  }, 2000);
+  if (userType === 'pharmacy') goToPharmacyDashboard(user);
+  else if (userType === 'delivery') goToDeliveryDashboard(user);
+  else goToPatientHome(user);
+}
+
+// ============================================
+// صفحات القائمة
+// ============================================
+function openProfile() {
+  closeSidebar();
+  showToast('🚧 الملف الشخصي - قريباً');
+}
+
+function openSettings() {
+  closeSidebar();
+  showScreen('settingsScreen');
+}
+
+function openAbout() {
+  closeSidebar();
+  showScreen('aboutScreen');
+}
+
+function openAppDetails() {
+  closeSidebar();
+  showScreen('appDetailsScreen');
 }
 
 // ============================================
 // التنقل
 // ============================================
-function goToSplash() {
-  showScreen('splashScreen');
-}
-
-function goToLogin() {
-  showScreen('loginScreen');
-}
-
-function goToRoleSelection() {
-  showScreen('roleScreen');
-}
-
-function goToOrdersPage() {
-  showScreen('ordersScreen');
-}
+function goToSplash() { showScreen('splashScreen'); }
+function goToLogin() { showScreen('loginScreen'); }
+function goToRoleSelection() { showScreen('roleScreen'); }
+function goToOrdersPage() { showScreen('ordersScreen'); }
 
 function selectRole(role) {
   console.log('👤 دور:', role);
-  
-  if (role === 'patient') {
-    showScreen('patientScreen');
-  } else if (role === 'pharmacy') {
-    showScreen('pharmacyScreen');
-  } else if (role === 'delivery') {
-    showScreen('deliveryScreen');
-  }
+  if (role === 'patient') showScreen('patientScreen');
+  else if (role === 'pharmacy') showScreen('pharmacyScreen');
+  else if (role === 'delivery') showScreen('deliveryScreen');
 }
 
 // ============================================
@@ -168,6 +186,7 @@ function goToPatientHome(user) {
   var greetEl = document.getElementById('userGreeting');
   if (greetEl) greetEl.textContent = user.name || 'أحمد';
   showScreen('homeScreen');
+  setTimeout(loadOffers, 100);
 }
 
 function goToPharmacyDashboard(user) {
@@ -201,12 +220,8 @@ function submitLogin(event) {
     return;
   }
   
-  console.log('🔐 محاولة تسجيل دخول:', phone);
-  
   var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-  var user = registrations.find(function(r) {
-    return r.phone === phone;
-  });
+  var user = registrations.find(function(r) { return r.phone === phone; });
   
   if (user) {
     if (user.password && user.password !== password) {
@@ -216,16 +231,9 @@ function submitLogin(event) {
     
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
     
-    if (user.type === 'pharmacy') {
-      console.log('🏥 دخول صيدلية');
-      goToPharmacyDashboard(user);
-    } else if (user.type === 'delivery') {
-      console.log('🛵 دخول دليفري');
-      goToDeliveryDashboard(user);
-    } else {
-      console.log('👤 دخول مريض');
-      goToPatientHome(user);
-    }
+    if (user.type === 'pharmacy') goToPharmacyDashboard(user);
+    else if (user.type === 'delivery') goToDeliveryDashboard(user);
+    else goToPatientHome(user);
     
     return;
   }
@@ -237,9 +245,12 @@ function submitLogin(event) {
 // تسجيل الخروج
 // ============================================
 function logout() {
-  localStorage.removeItem('saydaliyati_current_user');
-  goToSplash();
-  console.log('🚪 تسجيل خروج');
+  if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+    localStorage.removeItem('saydaliyati_current_user');
+    closeSidebar();
+    goToSplash();
+    showToast('✅ تم تسجيل الخروج');
+  }
 }
 
 // ============================================
@@ -275,10 +286,7 @@ function submitPatient(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage(
-    'تم إنشاء حسابك! 🎉',
-    'أهلاً بك في صيدليتي، ' + name
-  );
+  showSuccessMessage('تم إنشاء حسابك! 🎉', 'أهلاً بك في صيدليتي، ' + name);
 }
 
 function submitPharmacy(event) {
@@ -315,10 +323,7 @@ function submitPharmacy(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage(
-    'تم استلام طلبك! ✅',
-    'سنتواصل معك خلال 24 ساعة'
-  );
+  showSuccessMessage('تم استلام طلبك! ✅', 'سنتواصل معك خلال 24 ساعة');
 }
 
 function submitDelivery(event) {
@@ -353,10 +358,7 @@ function submitDelivery(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage(
-    'مرحباً بك في فريقنا! 🛵',
-    'سنتواصل معك قريباً'
-  );
+  showSuccessMessage('مرحباً بك في فريقنا! 🛵', 'سنتواصل معك قريباً');
 }
 
 // ============================================
@@ -364,12 +366,9 @@ function submitDelivery(event) {
 // ============================================
 function saveRegistration(data) {
   data.date = new Date().toISOString();
-  
   var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
   registrations.push(data);
   localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
-  
-  console.log('💾 تم الحفظ:', data);
 }
 
 // ============================================
@@ -394,18 +393,14 @@ function showSuccessMessage(title, message) {
     '</div>';
   document.body.appendChild(overlay);
   
-  setTimeout(function() {
-    overlay.classList.add('show');
-  }, 50);
+  setTimeout(function() { overlay.classList.add('show'); }, 50);
 }
 
 function closeSuccess() {
   var overlay = document.querySelector('.success-overlay');
   if (overlay) {
     overlay.classList.remove('show');
-    setTimeout(function() {
-      overlay.remove();
-    }, 300);
+    setTimeout(function() { overlay.remove(); }, 300);
   }
 }
 
@@ -415,13 +410,9 @@ function closeSuccessAndGo() {
     var currentUser = localStorage.getItem('saydaliyati_current_user');
     if (currentUser) {
       var user = JSON.parse(currentUser);
-      if (user.type === 'pharmacy') {
-        goToPharmacyDashboard(user);
-      } else if (user.type === 'delivery') {
-        goToDeliveryDashboard(user);
-      } else {
-        goToPatientHome(user);
-      }
+      if (user.type === 'pharmacy') goToPharmacyDashboard(user);
+      else if (user.type === 'delivery') goToDeliveryDashboard(user);
+      else goToPatientHome(user);
     } else {
       goToSplash();
     }
@@ -430,6 +421,107 @@ function closeSuccessAndGo() {
 
 function showError(message) {
   alert('⚠️ ' + message);
+}
+
+// ============================================
+// Toast
+// ============================================
+function showToast(message) {
+  var toast = document.createElement('div');
+  toast.className = 'toast-message';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(function() { toast.classList.add('show'); }, 50);
+  setTimeout(function() {
+    toast.classList.remove('show');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 2000);
+}
+
+// ============================================
+// إدارة العروض
+// ============================================
+function openAddOfferModal() {
+  var modal = document.getElementById('addOfferModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeAddOfferModal() {
+  var modal = document.getElementById('addOfferModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function publishOffer(event) {
+  if (event) event.preventDefault();
+  
+  var title = document.getElementById('offerTitle').value.trim();
+  var description = document.getElementById('offerDescription').value.trim();
+  var expiry = document.getElementById('offerExpiry').value;
+  var type = document.getElementById('offerType').value;
+  
+  if (!title || !description) {
+    alert('⚠️ املأ العنوان والتفاصيل');
+    return;
+  }
+  
+  var currentUser = JSON.parse(localStorage.getItem('saydaliyati_current_user') || '{}');
+  var pharmacyName = currentUser.name || 'صيدلية';
+  
+  var offer = {
+    id: 'OFFER_' + Date.now(),
+    title: title,
+    description: description,
+    expiry: expiry,
+    type: type,
+    pharmacy: pharmacyName,
+    pharmacyPhone: currentUser.phone || '',
+    date: new Date().toISOString(),
+    active: true
+  };
+  
+  var offers = JSON.parse(localStorage.getItem('saydaliyati_offers') || '[]');
+  offers.unshift(offer);
+  localStorage.setItem('saydaliyati_offers', JSON.stringify(offers));
+  
+  closeAddOfferModal();
+  
+  document.getElementById('offerTitle').value = '';
+  document.getElementById('offerDescription').value = '';
+  document.getElementById('offerExpiry').value = '';
+  
+  showToast('✅ تم نشر العرض بنجاح');
+  if (document.getElementById('offersList')) loadOffers();
+}
+
+function loadOffers() {
+  var offersList = document.getElementById('offersList');
+  if (!offersList) return;
+  
+  var offers = JSON.parse(localStorage.getItem('saydaliyati_offers') || '[]');
+  
+  if (offers.length === 0) {
+    offersList.innerHTML = '<div class="offer-empty">لا توجد عروض حالياً</div>';
+    return;
+  }
+  
+  var html = '';
+  offers.forEach(function(offer) {
+    html += 
+      '<div class="offer-card">' +
+        '<h4 class="offer-title">' + offer.title + '</h4>' +
+        '<p class="offer-desc">' + offer.description + '</p>' +
+        '<p class="offer-pharmacy">من: ' + offer.pharmacy + '</p>' +
+      '</div>';
+  });
+  
+  offersList.innerHTML = html;
 }
 
 // ============================================
@@ -443,21 +535,14 @@ document.addEventListener('DOMContentLoaded', function() {
   var currentUser = localStorage.getItem('saydaliyati_current_user');
   if (currentUser) {
     var user = JSON.parse(currentUser);
-    if (user.type === 'pharmacy') {
-      goToPharmacyDashboard(user);
-    } else if (user.type === 'delivery') {
-      goToDeliveryDashboard(user);
-    } else {
-      goToPatientHome(user);
-    }
+    if (user.type === 'pharmacy') goToPharmacyDashboard(user);
+    else if (user.type === 'delivery') goToDeliveryDashboard(user);
+    else goToPatientHome(user);
   } else {
     showScreen('splashScreen');
   }
 });
 
-// ============================================
-// منع التكبير على الجوال
-// ============================================
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
 });
