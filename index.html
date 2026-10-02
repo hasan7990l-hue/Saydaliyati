@@ -14,7 +14,6 @@
        شاشة البداية (Splash)
        ============================================ -->
   <div class="screen active" id="splashScreen">
-    <!-- زر الوضع الليلي -->
     <button class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-icon">🌙</span>
     </button>
@@ -53,7 +52,7 @@
     <h2 class="screen-title">تسجيل الدخول</h2>
     <p class="screen-subtitle">أدخل بياناتك للدخول</p>
     
-    <form class="blue-form" id="loginForm">
+    <form class="blue-form" id="loginForm" onsubmit="submitLogin(event); return false;">
       <div class="input-group">
         <label>رقم الهاتف *</label>
         <input type="tel" id="loginPhone" placeholder="07XX XXX XXXX" required>
@@ -64,7 +63,7 @@
         <input type="password" id="loginPassword" placeholder="••••••••" required>
       </div>
       
-      <button type="button" class="btn-primary" onclick="submitLogin()">دخول ✅</button>
+      <button type="submit" class="btn-primary">دخول ✅</button>
     </form>
     
     <p class="form-link">
@@ -137,7 +136,7 @@
     <h2 class="screen-title">تسجيل مريض جديد</h2>
     <p class="screen-subtitle">سجل بياناتك للبدء</p>
     
-    <form class="blue-form" id="patientForm">
+    <form class="blue-form" id="patientForm" onsubmit="submitPatient(event); return false;">
       <div class="input-group">
         <label>الاسم الكامل *</label>
         <input type="text" id="patientName" placeholder="الاسم الكامل" required>
@@ -158,7 +157,7 @@
         <input type="password" id="patientPassword" placeholder="••••••••" required>
       </div>
       
-      <button type="button" class="btn-primary" onclick="submitPatient()">إنشاء الحساب ✅</button>
+      <button type="submit" class="btn-primary">إنشاء الحساب ✅</button>
     </form>
   </div>
 
@@ -174,7 +173,7 @@
     <h2 class="screen-title">تسجيل صيدلية جديدة</h2>
     <p class="screen-subtitle">املأ البيانات وسنتواصل معك</p>
     
-    <form class="blue-form" id="pharmacyForm">
+    <form class="blue-form" id="pharmacyForm" onsubmit="submitPharmacy(event); return false;">
       <div class="input-group">
         <label>اسم الصيدلية *</label>
         <input type="text" id="pharmacyName" placeholder="مثال: صيدلية النور" required>
@@ -200,6 +199,11 @@
         <input type="text" id="licenseNumber" placeholder="رقم الترخيص الرسمي" required>
       </div>
       
+      <div class="input-group">
+        <label>كلمة المرور *</label>
+        <input type="password" id="pharmacyPassword" placeholder="••••••••" required>
+      </div>
+      
       <div class="upload-group">
         <label>صورة الترخيص</label>
         <div class="upload-area">
@@ -208,7 +212,7 @@
         </div>
       </div>
       
-      <button type="button" class="btn-primary" onclick="submitPharmacy()">إرسال الطلب ✅</button>
+      <button type="submit" class="btn-primary">إرسال الطلب ✅</button>
     </form>
   </div>
 
@@ -223,7 +227,7 @@
     <h2 class="screen-title">تسجيل دليفري</h2>
     <p class="screen-subtitle">انضم لفريق التوصيل</p>
     
-    <form class="blue-form" id="deliveryForm">
+    <form class="blue-form" id="deliveryForm" onsubmit="submitDelivery(event); return false;">
       <div class="input-group">
         <label>الاسم الكامل *</label>
         <input type="text" id="deliveryName" placeholder="الاسم الكامل" required>
@@ -249,8 +253,112 @@
         </select>
       </div>
       
-      <button type="button" class="btn-primary" onclick="submitDelivery()">انضم الآن ✅</button>
+      <div class="input-group">
+        <label>كلمة المرور *</label>
+        <input type="password" id="deliveryPassword" placeholder="••••••••" required>
+      </div>
+      
+      <button type="submit" class="btn-primary">انضم الآن ✅</button>
     </form>
+  </div>
+
+  <!-- ============================================
+       الصفحة الرئيسية (Home) - بعد الدخول
+       ============================================ -->
+  <div class="screen" id="homeScreen">
+    <div class="home-header">
+      <div class="greeting">
+        <p class="greet-small">مرحباً 👋</p>
+        <h2 class="greet-name" id="userGreeting">أحمد</h2>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle-small" onclick="toggleTheme()">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <button class="icon-btn">🔔</button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
+      </div>
+    </div>
+
+    <div class="search-wrapper">
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="ابحث عن دواء...">
+      </div>
+    </div>
+
+    <div class="categories-scroll">
+      <button class="cat-chip active">الكل</button>
+      <button class="cat-chip">مسكنات</button>
+      <button class="cat-chip">فيتامينات</button>
+      <button class="cat-chip">أطفال</button>
+      <button class="cat-chip">ضغط</button>
+    </div>
+
+    <div class="section-header">
+      <h3>أقرب الصيدليات إليك</h3>
+      <a href="#">عرض الكل</a>
+    </div>
+
+    <div class="pharmacy-list">
+      <div class="pharmacy-card">
+        <div class="pharmacy-logo green">ص</div>
+        <div class="pharmacy-info">
+          <h4>صيدلية النور</h4>
+          <p>📍 الكرادة - 500 م</p>
+          <div class="pharmacy-meta">
+            <span class="rating">⭐ 4.8</span>
+            <span class="badge">توصيل فوري</span>
+          </div>
+        </div>
+        <button class="btn-order">اطلب</button>
+      </div>
+
+      <div class="pharmacy-card">
+        <div class="pharmacy-logo blue">ص</div>
+        <div class="pharmacy-info">
+          <h4>صيدلية الحياة</h4>
+          <p>📍 الجادرية - 1.2 كم</p>
+          <div class="pharmacy-meta">
+            <span class="rating">⭐ 4.6</span>
+            <span class="badge">توصيل فوري</span>
+          </div>
+        </div>
+        <button class="btn-order">اطلب</button>
+      </div>
+
+      <div class="pharmacy-card">
+        <div class="pharmacy-logo orange">ص</div>
+        <div class="pharmacy-info">
+          <h4>صيدلية الشفاء</h4>
+          <p>📍 الكرادة - 800 م</p>
+          <div class="pharmacy-meta">
+            <span class="rating">⭐ 4.9</span>
+            <span class="badge">توصيل فوري</span>
+          </div>
+        </div>
+        <button class="btn-order">اطلب</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="nav-btn active">
+        <span>🏠</span>
+        <small>الرئيسية</small>
+      </button>
+      <button class="nav-btn">
+        <span>📋</span>
+        <small>طلباتي</small>
+      </button>
+      <button class="nav-btn">
+        <span>🔔</span>
+        <small>التنبيهات</small>
+      </button>
+      <button class="nav-btn">
+        <span>👤</span>
+        <small>حسابي</small>
+      </button>
+    </div>
   </div>
 
   <script src="script.js"></script>
