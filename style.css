@@ -1,11 +1,7 @@
 /* ============================================
    صيدليتي - Clean Medical Design
-   مع الوضع الليلي والنهاري
    ============================================ */
 
-/* ============================================
-   المتغيرات - الوضع النهاري (الافتراضي)
-   ============================================ */
 :root {
   --bg: #FFFFFF;
   --bg-card: #FFFFFF;
@@ -22,16 +18,12 @@
   --text-secondary: #64748B;
   --text-muted: #94A3B8;
   --border: #E2E8F0;
-  --border-focus: #2563EB;
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
   --shadow-primary: 0 8px 24px rgba(37, 99, 235, 0.25);
 }
 
-/* ============================================
-   الوضع الليلي
-   ============================================ */
 [data-theme="dark"] {
   --bg: #0F172A;
   --bg-card: #1E293B;
@@ -48,16 +40,12 @@
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
   --border: #334155;
-  --border-focus: #3B82F6;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
   --shadow-primary: 0 8px 24px rgba(59, 130, 246, 0.4);
 }
 
-/* ============================================
-   الأساسيات
-   ============================================ */
 * {
   margin: 0;
   padding: 0;
@@ -291,6 +279,7 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-direction: row;
 }
 
 .back-btn {
@@ -600,13 +589,18 @@ body {
 }
 
 /* ============================================
-   الصفحة الرئيسية (Home)
+   الصفحة الرئيسية
    ============================================ */
 .home-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  flex-direction: row-reverse;
+}
+
+.greeting {
+  text-align: right;
 }
 
 .greeting .greet-small {
@@ -621,7 +615,7 @@ body {
   color: var(--text);
 }
 
-.header-actions {
+.header-left {
   display: flex;
   gap: 8px;
   align-items: center;
@@ -646,6 +640,20 @@ body {
   box-shadow: var(--shadow-primary);
 }
 
+.logout-btn {
+  color: var(--danger) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: var(--danger) !important;
+}
+
+.logout-btn svg {
+  stroke: var(--danger);
+}
+
 /* شريط البحث */
 .search-wrapper {
   margin-bottom: 16px;
@@ -667,9 +675,9 @@ body {
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-.search-icon {
-  font-size: 18px;
-  color: var(--text-secondary);
+.search-bar svg {
+  stroke: var(--text-secondary);
+  flex-shrink: 0;
 }
 
 .search-bar input {
@@ -783,17 +791,9 @@ body {
   flex-shrink: 0;
 }
 
-.pharmacy-logo.green {
-  background: var(--success);
-}
-
-.pharmacy-logo.blue {
-  background: var(--primary);
-}
-
-.pharmacy-logo.orange {
-  background: var(--warning);
-}
+.pharmacy-logo.green { background: var(--success); }
+.pharmacy-logo.blue { background: var(--primary); }
+.pharmacy-logo.orange { background: var(--warning); }
 
 .pharmacy-info {
   flex: 1;
@@ -881,10 +881,33 @@ body {
   box-shadow: var(--shadow-md);
 }
 
-.stat-icon {
-  font-size: 24px;
-  margin-bottom: 4px;
+.stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
 }
+
+.stat-icon-wrap svg { stroke-width: 2; }
+
+.stat-icon-wrap.blue { background: var(--primary-light); }
+.stat-icon-wrap.blue svg { stroke: var(--primary); }
+
+.stat-icon-wrap.green { background: var(--success-light); }
+.stat-icon-wrap.green svg { stroke: var(--success); }
+
+.stat-icon-wrap.orange { background: #FEF3C7; }
+.stat-icon-wrap.orange svg { stroke: #F59E0B; }
+
+[data-theme="dark"] .stat-icon-wrap.orange { background: #78350F; }
+
+.stat-icon-wrap.yellow { background: #FEF9C3; }
+.stat-icon-wrap.yellow svg { stroke: #EAB308; }
+
+[data-theme="dark"] .stat-icon-wrap.yellow { background: #713F12; }
 
 .stat-num {
   font-size: 22px;
@@ -919,6 +942,11 @@ body {
 .order-card:hover {
   border-color: var(--primary);
   box-shadow: var(--shadow-md);
+}
+
+.order-card.highlighted {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .order-top {
@@ -1027,47 +1055,77 @@ body {
 }
 
 /* ============================================
-   الإجراءات السريعة
+   رسالة مهمة
    ============================================ */
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.alert-banner {
+  display: flex;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 1.5px solid #F59E0B;
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
 }
 
-.quick-btn {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 8px;
+[data-theme="dark"] .alert-banner {
+  background: linear-gradient(135deg, #422006 0%, #78350F 100%);
+  border-color: #B45309;
+}
+
+.alert-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #F59E0B;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.alert-icon svg { stroke: #FFFFFF; }
+
+.alert-content { flex: 1; }
+
+.alert-content h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #78350F;
+  margin-bottom: 2px;
+}
+
+[data-theme="dark"] .alert-content h4 { color: #FDE68A; }
+
+.alert-content p {
+  font-size: 12px;
+  color: #92400E;
+  margin: 0;
+}
+
+[data-theme="dark"] .alert-content p { color: #FCD34D; }
+
+.alert-action {
+  background: #F59E0B;
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
   font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.quick-btn:hover {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  transform: translateY(-2px);
-}
-
-.quick-btn span {
-  font-size: 24px;
-}
-
-.quick-btn small {
-  font-size: 11px;
-  color: var(--text);
-  font-weight: 600;
+.alert-action:hover {
+  background: #D97706;
+  transform: scale(1.05);
 }
 
 /* ============================================
-   حالة الاتصال (للدليفري)
+   حالة الاتصال
    ============================================ */
 .status-toggle {
   display: flex;
@@ -1079,6 +1137,7 @@ body {
   padding: 16px;
   margin-bottom: 20px;
   box-shadow: var(--shadow-sm);
+  flex-direction: row-reverse;
 }
 
 .status-info {
@@ -1098,9 +1157,7 @@ body {
   animation: pulse 2s infinite;
 }
 
-.status-dot.online {
-  background: var(--success);
-}
+.status-dot.online { background: var(--success); }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
@@ -1108,7 +1165,7 @@ body {
 }
 
 /* ============================================
-   Switch (زر التبديل)
+   Switch
    ============================================ */
 .switch {
   position: relative;
@@ -1145,12 +1202,42 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.switch input:checked + .slider {
-  background: var(--success);
-}
+.switch input:checked + .slider { background: var(--success); }
 
 .switch input:checked + .slider::before {
   transform: translateX(24px);
+}
+
+/* ============================================
+   Tabs الفلترة
+   ============================================ */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+}
+
+.filter-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-tab.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ============================================
@@ -1180,12 +1267,15 @@ body {
   color: var(--text-secondary);
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
-  padding: 6px 16px;
+  padding: 8px 12px;
   transition: all 0.3s ease;
 }
 
-.nav-btn span {
-  font-size: 20px;
+.nav-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  transition: all 0.3s ease;
 }
 
 .nav-btn small {
@@ -1193,44 +1283,20 @@ body {
   font-weight: 600;
 }
 
-.nav-btn.active {
-  color: var(--primary);
-}
+.nav-btn.active { color: var(--primary); }
 
-.nav-btn:hover {
-  color: var(--primary);
-}
+.nav-btn.active svg { stroke: var(--primary); }
+
+.nav-btn:hover { color: var(--primary); }
 
 /* ============================================
    الموبايل
    ============================================ */
 @media (max-width: 480px) {
-  .app-name {
-    font-size: 42px;
-  }
-  
-  .blue-circle {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .cross {
-    font-size: 60px;
-  }
-  
-  .screen-title {
-    font-size: 22px;
-  }
-  
-  .screen {
-    padding: 20px;
-    padding-bottom: 100px;
-  }
-  
-  .theme-toggle {
-    width: 42px;
-    height: 42px;
-    top: 16px;
-    left: 16px;
-  }
+  .app-name { font-size: 42px; }
+  .blue-circle { width: 120px; height: 120px; }
+  .cross { font-size: 60px; }
+  .screen-title { font-size: 22px; }
+  .screen { padding: 20px; padding-bottom: 100px; }
+  .theme-toggle { width: 42px; height: 42px; top: 16px; left: 16px; }
    }
