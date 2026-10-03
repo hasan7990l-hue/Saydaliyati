@@ -1521,7 +1521,117 @@
       <p>© 2026 صيدليتي</p>
     </div>
   </div>
+   <!-- صفحة سلة التسوق -->
+<div class="screen" id="cartScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+    <button class="clear-cart-btn" onclick="clearCart()">مسح الكل</button>
+  </div>
+  <h2 class="screen-title">سلة الأدوية 🛒</h2>
+  <p class="screen-subtitle" id="cartSubtitle">0 منتج</p>
 
+  <!-- ملاحظة: يجب أن تسجّل دخول كمريض -->
+  <div class="cart-info-banner" id="cartInfoBanner" style="display:none;">
+    <span class="cart-info-icon">ℹ️</span>
+    <p>اختر صيدلية أولاً لعرض أدويتها المتوفرة</p>
+  </div>
+
+  <!-- اختيار الصيدلية -->
+  <div class="input-group">
+    <label>اختر الصيدلية *</label>
+    <select id="cartPharmacySelect" onchange="onPharmacyChange()">
+      <option value="">— اختر صيدلية —</option>
+      <option value="صيدلية النور">صيدلية النور - الكرادة</option>
+      <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
+      <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
+    </select>
+  </div>
+
+  <!-- المخزون (الأدوية المتوفرة) -->
+  <div id="cartProducts" style="display:none;">
+    <div class="section-header">
+      <h3>الأدوية المتوفرة</h3>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- سلة المشتريات -->
+  <div id="cartItemsSection" style="display:none;">
+    <div class="section-header">
+      <h3>سلة المشتريات</h3>
+      <span class="cart-count" id="cartItemsCount">0</span>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+  </div>
+
+  <!-- رسالة سلة فارغة -->
+  <div class="cart-empty" id="cartEmpty">
+    <div class="cart-empty-icon">🛒</div>
+    <h3>سلتك فارغة</h3>
+    <p>أضف أدوية من القائمة أعلاه للبدء</p>
+  </div>
+
+  <!-- ملخص الفاتورة -->
+  <div class="cart-summary" id="cartSummary" style="display:none;">
+    <div class="cart-summary-row">
+      <span>المجموع الفرعي</span>
+      <span id="cartSubtotal">0 دينار</span>
+    </div>
+    <div class="cart-summary-row">
+      <span>رسوم التوصيل</span>
+      <span id="cartDelivery">3,000 دينار</span>
+    </div>
+    <div class="cart-summary-row cart-summary-total">
+      <span>الإجمالي</span>
+      <span id="cartTotal">0 دينار</span>
+    </div>
+
+    <!-- العنوان -->
+    <div class="input-group">
+      <label>عنوان التوصيل *</label>
+      <input type="text" id="cartAddress" placeholder="بغداد - الكرادة - شارع 62">
+    </div>
+
+    <!-- ملاحظات -->
+    <div class="input-group">
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="cartNotes" rows="2" placeholder="مثال: أدوية للاستخدام مرة واحدة بعد الأكل"></textarea>
+    </div>
+
+    <!-- طريقة الدفع -->
+    <div class="input-group">
+      <label>طريقة الدفع *</label>
+      <div class="payment-options">
+        <label class="payment-option active">
+          <input type="radio" name="paymentMethod" value="cash" checked>
+          <div class="payment-option-content">
+            <span>💵</span>
+            <div>
+              <h4>كاش عند التسليم</h4>
+            </div>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="online">
+          <div class="payment-option-content">
+            <span>💳</span>
+            <div>
+              <h4>دفع إلكتروني</h4>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      تأكيد الطلب
+    </button>
+  </div>
+</div>
   <!-- نافذة إضافة عرض -->
   <div class="modal-overlay" id="addOfferModal">
     <div class="modal-content">
