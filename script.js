@@ -2833,3 +2833,516 @@ window.openProfile = function() {
   originalOpenProfile.apply(this, arguments);
   setTimeout(renderMyRatings, 100);
 };
+
+// ============================================
+// 🗺️ نظام الخريطة + GPS
+// ============================================
+
+var mainMap = null;
+var trackingMap = null;
+var myLocation = null;
+var myMarker = null;
+var nearbyMarkers = [];
+var routeLine = null;
+
+// مواقع افتراضية في بغداد
+var BAGHDAD_CENTER = [33.3152, 44.3661];
+
+// مواقع وهمية للصيدليات والمريض
+var PHARMACY_LOCATIONS = {
+  'صيدلية النور': [33.3000, 44.4000],
+  'صيدلية الحياة': [33.2800, 44.3800],
+  'صيدلية الشفاء': [33.3300, 44.3500]
+};
+
+// ============================================
+// فتح صفحة الخريطة (للمندوب)
+// ============================================
+function openMapScreen() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'delivery') {
+    showToast('هذه الميزة للمندوبين فقط');
+    return;
+  }
+  
+  showScreen('mapScreen');
+  
+  // تهيئة الخريطة بعد ظهور الشاشة
+  setTimeout(function() {
+    initMainMap();
+    requestMyLocation();
+    loadNearbyOrders();
+  }, 300);
+}
+
+function closeMapScreen() {
+  if (mainMap) {
+    mainMap.remove();
+    mainMap = null;
+  }
+  showScreen('deliveryDashboard');
+}
+
+// ============================================
+// تهيئة خريطة المندوب
+// ============================================
+function initMainMap() {
+  var mapEl = document.getElementById('leafletMap');
+  if (!mapEl) return;
+  
+  // إذا كانت الخريطة موجودة، احذفها أولاً
+  if (mainMap) {
+    mainMap.remove();
+  }
+  
+  // إنشاء الخريطة
+  mainMap = L.map('leafletMap').setView(BAGHDAD_CENTER, 13);
+  
+  // إضافة طبقة OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 19
+  }).addTo(mainMap);
+  
+  // إخفاء رسالة التحميل
+  var loading = document.getElementById('mapLoading');
+  if (loading) loading.style.display = 'none';
+  
+  // إضافة مواقع الصيدليات
+  addPharmacyMarkers();
+  
+  console.log('✅ تم تحميل الخريطة');
+}
+
+// ============================================
+// طلب موقع المستخدم (GPS)
+// ============================================
+function requestMyLocation() {
+  if (!navigator.geolocation) {
+    showToast('المتصفح لا يدعم GPS');
+    updateGpsInfo(null);
+    return;
+  }
+  
+  var subtitleEl = document.getElementById('mapSubtitle');
+  if (subtitleEl) subtitleEl.textContent = 'جارٍ تحديد موقعك...';
+  
+  navigator.geolocation.getCurrentPosition(
+    // نجاح
+    function(position) {
+      myLocation = [position.coords.latitude, position.coords.longitude];
+      console.log('📍 موقعك:', myLocation);
+      
+      // تحديث معلومات GPS
+      updateGpsInfo(position);
+      
+      // إضافة علامة موقعي
+      addMyLocationMarker();
+      
+      // تحديث مركز الخريطة
+      if (mainMap) {
+        mainMap.setView(myLocation, 15);
+      }
+      
+      var subtitleEl = document.getElementById('mapSubtitle');
+      if (subtitleEl) subtitleEl.textContent = 'تم تحديد موقعك ✅';
+    },
+    // خطأ
+    function(error) {
+      console.log('❌ خطأ GPS:', error.message);
+      
+      // استخدام موقع افتراضي (بغداد)
+      myLocation = BAGHDAD_CENTER;
+      updateGpsInfo(null);
+      addMyLocationMarker();
+      
+      var subtitleEl = document.getElementById('mapSubtitle');
+      if (subtitleEl) subtitleEl.textContent = 'تعذّر تحديد الموقع - استخدمنا بغداد';
+      
+      showToast('⚠️ تعذّر تحديد موقعك، فعّل GPS');
+    },
+    // خيارات
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    }
+  );
+}
+
+// ============================================
+// تحديث معلومات GPS
+// ============================================
+function updateGpsInfo(position) {
+  var latEl = document.getElementById('gpsLat');
+  var lngEl = document.getElementById('gpsLng');
+  var addrEl = document.getElementById('gpsAddress');
+  
+  if (position && myLocation) {
+    if (latEl) latEl.textContent = 'Lat: ' + myLocation[0].toFixed(5);
+    if (lngEl) lngEl.textContent = 'Lng: ' + myLocation[1].toFixed(5);
+    if (addrEl) addrEl.textContent = 'بغداد، العراق';
+  } else {
+    if (latEl) latEl.textContent = 'Lat: --';
+    if (lngEl) lngEl.textContent = 'Lng: --';
+    if (addrEl) addrEl.textContent = 'الموقع غير متاح';
+  }
+}
+
+// ============================================
+// إضافة علامة "موقعي"
+// ============================================
+function addMyLocationMarker() {
+  if (!mainMap || !myLocation) return;
+  
+  // احذف العلامة القديمة
+  if (myMarker) {
+    mainMap.removeLayer(myMarker);
+  }
+  
+  // أيقونة مخصصة
+  var myIcon = L.divIcon({
+    className: 'custom-map-marker marker-me',
+    html: '<div class="custom-marker-pin"><span>📍</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  
+  myMarker = L.marker(myLocation, { icon: myIcon })
+    .addTo(mainMap)
+    .bindPopup('<strong>موقعك الحالي</strong><br>أنت هنا')
+    .openPopup();
+}
+
+// ============================================
+// إضافة علامات الصيدليات
+// ============================================
+function addPharmacyMarkers() {
+  if (!mainMap) return;
+  
+  var pharmacyIcon = L.divIcon({
+    className: 'custom-map-marker marker-pharmacy',
+    html: '<div class="custom-marker-pin"><span>🏪</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  
+  for (var name in PHARMACY_LOCATIONS) {
+    if (PHARMACY_LOCATIONS.hasOwnProperty(name)) {
+      var loc = PHARMACY_LOCATIONS[name];
+      L.marker(loc, { icon: pharmacyIcon })
+        .addTo(mainMap)
+        .bindPopup('<strong>' + name + '</strong><br>صيدلية');
+    }
+  }
+}
+
+// ============================================
+// تحميل الطلبات القريبة (محاكاة)
+// ============================================
+function loadNearbyOrders() {
+  var listEl = document.getElementById('nearbyOrdersList');
+  var countEl = document.getElementById('nearbyCount');
+  if (!listEl) return;
+  
+  // محاكاة 3 طلبات قريبة
+  var nearbyOrders = [
+    { id: 1234, name: 'أحمد علي', pharmacy: 'صيدلية النور', distance: '2.5 كم', commission: 3000, lat: 33.3000, lng: 44.4000 },
+    { id: 1235, name: 'سارة محمد', pharmacy: 'صيدلية الحياة', distance: '3.2 كم', commission: 4000, lat: 33.2800, lng: 44.3800 },
+    { id: 1236, name: 'علي حسن', pharmacy: 'صيدلية الشفاء', distance: '4.1 كم', commission: 5000, lat: 33.3300, lng: 44.3500 }
+  ];
+  
+  if (countEl) countEl.textContent = nearbyOrders.length;
+  
+  var html = '';
+  nearbyOrders.forEach(function(order) {
+    html += 
+      '<div class="nearby-order-card" onclick="focusOnOrder(' + order.lat + ',' + order.lng + ', ' + order.id + ')">' +
+        '<div class="nearby-order-icon">📦</div>' +
+        '<div class="nearby-order-info">' +
+          '<h4 class="nearby-order-name">طلب #' + order.id + ' - ' + order.name + '</h4>' +
+          '<div class="nearby-order-meta">' +
+            '<span>📍 ' + order.distance + '</span>' +
+            '<span>💰 ' + order.commission.toLocaleString() + ' د</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// ============================================
+// التركيز على طلب معين
+// ============================================
+function focusOnOrder(lat, lng, orderId) {
+  if (!mainMap) return;
+  
+  mainMap.setView([lat, lng], 16);
+  
+  // أضف علامة الطلب
+  var orderIcon = L.divIcon({
+    className: 'custom-map-marker marker-patient',
+    html: '<div class="custom-marker-pin"><span>🏠</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  
+  var marker = L.marker([lat, lng], { icon: orderIcon })
+    .addTo(mainMap)
+    .bindPopup('<strong>طلب #' + orderId + '</strong><br>موقع التسليم')
+    .openPopup();
+  
+  // ارسم المسار من موقعي إلى الطلب
+  drawRoute(myLocation, [lat, lng]);
+  
+  showToast('📍 تم تحديد موقع الطلب #' + orderId);
+}
+
+// ============================================
+// رسم المسار بين نقطتين
+// ============================================
+function drawRoute(from, to) {
+  if (!mainMap || !from || !to) return;
+  
+  // احذف المسار القديم
+  if (routeLine) {
+    mainMap.removeLayer(routeLine);
+  }
+  
+  // خط وهمي (في الحقيقة نستخدم OSRM API)
+  routeLine = L.polyline([from, to], {
+    color: '#2563EB',
+    weight: 4,
+    opacity: 0.7,
+    dashArray: '10, 10',
+    lineCap: 'round'
+  }).addTo(mainMap);
+  
+  // احسب المسافة التقريبية
+  var distance = calculateDistance(from[0], from[1], to[0], to[1]);
+  console.log('📏 المسافة:', distance.toFixed(2), 'كم');
+}
+
+// ============================================
+// حساب المسافة بين نقطتين (Haversine)
+// ============================================
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  var R = 6371; // نصف قطر الأرض بالكيلومتر
+  var dLat = toRad(lat2 - lat1);
+  var dLon = toRad(lon2 - lon1);
+  var a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+// ============================================
+// التركيز على موقعي
+// ============================================
+function centerOnMe() {
+  if (!mainMap || !myLocation) {
+    showToast('جاري تحديد موقعك...');
+    requestMyLocation();
+    return;
+  }
+  
+  mainMap.setView(myLocation, 16);
+  if (myMarker) myMarker.openPopup();
+  showToast('📍 تم التركيز على موقعك');
+}
+
+// ============================================
+// إظهار كل الطلبات على الخريطة
+// ============================================
+function showAllOrders() {
+  if (!mainMap) return;
+  
+  // ارسم مسارات لكل الطلبات
+  var orders = [
+    { lat: 33.3000, lng: 44.4000 },
+    { lat: 33.2800, lng: 44.3800 },
+    { lat: 33.3300, lng: 44.3500 }
+  ];
+  
+  orders.forEach(function(order) {
+    drawRoute(myLocation, [order.lat, order.lng]);
+  });
+  
+  // ضع الخريطة على مستوى يعرض كل الطلبات
+  var group = new L.featureGroup([
+    L.marker(myLocation),
+    L.marker([33.3000, 44.4000]),
+    L.marker([33.2800, 44.3800]),
+    L.marker([33.3300, 44.3500])
+  ]);
+  mainMap.fitBounds(group.getBounds().pad(0.2));
+  
+  showToast('🗺️ عرض كل الطلبات');
+}
+
+// ============================================
+// تحديث الموقع
+// ============================================
+function refreshMyLocation() {
+  showToast('🔄 جارٍ تحديث موقعك...');
+  requestMyLocation();
+}
+
+// ============================================
+// 🚴 تتبع المندوب (للمريض)
+// ============================================
+function trackDeliveryOnMap(deliveryName, pharmacyLat, pharmacyLng) {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return;
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
+  
+  showScreen('trackingScreen');
+  
+  // تحديث اسم المندوب
+  var nameEl = document.getElementById('trackingDeliveryName');
+  if (nameEl) nameEl.textContent = deliveryName;
+  
+  // تهيئة الخريطة
+  setTimeout(function() {
+    initTrackingMap(pharmacyLat, pharmacyLng);
+  }, 300);
+}
+
+function closeTrackingScreen() {
+  if (trackingMap) {
+    trackingMap.remove();
+    trackingMap = null;
+  }
+  showScreen('myOrdersScreen');
+}
+
+function initTrackingMap(pharmacyLat, pharmacyLng) {
+  var mapEl = document.getElementById('trackingMap');
+  if (!mapEl) return;
+  
+  if (trackingMap) trackingMap.remove();
+  
+  // موقع المريض (افتراضي)
+  var patientLoc = [33.3152, 44.3661];
+  var pharmacyLoc = [pharmacyLat, pharmacyLng];
+  
+  trackingMap = L.map('trackingMap').setView(patientLoc, 13);
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 19
+  }).addTo(trackingMap);
+  
+  // علامة موقع المريض
+  var patientIcon = L.divIcon({
+    className: 'custom-map-marker marker-patient',
+    html: '<div class="custom-marker-pin"><span>🏠</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  L.marker(patientLoc, { icon: patientIcon })
+    .addTo(trackingMap)
+    .bindPopup('<strong>موقعك</strong>');
+  
+  // علامة موقع الصيدلية
+  var pharmacyIcon = L.divIcon({
+    className: 'custom-map-marker marker-pharmacy',
+    html: '<div class="custom-marker-pin"><span>🏪</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  L.marker(pharmacyLoc, { icon: pharmacyIcon })
+    .addTo(trackingMap)
+    .bindPopup('<strong>الصيدلية</strong>');
+  
+  // علامة موقع المندوب (افتراضي - في المنتصف)
+  var midLat = (patientLoc[0] + pharmacyLoc[0]) / 2;
+  var midLng = (patientLoc[1] + pharmacyLoc[1]) / 2;
+  var deliveryIcon = L.divIcon({
+    className: 'custom-map-marker marker-delivery',
+    html: '<div class="custom-marker-pin"><span>🚴</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+  var deliveryMarker = L.marker([midLat, midLng], { icon: deliveryIcon })
+    .addTo(trackingMap)
+    .bindPopup('<strong>المندوب</strong><br>في الطريق')
+    .openPopup();
+  
+  // رسم المسار
+  L.polyline([pharmacyLoc, [midLat, midLng], patientLoc], {
+    color: '#10B981',
+    weight: 4,
+    opacity: 0.7
+  }).addTo(trackingMap);
+  
+  // ضبط الحدود
+  var group = new L.featureGroup([
+    L.marker(patientLoc),
+    L.marker(pharmacyLoc),
+    L.marker([midLat, midLng])
+  ]);
+  trackingMap.fitBounds(group.getBounds().pad(0.2));
+  
+  // حركة المندوب (محاكاة)
+  simulateDeliveryMovement(deliveryMarker, [midLat, midLng], patientLoc);
+}
+
+// ============================================
+// محاكاة حركة المندوب
+// ============================================
+function simulateDeliveryMovement(marker, start, end) {
+  var steps = 30;
+  var currentStep = 0;
+  
+  var interval = setInterval(function() {
+    currentStep++;
+    
+    if (currentStep > steps) {
+      clearInterval(interval);
+      return;
+    }
+    
+    var ratio = currentStep / steps;
+    var lat = start[0] + (end[0] - start[0]) * ratio;
+    var lng = start[1] + (end[1] - start[1]) * ratio;
+    
+    marker.setLatLng([lat, lng]);
+    
+    // تحديث الوقت المتوقع والمسافة
+    var distance = calculateDistance(lat, lng, end[0], end[1]);
+    var eta = Math.max(1, Math.round(distance * 3));
+    
+    var etaEl = document.getElementById('trackingETA');
+    var distEl = document.getElementById('trackingDistance');
+    var progEl = document.getElementById('trackingProgressFill');
+    
+    if (etaEl) etaEl.textContent = eta + ' دقيقة';
+    if (distEl) distEl.textContent = distance.toFixed(1) + ' كم';
+    if (progEl) progEl.style.width = (40 + (ratio * 55)) + '%';
+    
+  }, 2000); // كل 2 ثانية يتحرك المندوب
+}
+
+function refreshTracking() {
+  showToast('🔄 جارٍ تحديث موقع المندوب...');
+  // في الواقع، هنا نطلب الموقع من Firebase
+}
