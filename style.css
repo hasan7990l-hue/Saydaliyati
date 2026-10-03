@@ -1,5 +1,5 @@
 /* ============================================
-   صيدليتي - Clean Medical Design
+   صيدليتي - Clean Medical Design v2
    ============================================ */
 
 :root {
@@ -89,7 +89,7 @@ body {
 }
 
 /* ============================================
-   زر الوضع الليلي (في شاشة البداية)
+   زر الوضع الليلي
    ============================================ */
 .theme-toggle {
   position: absolute;
@@ -109,15 +109,8 @@ body {
   z-index: 100;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.1);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-primary);
-}
-
 .theme-icon {
   font-size: 22px;
-  transition: transform 0.3s ease;
 }
 
 /* ============================================
@@ -247,19 +240,21 @@ body {
 }
 
 /* ============================================
-   الشعار المصغّر (في الرأس)
+   الشعار المصغّر
    ============================================ */
 .home-header {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin-bottom: 24px;
+  gap: 8px;
 }
 
 .animated-logo-header {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -297,14 +292,14 @@ body {
 
 .mini-cross {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 32px;
   color: #FFFFFF;
   font-weight: 900;
   line-height: 1;
@@ -330,6 +325,13 @@ body {
 @keyframes miniRotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.home-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
 }
 
 /* ============================================
@@ -369,8 +371,6 @@ body {
   transition: all 0.3s ease;
 }
 
-.btn-outline:hover { background: var(--primary-light); }
-
 /* ============================================
    الشريط العلوي
    ============================================ */
@@ -388,10 +388,7 @@ body {
   font-size: 28px;
   cursor: pointer;
   padding: 8px;
-  transition: all 0.2s;
 }
-
-.back-btn:hover { transform: translateX(5px); }
 
 .progress-badge {
   background: var(--primary);
@@ -473,7 +470,7 @@ body {
 [data-theme="dark"] .role-icon-circle.orange { background: #78350F; }
 
 .role-text h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 4px;
@@ -488,8 +485,6 @@ body {
   color: var(--primary);
   font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
-  padding: 8px;
 }
 
 /* ============================================
@@ -538,19 +533,66 @@ body {
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-.input-group input::placeholder,
-.input-group textarea::placeholder { color: var(--text-muted); }
+.input-group input::placeholder { color: var(--text-muted); }
 
-.form-link {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
-  color: var(--text-secondary);
+/* كلمة المرور مع زر الإظهار */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.form-link a {
+.password-wrapper input {
+  padding-left: 50px;
+}
+
+.toggle-password {
+  position: absolute;
+  left: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 4px;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.toggle-password:hover { opacity: 1; }
+
+/* شريط قوة كلمة المرور */
+.password-strength {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+  min-height: 18px;
+}
+
+.password-strength.weak { color: var(--danger); }
+.password-strength.medium { color: var(--warning); }
+.password-strength.strong { color: var(--success); }
+
+/* الشروط والأحكام */
+.terms-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.terms-check input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.terms-check a {
   color: var(--primary);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -642,8 +684,6 @@ body {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
-.search-bar input::placeholder { color: var(--text-muted); }
-
 /* ============================================
    التصنيفات
    ============================================ */
@@ -669,7 +709,6 @@ body {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.3s ease;
 }
 
 .cat-chip.active {
@@ -736,7 +775,6 @@ body {
 
 .pharmacy-logo.green { background: var(--success); }
 .pharmacy-logo.blue { background: var(--primary); }
-.pharmacy-logo.orange { background: var(--warning); }
 
 .pharmacy-info { flex: 1; min-width: 0; }
 .pharmacy-info h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
@@ -1318,7 +1356,7 @@ body {
 [data-theme="dark"] .trust-card p { color: #DBEAFE; }
 
 /* ============================================
-   الإعدادات والملف الشخصي - العناصر
+   الإعدادات والعناصر
    ============================================ */
 .setting-item {
   display: flex;
@@ -1332,7 +1370,6 @@ body {
 }
 
 .setting-item.clickable { cursor: pointer; }
-
 .setting-item.locked {
   opacity: 0.7;
   background: var(--bg-secondary);
@@ -1456,7 +1493,6 @@ body {
 
 .sidebar-menu li.logout-item { color: var(--danger); }
 .sidebar-menu li.logout-item svg { stroke: var(--danger); }
-.sidebar-menu li.logout-item:hover { background: rgba(239, 68, 68, 0.1); }
 
 .sidebar-footer {
   padding: 20px;
@@ -1618,4 +1654,4 @@ body {
   .logo-cross { width: 100px; height: 100px; }
   .cross-symbol { font-size: 50px; }
   .wallet-balance { font-size: 34px; }
-   }
+  }
