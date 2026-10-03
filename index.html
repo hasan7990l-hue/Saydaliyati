@@ -476,104 +476,265 @@
     </div>
   </div>
 
-  <!-- صفحة طلباتي الذكية -->
+  <!-- صفحة طلباتي (ديناميكية حسب نوع المستخدم) -->
   <div class="screen" id="myOrdersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
     </div>
-    <h2 class="screen-title">طلباتي الذكية</h2>
-    <p class="screen-subtitle">ترتيب تلقائي حسب الأولوية</p>
+    <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
+    <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
 
-    <!-- إشعار AI -->
-    <div class="ai-suggestion-card">
-      <div class="ai-header">
-        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
-      </div>
-      <div class="ai-network">
-        <div class="ai-brain">
-          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-          </svg>
+    <!-- ============================================ -->
+    <!-- 🚴 قسم المندوب (AI + أولويات + عمولة)        -->
+    <!-- ============================================ -->
+    <div id="deliveryOrdersContent" style="display:none;">
+      
+      <div class="ai-suggestion-card">
+        <div class="ai-header">
+          <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
         </div>
-        <div class="ai-nodes">
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
+        <div class="ai-network">
+          <div class="ai-brain">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+            </svg>
+          </div>
+          <div class="ai-nodes">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="ai-content">
+          <h3>اقتراح ذكي</h3>
+          <p>ابدأ بطلب <span class="highlight">#1234</span></p>
+          <p class="ai-sub">الأقرب والأعلى عمولة</p>
+        </div>
+        <div class="ai-score">
+          <span>9.5</span>
+          <small>/10</small>
+        </div>
+        <button class="ai-start-btn" onclick="startOrder(1234)">
+          ابدأ الآن ←
+        </button>
+      </div>
+
+      <div class="priority-list">
+        <div class="priority-card priority-1">
+          <div class="priority-header">
+            <span class="priority-rank">🥇 الأولوية القصوى</span>
+            <span class="priority-id">طلب #1234</span>
+          </div>
+          <div class="priority-pharmacy">صيدلية النور</div>
+          <div class="priority-info">
+            <span>📍 2.5 كم</span>
+            <span>💰 3,000 دينار</span>
+          </div>
+          <div class="priority-footer">
+            <span class="priority-score">Score: 9.5/10</span>
+            <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
+          </div>
+        </div>
+
+        <div class="priority-card priority-2">
+          <div class="priority-header">
+            <span class="priority-rank">🥈 أولوية متوسطة</span>
+            <span class="priority-id">طلب #1235</span>
+          </div>
+          <div class="priority-pharmacy">صيدلية الحياة</div>
+          <div class="priority-info">
+            <span>📍 3.2 كم</span>
+            <span>💰 4,000 دينار</span>
+          </div>
+          <div class="priority-footer">
+            <span class="priority-score">Score: 7.5/10</span>
+            <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
+          </div>
+        </div>
+
+        <div class="priority-card priority-3">
+          <div class="priority-header">
+            <span class="priority-rank">🥉 أولوية منخفضة</span>
+            <span class="priority-id">طلب #1236</span>
+          </div>
+          <div class="priority-pharmacy">صيدلية الشفاء</div>
+          <div class="priority-info">
+            <span>📍 4.1 كم</span>
+            <span>💰 5,000 دينار</span>
+          </div>
+          <div class="priority-footer">
+            <span class="priority-score">Score: 5.5/10</span>
+            <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
+          </div>
         </div>
       </div>
-      <div class="ai-content">
-        <h3>اقتراح ذكي</h3>
-        <p>ابدأ بطلب <span class="highlight">#1234</span></p>
-        <p class="ai-sub">الأقرب والأعلى عمولة</p>
+
+      <div class="summary-bar">
+        <span>3 طلبات - إجمالي 12,000 دينار</span>
+        <span>الوقت المقدر: 45 دقيقة</span>
       </div>
-      <div class="ai-score">
-        <span>9.5</span>
-        <small>/10</small>
-      </div>
-      <button class="ai-start-btn" onclick="startOrder(1234)">
-        ابدأ الآن ←
-      </button>
     </div>
 
-    <!-- قائمة الأولويات -->
-    <div class="priority-list">
-      <div class="priority-card priority-1">
-        <div class="priority-header">
-          <span class="priority-rank">🥇 الأولوية القصوى</span>
-          <span class="priority-id">طلب #1234</span>
+    <!-- ============================================ -->
+    <!-- 🧑 قسم المريض (طلباته + تتبع)               -->
+    <!-- ============================================ -->
+    <div id="patientOrdersContent" style="display:none;">
+      
+      <div class="section-header">
+        <h3>الطلب الحالي</h3>
+      </div>
+
+      <div class="order-card active-order">
+        <div class="order-top">
+          <span class="order-id">طلب #1234</span>
+          <span class="order-status new">في الطريق 🚴</span>
         </div>
-        <div class="priority-pharmacy">صيدلية النور</div>
-        <div class="priority-info">
-          <span>📍 2.5 كم</span>
-          <span>💰 3,000 دينار</span>
+        <div class="order-info">
+          <p><strong>الصيدلية:</strong> صيدلية النور</p>
+          <p><strong>الأدوية:</strong> بانادول، فايتامين C</p>
+          <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+          <p><strong>الوقت المتوقع:</strong> 15 دقيقة</p>
+          <p><strong>المندوب:</strong> أحمد محمد ⭐ 4.9</p>
         </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 9.5/10</span>
-          <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
+        <div class="order-actions">
+          <button class="btn-accept full" onclick="showToast('جاري تتبع الطلب...')">📍 تتبع الطلب</button>
         </div>
       </div>
 
-      <div class="priority-card priority-2">
-        <div class="priority-header">
-          <span class="priority-rank">🥈 أولوية متوسطة</span>
-          <span class="priority-id">طلب #1235</span>
+      <div class="section-header">
+        <h3>الطلبات السابقة</h3>
+      </div>
+
+      <div class="order-list">
+        <div class="order-card">
+          <div class="order-top">
+            <span class="order-id">طلب #1220</span>
+            <span class="order-status available">تم التسليم ✓</span>
+          </div>
+          <div class="order-info">
+            <p><strong>الصيدلية:</strong> صيدلية الحياة</p>
+            <p><strong>التاريخ:</strong> 2026/9/28</p>
+            <p><strong>الإجمالي:</strong> <span class="price">15,000</span> دينار</p>
+          </div>
+          <div class="order-actions">
+            <button class="btn-accept full" onclick="showToast('شكراً لتقييمك ⭐')">⭐ تقييم الصيدلية</button>
+          </div>
         </div>
-        <div class="priority-pharmacy">صيدلية الحياة</div>
-        <div class="priority-info">
-          <span>📍 3.2 كم</span>
-          <span>💰 4,000 دينار</span>
-        </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 7.5/10</span>
-          <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
+
+        <div class="order-card">
+          <div class="order-top">
+            <span class="order-id">طلب #1180</span>
+            <span class="order-status available">تم التسليم ✓</span>
+          </div>
+          <div class="order-info">
+            <p><strong>الصيدلية:</strong> صيدلية النور</p>
+            <p><strong>التاريخ:</strong> 2026/9/20</p>
+            <p><strong>الإجمالي:</strong> <span class="price">8,500</span> دينار</p>
+          </div>
+          <div class="order-actions">
+            <button class="btn-accept full" onclick="showToast('إعادة الطلب')">🔁 إعادة الطلب</button>
+          </div>
         </div>
       </div>
 
-      <div class="priority-card priority-3">
-        <div class="priority-header">
-          <span class="priority-rank">🥉 أولوية منخفضة</span>
-          <span class="priority-id">طلب #1236</span>
-        </div>
-        <div class="priority-pharmacy">صيدلية الشفاء</div>
-        <div class="priority-info">
-          <span>📍 4.1 كم</span>
-          <span>💰 5,000 دينار</span>
-        </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 5.5/10</span>
-          <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
-        </div>
+      <div class="summary-bar">
+        <span>إجمالي طلباتك: 12</span>
+        <span>هذا الشهر: 3 طلبات</span>
       </div>
     </div>
 
-    <div class="summary-bar">
-      <span>3 طلبات - إجمالي 12,000 دينار</span>
-      <span>الوقت المقدر: 45 دقيقة</span>
-    </div>
-  </div>
+    <!-- ============================================ -->
+    <!-- 🏪 قسم الصيدلية (الطلبات الواردة)           -->
+    <!-- ============================================ -->
+    <div id="pharmacyOrdersContent" style="display:none;">
+      
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة (3)</button>
+        <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
+        <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
+      </div>
 
-  <!-- صفحة الطلبات (السجل) -->
+      <div id="newPharmacyOrders">
+        <div class="order-list">
+          <div class="order-card">
+            <div class="order-top">
+              <span class="order-id">طلب #1234</span>
+              <span class="order-status new">جديد</span>
+            </div>
+            <div class="order-info">
+              <p><strong>المريض:</strong> أحمد علي</p>
+              <p><strong>الهاتف:</strong> 07701234567</p>
+              <p><strong>العنوان:</strong> الجادرية - شارع 62</p>
+              <p><strong>الأدوية:</strong> بانادول (2)، فايتامين C (1)</p>
+              <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+            </div>
+            <div class="order-actions">
+              <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
+              <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-top">
+              <span class="order-id">طلب #1235</span>
+              <span class="order-status new">جديد</span>
+            </div>
+            <div class="order-info">
+              <p><strong>المريض:</strong> سارة محمد</p>
+              <p><strong>الهاتف:</strong> 07709876543</p>
+              <p><strong>العنوان:</strong> الكرادة - شارع 14</p>
+              <p><strong>الأدوية:</strong> أسبرين (1)، مضاد حيوي (1)</p>
+              <p><strong>الإجمالي:</strong> <span class="price">18,000</span> دينار</p>
+            </div>
+            <div class="order-actions">
+              <button class="btn-accept" onclick="acceptPharmacyOrder(1235)">قبول</button>
+              <button class="btn-reject" onclick="rejectPharmacyOrder(1235)">رفض</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="acceptedPharmacyOrders" style="display:none;">
+        <div class="order-list">
+          <div class="order-card">
+            <div class="order-top">
+              <span class="order-id">طلب #1230</span>
+              <span class="order-status available">مقبول — قيد التوصيل</span>
+            </div>
+            <div class="order-info">
+              <p><strong>المريض:</strong> علي حسن</p>
+              <p><strong>المندوب:</strong> أحمد محمد</p>
+              <p><strong>الإجمالي:</strong> <span class="price">12,000</span> دينار</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="donePharmacyOrders" style="display:none;">
+        <div class="order-list">
+          <div class="order-card">
+            <div class="order-top">
+              <span class="order-id">طلب #1200</span>
+              <span class="order-status available">تم التسليم ✓</span>
+            </div>
+            <div class="order-info">
+              <p><strong>المريض:</strong> فاطمة أحمد</p>
+              <p><strong>التاريخ:</strong> 2026/9/25</p>
+              <p><strong>الإجمالي:</strong> <span class="price">9,500</span> دينار</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-bar">
+        <span>اليوم: 12 طلب</span>
+        <span>الإيرادات: 250,000 دينار</span>
+      </div>
+    </div>
+
+    </div>
+      <!-- صفحة الطلبات (السجل) -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -1183,6 +1344,13 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>الملف الشخصي</span>
       </li>
+      <li onclick="openWallet()" id="walletMenuItem" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+        <span>محفظتي</span>
+      </li>
       <li onclick="openOrders()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <span>سجل الطلبات</span>
@@ -1192,12 +1360,12 @@
         <span>الإعدادات</span>
       </li>
       <li onclick="openAbout()">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <line x1="12" y1="16" x2="12" y2="12"/>
-    <line x1="12" y1="8" x2="12.01" y2="8"/>
-  </svg>
-  <span>من نحن</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span>من نحن</span>
       </li>
       <li onclick="openAppDetails()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
@@ -1355,4 +1523,4 @@
 
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
