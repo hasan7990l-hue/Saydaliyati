@@ -2248,3 +2248,364 @@ function submitCartOrder() {
     'طلب #' + orderId + ' - ' + pharmacy + ' ستتواصل معك قريباً'
   );
     }
+
+// ============================================
+// 💊 نظام إدارة المخزون
+// ============================================
+
+var currentInventoryFilter = 'all';
+var currentInventorySearch = '';
+
+// مفتاح تخزين المخزون (خاص بكل صيدلية)
+function getInventoryKey() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return 'saydaliyati_inventory_default';
+  var user = JSON.parse(userStr);
+  return 'saydaliyati_inventory_' + (user.phone || 'default');
+}
+
+// تحميل المخزون
+function loadInventory() {
+  var key = getInventoryKey();
+  var inventory = JSON.parse(localStorage.getItem(key) || 'null');
+  
+  // إذا لم يوجد، ابدأ بمخزون افتراضي
+  if (!inventory) {
+    inventory = [
+      { id: 'MED_' + Date.now() + '_1', name: 'بانادول', category: 'مسكنات', price: 3000, stock: 50, icon: '💊', desc: 'مسكن للألم وخافض للحرارة' },
+      { id: 'MED_' + Date.now() + '_2', name: 'فيتامين C', category: 'فيتامينات', price: 5000, stock: 30, icon: '🍊', desc: 'مكمل غذائي لتقوية المناعة' },
+      { id: 'MED_' + Date.now() + '_3', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, stock: 5, icon: '💉', desc: 'مضاد حيوي واسع المجال' }
+    ];
+    saveInventory(inventory);
+  }
+  
+  return inventory;
+}
+
+function saveInventory(inventory) {
+  var key = getInventoryKey();
+  localStorage.setItem(key, JSON.stringify(inventory));
+  
+  // تحديث PHARMACY_INVENTORY للصيدلية الحالية (للسلة)
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (userStr && typeof PHARMACY_INVENTORY !== 'undefined') {
+    try {
+      var user = JSON.parse(userStr);
+      var pharmacyName = user.name || 'صيدلية';
+      PHARMACY_INVENTORY[pharmacyName] = inventory.map(function(med) {
+        return {
+          id: med.id,
+          name: med.name,
+          category: med.category,
+          price: med.price,
+          icon: med.icon,
+          stock: med.stock,
+          desc: med.desc
+        };
+      });
+    } catch(e) {
+      console.log('خطأ في تحديث PHARMACY_INVENTORY:', e);
+    }
+  }
+}
+
+// فتح صفحة المخزون
+function openInventoryScreen() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'pharmacy') {
+    showToast('هذه الميزة للصيدليات فقط');
+    return;
+  }
+  
+  currentInventoryFilter = 'all';
+  currentInventorySearch = '';
+  
+  var searchInput = document.getElementById('inventorySearch');
+  if (searchInput) searchInput.value = '';
+  
+  document.querySelectorAll('.inv-filter').forEach(function(btn, i) {
+    btn.classList.toggle('active', i === 0);
+  });
+  
+  renderInventory();
+  showScreen('inventoryScreen');
+}
+
+function closeInventoryScreen() {
+  showScreen('pharmacyDashboard');
+}
+
+// عرض المخزون
+function renderInventory() {
+  var inventory = loadInventory();
+  var listEl = document.getElementById('inventoryList');
+  var subtitleEl = document.getElementById('inventorySubtitle');
+  
+  if (!listEl) return;
+  
+  // إحصائيات
+  var totalMeds = inventory.length;
+  var lowStock = inventory.filter(function(m) { return m.stock > 0 && m.stock <= 10; }).length;
+  var outOfStock = inventory.filter(function(m) { return m.stock === 0; }).length;
+  var totalValue = inventory.reduce(function(sum, m) { return sum + (m.price * m.stock); }, 0);
+  
+  var elTotalMeds = document.getElementById('invTotalMeds');
+  var elLowStock = document.getElementById('invLowStock');
+  var elOutOfStock = document.getElementById('invOutOfStock');
+  var elValue = document.getElementById('invValue');
+  
+  if (elTotalMeds) elTotalMeds.textContent = totalMeds;
+  if (elLowStock) elLowStock.textContent = lowStock;
+  if (elOutOfStock) elOutOfStock.textContent = outOfStock;
+  if (elValue) elValue.textContent = (totalValue / 1000).toFixed(0) + 'K';
+  
+  // تنبيه
+  var alertEl = document.getElementById('inventoryAlert');
+  var alertText = document.getElementById('inventoryAlertText');
+  if (alertEl && alertText) {
+    if (lowStock + outOfStock > 0) {
+      alertEl.style.display = 'flex';
+      alertText.textContent = (lowStock + outOfStock) + ' دواء يحتاج إعادة تعبئة';
+    } else {
+      alertEl.style.display = 'none';
+    }
+  }
+  
+  // فلترة
+  var filtered = inventory.filter(function(m) {
+    if (currentInventoryFilter === 'available' && m.stock <= 10) return false;
+    if (currentInventoryFilter === 'low' && (m.stock === 0 || m.stock > 10)) return false;
+    if (currentInventoryFilter === 'out' && m.stock !== 0) return false;
+    
+    if (currentInventorySearch) {
+      var search = currentInventorySearch.toLowerCase();
+      if (m.name.toLowerCase().indexOf(search) === -1 &&
+          m.category.toLowerCase().indexOf(search) === -1) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
+  
+  if (subtitleEl) subtitleEl.textContent = filtered.length + ' من ' + totalMeds + ' دواء';
+  
+  if (filtered.length === 0) {
+    listEl.innerHTML = 
+      '<div class="cart-empty">' +
+        '<div class="cart-empty-icon">💊</div>' +
+        '<h3>لا توجد أدوية</h3>' +
+        '<p>' + (inventory.length === 0 ? 'اضغط "+ إضافة دواء" للبدء' : 'لا توجد نتائج مطابقة') + '</p>' +
+      '</div>';
+    return;
+  }
+  
+  var html = '';
+  filtered.forEach(function(med) {
+    var stockClass = med.stock === 0 ? 'out' : (med.stock <= 10 ? 'low' : 'available');
+    var stockText = med.stock === 0 ? 'نفد' : (med.stock <= 10 ? 'قارب على النفاد (' + med.stock + ')' : 'متوفر (' + med.stock + ')');
+    var cardClass = med.stock === 0 ? 'out-of-stock' : (med.stock <= 10 ? 'low-stock' : '');
+    
+    html += 
+      '<div class="medicine-card ' + cardClass + '">' +
+        '<div class="medicine-card-icon">' + med.icon + '</div>' +
+        '<div class="medicine-card-info">' +
+          '<h4 class="medicine-card-name">' + med.name + '</h4>' +
+          '<div class="medicine-card-meta">' +
+            '<span>📁 ' + med.category + '</span>' +
+            '<span class="medicine-card-price">💰 ' + med.price.toLocaleString() + ' د</span>' +
+            '<span class="medicine-card-stock ' + stockClass + '">📦 ' + stockText + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="medicine-card-actions">' +
+          '<button class="medicine-action-btn edit" onclick="openEditMedicineModal(\'' + med.id + '\')">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>' +
+              '<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>' +
+            '</svg>' +
+          '</button>' +
+          '<button class="medicine-action-btn delete" onclick="deleteMedicine(\'' + med.id + '\')">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+              '<polyline points="3 6 5 6 21 6"/>' +
+              '<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>' +
+            '</svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// فلترة
+function filterInventoryBy(filter, btn) {
+  currentInventoryFilter = filter;
+  document.querySelectorAll('.inv-filter').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+  renderInventory();
+}
+
+function filterInventory() {
+  var input = document.getElementById('inventorySearch');
+  currentInventorySearch = input ? input.value.trim() : '';
+  renderInventory();
+}
+
+// فتح نافذة إضافة
+function openAddMedicineModal() {
+  var titleEl = document.getElementById('medicineModalTitle');
+  if (titleEl) titleEl.textContent = 'إضافة دواء جديد';
+  
+  var fields = ['editMedicineId', 'medicineName', 'medicineCategory', 'medicinePrice', 'medicineStock', 'medicineDesc'];
+  fields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  
+  var iconEl = document.getElementById('medicineIcon');
+  if (iconEl) iconEl.value = '💊';
+  
+  var btnEl = document.getElementById('medicineSubmitBtn');
+  if (btnEl) btnEl.textContent = 'إضافة إلى المخزون';
+  
+  document.querySelectorAll('.icon-option').forEach(function(btn, i) {
+    btn.classList.toggle('active', i === 0);
+  });
+  
+  var modal = document.getElementById('medicineModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+// فتح نافذة تعديل
+function openEditMedicineModal(medId) {
+  var inventory = loadInventory();
+  var med = inventory.find(function(m) { return m.id === medId; });
+  
+  if (!med) {
+    showError('الدواء غير موجود');
+    return;
+  }
+  
+  var titleEl = document.getElementById('medicineModalTitle');
+  if (titleEl) titleEl.textContent = 'تعديل الدواء';
+  
+  document.getElementById('editMedicineId').value = med.id;
+  document.getElementById('medicineName').value = med.name;
+  document.getElementById('medicineCategory').value = med.category;
+  document.getElementById('medicinePrice').value = med.price;
+  document.getElementById('medicineStock').value = med.stock;
+  document.getElementById('medicineDesc').value = med.desc || '';
+  document.getElementById('medicineIcon').value = med.icon;
+  
+  var btnEl = document.getElementById('medicineSubmitBtn');
+  if (btnEl) btnEl.textContent = 'حفظ التعديلات';
+  
+  document.querySelectorAll('.icon-option').forEach(function(btn) {
+    var isActive = btn.textContent.trim() === med.icon;
+    btn.classList.toggle('active', isActive);
+  });
+  
+  var modal = document.getElementById('medicineModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeMedicineModal() {
+  var modal = document.getElementById('medicineModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function selectIcon(icon, btn) {
+  var iconInput = document.getElementById('medicineIcon');
+  if (iconInput) iconInput.value = icon;
+  
+  document.querySelectorAll('.icon-option').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+}
+
+// حفظ الدواء
+function saveMedicine(event) {
+  if (event) event.preventDefault();
+  
+  var medId = document.getElementById('editMedicineId').value;
+  var name = document.getElementById('medicineName').value.trim();
+  var category = document.getElementById('medicineCategory').value;
+  var price = parseInt(document.getElementById('medicinePrice').value);
+  var stock = parseInt(document.getElementById('medicineStock').value);
+  var desc = document.getElementById('medicineDesc').value.trim();
+  var icon = document.getElementById('medicineIcon').value;
+  
+  if (!name || !category || isNaN(price) || isNaN(stock)) {
+    showError('املأ كل الحقول المطلوبة');
+    return;
+  }
+  
+  if (price < 0 || stock < 0) {
+    showError('السعر والكمية يجب أن يكونا رقمين موجبين');
+    return;
+  }
+  
+  var inventory = loadInventory();
+  
+  if (medId) {
+    // تعديل
+    var index = inventory.findIndex(function(m) { return m.id === medId; });
+    if (index !== -1) {
+      inventory[index].name = name;
+      inventory[index].category = category;
+      inventory[index].price = price;
+      inventory[index].stock = stock;
+      inventory[index].desc = desc;
+      inventory[index].icon = icon;
+    }
+    showToast('✅ تم حفظ التعديلات');
+  } else {
+    // إضافة جديدة
+    var newMed = {
+      id: 'MED_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      name: name,
+      category: category,
+      price: price,
+      stock: stock,
+      desc: desc,
+      icon: icon
+    };
+    inventory.unshift(newMed);
+    showToast('✅ تمت إضافة الدواء');
+  }
+  
+  saveInventory(inventory);
+  closeMedicineModal();
+  renderInventory();
+  
+  if (navigator.vibrate) navigator.vibrate([50]);
+}
+
+// حذف دواء
+function deleteMedicine(medId) {
+  if (!confirm('هل تريد حذف هذا الدواء؟')) return;
+  
+  var inventory = loadInventory();
+  inventory = inventory.filter(function(m) { return m.id !== medId; });
+  saveInventory(inventory);
+  renderInventory();
+  showToast('تم حذف الدواء');
+      }
