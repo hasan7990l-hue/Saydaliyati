@@ -380,7 +380,72 @@
       </div>
       <button class="alert-action">عرض</button>
     </div>
+      <!-- صفحة إدارة المخزون -->
+<div class="screen" id="inventoryScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeInventoryScreen()">←</button>
+    <button class="add-med-btn" onclick="openAddMedicineModal()">+ إضافة دواء</button>
+  </div>
+  <h2 class="screen-title">إدارة المخزون 💊</h2>
+  <p class="screen-subtitle" id="inventorySubtitle">0 دواء</p>
 
+  <!-- إحصائيات المخزون -->
+  <div class="inventory-stats">
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invTotalMeds">0</span>
+      <span class="inventory-stat-label">دواء</span>
+    </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invLowStock">0</span>
+      <span class="inventory-stat-label">قارب على النفاد</span>
+    </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invOutOfStock">0</span>
+      <span class="inventory-stat-label">نفد</span>
+    </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invValue">0</span>
+      <span class="inventory-stat-label">دينار</span>
+    </div>
+  </div>
+
+  <!-- تنبيه المخزون المنخفض -->
+  <div class="inventory-alert" id="inventoryAlert" style="display:none;">
+    <span class="inventory-alert-icon">⚠️</span>
+    <div>
+      <h4>تنبيه المخزون</h4>
+      <p id="inventoryAlertText">3 أدوية تحتاج إعادة تعبئة</p>
+    </div>
+  </div>
+
+  <!-- بحث -->
+  <div class="search-wrapper">
+    <div class="search-bar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="inventorySearch" placeholder="ابحث عن دواء..." oninput="filterInventory()">
+    </div>
+  </div>
+
+  <!-- فلاتر -->
+  <div class="inventory-filters">
+    <button class="inv-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
+    <button class="inv-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
+    <button class="inv-filter" onclick="filterInventoryBy('low', this)">قارب على النفاد</button>
+    <button class="inv-filter" onclick="filterInventoryBy('out', this)">نفد</button>
+  </div>
+
+  <!-- قائمة الأدوية -->
+  <div class="inventory-list" id="inventoryList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">💊</div>
+      <h3>لا توجد أدوية</h3>
+      <p>اضغط "+ إضافة دواء" للبدء</p>
+    </div>
+  </div>
+</div>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon-wrap blue">
