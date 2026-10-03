@@ -541,7 +541,8 @@
       </div>
     </div>
   </div>
-    <!-- صفحة طلباتي (ديناميكية حسب نوع المستخدم) -->
+
+  <!-- صفحة طلباتي (ديناميكية) -->
   <div class="screen" id="myOrdersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -550,7 +551,7 @@
     <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
 
     <!-- ============================================ -->
-    <!-- 🚴 قسم المندوب (AI + أولويات + عمولة)        -->
+    <!-- 🚴 قسم المندوب (AI + أولويات)                -->
     <!-- ============================================ -->
     <div id="deliveryOrdersContent" style="display:none;">
       
@@ -642,7 +643,7 @@
     </div>
 
     <!-- ============================================ -->
-    <!-- 🧑 قسم المريض (طلباته + تتبع)               -->
+    <!-- 🧑 قسم المريض (طلباته + تقييم)              -->
     <!-- ============================================ -->
     <div id="patientOrdersContent" style="display:none;">
       
@@ -679,11 +680,13 @@
           </div>
           <div class="order-info">
             <p><strong>الصيدلية:</strong> صيدلية الحياة</p>
+            <p><strong>المندوب:</strong> أحمد محمد</p>
             <p><strong>التاريخ:</strong> 2026/9/28</p>
             <p><strong>الإجمالي:</strong> <span class="price">15,000</span> دينار</p>
           </div>
           <div class="order-actions">
-            <button class="btn-accept full" onclick="showToast('شكراً لتقييمك ⭐')">⭐ تقييم الصيدلية</button>
+            <button class="btn-accept" onclick="openRatingModal('صيدلية الحياة', 'pharmacy', '1220')">⭐ قيّم الصيدلية</button>
+            <button class="btn-reject" onclick="openRatingModal('أحمد محمد', 'delivery', '1220')">⭐ قيّم المندوب</button>
           </div>
         </div>
 
@@ -694,11 +697,13 @@
           </div>
           <div class="order-info">
             <p><strong>الصيدلية:</strong> صيدلية النور</p>
+            <p><strong>المندوب:</strong> علي حسين</p>
             <p><strong>التاريخ:</strong> 2026/9/20</p>
             <p><strong>الإجمالي:</strong> <span class="price">8,500</span> دينار</p>
           </div>
           <div class="order-actions">
-            <button class="btn-accept full" onclick="showToast('إعادة الطلب')">🔁 إعادة الطلب</button>
+            <button class="btn-accept" onclick="openRatingModal('صيدلية النور', 'pharmacy', '1180')">⭐ قيّم الصيدلية</button>
+            <button class="btn-reject" onclick="openRatingModal('علي حسين', 'delivery', '1180')">⭐ قيّم المندوب</button>
           </div>
         </div>
       </div>
@@ -737,24 +742,6 @@
             <div class="order-actions">
               <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
               <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
-            </div>
-          </div>
-
-          <div class="order-card">
-            <div class="order-top">
-              <span class="order-id">طلب #1235</span>
-              <span class="order-status new">جديد</span>
-            </div>
-            <div class="order-info">
-              <p><strong>المريض:</strong> سارة محمد</p>
-              <p><strong>الهاتف:</strong> 07709876543</p>
-              <p><strong>العنوان:</strong> الكرادة - شارع 14</p>
-              <p><strong>الأدوية:</strong> أسبرين (1)، مضاد حيوي (1)</p>
-              <p><strong>الإجمالي:</strong> <span class="price">18,000</span> دينار</p>
-            </div>
-            <div class="order-actions">
-              <button class="btn-accept" onclick="acceptPharmacyOrder(1235)">قبول</button>
-              <button class="btn-reject" onclick="rejectPharmacyOrder(1235)">رفض</button>
             </div>
           </div>
         </div>
@@ -799,532 +786,591 @@
     </div>
 
   </div>
-
   <!-- صفحة إدارة المخزون -->
-  <div class="screen" id="inventoryScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeInventoryScreen()">←</button>
-      <button class="add-med-btn" onclick="openAddMedicineModal()">+ إضافة دواء</button>
-    </div>
-    <h2 class="screen-title">إدارة المخزون 💊</h2>
-    <p class="screen-subtitle" id="inventorySubtitle">0 دواء</p>
+<div class="screen" id="inventoryScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeInventoryScreen()">←</button>
+    <button class="add-med-btn" onclick="openAddMedicineModal()">+ إضافة دواء</button>
+  </div>
+  <h2 class="screen-title">إدارة المخزون 💊</h2>
+  <p class="screen-subtitle" id="inventorySubtitle">0 دواء</p>
 
-    <!-- إحصائيات المخزون -->
-    <div class="inventory-stats">
-      <div class="inventory-stat">
-        <span class="inventory-stat-num" id="invTotalMeds">0</span>
-        <span class="inventory-stat-label">دواء</span>
-      </div>
-      <div class="inventory-stat">
-        <span class="inventory-stat-num" id="invLowStock">0</span>
-        <span class="inventory-stat-label">قارب على النفاد</span>
-      </div>
-      <div class="inventory-stat">
-        <span class="inventory-stat-num" id="invOutOfStock">0</span>
-        <span class="inventory-stat-label">نفد</span>
-      </div>
-      <div class="inventory-stat">
-        <span class="inventory-stat-num" id="invValue">0</span>
-        <span class="inventory-stat-label">دينار</span>
-      </div>
+  <!-- إحصائيات المخزون -->
+  <div class="inventory-stats">
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invTotalMeds">0</span>
+      <span class="inventory-stat-label">دواء</span>
     </div>
-
-    <!-- تنبيه المخزون المنخفض -->
-    <div class="inventory-alert" id="inventoryAlert" style="display:none;">
-      <span class="inventory-alert-icon">⚠️</span>
-      <div>
-        <h4>تنبيه المخزون</h4>
-        <p id="inventoryAlertText">3 أدوية تحتاج إعادة تعبئة</p>
-      </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invLowStock">0</span>
+      <span class="inventory-stat-label">قارب على النفاد</span>
     </div>
-
-    <!-- بحث -->
-    <div class="search-wrapper">
-      <div class="search-bar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <input type="text" id="inventorySearch" placeholder="ابحث عن دواء..." oninput="filterInventory()">
-      </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invOutOfStock">0</span>
+      <span class="inventory-stat-label">نفد</span>
     </div>
-
-    <!-- فلاتر -->
-    <div class="inventory-filters">
-      <button class="inv-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
-      <button class="inv-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
-      <button class="inv-filter" onclick="filterInventoryBy('low', this)">قارب على النفاد</button>
-      <button class="inv-filter" onclick="filterInventoryBy('out', this)">نفد</button>
-    </div>
-
-    <!-- قائمة الأدوية -->
-    <div class="inventory-list" id="inventoryList">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">💊</div>
-        <h3>لا توجد أدوية</h3>
-        <p>اضغط "+ إضافة دواء" للبدء</p>
-      </div>
+    <div class="inventory-stat">
+      <span class="inventory-stat-num" id="invValue">0</span>
+      <span class="inventory-stat-label">دينار</span>
     </div>
   </div>
 
-  <!-- صفحة طلب بروشتة -->
-  <div class="screen" id="prescriptionScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closePrescriptionScreen()">←</button>
+  <!-- تنبيه المخزون المنخفض -->
+  <div class="inventory-alert" id="inventoryAlert" style="display:none;">
+    <span class="inventory-alert-icon">⚠️</span>
+    <div>
+      <h4>تنبيه المخزون</h4>
+      <p id="inventoryAlertText">3 أدوية تحتاج إعادة تعبئة</p>
     </div>
-    <h2 class="screen-title">طلب بالروشتة 📸</h2>
-    <p class="screen-subtitle">ارفع صورة وصفة الطبيب وسنجهز طلبك</p>
-
-    <form class="blue-form" onsubmit="submitPrescription(event); return false;">
-
-      <!-- رفع الصورة -->
-      <div class="input-group">
-        <label>صورة الوصفة *</label>
-        <div class="prescription-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
-          <div class="prescription-upload-placeholder" id="prescriptionPlaceholder">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            <p class="prescription-upload-title">اضغط لرفع الصورة</p>
-            <p class="prescription-upload-sub">JPG, PNG - الحد الأقصى 5MB</p>
-          </div>
-          <div class="prescription-preview" id="prescriptionPreview" style="display:none;">
-            <img id="prescriptionImage" src="" alt="الروشتة">
-            <button type="button" class="prescription-remove-btn" onclick="removePrescriptionImage(event)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
-      </div>
-
-      <!-- العنوان -->
-      <div class="input-group">
-        <label>عنوان التوصيل *</label>
-        <input type="text" id="prescriptionAddress" placeholder="بغداد - الكرادة - شارع 62" required>
-      </div>
-
-      <!-- ملاحظات -->
-      <div class="input-group">
-        <label>ملاحظات (اختياري)</label>
-        <textarea id="prescriptionNotes" rows="3" placeholder="مثال: أحتاج الدواء اليوم قبل الساعة 8 مساءً"></textarea>
-      </div>
-
-      <!-- اختيار صيدلية -->
-      <div class="input-group">
-        <label>صيدلية مفضلة (اختياري)</label>
-        <select id="prescriptionPharmacy">
-          <option value="">— دع النظام يختار الأقرب —</option>
-          <option value="صيدلية النور">صيدلية النور - الكرادة</option>
-          <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
-          <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
-        </select>
-      </div>
-
-      <!-- نوع التوصيل -->
-      <div class="input-group">
-        <label>نوع التوصيل *</label>
-        <div class="delivery-options">
-          <label class="delivery-option active">
-            <input type="radio" name="deliveryType" value="fast" checked>
-            <div class="delivery-option-content">
-              <span class="delivery-option-icon">⚡</span>
-              <div>
-                <h4>توصيل فوري</h4>
-                <p>خلال 30 دقيقة</p>
-              </div>
-            </div>
-          </label>
-          <label class="delivery-option">
-            <input type="radio" name="deliveryType" value="scheduled">
-            <div class="delivery-option-content">
-              <span class="delivery-option-icon">🕐</span>
-              <div>
-                <h4>توصيل مجدول</h4>
-                <p>حدد الوقت</p>
-              </div>
-            </div>
-          </label>
-        </div>
-      </div>
-
-      <button type="submit" class="btn-primary">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-        إرسال الطلب للصيدلية
-      </button>
-    </form>
   </div>
 
-  <!-- صفحة سلة التسوق -->
-  <div class="screen" id="cartScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToDashboardByType()">←</button>
-      <button class="clear-cart-btn" onclick="clearCart()">مسح الكل</button>
+  <!-- بحث -->
+  <div class="search-wrapper">
+    <div class="search-bar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="inventorySearch" placeholder="ابحث عن دواء..." oninput="filterInventory()">
     </div>
-    <h2 class="screen-title">سلة الأدوية 🛒</h2>
-    <p class="screen-subtitle" id="cartSubtitle">0 منتج</p>
+  </div>
 
-    <!-- ملاحظة -->
-    <div class="cart-info-banner" id="cartInfoBanner" style="display:none;">
-      <span class="cart-info-icon">ℹ️</span>
-      <p>اختر صيدلية أولاً لعرض أدويتها المتوفرة</p>
+  <!-- فلاتر -->
+  <div class="inventory-filters">
+    <button class="inv-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
+    <button class="inv-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
+    <button class="inv-filter" onclick="filterInventoryBy('low', this)">قارب على النفاد</button>
+    <button class="inv-filter" onclick="filterInventoryBy('out', this)">نفد</button>
+  </div>
+
+  <!-- قائمة الأدوية -->
+  <div class="inventory-list" id="inventoryList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">💊</div>
+      <h3>لا توجد أدوية</h3>
+      <p>اضغط "+ إضافة دواء" للبدء</p>
     </div>
+  </div>
+</div>
 
-    <!-- اختيار الصيدلية -->
+<!-- صفحة طلب بروشتة -->
+<div class="screen" id="prescriptionScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closePrescriptionScreen()">←</button>
+  </div>
+  <h2 class="screen-title">طلب بالروشتة 📸</h2>
+  <p class="screen-subtitle">ارفع صورة وصفة الطبيب وسنجهز طلبك</p>
+
+  <form class="blue-form" onsubmit="submitPrescription(event); return false;">
+
+    <!-- رفع الصورة -->
     <div class="input-group">
-      <label>اختر الصيدلية *</label>
-      <select id="cartPharmacySelect" onchange="onPharmacyChange()">
-        <option value="">— اختر صيدلية —</option>
+      <label>صورة الوصفة *</label>
+      <div class="prescription-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
+        <div class="prescription-upload-placeholder" id="prescriptionPlaceholder">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <p class="prescription-upload-title">اضغط لرفع الصورة</p>
+          <p class="prescription-upload-sub">JPG, PNG - الحد الأقصى 5MB</p>
+        </div>
+        <div class="prescription-preview" id="prescriptionPreview" style="display:none;">
+          <img id="prescriptionImage" src="" alt="الروشتة">
+          <button type="button" class="prescription-remove-btn" onclick="removePrescriptionImage(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
+    </div>
+
+    <!-- العنوان -->
+    <div class="input-group">
+      <label>عنوان التوصيل *</label>
+      <input type="text" id="prescriptionAddress" placeholder="بغداد - الكرادة - شارع 62" required>
+    </div>
+
+    <!-- ملاحظات -->
+    <div class="input-group">
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="prescriptionNotes" rows="3" placeholder="مثال: أحتاج الدواء اليوم قبل الساعة 8 مساءً"></textarea>
+    </div>
+
+    <!-- اختيار صيدلية -->
+    <div class="input-group">
+      <label>صيدلية مفضلة (اختياري)</label>
+      <select id="prescriptionPharmacy">
+        <option value="">— دع النظام يختار الأقرب —</option>
         <option value="صيدلية النور">صيدلية النور - الكرادة</option>
         <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
         <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
       </select>
     </div>
 
-    <!-- المخزون -->
-    <div id="cartProducts" style="display:none;">
-      <div class="section-header">
-        <h3>الأدوية المتوفرة</h3>
-      </div>
-      <div class="products-grid" id="productsGrid"></div>
-    </div>
-
-    <!-- السلة -->
-    <div id="cartItemsSection" style="display:none;">
-      <div class="section-header">
-        <h3>سلة المشتريات</h3>
-        <span class="cart-count" id="cartItemsCount">0</span>
-      </div>
-      <div class="cart-items" id="cartItems"></div>
-    </div>
-
-    <!-- السلة الفارغة -->
-    <div class="cart-empty" id="cartEmpty">
-      <div class="cart-empty-icon">🛒</div>
-      <h3>سلتك فارغة</h3>
-      <p>أضف أدوية من القائمة أعلاه للبدء</p>
-    </div>
-
-    <!-- ملخص الفاتورة -->
-    <div class="cart-summary" id="cartSummary" style="display:none;">
-      <div class="cart-summary-row">
-        <span>المجموع الفرعي</span>
-        <span id="cartSubtotal">0 دينار</span>
-      </div>
-      <div class="cart-summary-row">
-        <span>رسوم التوصيل</span>
-        <span id="cartDelivery">3,000 دينار</span>
-      </div>
-      <div class="cart-summary-row cart-summary-total">
-        <span>الإجمالي</span>
-        <span id="cartTotal">0 دينار</span>
-      </div>
-
-      <div class="input-group">
-        <label>عنوان التوصيل *</label>
-        <input type="text" id="cartAddress" placeholder="بغداد - الكرادة - شارع 62">
-      </div>
-
-      <div class="input-group">
-        <label>ملاحظات (اختياري)</label>
-        <textarea id="cartNotes" rows="2" placeholder="مثال: أدوية للاستخدام مرة واحدة بعد الأكل"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>طريقة الدفع *</label>
-        <div class="payment-options">
-          <label class="payment-option active">
-            <input type="radio" name="paymentMethod" value="cash" checked>
-            <div class="payment-option-content">
-              <span>💵</span>
-              <div>
-                <h4>كاش عند التسليم</h4>
-              </div>
+    <!-- نوع التوصيل -->
+    <div class="input-group">
+      <label>نوع التوصيل *</label>
+      <div class="delivery-options">
+        <label class="delivery-option active">
+          <input type="radio" name="deliveryType" value="fast" checked>
+          <div class="delivery-option-content">
+            <span class="delivery-option-icon">⚡</span>
+            <div>
+              <h4>توصيل فوري</h4>
+              <p>خلال 30 دقيقة</p>
             </div>
-          </label>
-          <label class="payment-option">
-            <input type="radio" name="paymentMethod" value="online">
-            <div class="payment-option-content">
-              <span>💳</span>
-              <div>
-                <h4>دفع إلكتروني</h4>
-              </div>
+          </div>
+        </label>
+        <label class="delivery-option">
+          <input type="radio" name="deliveryType" value="scheduled">
+          <div class="delivery-option-content">
+            <span class="delivery-option-icon">🕐</span>
+            <div>
+              <h4>توصيل مجدول</h4>
+              <p>حدد الوقت</p>
             </div>
-          </label>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      إرسال الطلب للصيدلية
+    </button>
+  </form>
+</div>
+
+<!-- صفحة سلة التسوق -->
+<div class="screen" id="cartScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+    <button class="clear-cart-btn" onclick="clearCart()">مسح الكل</button>
+  </div>
+  <h2 class="screen-title">سلة الأدوية 🛒</h2>
+  <p class="screen-subtitle" id="cartSubtitle">0 منتج</p>
+
+  <!-- ملاحظة -->
+  <div class="cart-info-banner" id="cartInfoBanner" style="display:none;">
+    <span class="cart-info-icon">ℹ️</span>
+    <p>اختر صيدلية أولاً لعرض أدويتها المتوفرة</p>
+  </div>
+
+  <!-- اختيار الصيدلية -->
+  <div class="input-group">
+    <label>اختر الصيدلية *</label>
+    <select id="cartPharmacySelect" onchange="onPharmacyChange()">
+      <option value="">— اختر صيدلية —</option>
+      <option value="صيدلية النور">صيدلية النور - الكرادة</option>
+      <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
+      <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
+    </select>
+  </div>
+
+  <!-- المخزون -->
+  <div id="cartProducts" style="display:none;">
+    <div class="section-header">
+      <h3>الأدوية المتوفرة</h3>
+    </div>
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <!-- السلة -->
+  <div id="cartItemsSection" style="display:none;">
+    <div class="section-header">
+      <h3>سلة المشتريات</h3>
+      <span class="cart-count" id="cartItemsCount">0</span>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+  </div>
+
+  <!-- السلة الفارغة -->
+  <div class="cart-empty" id="cartEmpty">
+    <div class="cart-empty-icon">🛒</div>
+    <h3>سلتك فارغة</h3>
+    <p>أضف أدوية من القائمة أعلاه للبدء</p>
+  </div>
+
+  <!-- ملخص الفاتورة -->
+  <div class="cart-summary" id="cartSummary" style="display:none;">
+    <div class="cart-summary-row">
+      <span>المجموع الفرعي</span>
+      <span id="cartSubtotal">0 دينار</span>
+    </div>
+    <div class="cart-summary-row">
+      <span>رسوم التوصيل</span>
+      <span id="cartDelivery">3,000 دينار</span>
+    </div>
+    <div class="cart-summary-row cart-summary-total">
+      <span>الإجمالي</span>
+      <span id="cartTotal">0 دينار</span>
+    </div>
+
+    <div class="input-group">
+      <label>عنوان التوصيل *</label>
+      <input type="text" id="cartAddress" placeholder="بغداد - الكرادة - شارع 62">
+    </div>
+
+    <div class="input-group">
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="cartNotes" rows="2" placeholder="مثال: أدوية للاستخدام مرة واحدة بعد الأكل"></textarea>
+    </div>
+
+    <div class="input-group">
+      <label>طريقة الدفع *</label>
+      <div class="payment-options">
+        <label class="payment-option active">
+          <input type="radio" name="paymentMethod" value="cash" checked>
+          <div class="payment-option-content">
+            <span>💵</span>
+            <div>
+              <h4>كاش عند التسليم</h4>
+            </div>
+          </div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="online">
+          <div class="payment-option-content">
+            <span>💳</span>
+            <div>
+              <h4>دفع إلكتروني</h4>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      تأكيد الطلب
+    </button>
+  </div>
+</div>
+
+<!-- صفحة الطلبات (السجل) -->
+<div class="screen" id="ordersScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+  </div>
+  <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
+  <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active">الكل</button>
+    <button class="filter-tab">الجديدة</button>
+    <button class="filter-tab">المكتملة</button>
+  </div>
+
+  <div class="order-list">
+    <div class="order-card">
+      <div class="order-top">
+        <span class="order-id">طلب رقم #1234</span>
+        <span class="order-status available">مكتمل</span>
+      </div>
+      <div class="order-info">
+        <p><strong>التاريخ:</strong> 2026/10/2</p>
+        <p><strong>الأدوية:</strong> 3 أدوية</p>
+        <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة التنبيهات -->
+<div class="screen" id="notificationsScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+  </div>
+  <h2 class="screen-title">التنبيهات</h2>
+  <p class="screen-subtitle">آخر الإشعارات</p>
+
+  <div class="order-list">
+    <div class="order-card">
+      <div class="order-top">
+        <span class="order-id">طلب جديد</span>
+        <span class="order-status new">الآن</span>
+      </div>
+      <div class="order-info">
+        <p>وصلك طلب جديد من أحمد علي - 23,000 دينار</p>
+      </div>
+    </div>
+    <div class="order-card">
+      <div class="order-top">
+        <span class="order-id">دواء قارب على الانتهاء</span>
+        <span class="order-status new">قبل ساعة</span>
+      </div>
+      <div class="order-info">
+        <p>3 أدوية ستنتهي صلاحيتها خلال 30 يوم</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة الملف الشخصي -->
+<div class="screen" id="profileScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeAllScreens()">←</button>
+  </div>
+  <h2 class="screen-title">الملف الشخصي</h2>
+
+  <div class="profile-header">
+    <div class="profile-avatar-wrapper" onclick="openImagePicker()">
+      <div class="profile-avatar" id="profileAvatar">م</div>
+      <div class="avatar-edit-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </div>
+    </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+    <h3 id="profileName">أحمد</h3>
+    <p id="profileType">مريض</p>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-row">
+      <span class="profile-label">الاسم الكامل</span>
+      <span class="profile-value" id="infoName">-</span>
+    </div>
+    <div class="profile-row locked">
+      <span class="profile-label">رقم الهاتف</span>
+      <span class="profile-value" id="infoPhone">-</span>
+    </div>
+    <div class="profile-row" id="emailRow">
+      <span class="profile-label">البريد الإلكتروني</span>
+      <span class="profile-value" id="infoEmail">-</span>
+    </div>
+    <div class="profile-row" id="addressRow">
+      <span class="profile-label" id="addressLabel">العنوان</span>
+      <span class="profile-value" id="infoAddress">-</span>
+    </div>
+    <div class="profile-row" id="vehicleRow">
+      <span class="profile-label">نوع المركبة</span>
+      <span class="profile-value" id="infoVehicle">-</span>
+    </div>
+    <div class="profile-row locked" id="licenseRow">
+      <span class="profile-label">رقم الترخيص</span>
+      <span class="profile-value" id="infoLicense">-</span>
+    </div>
+    <div class="profile-row">
+      <span class="profile-label">تاريخ التسجيل</span>
+      <span class="profile-value" id="infoDate">-</span>
+    </div>
+  </div>
+
+  <!-- قسم التقييمات -->
+  <div class="my-ratings-section">
+    <div class="section-header">
+      <h3>تقييماتي</h3>
+      <span class="my-ratings-count" id="myRatingsCount">0</span>
+    </div>
+    <div class="my-ratings-list" id="myRatingsList">
+      <div class="my-ratings-empty">
+        <div class="my-ratings-empty-icon">⭐</div>
+        <p>لم تقم بأي تقييم بعد</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="openEditProfile()">تعديل البيانات</button>
+</div>
+
+<!-- نافذة تعديل البيانات -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>تعديل البيانات</h3>
+      <button class="modal-close" onclick="closeEditProfile()">×</button>
+    </div>
+    <form class="modal-body" onsubmit="saveProfile(event); return false;">
+      <div class="input-group">
+        <label>الاسم الكامل</label>
+        <input type="text" id="editName" placeholder="الاسم الكامل">
+      </div>
+      <div class="input-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="editEmail" placeholder="example@email.com">
+      </div>
+      <div class="input-group" id="editAddressGroup">
+        <label id="editAddressLabel">العنوان</label>
+        <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
+      </div>
+      <button type="submit" class="btn-primary">حفظ التعديلات</button>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة تفاصيل الدواء -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="productModalName">اسم الدواء</h3>
+      <button class="modal-close" onclick="closeProductModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="product-modal-image">
+        <span id="productModalIcon">💊</span>
+      </div>
+      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
+
+      <div class="product-modal-info">
+        <div class="product-modal-row">
+          <span>السعر</span>
+          <strong id="productModalPrice">0 دينار</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>التصنيف</span>
+          <strong id="productModalCategory">—</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>متوفر</span>
+          <strong id="productModalStock" class="stock-available">متوفر</strong>
         </div>
       </div>
 
-      <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-        تأكيد الطلب
+      <div class="quantity-selector">
+        <label>الكمية</label>
+        <div class="quantity-controls">
+          <button type="button" onclick="decreaseModalQuantity()">−</button>
+          <span id="modalQuantity">1</span>
+          <button type="button" onclick="increaseModalQuantity()">+</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
+        🛒 أضف إلى السلة
       </button>
     </div>
   </div>
+</div>
 
-  <!-- صفحة الطلبات (السجل) -->
-  <div class="screen" id="ordersScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToDashboardByType()">←</button>
+<!-- نافذة إضافة/تعديل دواء -->
+<div class="modal-overlay" id="medicineModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="medicineModalTitle">إضافة دواء جديد</h3>
+      <button class="modal-close" onclick="closeMedicineModal()">×</button>
     </div>
-    <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
-    <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
+    <form class="modal-body" onsubmit="saveMedicine(event); return false;">
 
-    <div class="filter-tabs">
-      <button class="filter-tab active">الكل</button>
-      <button class="filter-tab">الجديدة</button>
-      <button class="filter-tab">المكتملة</button>
-    </div>
+      <input type="hidden" id="editMedicineId">
 
-    <div class="order-list">
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب رقم #1234</span>
-          <span class="order-status available">مكتمل</span>
+      <div class="input-group">
+        <label>اسم الدواء *</label>
+        <input type="text" id="medicineName" placeholder="مثال: بانادول" required>
+      </div>
+
+      <div class="input-group">
+        <label>التصنيف *</label>
+        <select id="medicineCategory" required>
+          <option value="">اختر...</option>
+          <option value="مسكنات">مسكنات</option>
+          <option value="فيتامينات">فيتامينات</option>
+          <option value="مضاد حيوي">مضاد حيوي</option>
+          <option value="أطفال">أطفال</option>
+          <option value="ضغط">ضغط</option>
+          <option value="سكري">سكري</option>
+          <option value="جهاز هضمي">جهاز هضمي</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>السعر (دينار) *</label>
+        <input type="number" id="medicinePrice" placeholder="3000" min="0" required>
+      </div>
+
+      <div class="input-group">
+        <label>الكمية المتوفرة *</label>
+        <input type="number" id="medicineStock" placeholder="50" min="0" required>
+      </div>
+
+      <div class="input-group">
+        <label>وصف مختصر (اختياري)</label>
+        <textarea id="medicineDesc" rows="2" placeholder="مثال: مسكن للألم وخافض للحرارة"></textarea>
+      </div>
+
+      <div class="input-group">
+        <label>الأيقونة</label>
+        <div class="icon-picker">
+          <button type="button" class="icon-option active" onclick="selectIcon('💊', this)">💊</button>
+          <button type="button" class="icon-option" onclick="selectIcon('💉', this)">💉</button>
+          <button type="button" class="icon-option" onclick="selectIcon('🍊', this)">🍊</button>
+          <button type="button" class="icon-option" onclick="selectIcon('🧴', this)">🧴</button>
+          <button type="button" class="icon-option" onclick="selectIcon('🍯', this)">🍯</button>
+          <button type="button" class="icon-option" onclick="selectIcon('💧', this)">💧</button>
+          <button type="button" class="icon-option" onclick="selectIcon('🩹', this)">🩹</button>
+          <button type="button" class="icon-option" onclick="selectIcon('🧸', this)">🧸</button>
         </div>
-        <div class="order-info">
-          <p><strong>التاريخ:</strong> 2026/10/2</p>
-          <p><strong>الأدوية:</strong> 3 أدوية</p>
-          <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+        <input type="hidden" id="medicineIcon" value="💊">
+      </div>
+
+      <button type="submit" class="btn-primary" id="medicineSubmitBtn">
+        إضافة إلى المخزون
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- نافذة التقييم -->
+<div class="modal-overlay" id="ratingModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="ratingModalTitle">قيّم تجربتك</h3>
+      <button class="modal-close" onclick="closeRatingModal()">×</button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="rating-target-info" id="ratingTargetInfo">
+        <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
+        <div>
+          <h4 id="ratingTargetName">صيدلية النور</h4>
+          <p id="ratingTargetType">صيدلية</p>
         </div>
       </div>
+
+      <div class="rating-stars-section">
+        <label>تقييمك *</label>
+        <div class="rating-stars" id="ratingStars">
+          <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
+          <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
+          <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
+          <button type="button" class="rating-star" data-value="4" onclick="selectRating(4)">★</button>
+          <button type="button" class="rating-star" data-value="5" onclick="selectRating(5)">★</button>
+        </div>
+        <p class="rating-text" id="ratingText">اضغط على النجوم للتقييم</p>
+      </div>
+
+      <div class="input-group">
+        <label>تعليق (اختياري)</label>
+        <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
+      </div>
+
+      <input type="hidden" id="ratingTargetId">
+      <input type="hidden" id="ratingTargetType">
+
+      <button class="btn-primary" onclick="submitRating()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        إرسال التقييم
+      </button>
     </div>
   </div>
-
-  <!-- صفحة التنبيهات -->
-  <div class="screen" id="notificationsScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToDashboardByType()">←</button>
-    </div>
-    <h2 class="screen-title">التنبيهات</h2>
-    <p class="screen-subtitle">آخر الإشعارات</p>
-
-    <div class="order-list">
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب جديد</span>
-          <span class="order-status new">الآن</span>
-        </div>
-        <div class="order-info">
-          <p>وصلك طلب جديد من أحمد علي - 23,000 دينار</p>
-        </div>
-      </div>
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">دواء قارب على الانتهاء</span>
-          <span class="order-status new">قبل ساعة</span>
-        </div>
-        <div class="order-info">
-          <p>3 أدوية ستنتهي صلاحيتها خلال 30 يوم</p>
-        </div>
-      </div>
-    </div>
   </div>
-
-  <!-- صفحة الملف الشخصي -->
-  <div class="screen" id="profileScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">الملف الشخصي</h2>
-
-    <div class="profile-header">
-      <div class="profile-avatar-wrapper" onclick="openImagePicker()">
-        <div class="profile-avatar" id="profileAvatar">م</div>
-        <div class="avatar-edit-badge">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-        </div>
-      </div>
-      <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-      <h3 id="profileName">أحمد</h3>
-      <p id="profileType">مريض</p>
-    </div>
-
-    <div class="profile-card">
-      <div class="profile-row">
-        <span class="profile-label">الاسم الكامل</span>
-        <span class="profile-value" id="infoName">-</span>
-      </div>
-      <div class="profile-row locked">
-        <span class="profile-label">رقم الهاتف</span>
-        <span class="profile-value" id="infoPhone">-</span>
-      </div>
-      <div class="profile-row" id="emailRow">
-        <span class="profile-label">البريد الإلكتروني</span>
-        <span class="profile-value" id="infoEmail">-</span>
-      </div>
-      <div class="profile-row" id="addressRow">
-        <span class="profile-label" id="addressLabel">العنوان</span>
-        <span class="profile-value" id="infoAddress">-</span>
-      </div>
-      <div class="profile-row" id="vehicleRow">
-        <span class="profile-label">نوع المركبة</span>
-        <span class="profile-value" id="infoVehicle">-</span>
-      </div>
-      <div class="profile-row locked" id="licenseRow">
-        <span class="profile-label">رقم الترخيص</span>
-        <span class="profile-value" id="infoLicense">-</span>
-      </div>
-      <div class="profile-row">
-        <span class="profile-label">تاريخ التسجيل</span>
-        <span class="profile-value" id="infoDate">-</span>
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="openEditProfile()">تعديل البيانات</button>
-  </div>
-
-  <!-- نافذة تعديل البيانات -->
-  <div class="modal-overlay" id="editProfileModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>تعديل البيانات</h3>
-        <button class="modal-close" onclick="closeEditProfile()">×</button>
-      </div>
-      <form class="modal-body" onsubmit="saveProfile(event); return false;">
-        <div class="input-group">
-          <label>الاسم الكامل</label>
-          <input type="text" id="editName" placeholder="الاسم الكامل">
-        </div>
-        <div class="input-group">
-          <label>البريد الإلكتروني</label>
-          <input type="email" id="editEmail" placeholder="example@email.com">
-        </div>
-        <div class="input-group" id="editAddressGroup">
-          <label id="editAddressLabel">العنوان</label>
-          <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
-        </div>
-        <button type="submit" class="btn-primary">حفظ التعديلات</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- نافذة تفاصيل الدواء -->
-  <div class="modal-overlay" id="productModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="productModalName">اسم الدواء</h3>
-        <button class="modal-close" onclick="closeProductModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="product-modal-image">
-          <span id="productModalIcon">💊</span>
-        </div>
-        <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
-
-        <div class="product-modal-info">
-          <div class="product-modal-row">
-            <span>السعر</span>
-            <strong id="productModalPrice">0 دينار</strong>
-          </div>
-          <div class="product-modal-row">
-            <span>التصنيف</span>
-            <strong id="productModalCategory">—</strong>
-          </div>
-          <div class="product-modal-row">
-            <span>متوفر</span>
-            <strong id="productModalStock" class="stock-available">متوفر</strong>
-          </div>
-        </div>
-
-        <div class="quantity-selector">
-          <label>الكمية</label>
-          <div class="quantity-controls">
-            <button type="button" onclick="decreaseModalQuantity()">−</button>
-            <span id="modalQuantity">1</span>
-            <button type="button" onclick="increaseModalQuantity()">+</button>
-          </div>
-        </div>
-
-        <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
-          🛒 أضف إلى السلة
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة إضافة/تعديل دواء -->
-  <div class="modal-overlay" id="medicineModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="medicineModalTitle">إضافة دواء جديد</h3>
-        <button class="modal-close" onclick="closeMedicineModal()">×</button>
-      </div>
-      <form class="modal-body" onsubmit="saveMedicine(event); return false;">
-
-        <input type="hidden" id="editMedicineId">
-
-        <div class="input-group">
-          <label>اسم الدواء *</label>
-          <input type="text" id="medicineName" placeholder="مثال: بانادول" required>
-        </div>
-
-        <div class="input-group">
-          <label>التصنيف *</label>
-          <select id="medicineCategory" required>
-            <option value="">اختر...</option>
-            <option value="مسكنات">مسكنات</option>
-            <option value="فيتامينات">فيتامينات</option>
-            <option value="مضاد حيوي">مضاد حيوي</option>
-            <option value="أطفال">أطفال</option>
-            <option value="ضغط">ضغط</option>
-            <option value="سكري">سكري</option>
-            <option value="جهاز هضمي">جهاز هضمي</option>
-            <option value="أخرى">أخرى</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label>السعر (دينار) *</label>
-          <input type="number" id="medicinePrice" placeholder="3000" min="0" required>
-        </div>
-
-        <div class="input-group">
-          <label>الكمية المتوفرة *</label>
-          <input type="number" id="medicineStock" placeholder="50" min="0" required>
-        </div>
-
-        <div class="input-group">
-          <label>وصف مختصر (اختياري)</label>
-          <textarea id="medicineDesc" rows="2" placeholder="مثال: مسكن للألم وخافض للحرارة"></textarea>
-        </div>
-
-        <div class="input-group">
-          <label>الأيقونة</label>
-          <div class="icon-picker">
-            <button type="button" class="icon-option active" onclick="selectIcon('💊', this)">💊</button>
-            <button type="button" class="icon-option" onclick="selectIcon('💉', this)">💉</button>
-            <button type="button" class="icon-option" onclick="selectIcon('🍊', this)">🍊</button>
-            <button type="button" class="icon-option" onclick="selectIcon('🧴', this)">🧴</button>
-            <button type="button" class="icon-option" onclick="selectIcon('🍯', this)">🍯</button>
-            <button type="button" class="icon-option" onclick="selectIcon('💧', this)">💧</button>
-            <button type="button" class="icon-option" onclick="selectIcon('🩹', this)">🩹</button>
-            <button type="button" class="icon-option" onclick="selectIcon('🧸', this)">🧸</button>
-          </div>
-          <input type="hidden" id="medicineIcon" value="💊">
-        </div>
-
-        <button type="submit" class="btn-primary" id="medicineSubmitBtn">
-          إضافة إلى المخزون
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- صفحة محفظة الدليفري -->
+    <!-- صفحة محفظة الدليفري -->
   <div class="screen" id="walletScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
