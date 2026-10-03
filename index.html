@@ -7,6 +7,12 @@
   <title>صيدليتي - صحتك أولويتنا</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="صيدليتي">
+  <link rel="apple-touch-icon" href="/icon-192.png">
 </head>
 <body>
 
@@ -1522,5 +1528,29 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    // ============================================
+    // تسجيل Service Worker
+    // ============================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('✅ Service Worker مسجل:', registration.scope);
+            window.swRegistration = registration;
+          })
+          .catch(function(error) {
+            console.log('❌ فشل تسجيل Service Worker:', error);
+          });
+      });
+      
+      // استقبال الرسائل من Service Worker
+      navigator.serviceWorker.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'NOTIFICATION_CLICKED') {
+          handleNotificationClick(event.data);
+        }
+      });
+    }
+ </script>
 </body>
-</html>
+</html> 
