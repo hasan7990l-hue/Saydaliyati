@@ -2609,3 +2609,227 @@ function deleteMedicine(medId) {
   renderInventory();
   showToast('تم حذف الدواء');
       }
+
+// ============================================
+// ⭐ نظام التقييم
+// ============================================
+
+var currentRating = 0;
+
+// فتح نافذة التقييم
+function openRatingModal(targetName, targetType, orderId) {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
+  
+  // إعادة تعيين
+  currentRating = 0;
+  
+  // تحديد الاسم والأيقونة
+  var titleEl = document.getElementById('ratingModalTitle');
+  var nameEl = document.getElementById('ratingTargetName');
+  var typeEl = document.getElementById('ratingTargetType');
+  var iconEl = document.getElementById('ratingTargetIcon');
+  
+  if (targetType === 'delivery') {
+    if (titleEl) titleEl.textContent = 'قيّم تجربتك مع المندوب';
+    if (iconEl) iconEl.textContent = '🚴';
+    if (typeEl) typeEl.textContent = 'مندوب توصيل';
+  } else {
+    if (titleEl) titleEl.textContent = 'قيّم تجربتك مع الصيدلية';
+    if (iconEl) iconEl.textContent = '🏪';
+    if (typeEl) typeEl.textContent = 'صيدلية';
+  }
+  
+  if (nameEl) nameEl.textContent = targetName;
+  
+  // حفظ بيانات الهدف
+  document.getElementById('ratingTargetId').value = orderId || '';
+  document.getElementById('ratingTargetType').value = targetType;
+  document.getElementById('ratingComment').value = '';
+  
+  // إعادة تعيين النجوم
+  document.querySelectorAll('.rating-star').forEach(function(star) {
+    star.classList.remove('active');
+  });
+  
+  var textEl = document.getElementById('ratingText');
+  if (textEl) {
+    textEl.textContent = 'اضغط على النجوم للتقييم';
+    textEl.className = 'rating-text';
+  }
+  
+  document.getElementById('ratingModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// إغلاق النافذة
+function closeRatingModal() {
+  document.getElementById('ratingModal').classList.remove('active');
+  document.body.style.overflow = '';
+  currentRating = 0;
+}
+
+// اختيار التقييم
+function selectRating(value) {
+  currentRating = value;
+  
+  var stars = document.querySelectorAll('.rating-star');
+  stars.forEach(function(star, index) {
+    star.classList.toggle('active', index < value);
+  });
+  
+  // نص توضيحي
+  var textEl = document.getElementById('ratingText');
+  var texts = {
+    1: '😞 سيء جداً',
+    2: '😕 ضعيف',
+    3: '😐 مقبول',
+    4: '😊 جيد',
+    5: '🤩 ممتاز!'
+  };
+  var classes = {
+    1: 'bad', 2: 'bad', 3: 'medium', 4: 'good', 5: 'good'
+  };
+  
+  if (textEl) {
+    textEl.textContent = texts[value];
+    textEl.className = 'rating-text ' + classes[value];
+  }
+  
+  // اهتزاز خفيف
+  if (navigator.vibrate) navigator.vibrate([30]);
+}
+
+// إرسال التقييم
+function submitRating() {
+  if (currentRating === 0) {
+    showError('اختر تقييماً أولاً');
+    return;
+  }
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = JSON.parse(userStr);
+  
+  var targetName = document.getElementById('ratingTargetName').textContent;
+  var targetType = document.getElementById('ratingTargetType').value;
+  var orderId = document.getElementById('ratingTargetId').value;
+  var comment = document.getElementById('ratingComment').value.trim();
+  
+  var rating = {
+    id: 'RATING_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    from: user.name,
+    fromPhone: user.phone,
+    targetName: targetName,
+    targetType: targetType, // 'pharmacy' | 'delivery'
+    orderId: orderId,
+    rating: currentRating,
+    comment: comment,
+    date: new Date().toISOString()
+  };
+  
+  // حفظ التقييم
+  var ratings = JSON.parse(localStorage.getItem('saydaliyati_ratings') || '[]');
+  ratings.unshift(rating);
+  localStorage.setItem('saydaliyati_ratings', JSON.stringify(ratings));
+  
+  // إشعار داخلي
+  if (typeof addInternalNotification === 'function') {
+    addInternalNotification(
+      'system',
+      '⭐ شكراً لتقييمك',
+      'قيّمت ' + targetName + ' بـ ' + currentRating + ' نجوم'
+    );
+  }
+  
+  // صوت نجاح
+  if (typeof playSuccessSound === 'function') playSuccessSound();
+  
+  // اهتزاز
+  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+  
+  closeRatingModal();
+  
+  showToast('⭐ شكراً لتقييمك ' + targetName);
+  
+  // تحديث قائمة تقييماتي (إذا كانت مفتوحة)
+  if (document.getElementById('profileScreen').classList.contains('active')) {
+    renderMyRatings();
+  }
+}
+
+// ============================================
+// عرض تقييماتي في الملف الشخصي
+// ============================================
+function renderMyRatings() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return;
+  
+  var user = JSON.parse(userStr);
+  var listEl = document.getElementById('myRatingsList');
+  var countEl = document.getElementById('myRatingsCount');
+  
+  if (!listEl) return;
+  
+  // فلترة تقييمات المستخدم الحالي
+  var allRatings = JSON.parse(localStorage.getItem('saydaliyati_ratings') || '[]');
+  var myRatings = allRatings.filter(function(r) {
+    return r.fromPhone === user.phone;
+  });
+  
+  if (countEl) countEl.textContent = myRatings.length;
+  
+  if (myRatings.length === 0) {
+    listEl.innerHTML = 
+      '<div class="my-ratings-empty">' +
+        '<div class="my-ratings-empty-icon">⭐</div>' +
+        '<p>لم تقم بأي تقييم بعد</p>' +
+      '</div>';
+    return;
+  }
+  
+  var html = '';
+  myRatings.forEach(function(rating) {
+    var starsHtml = '';
+    for (var i = 1; i <= 5; i++) {
+      starsHtml += '<span class="my-rating-star' + (i <= rating.rating ? ' filled' : '') + '">★</span>';
+    }
+    
+    var date = new Date(rating.date);
+    var dateStr = date.toLocaleDateString('ar-IQ');
+    
+    var icon = rating.targetType === 'delivery' ? '🚴' : '🏪';
+    
+    html += 
+      '<div class="my-rating-card">' +
+        '<div class="my-rating-header">' +
+          '<div class="my-rating-icon">' + icon + '</div>' +
+          '<div class="my-rating-info">' +
+            '<h4 class="my-rating-name">' + rating.targetName + '</h4>' +
+            '<p class="my-rating-date">' + dateStr + '</p>' +
+          '</div>' +
+          '<div class="my-rating-stars">' + starsHtml + '</div>' +
+        '</div>' +
+        (rating.comment ? '<p class="my-rating-comment">' + rating.comment + '</p>' : '') +
+      '</div>';
+  });
+  
+  listEl.innerHTML = html;
+}
+
+// ============================================
+// تحميل التقييمات عند فتح الملف الشخصي
+// ============================================
+var originalOpenProfile = window.openProfile;
+window.openProfile = function() {
+  originalOpenProfile.apply(this, arguments);
+  setTimeout(renderMyRatings, 100);
+};
