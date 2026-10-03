@@ -1812,3 +1812,439 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+// ============================================
+// 🛒 نظام سلة التسوق
+// ============================================
+
+// مخزون وهمي للصيدليات
+var PHARMACY_INVENTORY = {
+  'صيدلية النور': [
+    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3000, icon: '💊', stock: 50, desc: 'مسكن للألم وخافض للحرارة - للبالغين' },
+    { id: 'P002', name: 'فيتامين C', category: 'فيتامينات', price: 5000, icon: '🍊', stock: 30, desc: 'مكمل غذائي لتقوية المناعة' },
+    { id: 'P003', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, icon: '💉', stock: 20, desc: 'مضاد حيوي واسع المجال' },
+    { id: 'P004', name: 'فولتارين', category: 'مسكنات', price: 4500, icon: '💊', stock: 40, desc: 'مسكن للألم والالتهابات' },
+    { id: 'P005', name: 'أوميغا 3', category: 'فيتامينات', price: 12000, icon: '🐟', stock: 15, desc: 'مكمل غذائي لصحة القلب' },
+    { id: 'P006', name: 'شراب كحة', category: 'أطفال', price: 4000, icon: '🍯', stock: 25, desc: 'شراب مهدئ للكحة - للأطفال' }
+  ],
+  'صيدلية الحياة': [
+    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3500, icon: '💊', stock: 60, desc: 'مسكن للألم وخافض للحرارة' },
+    { id: 'P002', name: 'فيتامين D', category: 'فيتامينات', price: 6000, icon: '☀️', stock: 35, desc: 'مكمل غذائي لتقوية العظام' },
+    { id: 'P003', name: 'أوميبرازول', category: 'ضغط', price: 7000, icon: '💊', stock: 22, desc: 'لعلاج حموضة المعدة' },
+    { id: 'P004', name: 'حبوب زنك', category: 'فيتامينات', price: 4500, icon: '⚡', stock: 30, desc: 'مكمل لتقوية المناعة' },
+    { id: 'P005', name: 'شراب سعال', category: 'أطفال', price: 4500, icon: '🍯', stock: 20, desc: 'شراب للسعال الجاف' }
+  ],
+  'صيدلية الشفاء': [
+    { id: 'P001', name: 'أسبرين', category: 'مسكنات', price: 2500, icon: '💊', stock: 45, desc: 'مسكن ومضاد للالتهاب' },
+    { id: 'P002', name: 'ميترونيدازول', category: 'مضاد حيوي', price: 6500, icon: '💉', stock: 18, desc: 'مضاد حيوي للعدوى' },
+    { id: 'P003', name: 'حديد + فوليك', category: 'فيتامينات', price: 5500, icon: '🩸', stock: 28, desc: 'لعلاج فقر الدم' },
+    { id: 'P004', name: 'مسكن أطفال', category: 'أطفال', price: 3500, icon: '🧸', stock: 32, desc: 'شراب مسكن للأطفال' },
+    { id: 'P005', name: 'أملوديبين', category: 'ضغط', price: 8000, icon: '💊', stock: 15, desc: 'لعلاج ضغط الدم المرتفع' }
+  ]
+};
+
+var cart = [];
+var currentModalProduct = null;
+var modalQuantity = 1;
+
+// ============================================
+// فتح صفحة السلة
+// ============================================
+function openCartScreen() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
+  
+  // تحميل السلة المحفوظة
+  cart = JSON.parse(localStorage.getItem('saydaliyati_cart') || '[]');
+  
+  // تعبئة العنوان
+  var addressInput = document.getElementById('cartAddress');
+  if (addressInput && user.address) {
+    addressInput.value = user.address;
+  }
+  
+  // إظهار البانر
+  document.getElementById('cartInfoBanner').style.display = 'flex';
+  document.getElementById('cartProducts').style.display = 'none';
+  document.getElementById('cartItemsSection').style.display = 'none';
+  document.getElementById('cartEmpty').style.display = 'block';
+  document.getElementById('cartSummary').style.display = 'none';
+  
+  renderCart();
+  showScreen('cartScreen');
+}
+
+// ============================================
+// عند تغيير الصيدلية
+// ============================================
+function onPharmacyChange() {
+  var pharmacy = document.getElementById('cartPharmacySelect').value;
+  
+  if (!pharmacy) {
+    document.getElementById('cartInfoBanner').style.display = 'flex';
+    document.getElementById('cartProducts').style.display = 'none';
+    return;
+  }
+  
+  // تحقق: لا يمكن تغيير الصيدلية إذا كانت السلة تحتوي منتجات
+  if (cart.length > 0 && cart[0].pharmacy !== pharmacy) {
+    if (!confirm('السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟')) {
+      document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
+      return;
+    }
+    cart = [];
+    saveCart();
+  }
+  
+  document.getElementById('cartInfoBanner').style.display = 'none';
+  document.getElementById('cartProducts').style.display = 'block';
+  
+  renderProducts(pharmacy);
+  renderCart();
+}
+
+// ============================================
+// عرض المنتجات
+// ============================================
+function renderProducts(pharmacy) {
+  var grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  
+  var products = PHARMACY_INVENTORY[pharmacy] || [];
+  
+  if (products.length === 0) {
+    grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">لا توجد أدوية متوفرة</p>';
+    return;
+  }
+  
+  var html = '';
+  products.forEach(function(p) {
+    html += 
+      '<div class="product-card" onclick="openProductModal(\'' + p.id + '\', \'' + pharmacy + '\')">' +
+        '<div class="product-icon">' + p.icon + '</div>' +
+        '<h4 class="product-name">' + p.name + '</h4>' +
+        '<p class="product-category">' + p.category + '</p>' +
+        '<p class="product-price">' + p.price.toLocaleString() + ' دينار</p>' +
+      '</div>';
+  });
+  
+  grid.innerHTML = html;
+}
+
+// ============================================
+// فتح نافذة المنتج
+// ============================================
+function openProductModal(productId, pharmacy) {
+  var products = PHARMACY_INVENTORY[pharmacy] || [];
+  var product = products.find(function(p) { return p.id === productId; });
+  
+  if (!product) return;
+  
+  currentModalProduct = { ...product, pharmacy: pharmacy };
+  modalQuantity = 1;
+  
+  document.getElementById('productModalName').textContent = product.name;
+  document.getElementById('productModalIcon').textContent = product.icon;
+  document.getElementById('productModalDesc').textContent = product.desc;
+  document.getElementById('productModalPrice').textContent = product.price.toLocaleString() + ' دينار';
+  document.getElementById('productModalCategory').textContent = product.category;
+  document.getElementById('modalQuantity').textContent = modalQuantity;
+  
+  var stockEl = document.getElementById('productModalStock');
+  if (product.stock > 10) {
+    stockEl.textContent = 'متوفر (' + product.stock + ')';
+    stockEl.className = 'stock-available';
+  } else if (product.stock > 0) {
+    stockEl.textContent = 'كمية محدودة (' + product.stock + ')';
+    stockEl.className = 'stock-low';
+  } else {
+    stockEl.textContent = 'غير متوفر';
+    stockEl.className = 'stock-out';
+  }
+  
+  document.getElementById('productModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('active');
+  document.body.style.overflow = '';
+  currentModalProduct = null;
+}
+
+function increaseModalQuantity() {
+  if (!currentModalProduct) return;
+  if (modalQuantity < currentModalProduct.stock) {
+    modalQuantity++;
+    document.getElementById('modalQuantity').textContent = modalQuantity;
+  } else {
+    showToast('الكمية المتوفرة: ' + currentModalProduct.stock);
+  }
+}
+
+function decreaseModalQuantity() {
+  if (modalQuantity > 1) {
+    modalQuantity--;
+    document.getElementById('modalQuantity').textContent = modalQuantity;
+  }
+}
+
+// ============================================
+// إضافة إلى السلة
+// ============================================
+function addToCartFromModal() {
+  if (!currentModalProduct) return;
+  
+  var existingIndex = cart.findIndex(function(item) {
+    return item.id === currentModalProduct.id;
+  });
+  
+  if (existingIndex !== -1) {
+    cart[existingIndex].quantity += modalQuantity;
+  } else {
+    cart.push({
+      id: currentModalProduct.id,
+      name: currentModalProduct.name,
+      price: currentModalProduct.price,
+      icon: currentModalProduct.icon,
+      category: currentModalProduct.category,
+      quantity: modalQuantity,
+      pharmacy: currentModalProduct.pharmacy
+    });
+  }
+  
+  saveCart();
+  closeProductModal();
+  renderCart();
+  showToast('✅ تمت الإضافة إلى السلة');
+  
+  // اهتزاز
+  if (navigator.vibrate) navigator.vibrate([50]);
+}
+
+// ============================================
+// عرض السلة
+// ============================================
+function renderCart() {
+  var itemsEl = document.getElementById('cartItems');
+  var emptyEl = document.getElementById('cartEmpty');
+  var sectionEl = document.getElementById('cartItemsSection');
+  var summaryEl = document.getElementById('cartSummary');
+  var subtitleEl = document.getElementById('cartSubtitle');
+  var countEl = document.getElementById('cartItemsCount');
+  var badgeEl = document.getElementById('cartBadge');
+  
+  var totalItems = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
+  
+  // تحديث الشارة
+  if (badgeEl) {
+    badgeEl.textContent = totalItems;
+    badgeEl.setAttribute('data-count', totalItems);
+  }
+  
+  // تحديث العنوان
+  if (subtitleEl) subtitleEl.textContent = totalItems + ' منتج';
+  if (countEl) countEl.textContent = totalItems;
+  
+  if (cart.length === 0) {
+    if (itemsEl) itemsEl.innerHTML = '';
+    if (sectionEl) sectionEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (summaryEl) summaryEl.style.display = 'none';
+    return;
+  }
+  
+  if (sectionEl) sectionEl.style.display = 'block';
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (summaryEl) summaryEl.style.display = 'block';
+  
+  var html = '';
+  cart.forEach(function(item, index) {
+    html += 
+      '<div class="cart-item">' +
+        '<div class="cart-item-icon">' + item.icon + '</div>' +
+        '<div class="cart-item-info">' +
+          '<h4 class="cart-item-name">' + item.name + '</h4>' +
+          '<p class="cart-item-price">' + item.price.toLocaleString() + ' دينار</p>' +
+        '</div>' +
+        '<div class="cart-item-controls">' +
+          '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', -1)">−</button>' +
+          '<span class="cart-item-qty">' + item.quantity + '</span>' +
+          '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', 1)">+</button>' +
+          '<button class="cart-qty-btn remove" onclick="removeFromCart(' + index + ')">×</button>' +
+        '</div>' +
+      '</div>';
+  });
+  
+  if (itemsEl) itemsEl.innerHTML = html;
+  
+  // حساب المجموع
+  var subtotal = cart.reduce(function(sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+  var delivery = 3000;
+  var total = subtotal + delivery;
+  
+  document.getElementById('cartSubtotal').textContent = subtotal.toLocaleString() + ' دينار';
+  document.getElementById('cartDelivery').textContent = delivery.toLocaleString() + ' دينار';
+  document.getElementById('cartTotal').textContent = total.toLocaleString() + ' دينار';
+}
+
+// ============================================
+// تعديل الكمية
+// ============================================
+function changeQuantity(index, delta) {
+  if (index < 0 || index >= cart.length) return;
+  
+  cart[index].quantity += delta;
+  
+  if (cart[index].quantity <= 0) {
+    cart.splice(index, 1);
+  }
+  
+  saveCart();
+  renderCart();
+  updateCartBadge();
+}
+
+// ============================================
+// حذف من السلة
+// ============================================
+function removeFromCart(index) {
+  if (index < 0 || index >= cart.length) return;
+  
+  cart.splice(index, 1);
+  saveCart();
+  renderCart();
+  updateCartBadge();
+  showToast('تم الحذف من السلة');
+}
+
+// ============================================
+// مسح السلة
+// ============================================
+function clearCart() {
+  if (cart.length === 0) return;
+  if (!confirm('مسح جميع المنتجات من السلة؟')) return;
+  
+  cart = [];
+  saveCart();
+  renderCart();
+  updateCartBadge();
+  showToast('تم مسح السلة');
+}
+
+// ============================================
+// حفظ واستعادة
+// ============================================
+function saveCart() {
+  localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
+}
+
+function updateCartBadge() {
+  var badgeEl = document.getElementById('cartBadge');
+  if (!badgeEl) return;
+  
+  var total = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
+  badgeEl.textContent = total;
+  badgeEl.setAttribute('data-count', total);
+}
+
+// ============================================
+// إرسال الطلب
+// ============================================
+function submitCartOrder() {
+  if (cart.length === 0) {
+    showError('السلة فارغة');
+    return;
+  }
+  
+  var pharmacy = document.getElementById('cartPharmacySelect').value;
+  var address = document.getElementById('cartAddress').value.trim();
+  var notes = document.getElementById('cartNotes').value.trim();
+  var payment = document.querySelector('input[name="paymentMethod"]:checked').value;
+  
+  if (!pharmacy) {
+    showError('اختر صيدلية');
+    return;
+  }
+  
+  if (!address) {
+    showError('أدخل عنوان التوصيل');
+    return;
+  }
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = JSON.parse(userStr);
+  
+  var subtotal = cart.reduce(function(sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+  var delivery = 3000;
+  var total = subtotal + delivery;
+  
+  var orderId = Math.floor(1000 + Math.random() * 9000);
+  var order = {
+    id: orderId,
+    type: 'cart',
+    patientName: user.name,
+    patientPhone: user.phone,
+    pharmacy: pharmacy,
+    address: address,
+    notes: notes,
+    payment: payment,
+    items: cart.slice(),
+    subtotal: subtotal,
+    delivery: delivery,
+    total: total,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+  
+  // حفظ الطلب
+  var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('saydaliyati_cart_orders', JSON.stringify(orders));
+  
+  // إشعار للصيدلية (Push)
+  if (typeof sendNotification === 'function') {
+    sendNotification({
+      title: '🛒 طلب دواء جديد #' + orderId,
+      body: user.name + ' • ' + total.toLocaleString() + ' دينار',
+      type: 'order',
+      orderId: orderId,
+      vibrate: [300, 100, 300],
+      requireInteraction: true,
+      actions: [
+        { action: 'accept', title: '✅ قبول' },
+        { action: 'reject', title: '❌ رفض' }
+      ]
+    });
+  }
+  
+  // إشعار داخلي
+  if (typeof addInternalNotification === 'function') {
+    addInternalNotification('order', '🛒 طلبك #' + orderId, 'في انتظار قبول الصيدلية');
+    updateNotifBadge();
+  }
+  
+  // مسح السلة
+  cart = [];
+  saveCart();
+  updateCartBadge();
+  
+  // رسالة نجاح
+  showSuccessMessage(
+    '✅ تم إرسال طلبك',
+    'طلب #' + orderId + ' - ' + pharmacy + ' ستتواصل معك قريباً'
+  );
+    }
