@@ -8,6 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   
+  <!-- Leaflet Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -460,12 +464,32 @@
     </div>
   </div>
 
-  <!-- لوحة الدليفري (الرئيسية) -->
+  <!-- لوحة الدليفري -->
   <div class="screen" id="deliveryDashboard">
     <div class="home-header">
       <div class="greeting-section">
         <h1 class="greeting-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span></h1>
         <p class="greeting-sub">جاهز للعمل اليوم؟</p>
+      </div>
+    </div>
+
+    <!-- زر فتح الخريطة -->
+    <div class="map-cta" onclick="openMapScreen()">
+      <div class="map-cta-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <div class="map-cta-content">
+        <h3>الخريطة التفاعلية 🗺️</h3>
+        <p>اعرض موقعك والطلبات القريبة</p>
+      </div>
+      <div class="map-cta-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
       </div>
     </div>
 
@@ -488,7 +512,6 @@
       </div>
     </div>
 
-    <!-- قائمة الطلبات -->
     <div class="section-header">
       <h3>الطلبات المتاحة</h3>
       <a href="#" onclick="goToMyOrders(); return false;">عرض الكل</a>
@@ -540,253 +563,247 @@
         </div>
       </div>
     </div>
+    </div>
+    <!-- صفحة طلباتي (ديناميكية) -->
+<div class="screen" id="myOrdersScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+  </div>
+  <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
+  <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
+
+  <!-- 🚴 قسم المندوب -->
+  <div id="deliveryOrdersContent" style="display:none;">
+    
+    <div class="ai-suggestion-card">
+      <div class="ai-header">
+        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
+      </div>
+      <div class="ai-network">
+        <div class="ai-brain">
+          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+          </svg>
+        </div>
+        <div class="ai-nodes">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="ai-content">
+        <h3>اقتراح ذكي</h3>
+        <p>ابدأ بطلب <span class="highlight">#1234</span></p>
+        <p class="ai-sub">الأقرب والأعلى عمولة</p>
+      </div>
+      <div class="ai-score">
+        <span>9.5</span>
+        <small>/10</small>
+      </div>
+      <button class="ai-start-btn" onclick="startOrder(1234)">
+        ابدأ الآن ←
+      </button>
+    </div>
+
+    <div class="priority-list">
+      <div class="priority-card priority-1">
+        <div class="priority-header">
+          <span class="priority-rank">🥇 الأولوية القصوى</span>
+          <span class="priority-id">طلب #1234</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية النور</div>
+        <div class="priority-info">
+          <span>📍 2.5 كم</span>
+          <span>💰 3,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 9.5/10</span>
+          <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
+        </div>
+      </div>
+
+      <div class="priority-card priority-2">
+        <div class="priority-header">
+          <span class="priority-rank">🥈 أولوية متوسطة</span>
+          <span class="priority-id">طلب #1235</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية الحياة</div>
+        <div class="priority-info">
+          <span>📍 3.2 كم</span>
+          <span>💰 4,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 7.5/10</span>
+          <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
+        </div>
+      </div>
+
+      <div class="priority-card priority-3">
+        <div class="priority-header">
+          <span class="priority-rank">🥉 أولوية منخفضة</span>
+          <span class="priority-id">طلب #1236</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية الشفاء</div>
+        <div class="priority-info">
+          <span>📍 4.1 كم</span>
+          <span>💰 5,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 5.5/10</span>
+          <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <span>3 طلبات - إجمالي 12,000 دينار</span>
+      <span>الوقت المقدر: 45 دقيقة</span>
+    </div>
   </div>
 
-  <!-- صفحة طلباتي (ديناميكية) -->
-  <div class="screen" id="myOrdersScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToDashboardByType()">←</button>
+  <!-- 🧑 قسم المريض -->
+  <div id="patientOrdersContent" style="display:none;">
+    
+    <div class="section-header">
+      <h3>الطلب الحالي</h3>
     </div>
-    <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
-    <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
 
-    <!-- ============================================ -->
-    <!-- 🚴 قسم المندوب (AI + أولويات)                -->
-    <!-- ============================================ -->
-    <div id="deliveryOrdersContent" style="display:none;">
-      
-      <div class="ai-suggestion-card">
-        <div class="ai-header">
-          <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
-        </div>
-        <div class="ai-network">
-          <div class="ai-brain">
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-            </svg>
-          </div>
-          <div class="ai-nodes">
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-        <div class="ai-content">
-          <h3>اقتراح ذكي</h3>
-          <p>ابدأ بطلب <span class="highlight">#1234</span></p>
-          <p class="ai-sub">الأقرب والأعلى عمولة</p>
-        </div>
-        <div class="ai-score">
-          <span>9.5</span>
-          <small>/10</small>
-        </div>
-        <button class="ai-start-btn" onclick="startOrder(1234)">
-          ابدأ الآن ←
-        </button>
+    <div class="order-card active-order">
+      <div class="order-top">
+        <span class="order-id">طلب #1234</span>
+        <span class="order-status new">في الطريق 🚴</span>
       </div>
-
-      <div class="priority-list">
-        <div class="priority-card priority-1">
-          <div class="priority-header">
-            <span class="priority-rank">🥇 الأولوية القصوى</span>
-            <span class="priority-id">طلب #1234</span>
-          </div>
-          <div class="priority-pharmacy">صيدلية النور</div>
-          <div class="priority-info">
-            <span>📍 2.5 كم</span>
-            <span>💰 3,000 دينار</span>
-          </div>
-          <div class="priority-footer">
-            <span class="priority-score">Score: 9.5/10</span>
-            <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
-          </div>
-        </div>
-
-        <div class="priority-card priority-2">
-          <div class="priority-header">
-            <span class="priority-rank">🥈 أولوية متوسطة</span>
-            <span class="priority-id">طلب #1235</span>
-          </div>
-          <div class="priority-pharmacy">صيدلية الحياة</div>
-          <div class="priority-info">
-            <span>📍 3.2 كم</span>
-            <span>💰 4,000 دينار</span>
-          </div>
-          <div class="priority-footer">
-            <span class="priority-score">Score: 7.5/10</span>
-            <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
-          </div>
-        </div>
-
-        <div class="priority-card priority-3">
-          <div class="priority-header">
-            <span class="priority-rank">🥉 أولوية منخفضة</span>
-            <span class="priority-id">طلب #1236</span>
-          </div>
-          <div class="priority-pharmacy">صيدلية الشفاء</div>
-          <div class="priority-info">
-            <span>📍 4.1 كم</span>
-            <span>💰 5,000 دينار</span>
-          </div>
-          <div class="priority-footer">
-            <span class="priority-score">Score: 5.5/10</span>
-            <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
-          </div>
-        </div>
+      <div class="order-info">
+        <p><strong>الصيدلية:</strong> صيدلية النور</p>
+        <p><strong>الأدوية:</strong> بانادول، فايتامين C</p>
+        <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
+        <p><strong>الوقت المتوقع:</strong> 15 دقيقة</p>
+        <p><strong>المندوب:</strong> أحمد محمد ⭐ 4.9</p>
       </div>
-
-      <div class="summary-bar">
-        <span>3 طلبات - إجمالي 12,000 دينار</span>
-        <span>الوقت المقدر: 45 دقيقة</span>
+      <div class="order-actions">
+        <button class="btn-accept full" onclick="trackDeliveryOnMap('أحمد محمد', 33.3000, 44.4000)">📍 تتبع المندوب على الخريطة</button>
       </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- 🧑 قسم المريض (طلباته + تقييم)              -->
-    <!-- ============================================ -->
-    <div id="patientOrdersContent" style="display:none;">
-      
-      <div class="section-header">
-        <h3>الطلب الحالي</h3>
-      </div>
+    <div class="section-header">
+      <h3>الطلبات السابقة</h3>
+    </div>
 
-      <div class="order-card active-order">
+    <div class="order-list">
+      <div class="order-card">
         <div class="order-top">
-          <span class="order-id">طلب #1234</span>
-          <span class="order-status new">في الطريق 🚴</span>
+          <span class="order-id">طلب #1220</span>
+          <span class="order-status available">تم التسليم ✓</span>
+        </div>
+        <div class="order-info">
+          <p><strong>الصيدلية:</strong> صيدلية الحياة</p>
+          <p><strong>المندوب:</strong> أحمد محمد</p>
+          <p><strong>التاريخ:</strong> 2026/9/28</p>
+          <p><strong>الإجمالي:</strong> <span class="price">15,000</span> دينار</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn-accept" onclick="openRatingModal('صيدلية الحياة', 'pharmacy', '1220')">⭐ قيّم الصيدلية</button>
+          <button class="btn-reject" onclick="openRatingModal('أحمد محمد', 'delivery', '1220')">⭐ قيّم المندوب</button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">طلب #1180</span>
+          <span class="order-status available">تم التسليم ✓</span>
         </div>
         <div class="order-info">
           <p><strong>الصيدلية:</strong> صيدلية النور</p>
-          <p><strong>الأدوية:</strong> بانادول، فايتامين C</p>
-          <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-          <p><strong>الوقت المتوقع:</strong> 15 دقيقة</p>
-          <p><strong>المندوب:</strong> أحمد محمد ⭐ 4.9</p>
+          <p><strong>المندوب:</strong> علي حسين</p>
+          <p><strong>التاريخ:</strong> 2026/9/20</p>
+          <p><strong>الإجمالي:</strong> <span class="price">8,500</span> دينار</p>
         </div>
         <div class="order-actions">
-          <button class="btn-accept full" onclick="showToast('جاري تتبع الطلب...')">📍 تتبع الطلب</button>
+          <button class="btn-accept" onclick="openRatingModal('صيدلية النور', 'pharmacy', '1180')">⭐ قيّم الصيدلية</button>
+          <button class="btn-reject" onclick="openRatingModal('علي حسين', 'delivery', '1180')">⭐ قيّم المندوب</button>
         </div>
       </div>
+    </div>
 
-      <div class="section-header">
-        <h3>الطلبات السابقة</h3>
-      </div>
+    <div class="summary-bar">
+      <span>إجمالي طلباتك: 12</span>
+      <span>هذا الشهر: 3 طلبات</span>
+    </div>
+  </div>
 
+  <!-- 🏪 قسم الصيدلية -->
+  <div id="pharmacyOrdersContent" style="display:none;">
+    
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة (3)</button>
+      <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
+      <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
+    </div>
+
+    <div id="newPharmacyOrders">
       <div class="order-list">
         <div class="order-card">
           <div class="order-top">
-            <span class="order-id">طلب #1220</span>
-            <span class="order-status available">تم التسليم ✓</span>
+            <span class="order-id">طلب #1234</span>
+            <span class="order-status new">جديد</span>
           </div>
           <div class="order-info">
-            <p><strong>الصيدلية:</strong> صيدلية الحياة</p>
-            <p><strong>المندوب:</strong> أحمد محمد</p>
-            <p><strong>التاريخ:</strong> 2026/9/28</p>
-            <p><strong>الإجمالي:</strong> <span class="price">15,000</span> دينار</p>
+            <p><strong>المريض:</strong> أحمد علي</p>
+            <p><strong>الهاتف:</strong> 07701234567</p>
+            <p><strong>العنوان:</strong> الجادرية - شارع 62</p>
+            <p><strong>الأدوية:</strong> بانادول (2)، فايتامين C (1)</p>
+            <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
           </div>
           <div class="order-actions">
-            <button class="btn-accept" onclick="openRatingModal('صيدلية الحياة', 'pharmacy', '1220')">⭐ قيّم الصيدلية</button>
-            <button class="btn-reject" onclick="openRatingModal('أحمد محمد', 'delivery', '1220')">⭐ قيّم المندوب</button>
+            <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
+            <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
           </div>
         </div>
+      </div>
+    </div>
 
+    <div id="acceptedPharmacyOrders" style="display:none;">
+      <div class="order-list">
         <div class="order-card">
           <div class="order-top">
-            <span class="order-id">طلب #1180</span>
+            <span class="order-id">طلب #1230</span>
+            <span class="order-status available">مقبول — قيد التوصيل</span>
+          </div>
+          <div class="order-info">
+            <p><strong>المريض:</strong> علي حسن</p>
+            <p><strong>المندوب:</strong> أحمد محمد</p>
+            <p><strong>الإجمالي:</strong> <span class="price">12,000</span> دينار</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="donePharmacyOrders" style="display:none;">
+      <div class="order-list">
+        <div class="order-card">
+          <div class="order-top">
+            <span class="order-id">طلب #1200</span>
             <span class="order-status available">تم التسليم ✓</span>
           </div>
           <div class="order-info">
-            <p><strong>الصيدلية:</strong> صيدلية النور</p>
-            <p><strong>المندوب:</strong> علي حسين</p>
-            <p><strong>التاريخ:</strong> 2026/9/20</p>
-            <p><strong>الإجمالي:</strong> <span class="price">8,500</span> دينار</p>
-          </div>
-          <div class="order-actions">
-            <button class="btn-accept" onclick="openRatingModal('صيدلية النور', 'pharmacy', '1180')">⭐ قيّم الصيدلية</button>
-            <button class="btn-reject" onclick="openRatingModal('علي حسين', 'delivery', '1180')">⭐ قيّم المندوب</button>
+            <p><strong>المريض:</strong> فاطمة أحمد</p>
+            <p><strong>التاريخ:</strong> 2026/9/25</p>
+            <p><strong>الإجمالي:</strong> <span class="price">9,500</span> دينار</p>
           </div>
         </div>
-      </div>
-
-      <div class="summary-bar">
-        <span>إجمالي طلباتك: 12</span>
-        <span>هذا الشهر: 3 طلبات</span>
       </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- 🏪 قسم الصيدلية (الطلبات الواردة)           -->
-    <!-- ============================================ -->
-    <div id="pharmacyOrdersContent" style="display:none;">
-      
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة (3)</button>
-        <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
-        <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
-      </div>
-
-      <div id="newPharmacyOrders">
-        <div class="order-list">
-          <div class="order-card">
-            <div class="order-top">
-              <span class="order-id">طلب #1234</span>
-              <span class="order-status new">جديد</span>
-            </div>
-            <div class="order-info">
-              <p><strong>المريض:</strong> أحمد علي</p>
-              <p><strong>الهاتف:</strong> 07701234567</p>
-              <p><strong>العنوان:</strong> الجادرية - شارع 62</p>
-              <p><strong>الأدوية:</strong> بانادول (2)، فايتامين C (1)</p>
-              <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-            </div>
-            <div class="order-actions">
-              <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
-              <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="acceptedPharmacyOrders" style="display:none;">
-        <div class="order-list">
-          <div class="order-card">
-            <div class="order-top">
-              <span class="order-id">طلب #1230</span>
-              <span class="order-status available">مقبول — قيد التوصيل</span>
-            </div>
-            <div class="order-info">
-              <p><strong>المريض:</strong> علي حسن</p>
-              <p><strong>المندوب:</strong> أحمد محمد</p>
-              <p><strong>الإجمالي:</strong> <span class="price">12,000</span> دينار</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="donePharmacyOrders" style="display:none;">
-        <div class="order-list">
-          <div class="order-card">
-            <div class="order-top">
-              <span class="order-id">طلب #1200</span>
-              <span class="order-status available">تم التسليم ✓</span>
-            </div>
-            <div class="order-info">
-              <p><strong>المريض:</strong> فاطمة أحمد</p>
-              <p><strong>التاريخ:</strong> 2026/9/25</p>
-              <p><strong>الإجمالي:</strong> <span class="price">9,500</span> دينار</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="summary-bar">
-        <span>اليوم: 12 طلب</span>
-        <span>الإيرادات: 250,000 دينار</span>
-      </div>
+    <div class="summary-bar">
+      <span>اليوم: 12 طلب</span>
+      <span>الإيرادات: 250,000 دينار</span>
     </div>
-
   </div>
-  <!-- صفحة إدارة المخزون -->
+
+</div>
+
+<!-- صفحة إدارة المخزون -->
 <div class="screen" id="inventoryScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="closeInventoryScreen()">←</button>
@@ -795,7 +812,6 @@
   <h2 class="screen-title">إدارة المخزون 💊</h2>
   <p class="screen-subtitle" id="inventorySubtitle">0 دواء</p>
 
-  <!-- إحصائيات المخزون -->
   <div class="inventory-stats">
     <div class="inventory-stat">
       <span class="inventory-stat-num" id="invTotalMeds">0</span>
@@ -815,7 +831,6 @@
     </div>
   </div>
 
-  <!-- تنبيه المخزون المنخفض -->
   <div class="inventory-alert" id="inventoryAlert" style="display:none;">
     <span class="inventory-alert-icon">⚠️</span>
     <div>
@@ -824,7 +839,6 @@
     </div>
   </div>
 
-  <!-- بحث -->
   <div class="search-wrapper">
     <div class="search-bar">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -835,7 +849,6 @@
     </div>
   </div>
 
-  <!-- فلاتر -->
   <div class="inventory-filters">
     <button class="inv-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
     <button class="inv-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
@@ -843,7 +856,6 @@
     <button class="inv-filter" onclick="filterInventoryBy('out', this)">نفد</button>
   </div>
 
-  <!-- قائمة الأدوية -->
   <div class="inventory-list" id="inventoryList">
     <div class="cart-empty">
       <div class="cart-empty-icon">💊</div>
@@ -863,7 +875,6 @@
 
   <form class="blue-form" onsubmit="submitPrescription(event); return false;">
 
-    <!-- رفع الصورة -->
     <div class="input-group">
       <label>صورة الوصفة *</label>
       <div class="prescription-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
@@ -889,19 +900,16 @@
       <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
     </div>
 
-    <!-- العنوان -->
     <div class="input-group">
       <label>عنوان التوصيل *</label>
       <input type="text" id="prescriptionAddress" placeholder="بغداد - الكرادة - شارع 62" required>
     </div>
 
-    <!-- ملاحظات -->
     <div class="input-group">
       <label>ملاحظات (اختياري)</label>
       <textarea id="prescriptionNotes" rows="3" placeholder="مثال: أحتاج الدواء اليوم قبل الساعة 8 مساءً"></textarea>
     </div>
 
-    <!-- اختيار صيدلية -->
     <div class="input-group">
       <label>صيدلية مفضلة (اختياري)</label>
       <select id="prescriptionPharmacy">
@@ -912,7 +920,6 @@
       </select>
     </div>
 
-    <!-- نوع التوصيل -->
     <div class="input-group">
       <label>نوع التوصيل *</label>
       <div class="delivery-options">
@@ -958,13 +965,11 @@
   <h2 class="screen-title">سلة الأدوية 🛒</h2>
   <p class="screen-subtitle" id="cartSubtitle">0 منتج</p>
 
-  <!-- ملاحظة -->
   <div class="cart-info-banner" id="cartInfoBanner" style="display:none;">
     <span class="cart-info-icon">ℹ️</span>
     <p>اختر صيدلية أولاً لعرض أدويتها المتوفرة</p>
   </div>
 
-  <!-- اختيار الصيدلية -->
   <div class="input-group">
     <label>اختر الصيدلية *</label>
     <select id="cartPharmacySelect" onchange="onPharmacyChange()">
@@ -975,7 +980,6 @@
     </select>
   </div>
 
-  <!-- المخزون -->
   <div id="cartProducts" style="display:none;">
     <div class="section-header">
       <h3>الأدوية المتوفرة</h3>
@@ -983,7 +987,6 @@
     <div class="products-grid" id="productsGrid"></div>
   </div>
 
-  <!-- السلة -->
   <div id="cartItemsSection" style="display:none;">
     <div class="section-header">
       <h3>سلة المشتريات</h3>
@@ -992,14 +995,12 @@
     <div class="cart-items" id="cartItems"></div>
   </div>
 
-  <!-- السلة الفارغة -->
   <div class="cart-empty" id="cartEmpty">
     <div class="cart-empty-icon">🛒</div>
     <h3>سلتك فارغة</h3>
     <p>أضف أدوية من القائمة أعلاه للبدء</p>
   </div>
 
-  <!-- ملخص الفاتورة -->
   <div class="cart-summary" id="cartSummary" style="display:none;">
     <div class="cart-summary-row">
       <span>المجموع الفرعي</span>
@@ -1115,924 +1116,4 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- صفحة الملف الشخصي -->
-<div class="screen" id="profileScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
   </div>
-  <h2 class="screen-title">الملف الشخصي</h2>
-
-  <div class="profile-header">
-    <div class="profile-avatar-wrapper" onclick="openImagePicker()">
-      <div class="profile-avatar" id="profileAvatar">م</div>
-      <div class="avatar-edit-badge">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg>
-      </div>
-    </div>
-    <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-    <h3 id="profileName">أحمد</h3>
-    <p id="profileType">مريض</p>
-  </div>
-
-  <div class="profile-card">
-    <div class="profile-row">
-      <span class="profile-label">الاسم الكامل</span>
-      <span class="profile-value" id="infoName">-</span>
-    </div>
-    <div class="profile-row locked">
-      <span class="profile-label">رقم الهاتف</span>
-      <span class="profile-value" id="infoPhone">-</span>
-    </div>
-    <div class="profile-row" id="emailRow">
-      <span class="profile-label">البريد الإلكتروني</span>
-      <span class="profile-value" id="infoEmail">-</span>
-    </div>
-    <div class="profile-row" id="addressRow">
-      <span class="profile-label" id="addressLabel">العنوان</span>
-      <span class="profile-value" id="infoAddress">-</span>
-    </div>
-    <div class="profile-row" id="vehicleRow">
-      <span class="profile-label">نوع المركبة</span>
-      <span class="profile-value" id="infoVehicle">-</span>
-    </div>
-    <div class="profile-row locked" id="licenseRow">
-      <span class="profile-label">رقم الترخيص</span>
-      <span class="profile-value" id="infoLicense">-</span>
-    </div>
-    <div class="profile-row">
-      <span class="profile-label">تاريخ التسجيل</span>
-      <span class="profile-value" id="infoDate">-</span>
-    </div>
-  </div>
-
-  <!-- قسم التقييمات -->
-  <div class="my-ratings-section">
-    <div class="section-header">
-      <h3>تقييماتي</h3>
-      <span class="my-ratings-count" id="myRatingsCount">0</span>
-    </div>
-    <div class="my-ratings-list" id="myRatingsList">
-      <div class="my-ratings-empty">
-        <div class="my-ratings-empty-icon">⭐</div>
-        <p>لم تقم بأي تقييم بعد</p>
-      </div>
-    </div>
-  </div>
-
-  <button class="btn-primary" onclick="openEditProfile()">تعديل البيانات</button>
-</div>
-
-<!-- نافذة تعديل البيانات -->
-<div class="modal-overlay" id="editProfileModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>تعديل البيانات</h3>
-      <button class="modal-close" onclick="closeEditProfile()">×</button>
-    </div>
-    <form class="modal-body" onsubmit="saveProfile(event); return false;">
-      <div class="input-group">
-        <label>الاسم الكامل</label>
-        <input type="text" id="editName" placeholder="الاسم الكامل">
-      </div>
-      <div class="input-group">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="editEmail" placeholder="example@email.com">
-      </div>
-      <div class="input-group" id="editAddressGroup">
-        <label id="editAddressLabel">العنوان</label>
-        <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
-      </div>
-      <button type="submit" class="btn-primary">حفظ التعديلات</button>
-    </form>
-  </div>
-</div>
-
-<!-- نافذة تفاصيل الدواء -->
-<div class="modal-overlay" id="productModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="productModalName">اسم الدواء</h3>
-      <button class="modal-close" onclick="closeProductModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="product-modal-image">
-        <span id="productModalIcon">💊</span>
-      </div>
-      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
-
-      <div class="product-modal-info">
-        <div class="product-modal-row">
-          <span>السعر</span>
-          <strong id="productModalPrice">0 دينار</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>التصنيف</span>
-          <strong id="productModalCategory">—</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>متوفر</span>
-          <strong id="productModalStock" class="stock-available">متوفر</strong>
-        </div>
-      </div>
-
-      <div class="quantity-selector">
-        <label>الكمية</label>
-        <div class="quantity-controls">
-          <button type="button" onclick="decreaseModalQuantity()">−</button>
-          <span id="modalQuantity">1</span>
-          <button type="button" onclick="increaseModalQuantity()">+</button>
-        </div>
-      </div>
-
-      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
-        🛒 أضف إلى السلة
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- نافذة إضافة/تعديل دواء -->
-<div class="modal-overlay" id="medicineModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="medicineModalTitle">إضافة دواء جديد</h3>
-      <button class="modal-close" onclick="closeMedicineModal()">×</button>
-    </div>
-    <form class="modal-body" onsubmit="saveMedicine(event); return false;">
-
-      <input type="hidden" id="editMedicineId">
-
-      <div class="input-group">
-        <label>اسم الدواء *</label>
-        <input type="text" id="medicineName" placeholder="مثال: بانادول" required>
-      </div>
-
-      <div class="input-group">
-        <label>التصنيف *</label>
-        <select id="medicineCategory" required>
-          <option value="">اختر...</option>
-          <option value="مسكنات">مسكنات</option>
-          <option value="فيتامينات">فيتامينات</option>
-          <option value="مضاد حيوي">مضاد حيوي</option>
-          <option value="أطفال">أطفال</option>
-          <option value="ضغط">ضغط</option>
-          <option value="سكري">سكري</option>
-          <option value="جهاز هضمي">جهاز هضمي</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>السعر (دينار) *</label>
-        <input type="number" id="medicinePrice" placeholder="3000" min="0" required>
-      </div>
-
-      <div class="input-group">
-        <label>الكمية المتوفرة *</label>
-        <input type="number" id="medicineStock" placeholder="50" min="0" required>
-      </div>
-
-      <div class="input-group">
-        <label>وصف مختصر (اختياري)</label>
-        <textarea id="medicineDesc" rows="2" placeholder="مثال: مسكن للألم وخافض للحرارة"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>الأيقونة</label>
-        <div class="icon-picker">
-          <button type="button" class="icon-option active" onclick="selectIcon('💊', this)">💊</button>
-          <button type="button" class="icon-option" onclick="selectIcon('💉', this)">💉</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🍊', this)">🍊</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🧴', this)">🧴</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🍯', this)">🍯</button>
-          <button type="button" class="icon-option" onclick="selectIcon('💧', this)">💧</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🩹', this)">🩹</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🧸', this)">🧸</button>
-        </div>
-        <input type="hidden" id="medicineIcon" value="💊">
-      </div>
-
-      <button type="submit" class="btn-primary" id="medicineSubmitBtn">
-        إضافة إلى المخزون
-      </button>
-    </form>
-  </div>
-</div>
-
-<!-- نافذة التقييم -->
-<div class="modal-overlay" id="ratingModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="ratingModalTitle">قيّم تجربتك</h3>
-      <button class="modal-close" onclick="closeRatingModal()">×</button>
-    </div>
-    <div class="modal-body">
-      
-      <div class="rating-target-info" id="ratingTargetInfo">
-        <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
-        <div>
-          <h4 id="ratingTargetName">صيدلية النور</h4>
-          <p id="ratingTargetType">صيدلية</p>
-        </div>
-      </div>
-
-      <div class="rating-stars-section">
-        <label>تقييمك *</label>
-        <div class="rating-stars" id="ratingStars">
-          <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
-          <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
-          <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
-          <button type="button" class="rating-star" data-value="4" onclick="selectRating(4)">★</button>
-          <button type="button" class="rating-star" data-value="5" onclick="selectRating(5)">★</button>
-        </div>
-        <p class="rating-text" id="ratingText">اضغط على النجوم للتقييم</p>
-      </div>
-
-      <div class="input-group">
-        <label>تعليق (اختياري)</label>
-        <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
-      </div>
-
-      <input type="hidden" id="ratingTargetId">
-      <input type="hidden" id="ratingTargetType">
-
-      <button class="btn-primary" onclick="submitRating()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-        إرسال التقييم
-      </button>
-    </div>
-  </div>
-  </div>
-    <!-- صفحة محفظة الدليفري -->
-  <div class="screen" id="walletScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">محفظتي</h2>
-
-    <div class="wallet-card">
-      <p class="wallet-label">الرصيد الحالي</p>
-      <h2 class="wallet-balance">45,000 <span>دينار</span></h2>
-      <button class="btn-withdraw" onclick="showToast('طلب سحب قريباً')">طلب سحب</button>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon-wrap green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <span class="stat-num">12</span>
-        <span class="stat-label">طلبات اليوم</span>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-wrap orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <span class="stat-num">12K</span>
-        <span class="stat-label">أرباح اليوم</span>
-      </div>
-    </div>
-
-    <div class="section-header">
-      <h3>سجل المعاملات</h3>
-      <a href="#">عرض الكل</a>
-    </div>
-
-    <div class="order-list">
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب رقم #1234</span>
-          <span class="order-status available">+3,000</span>
-        </div>
-        <div class="order-info">
-          <p><strong>التاريخ:</strong> 2026/10/2 - 3:00 م</p>
-          <p><strong>من:</strong> صيدلية النور</p>
-          <p><strong>إلى:</strong> شارع 62 - الجادرية</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- صفحة من نحن -->
-  <div class="screen" id="aboutScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">من نحن</h2>
-    <p class="screen-subtitle">تعرّف على صيدليتي عن قرب</p>
-
-    <div class="about-hero">
-      <div class="about-logo">
-        <div class="about-logo-glow"></div>
-        <span class="about-cross">✚</span>
-      </div>
-      <h3>صيدليتي</h3>
-      <p>منصة عراقية 100% - صحتك أولويتنا</p>
-    </div>
-
-    <div class="about-cards">
-      <div class="about-card" onclick="openAboutUs()">
-        <div class="about-card-icon blue">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-        </div>
-        <div class="about-card-content">
-          <h4>صيدليتي</h4>
-          <p>تعرّف على تطبيقنا وأرقامنا</p>
-        </div>
-        <div class="about-card-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="about-card" onclick="openVision()">
-        <div class="about-card-icon green">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="6"/>
-            <circle cx="12" cy="12" r="2"/>
-          </svg>
-        </div>
-        <div class="about-card-content">
-          <h4>رؤيتنا</h4>
-          <p>أهدافنا للمستقبل</p>
-        </div>
-        <div class="about-card-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="about-card" onclick="openValues()">
-        <div class="about-card-icon orange">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-          </svg>
-        </div>
-        <div class="about-card-content">
-          <h4>قيمنا</h4>
-          <p>المبادئ التي نعمل بها</p>
-        </div>
-        <div class="about-card-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- صفحة صيدليتي التفصيلية -->
-  <div class="screen" id="aboutUsScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="openAbout()">←</button>
-    </div>
-    <h2 class="screen-title">صيدليتي</h2>
-    <p class="screen-subtitle">تعرّف على تطبيقنا</p>
-
-    <div class="detail-hero blue">
-      <div class="detail-icon-big">
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      </div>
-      <h3>منصة عراقية حديثة</h3>
-      <p>نربط المرضى بأقرب الصيدليات</p>
-    </div>
-
-    <div class="detail-section">
-      <h4>عن التطبيق</h4>
-      <p>صيدليتي هي منصة عراقية حديثة تهدف إلى ربط الباحثين عن الدواء بأقرب الصيدليات المتوفرة في جميع محافظات العراق. نعمل على توفير خدمة توصيل سريعة وآمنة، لنوصل الدواء إلى باب بيتك خلال 30 دقيقة.</p>
-    </div>
-
-    <div class="detail-section">
-      <h4>أرقامنا</h4>
-      <div class="stats-mini-grid">
-        <div class="stat-mini">
-          <span class="stat-mini-num">50+</span>
-          <span class="stat-mini-label">صيدلية</span>
-        </div>
-        <div class="stat-mini">
-          <span class="stat-mini-num">10K+</span>
-          <span class="stat-mini-label">مستخدم</span>
-        </div>
-        <div class="stat-mini">
-          <span class="stat-mini-num">30</span>
-          <span class="stat-mini-label">دقيقة توصيل</span>
-        </div>
-        <div class="stat-mini">
-          <span class="stat-mini-num">4.9</span>
-          <span class="stat-mini-label">تقييم</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="detail-section">
-      <h4>مميزاتنا</h4>
-      <ul class="detail-list">
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>توصيل سريع خلال 30 دقيقة</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>صيدليات معتمدة ومرخّصة</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>أسعار منافسة وشفافة</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>دعم فني 24/7</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- صفحة رؤيتنا -->
-  <div class="screen" id="visionScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="openAbout()">←</button>
-    </div>
-    <h2 class="screen-title">رؤيتنا</h2>
-    <p class="screen-subtitle">أهدافنا للمستقبل</p>
-
-    <div class="detail-hero green">
-      <div class="detail-icon-big">
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <circle cx="12" cy="12" r="6"/>
-          <circle cx="12" cy="12" r="2"/>
-        </svg>
-      </div>
-      <h3>أن نكون الأول</h3>
-      <p>المنصة الأولى لتوصيل الأدوية في العراق</p>
-    </div>
-
-    <div class="detail-section">
-      <h4>رؤيتنا</h4>
-      <p>نطمح أن نكون المنصة الأولى لتوصيل الأدوية في جميع محافظات العراق، وأن نوفر الرعاية الصحية للجميع بسهولة ويسر. نريد أن يكون الحصول على الدواء أمراً بسيطاً وسريعاً لكل عراقي.</p>
-    </div>
-
-    <div class="detail-section">
-      <h4>أهدافنا</h4>
-      <ul class="detail-list">
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>100% صيدليات معتمدة</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>توصيل في كل العراق</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>أسعار منافسة للجميع</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>خدمة 24/7 بدون توقف</span>
-        </li>
-        <li>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          <span>مليون مستخدم في 2027</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- صفحة قيمنا -->
-  <div class="screen" id="valuesScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="openAbout()">←</button>
-    </div>
-    <h2 class="screen-title">قيمنا</h2>
-    <p class="screen-subtitle">المبادئ التي نعمل بها</p>
-
-    <div class="detail-hero orange">
-      <div class="detail-icon-big">
-        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <h3>مبادئنا الأساسية</h3>
-      <p>نعمل بها كل يوم</p>
-    </div>
-
-    <div class="value-cards">
-      <div class="value-card">
-        <div class="value-icon blue">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-        </div>
-        <div class="value-content">
-          <h4>الموثوقية</h4>
-          <p>نعمل بمعايير عالمية، وكل صيدلية مرخّصة ومعتمدة</p>
-        </div>
-      </div>
-
-      <div class="value-card">
-        <div class="value-icon green">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-          </svg>
-        </div>
-        <div class="value-content">
-          <h4>السرعة</h4>
-          <p>توصيل خلال 30 دقيقة فقط، من أقرب صيدلية إلك</p>
-        </div>
-      </div>
-
-      <div class="value-card">
-        <div class="value-icon orange">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 3h12l4 6-10 13L2 9z"/>
-            <path d="M11 3L8 9l4 13 4-13-3-6"/>
-            <path d="M2 9h20"/>
-          </svg>
-        </div>
-        <div class="value-content">
-          <h4>الأمانة</h4>
-          <p>أسعار شفافة بدون رسوم خفية، ونبني الثقة مع كل عميل</p>
-        </div>
-      </div>
-
-      <div class="value-card">
-        <div class="value-icon red">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </div>
-        <div class="value-content">
-          <h4>الاهتمام</h4>
-          <p>صحة كل عراقي هي أولويتنا القصوى، ونخدمك بكل حب</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- صفحة تواصل معنا -->
-  <div class="screen" id="contactScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">تواصل معنا</h2>
-    <p class="screen-subtitle">نحن هنا لخدمتك على مدار الساعة</p>
-
-    <div class="contact-cards">
-      <a href="https://wa.me/9647751459130?text=مرحباً%20فريق%20صيدليتي" target="_blank" class="contact-card whatsapp">
-        <div class="contact-icon-circle">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-          </svg>
-        </div>
-        <div class="contact-info">
-          <h4>واتساب</h4>
-          <p>+964 775 145 9130</p>
-        </div>
-        <div class="contact-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </a>
-
-      <a href="tel:+9647761090465" class="contact-card phone">
-        <div class="contact-icon-circle">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-        </div>
-        <div class="contact-info">
-          <h4>اتصال هاتفي</h4>
-          <p>0776 109 0465</p>
-        </div>
-        <div class="contact-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </a>
-
-      <a href="https://t.me/Eror_7" target="_blank" class="contact-card telegram">
-        <div class="contact-icon-circle">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-          </svg>
-        </div>
-        <div class="contact-info">
-          <h4>تليكرام شخصي</h4>
-          <p>@Eror_7</p>
-        </div>
-        <div class="contact-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </a>
-
-      <a href="https://t.me/lb2_c" target="_blank" class="contact-card telegram-channel">
-        <div class="contact-icon-circle">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 11l19-9-9 19-2-8-8-2z"/>
-          </svg>
-        </div>
-        <div class="contact-info">
-          <h4>قناة التطبيق</h4>
-          <p>@lb2_c</p>
-        </div>
-        <div class="contact-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </div>
-      </a>
-    </div>
-
-    <div class="working-hours-card">
-      <div class="working-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-      </div>
-      <div>
-        <h4>أوقات العمل</h4>
-        <p>السبت - الخميس | 9 صباحاً - 5 مساءً</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- صفحة الإعدادات -->
-  <div class="screen" id="settingsScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">الإعدادات</h2>
-
-    <div class="setting-item">
-      <div class="setting-info">
-        <h4>الوضع الليلي</h4>
-        <p>تفعيل الوضع الداكن</p>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="darkModeToggle" onchange="toggleTheme()">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="setting-item">
-      <div class="setting-info">
-        <h4>الإشعارات</h4>
-        <p>تفعيل التنبيهات</p>
-      </div>
-      <label class="switch">
-        <input type="checkbox" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="setting-item clickable" onclick="showToast('قريباً')">
-      <div class="setting-info">
-        <h4>تغيير كلمة المرور</h4>
-      </div>
-      <span class="arrow">←</span>
-    </div>
-
-    <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
-  </div>
-
-  <!-- القائمة الجانبية -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="mini-logo">
-        <div class="mini-pulse"></div>
-        <div class="mini-cross">✚</div>
-      </div>
-      <h3>صيدليتي</h3>
-      <button class="sidebar-close" onclick="closeSidebar()">×</button>
-    </div>
-    <ul class="sidebar-menu">
-      <li onclick="openProfile()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span>الملف الشخصي</span>
-      </li>
-      <li onclick="openWallet()" id="walletMenuItem" style="display:none;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2"/>
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-        </svg>
-        <span>محفظتي</span>
-      </li>
-      <li onclick="openOrders()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>سجل الطلبات</span>
-      </li>
-      <li onclick="openSettings()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>الإعدادات</span>
-      </li>
-      <li onclick="openAbout()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
-        <span>من نحن</span>
-      </li>
-      <li onclick="openAppDetails()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-        <span>تفاصيل التطبيق</span>
-      </li>
-      <li onclick="openContact()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>تواصل معنا</span>
-      </li>
-      <li class="logout-item" onclick="logout()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>تسجيل الخروج</span>
-      </li>
-    </ul>
-    <div class="sidebar-footer">
-      <p>الإصدار 1.0.0</p>
-      <p>© 2026 صيدليتي</p>
-    </div>
-  </div>
-
-  <!-- نافذة إضافة عرض -->
-  <div class="modal-overlay" id="addOfferModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>نشر عرض جديد</h3>
-        <button class="modal-close" onclick="closeAddOfferModal()">×</button>
-      </div>
-      <form class="modal-body" onsubmit="publishOffer(event); return false;">
-        <div class="input-group">
-          <label>عنوان العرض *</label>
-          <input type="text" id="offerTitle" placeholder="مثال: خصم 20% على المضادات" required>
-        </div>
-        <div class="input-group">
-          <label>تفاصيل العرض *</label>
-          <textarea id="offerDescription" rows="3" placeholder="اكتب تفاصيل العرض..." required></textarea>
-        </div>
-        <div class="input-group">
-          <label>تاريخ الانتهاء (اختياري)</label>
-          <input type="date" id="offerExpiry">
-        </div>
-        <button type="submit" class="btn-primary">نشر العرض</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Bottom Sheet: طلب جديد -->
-  <div class="bottom-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
-  <div class="bottom-sheet" id="orderSheet">
-    <div class="bottom-sheet-handle"></div>
-
-    <div class="sheet-success-icon">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-    </div>
-
-    <h2 class="sheet-title">طلب جديد!</h2>
-
-    <div class="sheet-info">
-      <div class="sheet-row">
-        <span class="sheet-icon">🏪</span>
-        <span class="sheet-label">من:</span>
-        <span class="sheet-value">صيدلية النور - الكرادة</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">🏠</span>
-        <span class="sheet-label">إلى:</span>
-        <span class="sheet-value">الجادرية، شارع 62</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">📍</span>
-        <span class="sheet-label">المسافة:</span>
-        <span class="sheet-value">2.5 كم</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">💰</span>
-        <span class="sheet-label">العمولة:</span>
-        <span class="sheet-value highlight-green">3,000 دينار</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">⏱️</span>
-        <span class="sheet-label">الوقت:</span>
-        <span class="sheet-value">15 دقيقة</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">💵</span>
-        <span class="sheet-label">الدفع:</span>
-        <span class="sheet-value">كاش</span>
-      </div>
-    </div>
-
-    <div class="sheet-timer">
-      <div class="timer-bar">
-        <div class="timer-progress" id="timerProgress"></div>
-      </div>
-      <div class="timer-text">
-        <span>10 ثواني</span>
-        <span>70%</span>
-        <span>30%</span>
-      </div>
-    </div>
-
-    <button class="sheet-accept-btn" onclick="acceptFromSheet()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-      قبول الطلب
-    </button>
-
-    <button class="sheet-reject-btn" onclick="closeOrderSheet()">رفض</button>
-  </div>
-
-  <!-- شريط التنقل السفلي -->
-  <div class="bottom-nav" id="mainBottomNav" style="display: none;">
-    <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      <small>الطلبات</small>
-    </button>
-    <button class="nav-btn" data-tab="myorders" onclick="switchTab('myorders')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/>
-        <line x1="8" y1="12" x2="21" y2="12"/>
-        <line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/>
-        <line x1="3" y1="12" x2="3.01" y2="12"/>
-        <line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-      <small>طلباتي</small>
-    </button>
-    <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
-      <div class="nav-center-icon">
-        <span class="nav-cross">✚</span>
-      </div>
-      <small>الرئيسية</small>
-    </button>
-    <button class="nav-btn" data-tab="notifications" onclick="switchTab('notifications')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-      </svg>
-      <small>التنبيهات</small>
-    </button>
-    <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <line x1="3" y1="12" x2="21" y2="12"/>
-        <line x1="3" y1="18" x2="21" y2="18"/>
-      </svg>
-      <small>المزيد</small>
-    </button>
-  </div>
-
-  <script src="script.js"></script>
-  
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(r) { console.log('✅ Service Worker مسجل:', r.scope); })
-          .catch(function(e) { console.log('❌ فشل SW:', e); });
-      });
-      
-      navigator.serviceWorker.addEventListener('message', function(event) {
-        if (event.data && event.data.type === 'NOTIFICATION_CLICKED') {
-          handleNotificationClick(event.data);
-        }
-      });
-    }
-  </script>
-</body>
-</html>
