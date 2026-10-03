@@ -656,30 +656,277 @@
       </div>
     </div>
   </div>
+<!-- صفحة من نحن -->
+<div class="screen" id="aboutScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeAllScreens()">←</button>
+  </div>
+  <h2 class="screen-title">من نحن</h2>
+  <p class="screen-subtitle">تعرّف على صيدليتي عن قرب</p>
 
-  <!-- صفحة من نحن -->
-  <div class="screen" id="aboutScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
+  <div class="about-hero">
+    <div class="about-logo">
+      <div class="about-logo-glow"></div>
+      <span class="about-cross">✚</span>
     </div>
-    <h2 class="screen-title">من نحن</h2>
+    <h3>صيدليتي</h3>
+    <p>منصة عراقية 100% - صحتك أولويتنا</p>
+  </div>
 
-    <div class="info-card">
-      <h3>صيدليتي</h3>
-      <p>منصة عراقية حديثة تربط المرضى بأقرب الصيدليات وتوصل الدواء لباب البيت.</p>
+  <div class="about-cards">
+    <!-- بطاقة 1: صيدليتي -->
+    <div class="about-card" onclick="openAboutUs()">
+      <div class="about-card-icon blue">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div class="about-card-content">
+        <h4>صيدليتي</h4>
+        <p>تعرّف على تطبيقنا وأرقامنا</p>
+      </div>
+      <div class="about-card-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </div>
     </div>
 
-    <div class="info-card">
-      <h3>رؤيتنا</h3>
-      <p>أن نكون المنصة الأولى لتوصيل الأدوية في العراق، ونوفر الرعاية الصحية للجميع بسهولة.</p>
+    <!-- بطاقة 2: رؤيتنا -->
+    <div class="about-card" onclick="openVision()">
+      <div class="about-card-icon green">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="6"/>
+          <circle cx="12" cy="12" r="2"/>
+        </svg>
+      </div>
+      <div class="about-card-content">
+        <h4>رؤيتنا</h4>
+        <p>أهدافنا للمستقبل</p>
+      </div>
+      <div class="about-card-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </div>
     </div>
 
-    <div class="info-card">
-      <h3>قيمنا</h3>
-      <p>الموثوقية، السرعة، الأمانة، والاهتمام بصحة كل عراقي.</p>
+    <!-- بطاقة 3: قيمنا -->
+    <div class="about-card" onclick="openValues()">
+      <div class="about-card-icon orange">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <div class="about-card-content">
+        <h4>قيمنا</h4>
+        <p>المبادئ التي نعمل بها</p>
+      </div>
+      <div class="about-card-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة صيدليتي (تفصيلية) -->
+<div class="screen" id="aboutUsScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="openAbout()">←</button>
+  </div>
+  <h2 class="screen-title">صيدليتي</h2>
+  <p class="screen-subtitle">تعرّف على تطبيقنا</p>
+
+  <div class="detail-hero blue">
+    <div class="detail-icon-big">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    <h3>منصة عراقية حديثة</h3>
+    <p>نربط المرضى بأقرب الصيدليات</p>
+  </div>
+
+  <div class="detail-section">
+    <h4>عن التطبيق</h4>
+    <p>صيدليتي هي منصة عراقية حديثة تهدف إلى ربط الباحثين عن الدواء بأقرب الصيدليات المتوفرة في جميع محافظات العراق. نعمل على توفير خدمة توصيل سريعة وآمنة، لنوصل الدواء إلى باب بيتك خلال 30 دقيقة.</p>
+  </div>
+
+  <div class="detail-section">
+    <h4>أرقامنا</h4>
+    <div class="stats-mini-grid">
+      <div class="stat-mini">
+        <span class="stat-mini-num">50+</span>
+        <span class="stat-mini-label">صيدلية</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-num">10K+</span>
+        <span class="stat-mini-label">مستخدم</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-num">30</span>
+        <span class="stat-mini-label">دقيقة توصيل</span>
+      </div>
+      <div class="stat-mini">
+        <span class="stat-mini-num">4.9</span>
+        <span class="stat-mini-label">تقييم</span>
+      </div>
     </div>
   </div>
 
+  <div class="detail-section">
+    <h4>مميزاتنا</h4>
+    <ul class="detail-list">
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>توصيل سريع خلال 30 دقيقة</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>صيدليات معتمدة ومرخّصة</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>أسعار منافسة وشفافة</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>دعم فني 24/7</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- صفحة رؤيتنا -->
+<div class="screen" id="visionScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="openAbout()">←</button>
+  </div>
+  <h2 class="screen-title">رؤيتنا</h2>
+  <p class="screen-subtitle">أهدافنا للمستقبل</p>
+
+  <div class="detail-hero green">
+    <div class="detail-icon-big">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="2"/>
+      </svg>
+    </div>
+    <h3>أن نكون الأول</h3>
+    <p>المنصة الأولى لتوصيل الأدوية في العراق</p>
+  </div>
+
+  <div class="detail-section">
+    <h4>رؤيتنا</h4>
+    <p>نطمح أن نكون المنصة الأولى لتوصيل الأدوية في جميع محافظات العراق، وأن نوفر الرعاية الصحية للجميع بسهولة ويسر. نريد أن يكون الحصول على الدواء أمراً بسيطاً وسريعاً لكل عراقي.</p>
+  </div>
+
+  <div class="detail-section">
+    <h4>أهدافنا</h4>
+    <ul class="detail-list">
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>100% صيدليات معتمدة</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>توصيل في كل العراق</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>أسعار منافسة للجميع</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>خدمة 24/7 بدون توقف</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>مليون مستخدم في 2027</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- صفحة قيمنا -->
+<div class="screen" id="valuesScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="openAbout()">←</button>
+  </div>
+  <h2 class="screen-title">قيمنا</h2>
+  <p class="screen-subtitle">المبادئ التي نعمل بها</p>
+
+  <div class="detail-hero orange">
+    <div class="detail-icon-big">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </div>
+    <h3>مبادئنا الأساسية</h3>
+    <p>نعمل بها كل يوم</p>
+  </div>
+
+  <div class="value-cards">
+    <div class="value-card">
+      <div class="value-icon blue">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="value-content">
+        <h4>الموثوقية</h4>
+        <p>نعمل بمعايير عالمية، وكل صيدلية مرخّصة ومعتمدة</p>
+      </div>
+    </div>
+
+    <div class="value-card">
+      <div class="value-icon green">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <div class="value-content">
+        <h4>السرعة</h4>
+        <p>توصيل خلال 30 دقيقة فقط، من أقرب صيدلية إلك</p>
+      </div>
+    </div>
+
+    <div class="value-card">
+      <div class="value-icon orange">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3h12l4 6-10 13L2 9z"/>
+          <path d="M11 3L8 9l4 13 4-13-3-6"/>
+          <path d="M2 9h20"/>
+        </svg>
+      </div>
+      <div class="value-content">
+        <h4>الأمانة</h4>
+        <p>أسعار شفافة بدون رسوم خفية، ونبني الثقة مع كل عميل</p>
+      </div>
+    </div>
+
+    <div class="value-card">
+      <div class="value-icon red">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <div class="value-content">
+        <h4>الاهتمام</h4>
+        <p>صحة كل عراقي هي أولويتنا القصوى، ونخدمك بكل حب</p>
+      </div>
+    </div>
+  </div>
+</div>
   <!-- صفحة تفاصيل التطبيق -->
   <div class="screen" id="appDetailsScreen">
     <div class="top-bar">
