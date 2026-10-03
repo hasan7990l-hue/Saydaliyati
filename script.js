@@ -644,7 +644,7 @@ function loadOffers() {
   var offers = JSON.parse(localStorage.getItem('saydaliyati_offers') || '[]');
   
   if (offers.length === 0) {
-    offersList.innerHTML = '<div class="offer-empty">لا توجد عروض حالياً</div>';
+    offersList.innerHTML = '<div class="offer-empty">لا توجد عروض حالياً - تابعنا قريباً</div>';
     return;
   }
   
