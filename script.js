@@ -1,8 +1,8 @@
 // ============================================
-// صيدليتي - Clean Medical v2
+// صيدليتي - Clean Medical v3
 // ============================================
 
-console.log('✨ صيدليتي - بدأ التحميل');
+console.log('صيدليتي - بدأ التحميل');
 
 // ============================================
 // نظام الوضع الليلي / النهاري
@@ -81,13 +81,13 @@ function checkPasswordStrength(inputId, strengthId) {
   if (password.length === 0) {
     strengthEl.textContent = '';
   } else if (score <= 2) {
-    strengthEl.textContent = '🔴 ضعيفة - استخدم 6 أحرف على الأقل';
+    strengthEl.textContent = 'ضعيفة - استخدم 6 أحرف على الأقل';
     strengthEl.classList.add('weak');
   } else if (score <= 4) {
-    strengthEl.textContent = '🟡 متوسطة';
+    strengthEl.textContent = 'متوسطة';
     strengthEl.classList.add('medium');
   } else {
-    strengthEl.textContent = '🟢 قوية';
+    strengthEl.textContent = 'قوية';
     strengthEl.classList.add('strong');
   }
 }
@@ -96,8 +96,6 @@ function checkPasswordStrength(inputId, strengthId) {
 // إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
-  console.log('🔄 تحويل إلى:', screenId);
-  
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
     screen.style.display = 'none';
@@ -109,8 +107,6 @@ function showScreen(screenId) {
     target.style.display = 'flex';
     window.scrollTo(0, 0);
     updateBottomNav(screenId);
-  } else {
-    console.error('❌ شاشة غير موجودة:', screenId);
   }
 }
 
@@ -118,7 +114,7 @@ function updateBottomNav(screenId) {
   var nav = document.getElementById('mainBottomNav');
   if (!nav) return;
   
-  var navScreens = ['homeScreen', 'pharmacyDashboard', 'deliveryDashboard', 'ordersScreen'];
+  var navScreens = ['homeScreen', 'pharmacyDashboard', 'deliveryDashboard', 'ordersScreen', 'notificationsScreen'];
   
   if (navScreens.indexOf(screenId) !== -1) {
     nav.style.display = 'flex';
@@ -131,8 +127,6 @@ function updateBottomNav(screenId) {
 // تبديل التبويب
 // ============================================
 function switchTab(tab) {
-  console.log('📌 تبويب:', tab);
-  
   document.querySelectorAll('.nav-btn').forEach(function(btn) {
     btn.classList.remove('active');
   });
@@ -149,7 +143,7 @@ function switchTab(tab) {
   } else if (tab === 'orders') {
     openOrders();
   } else if (tab === 'notifications') {
-    showToast('🚧 التنبيهات - قريباً');
+    openNotifications();
   } else if (tab === 'myaccount') {
     if (userType === 'delivery') {
       openWallet();
@@ -170,51 +164,51 @@ function openProfile() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = userStr ? JSON.parse(userStr) : {};
   
-  var avatarEmoji = '👤';
+  var avatarText = 'م';
   var typeLabel = 'مريض';
   
   if (user.type === 'pharmacy') {
-    avatarEmoji = '🏥';
+    avatarText = 'ص';
     typeLabel = 'صيدلية';
   } else if (user.type === 'delivery') {
-    avatarEmoji = '🛵';
+    avatarText = 'د';
     typeLabel = 'دليفري';
   }
   
-  document.getElementById('profileAvatar').textContent = avatarEmoji;
+  document.getElementById('profileAvatar').textContent = avatarText;
   document.getElementById('profileName').textContent = user.name || 'مستخدم';
   document.getElementById('profileType').textContent = typeLabel;
   document.getElementById('infoName').textContent = user.name || '-';
   document.getElementById('infoPhone').textContent = user.phone || '-';
   document.getElementById('infoEmail').textContent = user.email || 'غير مضاف';
   
-  var addressItem = document.getElementById('addressItem');
-  var vehicleItem = document.getElementById('vehicleItem');
-  var licenseItem = document.getElementById('licenseItem');
+  var addressRow = document.getElementById('addressRow');
+  var vehicleRow = document.getElementById('vehicleRow');
+  var licenseRow = document.getElementById('licenseRow');
+  var emailRow = document.getElementById('emailRow');
   var addressLabel = document.getElementById('addressLabel');
-  var emailItem = document.getElementById('emailItem');
   
-  addressItem.style.display = 'none';
-  vehicleItem.style.display = 'none';
-  licenseItem.style.display = 'none';
-  emailItem.style.display = 'flex';
+  addressRow.style.display = 'none';
+  vehicleRow.style.display = 'none';
+  licenseRow.style.display = 'none';
+  emailRow.style.display = 'flex';
   
   if (user.type === 'patient') {
     addressLabel.textContent = 'العنوان';
     document.getElementById('infoAddress').textContent = user.address || '-';
-    addressItem.style.display = 'flex';
+    addressRow.style.display = 'flex';
   } else if (user.type === 'pharmacy') {
     addressLabel.textContent = 'العنوان';
     document.getElementById('infoAddress').textContent = user.address || '-';
     document.getElementById('infoLicense').textContent = user.license || '-';
-    addressItem.style.display = 'flex';
-    licenseItem.style.display = 'flex';
+    addressRow.style.display = 'flex';
+    licenseRow.style.display = 'flex';
   } else if (user.type === 'delivery') {
     addressLabel.textContent = 'المنطقة';
     document.getElementById('infoAddress').textContent = user.area || '-';
     document.getElementById('infoVehicle').textContent = user.vehicle || '-';
-    addressItem.style.display = 'flex';
-    vehicleItem.style.display = 'flex';
+    addressRow.style.display = 'flex';
+    vehicleRow.style.display = 'flex';
   }
   
   if (user.date) {
@@ -256,6 +250,11 @@ function openOrders() {
   showScreen('ordersScreen');
 }
 
+function openNotifications() {
+  closeSidebar();
+  showScreen('notificationsScreen');
+}
+
 function openSettings() {
   closeSidebar();
   showScreen('settingsScreen');
@@ -276,7 +275,7 @@ function closeAllScreens() {
 }
 
 function editField(field) {
-  showToast('🚧 قريباً');
+  showToast('قريباً');
 }
 
 // ============================================
@@ -380,7 +379,7 @@ function logout() {
     localStorage.removeItem('saydaliyati_current_user');
     closeSidebar();
     goToSplash();
-    showToast('✅ تم تسجيل الخروج');
+    showToast('تم تسجيل الخروج');
   }
 }
 
@@ -424,7 +423,7 @@ function submitPatient(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage('تم إنشاء حسابك! 🎉', 'أهلاً بك في صيدليتي، ' + name);
+  showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في صيدليتي، ' + name);
 }
 
 function submitPharmacy(event) {
@@ -468,7 +467,7 @@ function submitPharmacy(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage('تم استلام طلبك! ✅', 'سنتواصل معك خلال 24 ساعة');
+  showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
 }
 
 function submitDelivery(event) {
@@ -510,7 +509,7 @@ function submitDelivery(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  showSuccessMessage('مرحباً بك في فريقنا! 🛵', 'سنتواصل معك قريباً');
+  showSuccessMessage('مرحباً بك في فريقنا', 'سنتواصل معك قريباً');
 }
 
 // ============================================
@@ -562,7 +561,7 @@ function closeSuccessAndGo() {
 }
 
 function showError(message) {
-  alert('⚠️ ' + message);
+  alert('تنبيه: ' + message);
 }
 
 // ============================================
@@ -608,7 +607,7 @@ function publishOffer(event) {
   var expiry = document.getElementById('offerExpiry').value;
   
   if (!title || !description) {
-    alert('⚠️ املأ العنوان والتفاصيل');
+    alert('املأ العنوان والتفاصيل');
     return;
   }
   
@@ -633,7 +632,7 @@ function publishOffer(event) {
   document.getElementById('offerDescription').value = '';
   document.getElementById('offerExpiry').value = '';
   
-  showToast('✅ تم نشر العرض بنجاح');
+  showToast('تم نشر العرض بنجاح');
   loadOffers();
 }
 
@@ -665,7 +664,7 @@ function loadOffers() {
 // عند التحميل
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('✅ صيدليتي جاهز!');
+  console.log('صيدليتي جاهز');
   
   loadTheme();
   
