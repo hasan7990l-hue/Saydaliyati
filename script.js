@@ -1,5 +1,5 @@
 // ============================================
-// صيدليتي - Clean Medical
+// صيدليتي - Clean Medical v2
 // ============================================
 
 console.log('✨ صيدليتي - بدأ التحميل');
@@ -39,6 +39,57 @@ function loadTheme() {
   
   var darkToggle = document.getElementById('darkModeToggle');
   if (darkToggle) darkToggle.checked = saved === 'dark';
+}
+
+// ============================================
+// إظهار/إخفاء كلمة المرور
+// ============================================
+function togglePasswordVisibility(inputId, button) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    button.innerHTML = '<span>🙈</span>';
+  } else {
+    input.type = 'password';
+    button.innerHTML = '<span>👁️</span>';
+  }
+}
+
+// ============================================
+// فحص قوة كلمة المرور
+// ============================================
+function checkPasswordStrength(inputId, strengthId) {
+  var input = document.getElementById(inputId);
+  var strengthEl = document.getElementById(strengthId);
+  
+  if (!input || !strengthEl) return;
+  
+  var password = input.value;
+  var score = 0;
+  
+  if (password.length >= 6) score++;
+  if (password.length >= 10) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^a-zA-Z0-9]/.test(password)) score++;
+  
+  strengthEl.className = 'password-strength';
+  
+  if (password.length === 0) {
+    strengthEl.textContent = '';
+  } else if (score <= 2) {
+    strengthEl.textContent = '🔴 ضعيفة - استخدم 6 أحرف على الأقل';
+    strengthEl.classList.add('weak');
+  } else if (score <= 4) {
+    strengthEl.textContent = '🟡 متوسطة';
+    strengthEl.classList.add('medium');
+  } else {
+    strengthEl.textContent = '🟢 قوية';
+    strengthEl.classList.add('strong');
+  }
 }
 
 // ============================================
@@ -95,27 +146,23 @@ function switchTab(tab) {
   
   if (tab === 'home') {
     goToDashboardByType();
-    
   } else if (tab === 'orders') {
     openOrders();
-    
   } else if (tab === 'notifications') {
     showToast('🚧 التنبيهات - قريباً');
-    
   } else if (tab === 'myaccount') {
     if (userType === 'delivery') {
       openWallet();
     } else {
       openProfile();
     }
-    
   } else if (tab === 'more') {
     openSidebar();
   }
 }
 
 // ============================================
-// فتح الصفحات من القائمة الجانبية
+// فتح الصفحات
 // ============================================
 function openProfile() {
   closeSidebar();
@@ -139,30 +186,29 @@ function openProfile() {
   document.getElementById('profileType').textContent = typeLabel;
   document.getElementById('infoName').textContent = user.name || '-';
   document.getElementById('infoPhone').textContent = user.phone || '-';
+  document.getElementById('infoEmail').textContent = user.email || 'غير مضاف';
   
-  // إظهار الحقول حسب النوع
   var addressItem = document.getElementById('addressItem');
   var vehicleItem = document.getElementById('vehicleItem');
   var licenseItem = document.getElementById('licenseItem');
   var addressLabel = document.getElementById('addressLabel');
+  var emailItem = document.getElementById('emailItem');
   
-  // إخفاء الكل
   addressItem.style.display = 'none';
   vehicleItem.style.display = 'none';
   licenseItem.style.display = 'none';
+  emailItem.style.display = 'flex';
   
   if (user.type === 'patient') {
     addressLabel.textContent = 'العنوان';
     document.getElementById('infoAddress').textContent = user.address || '-';
     addressItem.style.display = 'flex';
-    
   } else if (user.type === 'pharmacy') {
     addressLabel.textContent = 'العنوان';
     document.getElementById('infoAddress').textContent = user.address || '-';
     document.getElementById('infoLicense').textContent = user.license || '-';
     addressItem.style.display = 'flex';
     licenseItem.style.display = 'flex';
-    
   } else if (user.type === 'delivery') {
     addressLabel.textContent = 'المنطقة';
     document.getElementById('infoAddress').textContent = user.area || '-';
@@ -229,6 +275,10 @@ function closeAllScreens() {
   goToDashboardByType();
 }
 
+function editField(field) {
+  showToast('🚧 قريباً');
+}
+
 // ============================================
 // القائمة الجانبية
 // ============================================
@@ -279,19 +329,6 @@ function goToDashboardByType() {
   }
 }
 
-function goToPatientHome(user) {
-  showScreen('homeScreen');
-  setTimeout(loadOffers, 100);
-}
-
-function goToPharmacyDashboard(user) {
-  showScreen('pharmacyDashboard');
-}
-
-function goToDeliveryDashboard(user) {
-  showScreen('deliveryDashboard');
-}
-
 // ============================================
 // تسجيل الدخول
 // ============================================
@@ -322,9 +359,12 @@ function submitLogin(event) {
     
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
     
-    if (user.type === 'pharmacy') goToPharmacyDashboard(user);
-    else if (user.type === 'delivery') goToDeliveryDashboard(user);
-    else goToPatientHome(user);
+    if (user.type === 'pharmacy') showScreen('pharmacyDashboard');
+    else if (user.type === 'delivery') showScreen('deliveryDashboard');
+    else {
+      showScreen('homeScreen');
+      setTimeout(loadOffers, 100);
+    }
     
     return;
   }
@@ -352,11 +392,12 @@ function submitPatient(event) {
   
   var name = document.getElementById('patientName').value.trim();
   var phone = document.getElementById('patientPhone').value.trim();
+  var email = document.getElementById('patientEmail').value.trim();
   var address = document.getElementById('patientAddress').value.trim();
   var password = document.getElementById('patientPassword').value.trim();
   
   if (!name || !phone || !address || !password) {
-    showError('املأ كل الحقول');
+    showError('املأ الحقول الإلزامية');
     return;
   }
   
@@ -365,10 +406,16 @@ function submitPatient(event) {
     return;
   }
   
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
+  
   var user = {
     type: 'patient',
     name: name,
     phone: phone,
+    email: email,
     address: address,
     password: password,
     date: new Date().toISOString()
@@ -386,12 +433,13 @@ function submitPharmacy(event) {
   var name = document.getElementById('pharmacyName').value.trim();
   var owner = document.getElementById('ownerName').value.trim();
   var phone = document.getElementById('pharmacyPhone').value.trim();
+  var email = document.getElementById('pharmacyEmail').value.trim();
   var address = document.getElementById('pharmacyAddress').value.trim();
   var license = document.getElementById('licenseNumber').value.trim();
   var password = document.getElementById('pharmacyPassword').value.trim();
   
   if (!name || !owner || !phone || !address || !license || !password) {
-    showError('املأ كل الحقول');
+    showError('املأ الحقول الإلزامية');
     return;
   }
   
@@ -400,11 +448,17 @@ function submitPharmacy(event) {
     return;
   }
   
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
+  
   var user = {
     type: 'pharmacy',
     name: name,
     owner: owner,
     phone: phone,
+    email: email,
     address: address,
     license: license,
     password: password,
@@ -422,12 +476,13 @@ function submitDelivery(event) {
   
   var name = document.getElementById('deliveryName').value.trim();
   var phone = document.getElementById('deliveryPhone').value.trim();
+  var email = document.getElementById('deliveryEmail').value.trim();
   var area = document.getElementById('deliveryArea').value.trim();
   var vehicle = document.getElementById('vehicleType').value;
   var password = document.getElementById('deliveryPassword').value.trim();
   
   if (!name || !phone || !area || !vehicle || !password) {
-    showError('املأ كل الحقول');
+    showError('املأ الحقول الإلزامية');
     return;
   }
   
@@ -436,15 +491,18 @@ function submitDelivery(event) {
     return;
   }
   
-  var vehicleText = vehicle === 'motorcycle' ? 'دراجة نارية' : 
-                    vehicle === 'car' ? 'سيارة' : 'دراجة هوائية';
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
   
   var user = {
     type: 'delivery',
     name: name,
     phone: phone,
+    email: email,
     area: area,
-    vehicle: vehicleText,
+    vehicle: vehicle,
     password: password,
     date: new Date().toISOString()
   };
@@ -601,13 +659,6 @@ function loadOffers() {
   });
   
   offersList.innerHTML = html;
-}
-
-// ============================================
-// تعديل الحقول
-// ============================================
-function editField(field) {
-  showToast('🚧 قريباً');
 }
 
 // ============================================
