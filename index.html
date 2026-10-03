@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <!-- شاشة البداية -->
+  <!-- ========== شاشة البداية ========== -->
   <div class="screen active" id="splashScreen">
     <button class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-icon">🌙</span>
@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <!-- تسجيل الدخول -->
+  <!-- ========== تسجيل الدخول ========== -->
   <div class="screen" id="loginScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -60,7 +60,7 @@
     </p>
   </div>
 
-  <!-- اختيار الدور -->
+  <!-- ========== اختيار الدور ========== -->
   <div class="screen" id="roleScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <!-- تسجيل المريض -->
+  <!-- ========== تسجيل المريض ========== -->
   <div class="screen" id="patientScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -143,7 +143,7 @@
     </form>
   </div>
 
-  <!-- تسجيل الصيدلية -->
+  <!-- ========== تسجيل الصيدلية ========== -->
   <div class="screen" id="pharmacyScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -194,7 +194,7 @@
     </form>
   </div>
 
-  <!-- تسجيل الدليفري -->
+  <!-- ========== تسجيل الدليفري ========== -->
   <div class="screen" id="deliveryScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -245,18 +245,18 @@
     </form>
   </div>
 
-  <!-- الصفحة الرئيسية للمريض -->
+  <!-- ========== الصفحة الرئيسية للمريض ========== -->
   <div class="screen" id="homeScreen">
     <div class="home-header">
-      <div class="animated-logo-header">
-        <div class="mini-pulse"></div>
-        <div class="mini-cross">✚</div>
+      <div class="greeting-section">
+        <h1 class="greeting-title">أهلاً بك يا <span id="userGreeting">أحمد</span> 👋</h1>
+        <p class="greeting-sub">شنو محتاج اليوم؟</p>
       </div>
     </div>
 
     <div class="offers-section">
       <div class="section-header">
-        <h3>📢 عروض من الصيدليات</h3>
+        <h3>📢 عروض الصيدليات</h3>
         <a href="#">عرض الكل</a>
       </div>
       <div class="offers-scroll" id="offersList">
@@ -315,14 +315,13 @@
     </div>
   </div>
 
-  <!-- لوحة الصيدلية -->
+  <!-- ========== لوحة الصيدلية ========== -->
   <div class="screen" id="pharmacyDashboard">
     <div class="home-header">
-      <div class="animated-logo-header">
-        <div class="mini-pulse"></div>
-        <div class="mini-cross">✚</div>
+      <div class="greeting-section">
+        <h1 class="greeting-title">أهلاً بك يا <span id="pharmacyGreeting">صيدلية النور</span> 🏥</h1>
+        <p class="greeting-sub">إدارة صيدليتك اليوم</p>
       </div>
-      <h2 class="home-name" id="pharmacyGreeting">صيدلية النور</h2>
     </div>
 
     <div class="alert-banner">
@@ -412,12 +411,12 @@
     </div>
   </div>
 
-  <!-- لوحة الدليفري -->
+  <!-- ========== لوحة الدليفري ========== -->
   <div class="screen" id="deliveryDashboard">
     <div class="home-header">
-      <div class="animated-logo-header">
-        <div class="mini-pulse"></div>
-        <div class="mini-cross">✚</div>
+      <div class="greeting-section">
+        <h1 class="greeting-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span> 🛵</h1>
+        <p class="greeting-sub">جاهز للعمل اليوم؟</p>
       </div>
     </div>
 
@@ -485,7 +484,7 @@
     </div>
   </div>
 
-  <!-- صفحة الطلبات -->
+  <!-- ========== صفحة الطلبات ========== -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -514,7 +513,7 @@
     </div>
   </div>
 
-  <!-- صفحة الملف الشخصي -->
+  <!-- ========== الملف الشخصي ========== -->
   <div class="screen" id="profileScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -580,7 +579,7 @@
     </div>
   </div>
 
-  <!-- صفحة محفظة الدليفري -->
+  <!-- ========== محفظة الدليفري ========== -->
   <div class="screen" id="walletScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -630,7 +629,7 @@
     </div>
   </div>
 
-  <!-- صفحة من نحن -->
+  <!-- ========== من نحن ========== -->
   <div class="screen" id="aboutScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -656,7 +655,7 @@
     </div>
   </div>
 
-  <!-- صفحة تفاصيل التطبيق -->
+  <!-- ========== تفاصيل التطبيق ========== -->
   <div class="screen" id="appDetailsScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -690,7 +689,7 @@
     </div>
   </div>
 
-  <!-- صفحة الإعدادات -->
+  <!-- ========== الإعدادات ========== -->
   <div class="screen" id="settingsScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -729,7 +728,7 @@
     <button class="btn-logout" onclick="logout()">🚪 تسجيل الخروج</button>
   </div>
 
-  <!-- القائمة الجانبية -->
+  <!-- ========== القائمة الجانبية ========== -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -776,7 +775,7 @@
     </div>
   </div>
 
-  <!-- نافذة إضافة عرض -->
+  <!-- ========== نافذة إضافة عرض ========== -->
   <div class="modal-overlay" id="addOfferModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -801,15 +800,8 @@
     </div>
   </div>
 
-  <!-- شريط التنقل السفلي -->
+  <!-- ========== شريط التنقل السفلي ========== -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
-    <button class="nav-btn active" data-tab="home" onclick="switchTab('home')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      <small>الرئيسية</small>
-    </button>
     <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -824,12 +816,11 @@
       </svg>
       <small>التنبيهات</small>
     </button>
-    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      <small>حسابي</small>
+    <button class="nav-btn nav-center" data-tab="home" onclick="switchTab('home')">
+      <div class="nav-center-icon">
+        <span class="nav-cross">✚</span>
+      </div>
+      <small>الرئيسية</small>
     </button>
     <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -839,8 +830,15 @@
       </svg>
       <small>المزيد</small>
     </button>
+    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <small>حسابي</small>
+    </button>
   </div>
 
   <script src="script.js"></script>
 </body>
-</html>
+  </html>
