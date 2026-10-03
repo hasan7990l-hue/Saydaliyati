@@ -4139,3 +4139,226 @@ body {
 [data-theme="dark"] .icon-option.active {
   background: rgba(59, 130, 246, 0.15);
 }
+
+/* ============================================
+   ⭐ نافذة التقييم
+   ============================================ */
+.rating-target-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.rating-target-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.rating-target-info h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.rating-target-info p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.rating-stars-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.rating-stars-section > label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.rating-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rating-star {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: #CBD5E1;
+  font-size: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .rating-star {
+  color: #475569;
+}
+
+.rating-star:hover {
+  transform: scale(1.2);
+}
+
+.rating-star.active {
+  color: #FBBF24;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+  transform: scale(1.1);
+}
+
+.rating-star.active:hover {
+  transform: scale(1.25);
+}
+
+.rating-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-height: 20px;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+.rating-text.good { color: var(--success); }
+.rating-text.bad { color: var(--danger); }
+.rating-text.medium { color: var(--warning); }
+
+/* ============================================
+   ⭐ قسم تقييماتي في الملف الشخصي
+   ============================================ */
+.my-ratings-section {
+  margin-bottom: 20px;
+}
+
+.my-ratings-count {
+  background: var(--warning);
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.my-ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.my-ratings-empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+
+.my-ratings-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.my-ratings-empty p {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.my-rating-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.my-rating-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.my-rating-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.my-rating-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-rating-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+
+.my-rating-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.my-rating-stars {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.my-rating-star {
+  color: #CBD5E1;
+  font-size: 16px;
+}
+
+[data-theme="dark"] .my-rating-star {
+  color: #475569;
+}
+
+.my-rating-star.filled {
+  color: #FBBF24;
+}
+
+.my-rating-comment {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 10px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  border-right: 3px solid var(--warning);
+}
