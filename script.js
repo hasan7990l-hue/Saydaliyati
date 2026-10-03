@@ -811,3 +811,17 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
 });
+// ============================================
+// صفحات "من نحن" التفصيلية
+// ============================================
+function openAboutUs() {
+  showScreen('aboutUsScreen');
+}
+
+function openVision() {
+  showScreen('visionScreen');
+}
+
+function openValues() {
+  showScreen('valuesScreen');
+}
