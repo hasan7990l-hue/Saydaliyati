@@ -1618,3 +1618,197 @@ window.logout = function() {
   stopRadarSystem();
   originalLogout.apply(this, arguments);
 };
+
+// ============================================
+// 📸 نظام طلب الروشتة
+// ============================================
+
+var prescriptionImageData = null;
+
+// فتح صفحة الروشتة
+function openPrescriptionScreen() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  
+  var user = JSON.parse(userStr);
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
+  
+  // تعبئة العنوان تلقائياً
+  var addressInput = document.getElementById('prescriptionAddress');
+  if (addressInput && user.address) {
+    addressInput.value = user.address;
+  }
+  
+  // إعادة تعيين
+  prescriptionImageData = null;
+  resetPrescriptionUpload();
+  
+  showScreen('prescriptionScreen');
+}
+
+function closePrescriptionScreen() {
+  showScreen('homeScreen');
+}
+
+// فتح منتقي الصور
+function openPrescriptionPicker() {
+  var input = document.getElementById('prescriptionInput');
+  if (input) input.click();
+}
+
+// معالجة رفع الصورة
+function handlePrescriptionUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  
+  // التحقق من الحجم (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    showError('حجم الصورة كبير جداً - الحد الأقصى 5MB');
+    return;
+  }
+  
+  // التحقق من النوع
+  if (!file.type.startsWith('image/')) {
+    showError('يجب أن تكون الصورة بصيغة صورة (JPG, PNG)');
+    return;
+  }
+  
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    prescriptionImageData = e.target.result;
+    
+    // إظهار المعاينة
+    var placeholder = document.getElementById('prescriptionPlaceholder');
+    var preview = document.getElementById('prescriptionPreview');
+    var img = document.getElementById('prescriptionImage');
+    
+    if (placeholder) placeholder.style.display = 'none';
+    if (preview) preview.style.display = 'flex';
+    if (img) img.src = prescriptionImageData;
+    
+    showToast('✅ تم رفع الصورة');
+  };
+  reader.readAsDataURL(file);
+}
+
+// إزالة الصورة
+function removePrescriptionImage(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  
+  prescriptionImageData = null;
+  resetPrescriptionUpload();
+  
+  // تفريغ input
+  var input = document.getElementById('prescriptionInput');
+  if (input) input.value = '';
+}
+
+// إعادة تعيين منطقة الرفع
+function resetPrescriptionUpload() {
+  var placeholder = document.getElementById('prescriptionPlaceholder');
+  var preview = document.getElementById('prescriptionPreview');
+  
+  if (placeholder) placeholder.style.display = 'block';
+  if (preview) preview.style.display = 'none';
+}
+
+// إرسال الطلب
+function submitPrescription(event) {
+  if (event) event.preventDefault();
+  
+  // التحقق من الصورة
+  if (!prescriptionImageData) {
+    showError('ارفع صورة الوصفة أولاً');
+    return;
+  }
+  
+  var address = document.getElementById('prescriptionAddress').value.trim();
+  var notes = document.getElementById('prescriptionNotes').value.trim();
+  var pharmacy = document.getElementById('prescriptionPharmacy').value;
+  var deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
+  
+  if (!address) {
+    showError('أدخل عنوان التوصيل');
+    return;
+  }
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = JSON.parse(userStr);
+  
+  // إنشاء الطلب
+  var orderId = Math.floor(1000 + Math.random() * 9000);
+  var order = {
+    id: orderId,
+    type: 'prescription',
+    patientName: user.name,
+    patientPhone: user.phone,
+    address: address,
+    notes: notes,
+    preferredPharmacy: pharmacy || 'النظام يختار',
+    deliveryType: deliveryType,
+    image: prescriptionImageData,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+  
+  // حفظ الطلب
+  var orders = JSON.parse(localStorage.getItem('saydaliyati_prescription_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('saydaliyati_prescription_orders', JSON.stringify(orders));
+  
+  // إشعار داخلي
+  addInternalNotification(
+    'order',
+    '📸 تم إرسال روشتتك',
+    'صيدلية ' + (pharmacy || 'أقرب صيدلية') + ' ستتواصل معك'
+  );
+  
+  // إشعار حقيقي
+  if (typeof sendNotification === 'function') {
+    sendNotification({
+      title: '📸 تم إرسال روشتتك',
+      body: 'طلب #' + orderId + ' - ' + (pharmacy || 'أقرب صيدلية'),
+      type: 'order',
+      orderId: orderId,
+      vibrate: [200, 100, 200]
+    });
+  }
+  
+  // رسالة نجاح
+  showSuccessMessage(
+    '✅ تم إرسال طلبك',
+    'صيدلية ' + (pharmacy || 'قريبة منك') + ' ستتواصل معك خلال دقائق'
+  );
+  
+  // إعادة تعيين
+  prescriptionImageData = null;
+  resetPrescriptionUpload();
+  
+  // تنظيف الحقول
+  setTimeout(function() {
+    document.getElementById('prescriptionAddress').value = '';
+    document.getElementById('prescriptionNotes').value = '';
+    document.getElementById('prescriptionPharmacy').value = '';
+  }, 500);
+}
+
+// تفعيل خيارات التوصيل
+document.addEventListener('DOMContentLoaded', function() {
+  var deliveryRadios = document.querySelectorAll('input[name="deliveryType"]');
+  deliveryRadios.forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll('.delivery-option').forEach(function(opt) {
+        opt.classList.remove('active');
+      });
+      this.closest('.delivery-option').classList.add('active');
+    });
+  });
+});
