@@ -3819,3 +3819,323 @@ body {
   min-width: 40px;
   text-align: center;
 }
+
+/* ============================================
+   🏪 أزرار سريعة للصيدلية
+   ============================================ */
+.pharmacy-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pharmacy-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pharmacy-action-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.pharmacy-action-btn svg {
+  stroke: var(--primary);
+}
+
+[data-theme="dark"] .pharmacy-action-btn:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* ============================================
+   💊 صفحة المخزون
+   ============================================ */
+.add-med-btn {
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.add-med-btn:hover {
+  background: var(--primary-hover);
+}
+
+.inventory-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.inventory-stat {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inventory-stat-num {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.inventory-stat-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.inventory-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border: 1.5px solid #F59E0B;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .inventory-alert {
+  background: linear-gradient(135deg, #422006 0%, #78350F 100%);
+  border-color: #B45309;
+}
+
+.inventory-alert-icon {
+  font-size: 24px;
+}
+
+.inventory-alert h4 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #78350F;
+  margin-bottom: 2px;
+}
+
+[data-theme="dark"] .inventory-alert h4 { color: #FDE68A; }
+
+.inventory-alert p {
+  font-size: 11px;
+  color: #92400E;
+  margin: 0;
+}
+
+[data-theme="dark"] .inventory-alert p { color: #FCD34D; }
+
+.inventory-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.inventory-filters::-webkit-scrollbar { display: none; }
+
+.inv-filter {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.inv-filter.active {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-color: var(--primary);
+}
+
+/* ============================================
+   💊 قائمة الأدوية
+   ============================================ */
+.inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.medicine-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.medicine-card.low-stock {
+  border-right: 4px solid var(--warning);
+}
+
+.medicine-card.out-of-stock {
+  border-right: 4px solid var(--danger);
+  opacity: 0.7;
+}
+
+.medicine-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.medicine-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.medicine-card-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.medicine-card-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.medicine-card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.medicine-card-price {
+  color: var(--success);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.medicine-card-stock {
+  font-weight: 700;
+}
+
+.medicine-card-stock.available { color: var(--success); }
+.medicine-card-stock.low { color: var(--warning); }
+.medicine-card-stock.out { color: var(--danger); }
+
+.medicine-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.medicine-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.medicine-action-btn.edit {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.medicine-action-btn.edit:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+.medicine-action-btn.delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.medicine-action-btn.delete:hover {
+  background: var(--danger);
+  color: #FFFFFF;
+}
+
+.medicine-action-btn svg {
+  stroke: currentColor;
+}
+
+/* ============================================
+   🎨 اختيار الأيقونة
+   ============================================ */
+.icon-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.icon-option {
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-option:hover {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+.icon-option.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+[data-theme="dark"] .icon-option.active {
+  background: rgba(59, 130, 246, 0.15);
+}
