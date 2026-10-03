@@ -394,7 +394,7 @@
     </div>
   </div>
 
-  <!-- لوحة الدليفري -->
+  <!-- لوحة الدليفري (الرئيسية) -->
   <div class="screen" id="deliveryDashboard">
     <div class="home-header">
       <div class="greeting-section">
@@ -403,71 +403,177 @@
       </div>
     </div>
 
-    <div class="status-toggle">
-      <label class="switch">
-        <input type="checkbox" checked>
-        <span class="slider"></span>
-      </label>
-      <div class="status-info">
-        <span>متصل - جاهز للعمل</span>
-        <span class="status-dot online"></span>
+    <!-- الرادار -->
+    <div class="radar-section">
+      <div class="radar-map">
+        <div class="radar-grid"></div>
+        <div class="radar-circle radar-circle-1"></div>
+        <div class="radar-circle radar-circle-2"></div>
+        <div class="radar-circle radar-circle-3"></div>
+        <div class="radar-sweep"></div>
+        <div class="radar-center"></div>
+        <div class="radar-dot" style="top: 25%; left: 30%;"></div>
+        <div class="radar-dot" style="top: 45%; left: 70%;"></div>
+        <div class="radar-dot" style="top: 70%; left: 45%;"></div>
+        <div class="radar-label-top">3 طلبات قريبة</div>
+        <button class="radar-btn" onclick="toggleRadar()" id="radarBtn">
+          <span id="radarBtnText">تفعيل الرادار</span>
+        </button>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon-wrap blue">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        </div>
-        <span class="stat-num">12</span>
-        <span class="stat-label">طلبات اليوم</span>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-wrap orange">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <span class="stat-num">45K</span>
-        <span class="stat-label">أرباح اليوم</span>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-wrap yellow">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <span class="stat-num">4.9</span>
-        <span class="stat-label">تقييم</span>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon-wrap green">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-        </div>
-        <span class="stat-num">3</span>
-        <span class="stat-label">مرات التقييم</span>
-      </div>
-    </div>
-
+    <!-- قائمة الطلبات -->
     <div class="section-header">
-      <h3>طلبات قريبة منك</h3>
-      <a href="#" onclick="goToOrdersPage(); return false;">عرض الكل</a>
+      <h3>الطلبات المتاحة</h3>
+      <a href="#">عرض الكل</a>
     </div>
 
     <div class="order-list">
       <div class="order-card">
         <div class="order-top">
-          <span class="order-id">طلب رقم #1234</span>
+          <span class="order-id">طلب #1234 - صيدلية النور</span>
           <span class="order-status available">متاح</span>
         </div>
         <div class="order-info">
-          <p><strong>من:</strong> صيدلية النور - الكرادة</p>
-          <p><strong>إلى:</strong> شارع 62 - الجادرية</p>
           <p><strong>المسافة:</strong> 2.5 كم</p>
           <p><strong>العمولة:</strong> <span class="price">3,000</span> دينار</p>
         </div>
-        <button class="btn-accept full">قبول الطلب</button>
+        <div class="order-actions">
+          <button class="btn-accept" onclick="acceptOrder(1234)">قبول</button>
+          <button class="btn-reject">تفاصيل</button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">طلب #1235</span>
+          <span class="order-status available">متاح</span>
+        </div>
+        <div class="order-info">
+          <p><strong>المسافة:</strong> 3.2 كم</p>
+          <p><strong>العمولة:</strong> <span class="price">4,000</span> دينار</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn-accept" onclick="acceptOrder(1235)">قبول</button>
+          <button class="btn-reject">تفاصيل</button>
+        </div>
+      </div>
+
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">طلب #1236</span>
+          <span class="order-status available">متاح</span>
+        </div>
+        <div class="order-info">
+          <p><strong>المسافة:</strong> 4.1 كم</p>
+          <p><strong>العمولة:</strong> <span class="price">5,000</span> دينار</p>
+        </div>
+        <div class="order-actions">
+          <button class="btn-accept" onclick="acceptOrder(1236)">قبول</button>
+          <button class="btn-reject">تفاصيل</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- صفحة الطلبات -->
+  <!-- صفحة طلباتي الذكية -->
+  <div class="screen" id="myOrdersScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goToDashboardByType()">←</button>
+    </div>
+    <h2 class="screen-title">طلباتي الذكية</h2>
+    <p class="screen-subtitle">ترتيب تلقائي حسب الأولوية</p>
+
+    <!-- إشعار AI -->
+    <div class="ai-suggestion-card">
+      <div class="ai-header">
+        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
+      </div>
+      <div class="ai-network">
+        <div class="ai-brain">
+          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+          </svg>
+        </div>
+        <div class="ai-nodes">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="ai-content">
+        <h3>اقتراح ذكي</h3>
+        <p>ابدأ بطلب <span class="highlight">#1234</span></p>
+        <p class="ai-sub">الأقرب والأعلى عمولة</p>
+      </div>
+      <div class="ai-score">
+        <span>9.5</span>
+        <small>/10</small>
+      </div>
+      <button class="ai-start-btn" onclick="startOrder(1234)">
+        ابدأ الآن ←
+      </button>
+    </div>
+
+    <!-- قائمة الأولويات -->
+    <div class="priority-list">
+      <div class="priority-card priority-1">
+        <div class="priority-header">
+          <span class="priority-rank">🥇 الأولوية القصوى</span>
+          <span class="priority-id">طلب #1234</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية النور</div>
+        <div class="priority-info">
+          <span>📍 2.5 كم</span>
+          <span>💰 3,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 9.5/10</span>
+          <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
+        </div>
+      </div>
+
+      <div class="priority-card priority-2">
+        <div class="priority-header">
+          <span class="priority-rank">🥈 أولوية متوسطة</span>
+          <span class="priority-id">طلب #1235</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية الحياة</div>
+        <div class="priority-info">
+          <span>📍 3.2 كم</span>
+          <span>💰 4,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 7.5/10</span>
+          <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
+        </div>
+      </div>
+
+      <div class="priority-card priority-3">
+        <div class="priority-header">
+          <span class="priority-rank">🥉 أولوية منخفضة</span>
+          <span class="priority-id">طلب #1236</span>
+        </div>
+        <div class="priority-pharmacy">صيدلية الشفاء</div>
+        <div class="priority-info">
+          <span>📍 4.1 كم</span>
+          <span>💰 5,000 دينار</span>
+        </div>
+        <div class="priority-footer">
+          <span class="priority-score">Score: 5.5/10</span>
+          <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <span>3 طلبات - إجمالي 12,000 دينار</span>
+      <span>الوقت المقدر: 45 دقيقة</span>
+    </div>
+  </div>
+
+  <!-- صفحة الطلبات (السجل) -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -656,305 +762,273 @@
       </div>
     </div>
   </div>
-<!-- صفحة من نحن -->
-<div class="screen" id="aboutScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-  </div>
-  <h2 class="screen-title">من نحن</h2>
-  <p class="screen-subtitle">تعرّف على صيدليتي عن قرب</p>
 
-  <div class="about-hero">
-    <div class="about-logo">
-      <div class="about-logo-glow"></div>
-      <span class="about-cross">✚</span>
+  <!-- صفحة من نحن -->
+  <div class="screen" id="aboutScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeAllScreens()">←</button>
     </div>
-    <h3>صيدليتي</h3>
-    <p>منصة عراقية 100% - صحتك أولويتنا</p>
+    <h2 class="screen-title">من نحن</h2>
+    <p class="screen-subtitle">تعرّف على صيدليتي عن قرب</p>
+
+    <div class="about-hero">
+      <div class="about-logo">
+        <div class="about-logo-glow"></div>
+        <span class="about-cross">✚</span>
+      </div>
+      <h3>صيدليتي</h3>
+      <p>منصة عراقية 100% - صحتك أولويتنا</p>
+    </div>
+
+    <div class="about-cards">
+      <div class="about-card" onclick="openAboutUs()">
+        <div class="about-card-icon blue">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="about-card-content">
+          <h4>صيدليتي</h4>
+          <p>تعرّف على تطبيقنا وأرقامنا</p>
+        </div>
+        <div class="about-card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="about-card" onclick="openVision()">
+        <div class="about-card-icon green">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="6"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </div>
+        <div class="about-card-content">
+          <h4>رؤيتنا</h4>
+          <p>أهدافنا للمستقبل</p>
+        </div>
+        <div class="about-card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="about-card" onclick="openValues()">
+        <div class="about-card-icon orange">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div class="about-card-content">
+          <h4>قيمنا</h4>
+          <p>المبادئ التي نعمل بها</p>
+        </div>
+        <div class="about-card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="about-cards">
-    <!-- بطاقة 1: صيدليتي -->
-    <div class="about-card" onclick="openAboutUs()">
-      <div class="about-card-icon blue">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- صفحة صيدليتي التفصيلية -->
+  <div class="screen" id="aboutUsScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="openAbout()">←</button>
+    </div>
+    <h2 class="screen-title">صيدليتي</h2>
+    <p class="screen-subtitle">تعرّف على تطبيقنا</p>
+
+    <div class="detail-hero blue">
+      <div class="detail-icon-big">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
-      <div class="about-card-content">
-        <h4>صيدليتي</h4>
-        <p>تعرّف على تطبيقنا وأرقامنا</p>
-      </div>
-      <div class="about-card-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
+      <h3>منصة عراقية حديثة</h3>
+      <p>نربط المرضى بأقرب الصيدليات</p>
+    </div>
+
+    <div class="detail-section">
+      <h4>عن التطبيق</h4>
+      <p>صيدليتي هي منصة عراقية حديثة تهدف إلى ربط الباحثين عن الدواء بأقرب الصيدليات المتوفرة في جميع محافظات العراق. نعمل على توفير خدمة توصيل سريعة وآمنة، لنوصل الدواء إلى باب بيتك خلال 30 دقيقة.</p>
+    </div>
+
+    <div class="detail-section">
+      <h4>أرقامنا</h4>
+      <div class="stats-mini-grid">
+        <div class="stat-mini">
+          <span class="stat-mini-num">50+</span>
+          <span class="stat-mini-label">صيدلية</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-num">10K+</span>
+          <span class="stat-mini-label">مستخدم</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-num">30</span>
+          <span class="stat-mini-label">دقيقة توصيل</span>
+        </div>
+        <div class="stat-mini">
+          <span class="stat-mini-num">4.9</span>
+          <span class="stat-mini-label">تقييم</span>
+        </div>
       </div>
     </div>
 
-    <!-- بطاقة 2: رؤيتنا -->
-    <div class="about-card" onclick="openVision()">
-      <div class="about-card-icon green">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="detail-section">
+      <h4>مميزاتنا</h4>
+      <ul class="detail-list">
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>توصيل سريع خلال 30 دقيقة</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>صيدليات معتمدة ومرخّصة</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>أسعار منافسة وشفافة</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>دعم فني 24/7</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- صفحة رؤيتنا -->
+  <div class="screen" id="visionScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="openAbout()">←</button>
+    </div>
+    <h2 class="screen-title">رؤيتنا</h2>
+    <p class="screen-subtitle">أهدافنا للمستقبل</p>
+
+    <div class="detail-hero green">
+      <div class="detail-icon-big">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
           <circle cx="12" cy="12" r="6"/>
           <circle cx="12" cy="12" r="2"/>
         </svg>
       </div>
-      <div class="about-card-content">
-        <h4>رؤيتنا</h4>
-        <p>أهدافنا للمستقبل</p>
-      </div>
-      <div class="about-card-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </div>
+      <h3>أن نكون الأول</h3>
+      <p>المنصة الأولى لتوصيل الأدوية في العراق</p>
     </div>
 
-    <!-- بطاقة 3: قيمنا -->
-    <div class="about-card" onclick="openValues()">
-      <div class="about-card-icon orange">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="detail-section">
+      <h4>رؤيتنا</h4>
+      <p>نطمح أن نكون المنصة الأولى لتوصيل الأدوية في جميع محافظات العراق، وأن نوفر الرعاية الصحية للجميع بسهولة ويسر. نريد أن يكون الحصول على الدواء أمراً بسيطاً وسريعاً لكل عراقي.</p>
+    </div>
+
+    <div class="detail-section">
+      <h4>أهدافنا</h4>
+      <ul class="detail-list">
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>100% صيدليات معتمدة</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>توصيل في كل العراق</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>أسعار منافسة للجميع</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>خدمة 24/7 بدون توقف</span>
+        </li>
+        <li>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>مليون مستخدم في 2027</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- صفحة قيمنا -->
+  <div class="screen" id="valuesScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="openAbout()">←</button>
+    </div>
+    <h2 class="screen-title">قيمنا</h2>
+    <p class="screen-subtitle">المبادئ التي نعمل بها</p>
+
+    <div class="detail-hero orange">
+      <div class="detail-icon-big">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
       </div>
-      <div class="about-card-content">
-        <h4>قيمنا</h4>
-        <p>المبادئ التي نعمل بها</p>
-      </div>
-      <div class="about-card-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- صفحة صيدليتي (تفصيلية) -->
-<div class="screen" id="aboutUsScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">صيدليتي</h2>
-  <p class="screen-subtitle">تعرّف على تطبيقنا</p>
-
-  <div class="detail-hero blue">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-    </div>
-    <h3>منصة عراقية حديثة</h3>
-    <p>نربط المرضى بأقرب الصيدليات</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>عن التطبيق</h4>
-    <p>صيدليتي هي منصة عراقية حديثة تهدف إلى ربط الباحثين عن الدواء بأقرب الصيدليات المتوفرة في جميع محافظات العراق. نعمل على توفير خدمة توصيل سريعة وآمنة، لنوصل الدواء إلى باب بيتك خلال 30 دقيقة.</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>أرقامنا</h4>
-    <div class="stats-mini-grid">
-      <div class="stat-mini">
-        <span class="stat-mini-num">50+</span>
-        <span class="stat-mini-label">صيدلية</span>
-      </div>
-      <div class="stat-mini">
-        <span class="stat-mini-num">10K+</span>
-        <span class="stat-mini-label">مستخدم</span>
-      </div>
-      <div class="stat-mini">
-        <span class="stat-mini-num">30</span>
-        <span class="stat-mini-label">دقيقة توصيل</span>
-      </div>
-      <div class="stat-mini">
-        <span class="stat-mini-num">4.9</span>
-        <span class="stat-mini-label">تقييم</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="detail-section">
-    <h4>مميزاتنا</h4>
-    <ul class="detail-list">
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>توصيل سريع خلال 30 دقيقة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>صيدليات معتمدة ومرخّصة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>أسعار منافسة وشفافة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>دعم فني 24/7</span>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- صفحة رؤيتنا -->
-<div class="screen" id="visionScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">رؤيتنا</h2>
-  <p class="screen-subtitle">أهدافنا للمستقبل</p>
-
-  <div class="detail-hero green">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <circle cx="12" cy="12" r="6"/>
-        <circle cx="12" cy="12" r="2"/>
-      </svg>
-    </div>
-    <h3>أن نكون الأول</h3>
-    <p>المنصة الأولى لتوصيل الأدوية في العراق</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>رؤيتنا</h4>
-    <p>نطمح أن نكون المنصة الأولى لتوصيل الأدوية في جميع محافظات العراق، وأن نوفر الرعاية الصحية للجميع بسهولة ويسر. نريد أن يكون الحصول على الدواء أمراً بسيطاً وسريعاً لكل عراقي.</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>أهدافنا</h4>
-    <ul class="detail-list">
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>100% صيدليات معتمدة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>توصيل في كل العراق</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>أسعار منافسة للجميع</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>خدمة 24/7 بدون توقف</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>مليون مستخدم في 2027</span>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- صفحة قيمنا -->
-<div class="screen" id="valuesScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">قيمنا</h2>
-  <p class="screen-subtitle">المبادئ التي نعمل بها</p>
-
-  <div class="detail-hero orange">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-    </div>
-    <h3>مبادئنا الأساسية</h3>
-    <p>نعمل بها كل يوم</p>
-  </div>
-
-  <div class="value-cards">
-    <div class="value-card">
-      <div class="value-icon blue">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-      </div>
-      <div class="value-content">
-        <h4>الموثوقية</h4>
-        <p>نعمل بمعايير عالمية، وكل صيدلية مرخّصة ومعتمدة</p>
-      </div>
+      <h3>مبادئنا الأساسية</h3>
+      <p>نعمل بها كل يوم</p>
     </div>
 
-    <div class="value-card">
-      <div class="value-icon green">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
+    <div class="value-cards">
+      <div class="value-card">
+        <div class="value-icon blue">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="value-content">
+          <h4>الموثوقية</h4>
+          <p>نعمل بمعايير عالمية، وكل صيدلية مرخّصة ومعتمدة</p>
+        </div>
       </div>
-      <div class="value-content">
-        <h4>السرعة</h4>
-        <p>توصيل خلال 30 دقيقة فقط، من أقرب صيدلية إلك</p>
+
+      <div class="value-card">
+        <div class="value-icon green">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div class="value-content">
+          <h4>السرعة</h4>
+          <p>توصيل خلال 30 دقيقة فقط، من أقرب صيدلية إلك</p>
+        </div>
       </div>
-    </div>
 
-    <div class="value-card">
-      <div class="value-icon orange">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 3h12l4 6-10 13L2 9z"/>
-          <path d="M11 3L8 9l4 13 4-13-3-6"/>
-          <path d="M2 9h20"/>
-        </svg>
+      <div class="value-card">
+        <div class="value-icon orange">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h12l4 6-10 13L2 9z"/>
+            <path d="M11 3L8 9l4 13 4-13-3-6"/>
+            <path d="M2 9h20"/>
+          </svg>
+        </div>
+        <div class="value-content">
+          <h4>الأمانة</h4>
+          <p>أسعار شفافة بدون رسوم خفية، ونبني الثقة مع كل عميل</p>
+        </div>
       </div>
-      <div class="value-content">
-        <h4>الأمانة</h4>
-        <p>أسعار شفافة بدون رسوم خفية، ونبني الثقة مع كل عميل</p>
+
+      <div class="value-card">
+        <div class="value-icon red">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="value-content">
+          <h4>الاهتمام</h4>
+          <p>صحة كل عراقي هي أولويتنا القصوى، ونخدمك بكل حب</p>
+        </div>
       </div>
-    </div>
-
-    <div class="value-card">
-      <div class="value-icon red">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </div>
-      <div class="value-content">
-        <h4>الاهتمام</h4>
-        <p>صحة كل عراقي هي أولويتنا القصوى، ونخدمك بكل حب</p>
-      </div>
-    </div>
-  </div>
-</div>
-  <!-- صفحة تفاصيل التطبيق -->
-  <div class="screen" id="appDetailsScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeAllScreens()">←</button>
-    </div>
-    <h2 class="screen-title">تفاصيل التطبيق</h2>
-
-    <div class="trust-card">
-      <div class="trust-icon">✓</div>
-      <h3>رسالة موثوقية</h3>
-      <p>صيدليتي تطبيق عراقي 100%، مبني بمعايير عالمية. نلتزم بحماية بياناتك وأموالك.</p>
-    </div>
-
-    <div class="info-card">
-      <h3>المبرمج</h3>
-      <p><strong>حسن عدنان</strong></p>
-      <p>مطوّر عراقي، صاحب فكرة صيدليتي ورئيس فريق التطوير.</p>
-    </div>
-
-    <div class="info-card">
-      <h3>كيف نُفّذ؟</h3>
-      <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase وVercel.</p>
-    </div>
-
-    <div class="info-card">
-      <h3>الإصدار</h3>
-      <p>الإصدار 1.0.0</p>
-      <p>آخر تحديث: أكتوبر 2026</p>
     </div>
   </div>
 
@@ -967,7 +1041,6 @@
     <p class="screen-subtitle">نحن هنا لخدمتك على مدار الساعة</p>
 
     <div class="contact-cards">
-      <!-- واتساب -->
       <a href="https://wa.me/9647751459130?text=مرحباً%20فريق%20صيدليتي" target="_blank" class="contact-card whatsapp">
         <div class="contact-icon-circle">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -986,7 +1059,6 @@
         </div>
       </a>
 
-      <!-- اتصال -->
       <a href="tel:+9647761090465" class="contact-card phone">
         <div class="contact-icon-circle">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1005,7 +1077,6 @@
         </div>
       </a>
 
-      <!-- تليكرام شخصي -->
       <a href="https://t.me/Eror_7" target="_blank" class="contact-card telegram">
         <div class="contact-icon-circle">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
@@ -1024,7 +1095,6 @@
         </div>
       </a>
 
-      <!-- قناة تليكرام -->
       <a href="https://t.me/lb2_c" target="_blank" class="contact-card telegram-channel">
         <div class="contact-icon-circle">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1113,11 +1183,17 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>الملف الشخصي</span>
       </li>
+      <li onclick="openOrders()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>سجل الطلبات</span>
+      </li>
       <li onclick="openSettings()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span>الإعدادات</span>
       </li>
       <li onclick="openAbout()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+        <li onclick="openAbout()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         <span>من نحن</span>
       </li>
@@ -1165,6 +1241,73 @@
     </div>
   </div>
 
+  <!-- Bottom Sheet: طلب جديد -->
+  <div class="bottom-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
+  <div class="bottom-sheet" id="orderSheet">
+    <div class="bottom-sheet-handle"></div>
+
+    <div class="sheet-success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <h2 class="sheet-title">طلب جديد!</h2>
+
+    <div class="sheet-info">
+      <div class="sheet-row">
+        <span class="sheet-icon">🏪</span>
+        <span class="sheet-label">من:</span>
+        <span class="sheet-value">صيدلية النور - الكرادة</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">🏠</span>
+        <span class="sheet-label">إلى:</span>
+        <span class="sheet-value">الجادرية، شارع 62</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">📍</span>
+        <span class="sheet-label">المسافة:</span>
+        <span class="sheet-value">2.5 كم</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">💰</span>
+        <span class="sheet-label">العمولة:</span>
+        <span class="sheet-value highlight-green">3,000 دينار</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">⏱️</span>
+        <span class="sheet-label">الوقت:</span>
+        <span class="sheet-value">15 دقيقة</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">💵</span>
+        <span class="sheet-label">الدفع:</span>
+        <span class="sheet-value">كاش</span>
+      </div>
+    </div>
+
+    <div class="sheet-timer">
+      <div class="timer-bar">
+        <div class="timer-progress" id="timerProgress"></div>
+      </div>
+      <div class="timer-text">
+        <span>10 ثواني</span>
+        <span>70%</span>
+        <span>30%</span>
+      </div>
+    </div>
+
+    <button class="sheet-accept-btn" onclick="acceptFromSheet()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      قبول الطلب
+    </button>
+
+    <button class="sheet-reject-btn" onclick="closeOrderSheet()">رفض</button>
+  </div>
+
   <!-- شريط التنقل السفلي -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
     <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
@@ -1174,12 +1317,16 @@
       </svg>
       <small>الطلبات</small>
     </button>
-    <button class="nav-btn" data-tab="notifications" onclick="switchTab('notifications')">
+    <button class="nav-btn" data-tab="myorders" onclick="switchTab('myorders')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        <line x1="8" y1="6" x2="21" y2="6"/>
+        <line x1="8" y1="12" x2="21" y2="12"/>
+        <line x1="8" y1="18" x2="21" y2="18"/>
+        <line x1="3" y1="6" x2="3.01" y2="6"/>
+        <line x1="3" y1="12" x2="3.01" y2="12"/>
+        <line x1="3" y1="18" x2="3.01" y2="18"/>
       </svg>
-      <small>التنبيهات</small>
+      <small>طلباتي</small>
     </button>
     <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
       <div class="nav-center-icon">
@@ -1187,12 +1334,12 @@
       </div>
       <small>الرئيسية</small>
     </button>
-    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
+    <button class="nav-btn" data-tab="notifications" onclick="switchTab('notifications')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
       </svg>
-      <small>حسابي</small>
+      <small>التنبيهات</small>
     </button>
     <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
