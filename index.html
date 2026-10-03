@@ -45,7 +45,12 @@
       </div>
       <div class="input-group">
         <label>كلمة المرور *</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required>
+        <div class="password-wrapper">
+          <input type="password" id="loginPassword" placeholder="••••••••" required>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('loginPassword', this)">
+            <span>👁️</span>
+          </button>
+        </div>
       </div>
       <button type="submit" class="btn-primary">دخول</button>
     </form>
@@ -61,14 +66,14 @@
       <button class="back-btn" onclick="goToSplash()">←</button>
     </div>
     <h2 class="screen-title">اختر نوع الحساب</h2>
-    <p class="screen-subtitle">سجل كمريض، صيدلية، أو دليفري</p>
+    <p class="screen-subtitle">كل حساب له مميزاته الخاصة</p>
     <div class="role-cards">
       <div class="role-card" onclick="selectRole('patient')">
         <div class="role-info">
           <div class="role-icon-circle blue">👤</div>
           <div class="role-text">
-            <h3>مريض</h3>
-            <p>اطلب دواءك من أقرب صيدلية</p>
+            <h3>أريد أشتري دواء</h3>
+            <p>تسجيل كمريض - اطلب من أي صيدلية</p>
           </div>
         </div>
         <span class="arrow">←</span>
@@ -77,8 +82,8 @@
         <div class="role-info">
           <div class="role-icon-circle green">🏥</div>
           <div class="role-text">
-            <h3>صيدلية</h3>
-            <p>سجل صيدليتك واستقبل طلبات</p>
+            <h3>أريد أبيع دواء</h3>
+            <p>تسجيل كصيدلية - استقبل طلبات</p>
           </div>
         </div>
         <span class="arrow">←</span>
@@ -87,8 +92,8 @@
         <div class="role-info">
           <div class="role-icon-circle orange">🛵</div>
           <div class="role-text">
-            <h3>دليفري</h3>
-            <p>اشتغل ووصّل الطلبات</p>
+            <h3>أريد أشتغل توصيل</h3>
+            <p>تسجيل كمندوب - اشتغل وقت ما تريد</p>
           </div>
         </div>
         <span class="arrow">←</span>
@@ -113,13 +118,27 @@
         <input type="tel" id="patientPhone" placeholder="07XX XXX XXXX" required>
       </div>
       <div class="input-group">
+        <label>البريد الإلكتروني (اختياري)</label>
+        <input type="email" id="patientEmail" placeholder="example@email.com">
+      </div>
+      <div class="input-group">
         <label>العنوان *</label>
         <input type="text" id="patientAddress" placeholder="بغداد - الكرادة" required>
       </div>
       <div class="input-group">
         <label>كلمة المرور *</label>
-        <input type="password" id="patientPassword" placeholder="••••••••" required>
+        <div class="password-wrapper">
+          <input type="password" id="patientPassword" placeholder="••••••••" required oninput="checkPasswordStrength('patientPassword', 'patientStrength')">
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('patientPassword', this)">
+            <span>👁️</span>
+          </button>
+        </div>
+        <div class="password-strength" id="patientStrength"></div>
       </div>
+      <label class="terms-check">
+        <input type="checkbox" required>
+        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+      </label>
       <button type="submit" class="btn-primary">إنشاء الحساب</button>
     </form>
   </div>
@@ -146,6 +165,10 @@
         <input type="tel" id="pharmacyPhone" placeholder="07XX XXX XXXX" required>
       </div>
       <div class="input-group">
+        <label>البريد الإلكتروني (اختياري)</label>
+        <input type="email" id="pharmacyEmail" placeholder="example@email.com">
+      </div>
+      <div class="input-group">
         <label>العنوان *</label>
         <input type="text" id="pharmacyAddress" placeholder="بغداد - الكرادة" required>
       </div>
@@ -155,8 +178,18 @@
       </div>
       <div class="input-group">
         <label>كلمة المرور *</label>
-        <input type="password" id="pharmacyPassword" placeholder="••••••••" required>
+        <div class="password-wrapper">
+          <input type="password" id="pharmacyPassword" placeholder="••••••••" required oninput="checkPasswordStrength('pharmacyPassword', 'pharmacyStrength')">
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('pharmacyPassword', this)">
+            <span>👁️</span>
+          </button>
+        </div>
+        <div class="password-strength" id="pharmacyStrength"></div>
       </div>
+      <label class="terms-check">
+        <input type="checkbox" required>
+        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+      </label>
       <button type="submit" class="btn-primary">إرسال الطلب</button>
     </form>
   </div>
@@ -166,7 +199,7 @@
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
     </div>
-    <h2 class="screen-title">تسجيل دليفري</h2>
+    <h2 class="screen-title">تسجيل مندوب</h2>
     <p class="screen-subtitle">انضم لفريق التوصيل</p>
     <form class="blue-form" onsubmit="submitDelivery(event); return false;">
       <div class="input-group">
@@ -178,6 +211,10 @@
         <input type="tel" id="deliveryPhone" placeholder="07XX XXX XXXX" required>
       </div>
       <div class="input-group">
+        <label>البريد الإلكتروني (اختياري)</label>
+        <input type="email" id="deliveryEmail" placeholder="example@email.com">
+      </div>
+      <div class="input-group">
         <label>المنطقة *</label>
         <input type="text" id="deliveryArea" placeholder="الكرادة" required>
       </div>
@@ -185,15 +222,25 @@
         <label>نوع المركبة *</label>
         <select id="vehicleType" required>
           <option value="">اختر...</option>
-          <option value="motorcycle">دراجة نارية</option>
-          <option value="car">سيارة</option>
-          <option value="bicycle">دراجة هوائية</option>
+          <option value="دراجة نارية">دراجة نارية</option>
+          <option value="سيارة">سيارة</option>
+          <option value="دراجة هوائية">دراجة هوائية</option>
         </select>
       </div>
       <div class="input-group">
         <label>كلمة المرور *</label>
-        <input type="password" id="deliveryPassword" placeholder="••••••••" required>
+        <div class="password-wrapper">
+          <input type="password" id="deliveryPassword" placeholder="••••••••" required oninput="checkPasswordStrength('deliveryPassword', 'deliveryStrength')">
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('deliveryPassword', this)">
+            <span>👁️</span>
+          </button>
+        </div>
+        <div class="password-strength" id="deliveryStrength"></div>
       </div>
+      <label class="terms-check">
+        <input type="checkbox" required>
+        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+      </label>
       <button type="submit" class="btn-primary">انضم الآن</button>
     </form>
   </div>
@@ -275,6 +322,7 @@
         <div class="mini-pulse"></div>
         <div class="mini-cross">✚</div>
       </div>
+      <h2 class="home-name" id="pharmacyGreeting">صيدلية النور</h2>
     </div>
 
     <div class="alert-banner">
@@ -300,7 +348,7 @@
         </svg>
         <span>نشر عرض جديد</span>
       </button>
-      <button class="action-btn" onclick="showToast('🚧 إدارة العروض - قريباً')">
+      <button class="action-btn" onclick="showToast('🚧 قريباً')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
@@ -451,7 +499,7 @@
       <button class="filter-tab">المكتملة</button>
     </div>
 
-    <div class="order-list" id="ordersListContent">
+    <div class="order-list">
       <div class="order-card">
         <div class="order-top">
           <span class="order-id">طلب رقم #1234</span>
@@ -494,6 +542,14 @@
       </div>
     </div>
 
+    <div class="setting-item" id="emailItem">
+      <div class="setting-info">
+        <h4>البريد الإلكتروني</h4>
+        <p id="infoEmail">-</p>
+      </div>
+      <span class="arrow" onclick="editField('email')">✏️</span>
+    </div>
+
     <div class="setting-item" id="addressItem">
       <div class="setting-info">
         <h4 id="addressLabel">العنوان</h4>
@@ -507,7 +563,6 @@
         <h4>نوع المركبة</h4>
         <p id="infoVehicle">-</p>
       </div>
-      <span class="arrow" onclick="editField('vehicle')">✏️</span>
     </div>
 
     <div class="setting-item" id="licenseItem">
@@ -572,17 +627,6 @@
           <p><strong>إلى:</strong> شارع 62 - الجادرية</p>
         </div>
       </div>
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب رقم #1233</span>
-          <span class="order-status available">+4,000</span>
-        </div>
-        <div class="order-info">
-          <p><strong>التاريخ:</strong> 2026/10/2 - 2:15 م</p>
-          <p><strong>من:</strong> صيدلية الحياة</p>
-          <p><strong>إلى:</strong> الكرادة - 909</p>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -622,7 +666,7 @@
     <div class="trust-card">
       <div class="trust-icon">✓</div>
       <h3>رسالة موثوقية</h3>
-      <p>صيدليتي تطبيق عراقي 100%، مبني بمعايير عالمية. نلتزم بحماية بياناتك وأموالك. جميع الصيدليات مرخّصة، وجميع السائقين موثوقين.</p>
+      <p>صيدليتي تطبيق عراقي 100%، مبني بمعايير عالمية. نلتزم بحماية بياناتك وأموالك.</p>
     </div>
 
     <div class="info-card">
@@ -635,7 +679,7 @@
     <div class="info-card">
       <div class="info-icon">⚙️</div>
       <h3>كيف نُفّذ؟</h3>
-      <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase لقاعدة البيانات، وVercel للنشر.</p>
+      <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase وVercel.</p>
     </div>
 
     <div class="info-card">
@@ -742,11 +786,11 @@
       <form class="modal-body" onsubmit="publishOffer(event); return false;">
         <div class="input-group">
           <label>عنوان العرض *</label>
-          <input type="text" id="offerTitle" placeholder="مثال: خصم 20% على المضادات الحيوية" required>
+          <input type="text" id="offerTitle" placeholder="مثال: خصم 20% على المضادات" required>
         </div>
         <div class="input-group">
           <label>تفاصيل العرض *</label>
-          <textarea id="offerDescription" rows="3" placeholder="اكتب تفاصيل العرض هنا..." required></textarea>
+          <textarea id="offerDescription" rows="3" placeholder="اكتب تفاصيل العرض..." required></textarea>
         </div>
         <div class="input-group">
           <label>تاريخ الانتهاء (اختياري)</label>
@@ -799,4 +843,4 @@
 
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
