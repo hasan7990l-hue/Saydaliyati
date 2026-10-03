@@ -4362,3 +4362,502 @@ body {
   border-radius: 10px;
   border-right: 3px solid var(--warning);
 }
+
+/* ============================================
+   🗺️ زر الخريطة (لوحة المندوب)
+   ============================================ */
+.map-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35);
+}
+
+.map-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+}
+
+.map-cta-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.map-cta-icon svg {
+  stroke: #FFFFFF;
+}
+
+.map-cta-content {
+  flex: 1;
+  min-width: 0;
+  color: #FFFFFF;
+}
+
+.map-cta-content h3 {
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.map-cta-content p {
+  font-size: 12px;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 500;
+}
+
+.map-cta-arrow {
+  color: #FFFFFF;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.map-cta:hover .map-cta-arrow {
+  transform: translateX(-4px);
+}
+
+/* ============================================
+   🗺️ صفحة الخريطة
+   ============================================ */
+.refresh-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.refresh-location-btn:hover {
+  background: var(--primary-light);
+}
+
+.refresh-location-btn svg {
+  stroke: var(--primary);
+}
+
+.gps-info-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gps-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gps-info-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.gps-info-row h4 {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+
+.gps-info-row p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.gps-coords {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  direction: ltr;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+#leafletMap,
+#trackingMap {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-loading {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+.map-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.map-loading p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin: 0;
+}
+
+.map-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.map-control-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.map-control-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.map-control-btn svg {
+  stroke: var(--primary);
+}
+
+/* ============================================
+   🗺️ الطلبات القريبة
+   ============================================ */
+.nearby-orders-section {
+  margin-bottom: 24px;
+}
+
+.nearby-count {
+  background: var(--primary);
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.nearby-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nearby-order-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nearby-order-card:hover {
+  border-color: var(--primary);
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.nearby-order-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.nearby-order-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nearby-order-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.nearby-order-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ============================================
+   🗺️ تتبع المندوب (للمريض)
+   ============================================ */
+.tracking-delivery-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tracking-delivery-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.tracking-delivery-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tracking-delivery-info h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+
+.tracking-delivery-info p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.tracking-call-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--success);
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.tracking-call-btn:hover {
+  background: #059669;
+  transform: scale(1.1);
+}
+
+.tracking-call-btn svg {
+  stroke: #FFFFFF;
+}
+
+.tracking-map-container {
+  height: 320px;
+}
+
+.tracking-status {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.tracking-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.tracking-status-row:last-child {
+  border-bottom: none;
+}
+
+.tracking-status-row span:first-child {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.tracking-status-row strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* شريط التقدم */
+.tracking-progress-section {
+  margin-bottom: 24px;
+}
+
+.tracking-progress-bar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tracking-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981 0%, #22C55E 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.tracking-steps {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tracking-step {
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.tracking-step.done {
+  color: var(--success);
+}
+
+.tracking-step.active {
+  color: var(--primary);
+  font-weight: 900;
+}
+
+/* ============================================
+   📍 أيقونات الخريطة المخصصة
+   ============================================ */
+.custom-map-marker {
+  background: transparent;
+  border: none;
+}
+
+.custom-marker-pin {
+  width: 40px;
+  height: 40px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 3px solid #FFFFFF;
+}
+
+.custom-marker-pin span {
+  transform: rotate(45deg);
+  font-size: 18px;
+}
+
+.marker-me .custom-marker-pin {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+}
+
+.marker-pharmacy .custom-marker-pin {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.marker-patient .custom-marker-pin {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.marker-delivery .custom-marker-pin {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+}
+
+/* ============================================
+   📱 موبايل
+   ============================================ */
+@media (max-width: 480px) {
+  .map-container {
+    height: 340px;
+  }
+  
+  .tracking-map-container {
+    height: 280px;
+  }
+  
+  .gps-info-card {
+    padding: 12px;
+  }
+}
