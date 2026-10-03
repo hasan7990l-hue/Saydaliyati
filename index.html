@@ -1632,6 +1632,50 @@
     </button>
   </div>
 </div>
+  <!-- نافذة تفاصيل الدواء -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="productModalName">اسم الدواء</h3>
+      <button class="modal-close" onclick="closeProductModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="product-modal-image">
+        <span id="productModalIcon">💊</span>
+      </div>
+      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
+
+      <div class="product-modal-info">
+        <div class="product-modal-row">
+          <span>السعر</span>
+          <strong id="productModalPrice">0 دينار</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>التصنيف</span>
+          <strong id="productModalCategory">—</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>متوفر</span>
+          <strong id="productModalStock" class="stock-available">متوفر</strong>
+        </div>
+      </div>
+
+      <!-- الكمية -->
+      <div class="quantity-selector">
+        <label>الكمية</label>
+        <div class="quantity-controls">
+          <button type="button" onclick="decreaseModalQuantity()">−</button>
+          <span id="modalQuantity">1</span>
+          <button type="button" onclick="increaseModalQuantity()">+</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
+        🛒 أضف إلى السلة
+      </button>
+    </div>
+  </div>
+</div>
   <!-- نافذة إضافة عرض -->
   <div class="modal-overlay" id="addOfferModal">
     <div class="modal-content">
