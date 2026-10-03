@@ -1,5 +1,5 @@
 // ============================================
-// صيدليتي - Clean Medical v3
+// صيدليتي - Clean Medical v4
 // ============================================
 
 console.log('صيدليتي - بدأ التحميل');
@@ -156,7 +156,7 @@ function switchTab(tab) {
 }
 
 // ============================================
-// فتح الصفحات
+// الملف الشخصي
 // ============================================
 function openProfile() {
   closeSidebar();
@@ -175,7 +175,18 @@ function openProfile() {
     typeLabel = 'دليفري';
   }
   
-  document.getElementById('profileAvatar').textContent = avatarText;
+  var avatarEl = document.getElementById('profileAvatar');
+  
+  if (user.avatar) {
+    avatarEl.textContent = '';
+    avatarEl.style.backgroundImage = 'url(' + user.avatar + ')';
+    avatarEl.style.backgroundSize = 'cover';
+    avatarEl.style.backgroundPosition = 'center';
+  } else {
+    avatarEl.textContent = avatarText;
+    avatarEl.style.backgroundImage = '';
+  }
+  
   document.getElementById('profileName').textContent = user.name || 'مستخدم';
   document.getElementById('profileType').textContent = typeLabel;
   document.getElementById('infoName').textContent = user.name || '-';
@@ -221,6 +232,125 @@ function openProfile() {
   showScreen('profileScreen');
 }
 
+// ============================================
+// تعديل صورة الملف الشخصي
+// ============================================
+function openImagePicker() {
+  var input = document.getElementById('avatarInput');
+  if (input) input.click();
+}
+
+function handleAvatarUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  
+  if (file.size > 2 * 1024 * 1024) {
+    showError('حجم الصورة كبير جداً - الحد الأقصى 2MB');
+    return;
+  }
+  
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var imageData = e.target.result;
+    
+    var avatarEl = document.getElementById('profileAvatar');
+    avatarEl.textContent = '';
+    avatarEl.style.backgroundImage = 'url(' + imageData + ')';
+    avatarEl.style.backgroundSize = 'cover';
+    avatarEl.style.backgroundPosition = 'center';
+    
+    var userStr = localStorage.getItem('saydaliyati_current_user');
+    var user = userStr ? JSON.parse(userStr) : {};
+    user.avatar = imageData;
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+    
+    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+    for (var i = 0; i < registrations.length; i++) {
+      if (registrations[i].phone === user.phone) {
+        registrations[i].avatar = imageData;
+        break;
+      }
+    }
+    localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    
+    showToast('تم تحديث الصورة');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============================================
+// نافذة تعديل البيانات
+// ============================================
+function openEditProfile() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  
+  document.getElementById('editName').value = user.name || '';
+  document.getElementById('editEmail').value = user.email || '';
+  
+  var editAddressLabel = document.getElementById('editAddressLabel');
+  var editAddress = document.getElementById('editAddress');
+  
+  if (user.type === 'delivery') {
+    editAddressLabel.textContent = 'المنطقة';
+    editAddress.value = user.area || '';
+  } else {
+    editAddressLabel.textContent = 'العنوان';
+    editAddress.value = user.address || '';
+  }
+  
+  document.getElementById('editProfileModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditProfile() {
+  document.getElementById('editProfileModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function saveProfile(event) {
+  if (event) event.preventDefault();
+  
+  var name = document.getElementById('editName').value.trim();
+  var email = document.getElementById('editEmail').value.trim();
+  var address = document.getElementById('editAddress').value.trim();
+  
+  if (!name) {
+    showError('الاسم مطلوب');
+    return;
+  }
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  
+  user.name = name;
+  user.email = email;
+  
+  if (user.type === 'delivery') {
+    user.area = address;
+  } else {
+    user.address = address;
+  }
+  
+  localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+  
+  var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+  for (var i = 0; i < registrations.length; i++) {
+    if (registrations[i].phone === user.phone) {
+      registrations[i] = user;
+      break;
+    }
+  }
+  localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+  
+  closeEditProfile();
+  openProfile();
+  showToast('تم حفظ التعديلات');
+}
+
+// ============================================
+// فتح الصفحات
+// ============================================
 function openWallet() {
   closeSidebar();
   showScreen('walletScreen');
@@ -270,12 +400,13 @@ function openAppDetails() {
   showScreen('appDetailsScreen');
 }
 
-function closeAllScreens() {
-  goToDashboardByType();
+function openContact() {
+  closeSidebar();
+  showScreen('contactScreen');
 }
 
-function editField(field) {
-  showToast('قريباً');
+function closeAllScreens() {
+  goToDashboardByType();
 }
 
 // ============================================
