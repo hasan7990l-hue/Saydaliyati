@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <!-- ========== شاشة البداية ========== -->
+  <!-- شاشة البداية -->
   <div class="screen active" id="splashScreen">
     <button class="theme-toggle" onclick="toggleTheme()">
       <span class="theme-icon">🌙</span>
@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <!-- ========== تسجيل الدخول ========== -->
+  <!-- تسجيل الدخول -->
   <div class="screen" id="loginScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -60,7 +60,7 @@
     </p>
   </div>
 
-  <!-- ========== اختيار الدور ========== -->
+  <!-- اختيار الدور -->
   <div class="screen" id="roleScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToSplash()">←</button>
@@ -70,7 +70,7 @@
     <div class="role-cards">
       <div class="role-card" onclick="selectRole('patient')">
         <div class="role-info">
-          <div class="role-icon-circle blue">👤</div>
+          <div class="role-icon-circle blue">م</div>
           <div class="role-text">
             <h3>أريد أشتري دواء</h3>
             <p>تسجيل كمريض - اطلب من أي صيدلية</p>
@@ -80,7 +80,7 @@
       </div>
       <div class="role-card" onclick="selectRole('pharmacy')">
         <div class="role-info">
-          <div class="role-icon-circle green">🏥</div>
+          <div class="role-icon-circle green">ص</div>
           <div class="role-text">
             <h3>أريد أبيع دواء</h3>
             <p>تسجيل كصيدلية - استقبل طلبات</p>
@@ -90,7 +90,7 @@
       </div>
       <div class="role-card" onclick="selectRole('delivery')">
         <div class="role-info">
-          <div class="role-icon-circle orange">🛵</div>
+          <div class="role-icon-circle orange">د</div>
           <div class="role-text">
             <h3>أريد أشتغل توصيل</h3>
             <p>تسجيل كمندوب - اشتغل وقت ما تريد</p>
@@ -101,7 +101,7 @@
     </div>
   </div>
 
-  <!-- ========== تسجيل المريض ========== -->
+  <!-- تسجيل المريض -->
   <div class="screen" id="patientScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -137,13 +137,13 @@
       </div>
       <label class="terms-check">
         <input type="checkbox" required>
-        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+        <span>أوافق على <a href="#" onclick="showToast('الشروط والأحكام قريباً'); return false;">الشروط والأحكام</a></span>
       </label>
       <button type="submit" class="btn-primary">إنشاء الحساب</button>
     </form>
   </div>
 
-  <!-- ========== تسجيل الصيدلية ========== -->
+  <!-- تسجيل الصيدلية -->
   <div class="screen" id="pharmacyScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -188,13 +188,13 @@
       </div>
       <label class="terms-check">
         <input type="checkbox" required>
-        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+        <span>أوافق على <a href="#" onclick="showToast('الشروط والأحكام قريباً'); return false;">الشروط والأحكام</a></span>
       </label>
       <button type="submit" class="btn-primary">إرسال الطلب</button>
     </form>
   </div>
 
-  <!-- ========== تسجيل الدليفري ========== -->
+  <!-- تسجيل الدليفري -->
   <div class="screen" id="deliveryScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToRoleSelection()">←</button>
@@ -239,24 +239,24 @@
       </div>
       <label class="terms-check">
         <input type="checkbox" required>
-        <span>أوافق على <a href="#" onclick="showToast('🚧 الشروط والأحكام'); return false;">الشروط والأحكام</a></span>
+        <span>أوافق على <a href="#" onclick="showToast('الشروط والأحكام قريباً'); return false;">الشروط والأحكام</a></span>
       </label>
       <button type="submit" class="btn-primary">انضم الآن</button>
     </form>
   </div>
 
-  <!-- ========== الصفحة الرئيسية للمريض ========== -->
+  <!-- الصفحة الرئيسية للمريض -->
   <div class="screen" id="homeScreen">
     <div class="home-header">
       <div class="greeting-section">
-        <h1 class="greeting-title">أهلاً بك يا <span id="userGreeting">أحمد</span> 👋</h1>
+        <h1 class="greeting-title">أهلاً بك يا <span id="userGreeting">أحمد</span></h1>
         <p class="greeting-sub">شنو محتاج اليوم؟</p>
       </div>
     </div>
 
     <div class="offers-section">
       <div class="section-header">
-        <h3>📢 عروض الصيدليات</h3>
+        <h3>عروض الصيدليات</h3>
         <a href="#">عرض الكل</a>
       </div>
       <div class="offers-scroll" id="offersList">
@@ -294,7 +294,7 @@
           <h4>صيدلية النور</h4>
           <p>الكرادة - 500 م</p>
           <div class="pharmacy-meta">
-            <span class="rating">⭐ 4.8</span>
+            <span class="rating">4.8 ★</span>
             <span class="badge">توصيل فوري</span>
           </div>
         </div>
@@ -306,7 +306,7 @@
           <h4>صيدلية الحياة</h4>
           <p>الجادرية - 1.2 كم</p>
           <div class="pharmacy-meta">
-            <span class="rating">⭐ 4.6</span>
+            <span class="rating">4.6 ★</span>
             <span class="badge">توصيل فوري</span>
           </div>
         </div>
@@ -315,11 +315,11 @@
     </div>
   </div>
 
-  <!-- ========== لوحة الصيدلية ========== -->
+  <!-- لوحة الصيدلية -->
   <div class="screen" id="pharmacyDashboard">
     <div class="home-header">
       <div class="greeting-section">
-        <h1 class="greeting-title">أهلاً بك يا <span id="pharmacyGreeting">صيدلية النور</span> 🏥</h1>
+        <h1 class="greeting-title">أهلاً بك يا <span id="pharmacyGreeting">صيدلية النور</span></h1>
         <p class="greeting-sub">إدارة صيدليتك اليوم</p>
       </div>
     </div>
@@ -337,23 +337,6 @@
         <p>يوجد 3 أدوية قاربت على الانتهاء - راجع المخزون</p>
       </div>
       <button class="alert-action">عرض</button>
-    </div>
-
-    <div class="pharmacy-actions">
-      <button class="action-btn primary" onclick="openAddOfferModal()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        <span>نشر عرض جديد</span>
-      </button>
-      <button class="action-btn" onclick="showToast('🚧 قريباً')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-        </svg>
-        <span>عروضي</span>
-      </button>
     </div>
 
     <div class="stats-grid">
@@ -411,11 +394,11 @@
     </div>
   </div>
 
-  <!-- ========== لوحة الدليفري ========== -->
+  <!-- لوحة الدليفري -->
   <div class="screen" id="deliveryDashboard">
     <div class="home-header">
       <div class="greeting-section">
-        <h1 class="greeting-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span> 🛵</h1>
+        <h1 class="greeting-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span></h1>
         <p class="greeting-sub">جاهز للعمل اليوم؟</p>
       </div>
     </div>
@@ -484,7 +467,7 @@
     </div>
   </div>
 
-  <!-- ========== صفحة الطلبات ========== -->
+  <!-- صفحة الطلبات -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -513,7 +496,37 @@
     </div>
   </div>
 
-  <!-- ========== الملف الشخصي ========== -->
+  <!-- صفحة التنبيهات -->
+  <div class="screen" id="notificationsScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="goToDashboardByType()">←</button>
+    </div>
+    <h2 class="screen-title">التنبيهات</h2>
+    <p class="screen-subtitle">آخر الإشعارات</p>
+
+    <div class="order-list">
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">طلب جديد</span>
+          <span class="order-status new">الآن</span>
+        </div>
+        <div class="order-info">
+          <p>وصلك طلب جديد من أحمد علي - 23,000 دينار</p>
+        </div>
+      </div>
+      <div class="order-card">
+        <div class="order-top">
+          <span class="order-id">دواء قارب على الانتهاء</span>
+          <span class="order-status new">قبل ساعة</span>
+        </div>
+        <div class="order-info">
+          <p>3 أدوية ستنتهي صلاحيتها خلال 30 يوم</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- صفحة الملف الشخصي -->
   <div class="screen" id="profileScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -521,65 +534,46 @@
     <h2 class="screen-title">الملف الشخصي</h2>
 
     <div class="profile-header">
-      <div class="profile-avatar" id="profileAvatar">👤</div>
+      <div class="profile-avatar" id="profileAvatar">م</div>
       <h3 id="profileName">أحمد</h3>
       <p id="profileType">مريض</p>
     </div>
 
-    <div class="setting-item">
-      <div class="setting-info">
-        <h4>الاسم الكامل</h4>
-        <p id="infoName">-</p>
+    <div class="profile-card">
+      <div class="profile-row">
+        <span class="profile-label">الاسم الكامل</span>
+        <span class="profile-value" id="infoName">-</span>
       </div>
-      <span class="arrow" onclick="editField('name')">✏️</span>
-    </div>
-
-    <div class="setting-item locked">
-      <div class="setting-info">
-        <h4>رقم الهاتف 🔒</h4>
-        <p id="infoPhone">-</p>
+      <div class="profile-row locked">
+        <span class="profile-label">رقم الهاتف</span>
+        <span class="profile-value" id="infoPhone">-</span>
       </div>
-    </div>
-
-    <div class="setting-item" id="emailItem">
-      <div class="setting-info">
-        <h4>البريد الإلكتروني</h4>
-        <p id="infoEmail">-</p>
+      <div class="profile-row" id="emailRow">
+        <span class="profile-label">البريد الإلكتروني</span>
+        <span class="profile-value" id="infoEmail">-</span>
       </div>
-      <span class="arrow" onclick="editField('email')">✏️</span>
-    </div>
-
-    <div class="setting-item" id="addressItem">
-      <div class="setting-info">
-        <h4 id="addressLabel">العنوان</h4>
-        <p id="infoAddress">-</p>
+      <div class="profile-row" id="addressRow">
+        <span class="profile-label" id="addressLabel">العنوان</span>
+        <span class="profile-value" id="infoAddress">-</span>
       </div>
-      <span class="arrow" onclick="editField('address')">✏️</span>
-    </div>
-
-    <div class="setting-item" id="vehicleItem">
-      <div class="setting-info">
-        <h4>نوع المركبة</h4>
-        <p id="infoVehicle">-</p>
+      <div class="profile-row" id="vehicleRow">
+        <span class="profile-label">نوع المركبة</span>
+        <span class="profile-value" id="infoVehicle">-</span>
+      </div>
+      <div class="profile-row locked" id="licenseRow">
+        <span class="profile-label">رقم الترخيص</span>
+        <span class="profile-value" id="infoLicense">-</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">تاريخ التسجيل</span>
+        <span class="profile-value" id="infoDate">-</span>
       </div>
     </div>
 
-    <div class="setting-item" id="licenseItem">
-      <div class="setting-info">
-        <h4>رقم الترخيص 🔒</h4>
-        <p id="infoLicense">-</p>
-      </div>
-    </div>
-
-    <div class="setting-item">
-      <div class="setting-info">
-        <h4>تاريخ التسجيل</h4>
-        <p id="infoDate">-</p>
-      </div>
-    </div>
+    <button class="btn-primary" onclick="editField('profile')">تعديل البيانات</button>
   </div>
 
-  <!-- ========== محفظة الدليفري ========== -->
+  <!-- صفحة محفظة الدليفري -->
   <div class="screen" id="walletScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -589,7 +583,7 @@
     <div class="wallet-card">
       <p class="wallet-label">الرصيد الحالي</p>
       <h2 class="wallet-balance">45,000 <span>دينار</span></h2>
-      <button class="btn-withdraw" onclick="showToast('🚧 قريباً - طلب سحب')">💰 طلب سحب</button>
+      <button class="btn-withdraw" onclick="showToast('طلب سحب قريباً')">طلب سحب</button>
     </div>
 
     <div class="stats-grid">
@@ -629,7 +623,7 @@
     </div>
   </div>
 
-  <!-- ========== من نحن ========== -->
+  <!-- صفحة من نحن -->
   <div class="screen" id="aboutScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -637,25 +631,22 @@
     <h2 class="screen-title">من نحن</h2>
 
     <div class="info-card">
-      <div class="info-icon">🏥</div>
       <h3>صيدليتي</h3>
       <p>منصة عراقية حديثة تربط المرضى بأقرب الصيدليات وتوصل الدواء لباب البيت.</p>
     </div>
 
     <div class="info-card">
-      <div class="info-icon">🎯</div>
       <h3>رؤيتنا</h3>
       <p>أن نكون المنصة الأولى لتوصيل الأدوية في العراق، ونوفر الرعاية الصحية للجميع بسهولة.</p>
     </div>
 
     <div class="info-card">
-      <div class="info-icon">💚</div>
       <h3>قيمنا</h3>
       <p>الموثوقية، السرعة، الأمانة، والاهتمام بصحة كل عراقي.</p>
     </div>
   </div>
 
-  <!-- ========== تفاصيل التطبيق ========== -->
+  <!-- صفحة تفاصيل التطبيق -->
   <div class="screen" id="appDetailsScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -669,27 +660,24 @@
     </div>
 
     <div class="info-card">
-      <div class="info-icon">👨‍💻</div>
       <h3>المبرمج</h3>
       <p><strong>حسن عدنان</strong></p>
       <p>مطوّر عراقي، صاحب فكرة صيدليتي ورئيس فريق التطوير.</p>
     </div>
 
     <div class="info-card">
-      <div class="info-icon">⚙️</div>
       <h3>كيف نُفّذ؟</h3>
       <p>التطبيق مبني بـ HTML و CSS و JavaScript، مع Firebase وVercel.</p>
     </div>
 
     <div class="info-card">
-      <div class="info-icon">📱</div>
       <h3>الإصدار</h3>
       <p>الإصدار 1.0.0</p>
       <p>آخر تحديث: أكتوبر 2026</p>
     </div>
   </div>
 
-  <!-- ========== الإعدادات ========== -->
+  <!-- صفحة الإعدادات -->
   <div class="screen" id="settingsScreen">
     <div class="top-bar">
       <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -718,17 +706,17 @@
       </label>
     </div>
 
-    <div class="setting-item clickable" onclick="showToast('🚧 قريباً')">
+    <div class="setting-item clickable" onclick="showToast('قريباً')">
       <div class="setting-info">
         <h4>تغيير كلمة المرور</h4>
       </div>
       <span class="arrow">←</span>
     </div>
 
-    <button class="btn-logout" onclick="logout()">🚪 تسجيل الخروج</button>
+    <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
   </div>
 
-  <!-- ========== القائمة الجانبية ========== -->
+  <!-- القائمة الجانبية -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -744,10 +732,6 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>الملف الشخصي</span>
       </li>
-      <li onclick="openOrders()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>سجل الطلبات</span>
-      </li>
       <li onclick="openSettings()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span>الإعدادات</span>
@@ -760,7 +744,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         <span>تفاصيل التطبيق</span>
       </li>
-      <li onclick="showToast('🚧 قريباً')">
+      <li onclick="showToast('قريباً')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         <span>تواصل معنا</span>
       </li>
@@ -775,11 +759,11 @@
     </div>
   </div>
 
-  <!-- ========== نافذة إضافة عرض ========== -->
+  <!-- نافذة إضافة عرض -->
   <div class="modal-overlay" id="addOfferModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>📢 نشر عرض جديد</h3>
+        <h3>نشر عرض جديد</h3>
         <button class="modal-close" onclick="closeAddOfferModal()">×</button>
       </div>
       <form class="modal-body" onsubmit="publishOffer(event); return false;">
@@ -800,8 +784,9 @@
     </div>
   </div>
 
-  <!-- ========== شريط التنقل السفلي ========== -->
+  <!-- شريط التنقل السفلي -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
+    <!-- للمريض والدليفري -->
     <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -816,11 +801,18 @@
       </svg>
       <small>التنبيهات</small>
     </button>
-    <button class="nav-btn nav-center" data-tab="home" onclick="switchTab('home')">
+    <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
       <div class="nav-center-icon">
         <span class="nav-cross">✚</span>
       </div>
       <small>الرئيسية</small>
+    </button>
+    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <small>حسابي</small>
     </button>
     <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -830,15 +822,8 @@
       </svg>
       <small>المزيد</small>
     </button>
-    <button class="nav-btn" data-tab="myaccount" onclick="switchTab('myaccount')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      <small>حسابي</small>
-    </button>
   </div>
 
   <script src="script.js"></script>
 </body>
-  </html>
+</html>
