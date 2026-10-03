@@ -502,7 +502,101 @@
       </div>
     </div>
   </div>
+   <!-- صفحة طلب بروشتة -->
+<div class="screen" id="prescriptionScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closePrescriptionScreen()">←</button>
+  </div>
+  <h2 class="screen-title">طلب بالروشتة 📸</h2>
+  <p class="screen-subtitle">ارفع صورة وصفة الطبيب وسنجهز طلبك</p>
 
+  <form class="blue-form" onsubmit="submitPrescription(event); return false;">
+
+    <!-- رفع الصورة -->
+    <div class="input-group">
+      <label>صورة الوصفة *</label>
+      <div class="prescription-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
+        <div class="prescription-upload-placeholder" id="prescriptionPlaceholder">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <p class="prescription-upload-title">اضغط لرفع الصورة</p>
+          <p class="prescription-upload-sub">JPG, PNG - الحد الأقصى 5MB</p>
+        </div>
+        <div class="prescription-preview" id="prescriptionPreview" style="display:none;">
+          <img id="prescriptionImage" src="" alt="الروشتة">
+          <button type="button" class="prescription-remove-btn" onclick="removePrescriptionImage(event)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
+    </div>
+
+    <!-- العنوان -->
+    <div class="input-group">
+      <label>عنوان التوصيل *</label>
+      <input type="text" id="prescriptionAddress" placeholder="بغداد - الكرادة - شارع 62" required>
+    </div>
+
+    <!-- ملاحظات -->
+    <div class="input-group">
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="prescriptionNotes" rows="3" placeholder="مثال: أحتاج الدواء اليوم قبل الساعة 8 مساءً"></textarea>
+    </div>
+
+    <!-- اختيار صيدلية -->
+    <div class="input-group">
+      <label>صيدلية مفضلة (اختياري)</label>
+      <select id="prescriptionPharmacy">
+        <option value="">— دع النظام يختار الأقرب —</option>
+        <option value="صيدلية النور">صيدلية النور - الكرادة</option>
+        <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
+        <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
+      </select>
+    </div>
+
+    <!-- نوع التوصيل -->
+    <div class="input-group">
+      <label>نوع التوصيل *</label>
+      <div class="delivery-options">
+        <label class="delivery-option active">
+          <input type="radio" name="deliveryType" value="fast" checked>
+          <div class="delivery-option-content">
+            <span class="delivery-option-icon">⚡</span>
+            <div>
+              <h4>توصيل فوري</h4>
+              <p>خلال 30 دقيقة</p>
+            </div>
+          </div>
+        </label>
+        <label class="delivery-option">
+          <input type="radio" name="deliveryType" value="scheduled">
+          <div class="delivery-option-content">
+            <span class="delivery-option-icon">🕐</span>
+            <div>
+              <h4>توصيل مجدول</h4>
+              <p>حدد الوقت</p>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      إرسال الطلب للصيدلية
+    </button>
+  </form>
+</div>
   <!-- صفحة طلباتي (ديناميكية حسب نوع المستخدم) -->
   <div class="screen" id="myOrdersScreen">
     <div class="top-bar">
