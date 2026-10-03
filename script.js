@@ -1299,3 +1299,322 @@ function requestNotificationPermission() {
 // نهاية الملف
 // ============================================
 console.log('صيدليتي - اكتمل التحميل');
+
+// ============================================
+// 🔔 نظام الإشعارات الحقيقي
+// ============================================
+
+// 1. طلب إذن الإشعارات
+function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    showToast('المتصفح لا يدعم الإشعارات');
+    return Promise.resolve('unsupported');
+  }
+  
+  return Notification.requestPermission().then(function(permission) {
+    if (permission === 'granted') {
+      console.log('✅ الإشعارات مفعّلة');
+      showToast('الإشعارات مفعّلة ✅');
+      startRadarSystem();
+    } else {
+      console.log('❌ الإشعارات مرفوضة');
+      showToast('يجب تفعيل الإشعارات لاستقبال الطلبات');
+    }
+    return permission;
+  });
+}
+
+// 2. إرسال إشعار عبر Service Worker
+function sendNotification(options) {
+  if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
+    console.log('⚠️ Service Worker غير متاح');
+    addInternalNotification(options.type || 'system', options.title, options.body);
+    vibrateDevice([200, 100, 200]);
+    return;
+  }
+  
+  navigator.serviceWorker.controller.postMessage({
+    type: 'SHOW_NOTIFICATION',
+    payload: {
+      title: options.title,
+      body: options.body,
+      icon: options.icon || '/icon-192.png',
+      vibrate: options.vibrate || [200, 100, 200, 100, 200],
+      tag: options.tag || ('saydaliyati-' + Date.now()),
+      requireInteraction: options.requireInteraction || false,
+      data: {
+        orderId: options.orderId || null,
+        type: options.type || 'order',
+        url: options.url || '/'
+      },
+      actions: options.actions || []
+    }
+  });
+  
+  vibrateDevice(options.vibrate || [200, 100, 200]);
+}
+
+// 3. الإشعارات الداخلية (احتياطي)
+function addInternalNotification(type, title, message) {
+  var notif = {
+    id: 'NOTIF_' + Date.now(),
+    type: type,
+    title: title,
+    message: message,
+    icon: getNotifIcon(type),
+    read: false,
+    date: new Date().toISOString()
+  };
+  
+  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  notifs.unshift(notif);
+  if (notifs.length > 50) notifs = notifs.slice(0, 50);
+  localStorage.setItem('saydaliyati_notifications', JSON.stringify(notifs));
+  
+  updateNotifBadge();
+}
+
+function getNotifIcon(type) {
+  var icons = {
+    'order': '📦', 'accepted': '✅', 'delivered': '🎉',
+    'stock': '⚠️', 'offer': '📢', 'wallet': '💰', 'system': '⚙️'
+  };
+  return icons[type] || '🔔';
+}
+
+// 4. اهتزاز
+function vibrateDevice(pattern) {
+  if (navigator.vibrate) {
+    navigator.vibrate(pattern);
+  }
+}
+
+// 5. شارة الإشعارات
+function updateNotifBadge() {
+  var navBtn = document.querySelector('.nav-btn[data-tab="notifications"]');
+  if (!navBtn) return;
+  
+  var oldBadge = navBtn.querySelector('.notif-badge');
+  if (oldBadge) oldBadge.remove();
+  
+  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  var unreadCount = notifs.filter(function(n) { return !n.read; }).length;
+  
+  if (unreadCount > 0) {
+    var badge = document.createElement('span');
+    badge.className = 'notif-badge';
+    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+    navBtn.appendChild(badge);
+  }
+}
+
+// 6. نظام الرادار
+var radarSystemActive = false;
+var radarCheckInterval = null;
+
+function startRadarSystem() {
+  if (radarSystemActive) return;
+  radarSystemActive = true;
+  console.log('🚀 نظام الرادار يعمل...');
+  
+  if (radarCheckInterval) clearInterval(radarCheckInterval);
+  radarCheckInterval = setInterval(function() {
+    checkForNewOrders();
+  }, 10000);
+  
+  checkForNewOrders();
+}
+
+function stopRadarSystem() {
+  radarSystemActive = false;
+  if (radarCheckInterval) {
+    clearInterval(radarCheckInterval);
+    radarCheckInterval = null;
+  }
+  console.log('🛑 نظام الرادار متوقف');
+}
+
+// 7. فحص الطلبات
+function checkForNewOrders() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return;
+  
+  var user = JSON.parse(userStr);
+  
+  if (user.type === 'delivery' && radarActive) {
+    simulateDeliveryOrder(user);
+  }
+  if (user.type === 'pharmacy') {
+    simulatePharmacyOrder(user);
+  }
+}
+
+function simulateDeliveryOrder(user) {
+  var now = Date.now();
+  if (!window.lastDeliveryNotifTime || (now - window.lastDeliveryNotifTime) > 30000) {
+    window.lastDeliveryNotifTime = now;
+    
+    var orderId = Math.floor(1000 + Math.random() * 9000);
+    var pharmacy = ['صيدلية النور', 'صيدلية الحياة', 'صيدلية الشفاء'][Math.floor(Math.random() * 3)];
+    var commission = [3000, 4000, 5000][Math.floor(Math.random() * 3)];
+    var distance = (2 + Math.random() * 3).toFixed(1);
+    
+    sendNotification({
+      title: '📦 طلب توصيل جديد #' + orderId,
+      body: pharmacy + ' • ' + distance + ' كم • ' + commission + ' دينار',
+      type: 'order',
+      orderId: orderId,
+      vibrate: [200, 100, 200, 100, 200],
+      requireInteraction: true,
+      actions: [
+        { action: 'accept', title: '✅ قبول' },
+        { action: 'reject', title: '❌ رفض' }
+      ]
+    });
+  }
+}
+
+function simulatePharmacyOrder(user) {
+  var now = Date.now();
+  if (!window.lastPharmacyNotifTime || (now - window.lastPharmacyNotifTime) > 45000) {
+    window.lastPharmacyNotifTime = now;
+    
+    var orderId = Math.floor(1000 + Math.random() * 9000);
+    var patientName = ['أحمد علي', 'سارة محمد', 'علي حسن', 'فاطمة أحمد'][Math.floor(Math.random() * 4)];
+    var total = [15000, 23000, 18000, 12000][Math.floor(Math.random() * 4)];
+    
+    sendNotification({
+      title: '💊 طلب دواء جديد #' + orderId,
+      body: patientName + ' • ' + total.toLocaleString() + ' دينار',
+      type: 'order',
+      orderId: orderId,
+      vibrate: [300, 100, 300],
+      requireInteraction: true,
+      actions: [
+        { action: 'accept', title: '✅ قبول' },
+        { action: 'reject', title: '❌ رفض' }
+      ]
+    });
+  }
+}
+
+// 8. عند الضغط على الإشعار
+function handleNotificationClick(data) {
+  console.log('🖱️ تم الضغط على الإشعار:', data);
+  
+  var action = data.action;
+  var orderId = data.orderId;
+  
+  vibrateDevice([100]);
+  
+  if (action === 'reject') {
+    showToast('تم رفض الطلب #' + orderId);
+    return;
+  }
+  
+  if (action === 'accept' || action === 'open') {
+    acceptOrderFromNotification(orderId);
+    
+    setTimeout(function() {
+      goToMyOrders();
+      setTimeout(function() {
+        scrollToOrderAndHighlight(orderId);
+      }, 300);
+    }, 100);
+  }
+}
+
+// 9. قبول الطلب من الإشعار
+function acceptOrderFromNotification(orderId) {
+  showToast('✅ تم قبول الطلب #' + orderId);
+  
+  var acceptedOrders = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
+  acceptedOrders.unshift({
+    id: orderId,
+    acceptedAt: new Date().toISOString()
+  });
+  localStorage.setItem('saydaliyati_accepted_orders', JSON.stringify(acceptedOrders));
+  
+  addInternalNotification('accepted', '✅ تم قبول الطلب #' + orderId, 'جاري التوصيل');
+  updateNotifBadge();
+}
+
+// 10. تمرير وتمييز الطلب
+function scrollToOrderAndHighlight(orderId) {
+  var cards = document.querySelectorAll('.priority-card, .order-card');
+  cards.forEach(function(card) {
+    var text = card.textContent || '';
+    if (text.indexOf('#' + orderId) !== -1 || text.indexOf(String(orderId)) !== -1) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('highlighted');
+      setTimeout(function() {
+        card.classList.remove('highlighted');
+      }, 3000);
+    }
+  });
+}
+
+// 11. فحص URL
+function checkUrlForOrder() {
+  var params = new URLSearchParams(window.location.search);
+  var orderId = params.get('order');
+  var action = params.get('action');
+  
+  if (orderId) {
+    console.log('🎯 orderId من URL:', orderId, '| action:', action);
+    
+    if (action === 'accept') {
+      acceptOrderFromNotification(orderId);
+    }
+    
+    setTimeout(function() {
+      goToMyOrders();
+      setTimeout(function() {
+        scrollToOrderAndHighlight(orderId);
+      }, 500);
+    }, 300);
+    
+    window.history.replaceState({}, '', '/');
+  }
+}
+
+// 12. عند التحميل
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(checkUrlForOrder, 500);
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (userStr && Notification.permission === 'granted') {
+    startRadarSystem();
+  }
+  
+  setTimeout(function() {
+    if (userStr && Notification.permission === 'default') {
+      var user = JSON.parse(userStr);
+      if (user.type === 'delivery' || user.type === 'pharmacy') {
+        requestNotificationPermission();
+      }
+    }
+  }, 3000);
+});
+
+// 13. تكامل مع الرادار
+var originalToggleRadar = window.toggleRadar;
+window.toggleRadar = function() {
+  originalToggleRadar.apply(this, arguments);
+  
+  if (radarActive) {
+    if (Notification.permission !== 'granted') {
+      requestNotificationPermission();
+    }
+    startRadarSystem();
+  } else {
+    stopRadarSystem();
+  }
+};
+
+// 14. تكامل مع تسجيل الخروج
+var originalLogout = window.logout;
+window.logout = function() {
+  stopRadarSystem();
+  originalLogout.apply(this, arguments);
+};
