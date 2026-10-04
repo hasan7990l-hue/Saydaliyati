@@ -3101,8 +3101,10 @@ function focusOnOrder(lat, lng, orderId) {
   
   // ارسم المسار من موقعي إلى الطلب
   drawRoute(myLocation, [lat, lng]);
+    showToast('📍 تم تحديد موقع الطلب #' + orderId);
   
-  showToast('📍 تم تحديد موقع الطلب #' + orderId);
+  // ✅ إظهار قسم Waze / Google Maps
+  setDestination(lat, lng);
 }
 
 // ============================================
