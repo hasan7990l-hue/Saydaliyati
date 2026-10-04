@@ -3346,3 +3346,129 @@ function refreshTracking() {
   showToast('🔄 جارٍ تحديث موقع المندوب...');
   // في الواقع، هنا نطلب الموقع من Firebase
 }
+
+// ============================================
+// 🧭 نظام التنقل (Waze / Google Maps)
+// ============================================
+
+var currentDestination = null;
+
+// تعيين وجهة حالية
+function setDestination(lat, lng) {
+  currentDestination = { lat: lat, lng: lng };
+  
+  var navSection = document.getElementById('navigateSection');
+  if (navSection) navSection.style.display = 'block';
+}
+
+// ============================================
+// فتح في Waze (للمندوب)
+// ============================================
+function openInWaze() {
+  if (!currentDestination) {
+    showToast('⚠️ اختر طلباً أولاً');
+    return;
+  }
+  
+  var lat = currentDestination.lat;
+  var lng = currentDestination.lng;
+  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
+  
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  var isAndroid = /android/i.test(userAgent);
+  
+  if (isIOS) {
+    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
+    setTimeout(function() {
+      window.open(wazeUrl, '_blank');
+    }, 1500);
+  } else if (isAndroid) {
+    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
+    setTimeout(function() {
+      window.open(wazeUrl, '_blank');
+    }, 1500);
+  } else {
+    window.open(wazeUrl, '_blank');
+  }
+  
+  showToast('🚗 جارٍ فتح Waze...');
+}
+
+// ============================================
+// فتح في Google Maps (للمندوب)
+// ============================================
+function openInGoogleMaps() {
+  if (!currentDestination) {
+    showToast('⚠️ اختر طلباً أولاً');
+    return;
+  }
+  
+  var lat = currentDestination.lat;
+  var lng = currentDestination.lng;
+  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
+  
+  window.open(googleUrl, '_blank');
+  showToast('🗺️ جارٍ فتح Google Maps...');
+}
+
+// ============================================
+// فتح المسار من صفحة التتبع (للمريض)
+// ============================================
+function openTrackingInWaze() {
+  var pharmacyLoc = PHARMACY_LOCATIONS['صيدلية النور'];
+  if (!pharmacyLoc) {
+    showToast('⚠️ لم يتم تحديد الموقع');
+    return;
+  }
+  
+  var lat = pharmacyLoc[0];
+  var lng = pharmacyLoc[1];
+  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
+  
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+  var isAndroid = /android/i.test(userAgent);
+  
+  if (isIOS) {
+    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
+    setTimeout(function() {
+      window.open(wazeUrl, '_blank');
+    }, 1500);
+  } else if (isAndroid) {
+    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
+    setTimeout(function() {
+      window.open(wazeUrl, '_blank');
+    }, 1500);
+  } else {
+    window.open(wazeUrl, '_blank');
+  }
+  
+  showToast('🚗 جارٍ فتح Waze...');
+}
+
+function openTrackingInGoogle() {
+  var pharmacyLoc = PHARMACY_LOCATIONS['صيدلية النور'];
+  if (!pharmacyLoc) {
+    showToast('⚠️ لم يتم تحديد الموقع');
+    return;
+  }
+  
+  var lat = pharmacyLoc[0];
+  var lng = pharmacyLoc[1];
+  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
+  
+  window.open(googleUrl, '_blank');
+  showToast('🗺️ جارٍ فتح Google Maps...');
+}
+
+// ============================================
+// تفعيل قسم التنقل عند اختيار طلب
+// ============================================
+var originalFocusOnOrder = window.focusOnOrder;
+window.focusOnOrder = function(lat, lng, orderId) {
+  if (originalFocusOnOrder) {
+    originalFocusOnOrder(lat, lng, orderId);
+  }
+  setDestination(lat, lng);
+};
