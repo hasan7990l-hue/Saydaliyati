@@ -2106,73 +2106,62 @@
       </form>
     </div>
   </div>
+   <!-- Bottom Sheet: اختيار نظام الملاحة -->
+<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="closeNavSheet()"></div>
+<div class="nav-sheet" id="navSheet">
+  <div class="nav-sheet-handle"></div>
+  
+  <h3 class="nav-sheet-title">
+    <span>🧭</span>
+    اختر كيف تريد الانتقال
+  </h3>
 
-  <!-- Bottom Sheet: طلب جديد -->
-  <div class="bottom-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
-  <div class="bottom-sheet" id="orderSheet">
-    <div class="bottom-sheet-handle"></div>
-
-    <div class="sheet-success-icon">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-    </div>
-
-    <h2 class="sheet-title">طلب جديد!</h2>
-
-    <div class="sheet-info">
-      <div class="sheet-row">
-        <span class="sheet-icon">🏪</span>
-        <span class="sheet-label">من:</span>
-        <span class="sheet-value">صيدلية النور - الكرادة</span>
+  <div class="nav-sheet-options">
+    <!-- Waze -->
+    <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
+      <div class="nav-sheet-btn-text">
+        <h4>Waze</h4>
+        <p>الأفضل للملاحة والزحام</p>
       </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">🏠</span>
-        <span class="sheet-label">إلى:</span>
-        <span class="sheet-value">الجادرية، شارع 62</span>
+      <div class="nav-sheet-btn-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+          <path d="M18.5 5h-2V3.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5V5h-3V3.5C10.5 2.7 9.8 2 9 2S7.5 2.7 7.5 3.5V5h-2C4.1 5 3 6.1 3 7.5v4c0 .8.7 1.5 1.5 1.5h.7l.4 6.3c0 .9.8 1.7 1.7 1.7h6.4c.9 0 1.7-.8 1.7-1.7l.4-6.3h.7c.8 0 1.5-.7 1.5-1.5v-4C19 6.1 19.9 5 18.5 5zM9 9.5c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm6 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"/>
+        </svg>
       </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">📍</span>
-        <span class="sheet-label">المسافة:</span>
-        <span class="sheet-value">2.5 كم</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">💰</span>
-        <span class="sheet-label">العمولة:</span>
-        <span class="sheet-value highlight-green">3,000 دينار</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">⏱️</span>
-        <span class="sheet-label">الوقت:</span>
-        <span class="sheet-value">15 دقيقة</span>
-      </div>
-      <div class="sheet-row">
-        <span class="sheet-icon">💵</span>
-        <span class="sheet-label">الدفع:</span>
-        <span class="sheet-value">كاش</span>
-      </div>
-    </div>
-
-    <div class="sheet-timer">
-      <div class="timer-bar">
-        <div class="timer-progress" id="timerProgress"></div>
-      </div>
-      <div class="timer-text">
-        <span>10 ثواني</span>
-        <span>70%</span>
-        <span>30%</span>
-      </div>
-    </div>
-
-    <button class="sheet-accept-btn" onclick="acceptFromSheet()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-      قبول الطلب
     </button>
 
-    <button class="sheet-reject-btn" onclick="closeOrderSheet()">رفض</button>
+    <!-- Google Maps -->
+    <button class="nav-sheet-btn google-btn" onclick="chooseNavigation('google')">
+      <div class="nav-sheet-btn-text">
+        <h4>Google Maps</h4>
+        <p>الخريطة الأشهر عالمياً</p>
+      </div>
+      <div class="nav-sheet-btn-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+    </button>
+
+    <!-- عرض على الخريطة -->
+    <button class="nav-sheet-btn map-btn" onclick="chooseNavigation('map')">
+      <div class="nav-sheet-btn-text">
+        <h4>عرض على الخريطة هنا</h4>
+        <p>داخل التطبيق</p>
+      </div>
+      <div class="nav-sheet-btn-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+    </button>
   </div>
+
+  <button class="nav-sheet-cancel" onclick="closeNavSheet()">
+    إلغاء
+  </button>
+</div>
 
   <!-- شريط التنقل السفلي -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
