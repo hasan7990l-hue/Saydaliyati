@@ -537,8 +537,8 @@
         </div>
       </div>
     </div>
-  </div>
-  <!-- صفحة طلباتي (ديناميكية) -->
+      </div>
+      <!-- صفحة طلباتي (ديناميكية) -->
 <div class="screen" id="myOrdersScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -1074,15 +1074,22 @@
     <!-- يتم تعبئتها ديناميكياً من script.js -->
   </div>
   </div>
-  <!-- صفحة الملف الشخصي -->
+  <!-- صفحة الملف الشخصي (جديد) -->
 <div class="screen" id="profileScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="closeAllScreens()">←</button>
+    <button class="top-bar-settings" onclick="openSettings()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
   </div>
-  <h2 class="screen-title">الملف الشخصي</h2>
 
-  <div class="profile-header">
+  <!-- بطاقة الملف الشخصي -->
+  <div class="profile-hero-card">
     <div class="profile-avatar-wrapper" onclick="openImagePicker()">
+      <div class="profile-avatar-glow"></div>
       <div class="profile-avatar" id="profileAvatar">م</div>
       <div class="avatar-edit-badge">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1092,41 +1099,107 @@
       </div>
     </div>
     <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-    <h3 id="profileName">أحمد</h3>
-    <p id="profileType">مريض</p>
-  </div>
-
-  <div class="profile-card">
-    <div class="profile-row">
-      <span class="profile-label">الاسم الكامل</span>
-      <span class="profile-value" id="infoName">-</span>
-    </div>
-    <div class="profile-row locked">
-      <span class="profile-label">رقم الهاتف</span>
-      <span class="profile-value" id="infoPhone">-</span>
-    </div>
-    <div class="profile-row" id="emailRow">
-      <span class="profile-label">البريد الإلكتروني</span>
-      <span class="profile-value" id="infoEmail">-</span>
-    </div>
-    <div class="profile-row" id="addressRow">
-      <span class="profile-label" id="addressLabel">العنوان</span>
-      <span class="profile-value" id="infoAddress">-</span>
-    </div>
-    <div class="profile-row" id="vehicleRow">
-      <span class="profile-label">نوع المركبة</span>
-      <span class="profile-value" id="infoVehicle">-</span>
-    </div>
-    <div class="profile-row locked" id="licenseRow">
-      <span class="profile-label">رقم الترخيص</span>
-      <span class="profile-value" id="infoLicense">-</span>
-    </div>
-    <div class="profile-row">
-      <span class="profile-label">تاريخ التسجيل</span>
-      <span class="profile-value" id="infoDate">-</span>
+    
+    <h3 class="profile-name" id="profileName">حسن</h3>
+    <p class="profile-role" id="profileType">دليفري • دراجة نارية</p>
+    
+    <div class="profile-status-badge" id="profileStatus">
+      <span class="status-dot"></span>
+      <span>متصل</span>
     </div>
   </div>
 
+  <!-- المعلومات الشخصية -->
+  <div class="profile-info-list">
+    <div class="profile-info-row">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </div>
+      <span class="profile-info-label">رقم الهاتف</span>
+      <span class="profile-info-value" id="infoPhone">-</span>
+    </div>
+
+    <div class="profile-info-row" id="emailRow">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <span class="profile-info-label">البريد</span>
+      <span class="profile-info-value" id="infoEmail">-</span>
+    </div>
+
+    <div class="profile-info-row" id="addressRow">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+      </div>
+      <span class="profile-info-label" id="addressLabel">المنطقة</span>
+      <span class="profile-info-value" id="infoAddress">-</span>
+    </div>
+
+    <div class="profile-info-row" id="vehicleRow">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="5.5" cy="17.5" r="3.5"/>
+          <circle cx="18.5" cy="17.5" r="3.5"/>
+          <path d="M15 6h-4l-2 6h8l-2-6z"/>
+          <line x1="12" y1="12" x2="12" y2="17.5"/>
+        </svg>
+      </div>
+      <span class="profile-info-label">المركبة</span>
+      <span class="profile-info-value" id="infoVehicle">-</span>
+    </div>
+
+    <div class="profile-info-row" id="licenseRow">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="2"/>
+          <line x1="8" y1="10" x2="10" y2="10"/>
+          <line x1="8" y1="14" x2="10" y2="14"/>
+          <line x1="13" y1="10" x2="16" y2="10"/>
+          <line x1="13" y1="14" x2="16" y2="14"/>
+        </svg>
+      </div>
+      <span class="profile-info-label">الترخيص</span>
+      <span class="profile-info-value" id="infoLicense">-</span>
+    </div>
+
+    <div class="profile-info-row">
+      <div class="profile-info-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <span class="profile-info-label">التسجيل</span>
+      <span class="profile-info-value" id="infoDate">-</span>
+    </div>
+  </div>
+
+  <!-- أزرار الإجراءات -->
+  <div class="profile-actions">
+    <button class="profile-edit-btn" onclick="openEditProfile()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      تعديل البيانات
+    </button>
+
+    <button class="profile-logout-btn" onclick="logout()">
+      تسجيل الخروج
+    </button>
+  </div>
+
+  <!-- قسم التقييمات -->
   <div class="my-ratings-section">
     <div class="section-header">
       <h3>تقييماتي</h3>
@@ -1134,64 +1207,10 @@
     </div>
     <div class="my-ratings-list" id="myRatingsList">
       <div class="my-ratings-empty">
-        <div class="my-ratings-empty-icon">⭐</div>
-        <p>لم تقم بأي تقييم بعد</p>
+        <div class="my-ratings-empty-icon">★</div>
+        <p>لا توجد تقييمات بعد</p>
       </div>
     </div>
-  </div>
-
-  <button class="btn-primary" onclick="openEditProfile()">تعديل البيانات</button>
-</div>
-
-<!-- صفحة محفظة الدليفري (جديد - إلكتروني) -->
-<div class="screen" id="walletScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-  </div>
-  <h2 class="screen-title">محفظتي 💰</h2>
-  <p class="screen-subtitle">إدارة رصيدك وأرباحك</p>
-
-  <!-- بطاقة الرصيد -->
-  <div class="wallet-balance-card">
-    <div class="wallet-balance-icon">💎</div>
-    <p class="wallet-balance-label">الرصيد المتاح للسحب</p>
-    <h2 class="wallet-balance-amount" id="walletBalance">45,000</h2>
-    <p class="wallet-balance-currency">دينار عراقي</p>
-    <button class="wallet-withdraw-btn" onclick="openWithdrawModal()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"/>
-        <polyline points="19 12 12 19 5 12"/>
-      </svg>
-      سحب الآن
-    </button>
-  </div>
-
-  <!-- إحصائيات سريعة -->
-  <div class="wallet-quick-stats">
-    <div class="wallet-quick-stat">
-      <span class="wallet-quick-icon">💰</span>
-      <div>
-        <h4 id="todayEarnings">12,000</h4>
-        <p>أرباح اليوم</p>
-      </div>
-    </div>
-    <div class="wallet-quick-stat">
-      <span class="wallet-quick-icon">📦</span>
-      <div>
-        <h4 id="todayOrders">12</h4>
-        <p>طلبات اليوم</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- سجل المعاملات -->
-  <div class="section-header">
-    <h3>سجل المعاملات</h3>
-    <a href="#" onclick="showAllTransactions(); return false;">عرض الكل</a>
-  </div>
-
-  <div class="wallet-transactions-list" id="walletTransactions">
-    <!-- يتم تعبئتها ديناميكياً من script.js -->
   </div>
 </div>
 
@@ -1615,13 +1634,6 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>الملف الشخصي</span>
     </li>
-    <li onclick="openWallet()" id="walletMenuItem" style="display:none;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="7" width="20" height="14" rx="2"/>
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-      </svg>
-      <span>محفظتي</span>
-    </li>
     <li onclick="openOrders()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       <span>سجل الطلبات</span>
@@ -1656,136 +1668,7 @@
     <p>© 2026 صيدليتي</p>
   </div>
   </div>
-    <!-- صفحة الخريطة التفاعلية (للمندوب) -->
-  <div class="screen" id="mapScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeMapScreen()">←</button>
-      <button class="refresh-location-btn" onclick="refreshMyLocation()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"/>
-          <polyline points="1 20 1 14 7 14"/>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
-        تحديث
-      </button>
-    </div>
-    <h2 class="screen-title">الخريطة 🗺️</h2>
-    <p class="screen-subtitle" id="mapSubtitle">جارٍ تحديد موقعك...</p>
-
-    <div class="gps-info-card" id="gpsInfoCard">
-      <div class="gps-info-row">
-        <span class="gps-info-icon">📍</span>
-        <div>
-          <h4>موقعك الحالي</h4>
-          <p id="gpsAddress">جارٍ التحديد...</p>
-        </div>
-      </div>
-      <div class="gps-coords">
-        <span id="gpsLat">--</span>
-        <span id="gpsLng">--</span>
-      </div>
-    </div>
-
-    <div class="map-container" id="mapContainer">
-      <div id="leafletMap"></div>
-      <div class="map-loading" id="mapLoading">
-        <div class="map-spinner"></div>
-        <p>جارٍ تحميل الخريطة...</p>
-      </div>
-    </div>
-
-    <div class="map-controls">
-      <button class="map-control-btn" onclick="centerOnMe()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-        موقعي
-      </button>
-      <button class="map-control-btn" onclick="showAllOrders()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        الطلبات
-      </button>
-    </div>
-
-    <div class="nearby-orders-section">
-      <div class="section-header">
-        <h3>الطلبات القريبة</h3>
-        <span class="nearby-count" id="nearbyCount">0</span>
-      </div>
-      <div class="nearby-orders-list" id="nearbyOrdersList">
-        <div class="cart-empty">
-          <div class="cart-empty-icon">🗺️</div>
-          <h3>لا توجد طلبات قريبة</h3>
-          <p>سيظهر هنا الطلبات عند تفعيل الرادار</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- صفحة تتبع المندوب (للمريض) -->
-  <div class="screen" id="trackingScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="closeTrackingScreen()">←</button>
-      <button class="refresh-location-btn" onclick="refreshTracking()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 4 23 10 17 10"/>
-          <polyline points="1 20 1 14 7 14"/>
-          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
-      </button>
-    </div>
-    <h2 class="screen-title">تتبع الطلب 🚴</h2>
-    <p class="screen-subtitle" id="trackingSubtitle">جارٍ تحديد موقع المندوب...</p>
-
-    <div class="tracking-delivery-card">
-      <div class="tracking-delivery-avatar">🚴</div>
-      <div class="tracking-delivery-info">
-        <h4 id="trackingDeliveryName">أحمد محمد</h4>
-        <p>⭐ 4.9 • دراجة نارية</p>
-      </div>
-      <button class="tracking-call-btn" onclick="showToast('جارٍ الاتصال...')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="map-container tracking-map-container">
-      <div id="trackingMap"></div>
-    </div>
-
-    <div class="tracking-status">
-      <div class="tracking-status-row">
-        <span>⏱️ الوقت المتوقع</span>
-        <strong id="trackingETA">15 دقيقة</strong>
-      </div>
-      <div class="tracking-status-row">
-        <span>📍 المسافة المتبقية</span>
-        <strong id="trackingDistance">2.5 كم</strong>
-      </div>
-      <div class="tracking-status-row">
-        <span>💰 المبلغ</span>
-        <strong>23,000 دينار</strong>
-      </div>
-    </div>
-
-    <div class="tracking-progress-section">
-      <div class="tracking-progress-bar">
-        <div class="tracking-progress-fill" id="trackingProgressFill" style="width: 40%;"></div>
-      </div>
-      <div class="tracking-steps">
-        <div class="tracking-step done">✅ تم القبول</div>
-        <div class="tracking-step active">🚴 في الطريق</div>
-        <div class="tracking-step">🏠 وصل</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- نافذة تعديل البيانات -->
+    <!-- نافذة تعديل البيانات -->
   <div class="modal-overlay" id="editProfileModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1969,61 +1852,131 @@
     </div>
   </div>
 
-  <!-- نافذة السحب (Withdraw) -->
-  <div class="modal-overlay" id="withdrawModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>سحب الرصيد 💵</h3>
-        <button class="modal-close" onclick="closeWithdrawModal()">×</button>
+  <!-- صفحة الخريطة التفاعلية -->
+  <div class="screen" id="mapScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeMapScreen()">←</button>
+      <button class="refresh-location-btn" onclick="refreshMyLocation()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        تحديث
+      </button>
+    </div>
+    <h2 class="screen-title">الخريطة 🗺️</h2>
+    <p class="screen-subtitle" id="mapSubtitle">جارٍ تحديد موقعك...</p>
+
+    <div class="gps-info-card" id="gpsInfoCard">
+      <div class="gps-info-row">
+        <span class="gps-info-icon">📍</span>
+        <div>
+          <h4>موقعك الحالي</h4>
+          <p id="gpsAddress">جارٍ التحديد...</p>
+        </div>
       </div>
-      <div class="modal-body">
-        
-        <div class="withdraw-amount-display">
-          <p>الرصيد المتاح</p>
-          <h2 id="withdrawAvailable">45,000 دينار</h2>
-        </div>
+      <div class="gps-coords">
+        <span id="gpsLat">--</span>
+        <span id="gpsLng">--</span>
+      </div>
+    </div>
 
-        <div class="input-group">
-          <label>المبلغ المطلوب سحبه *</label>
-          <input type="number" id="withdrawAmount" placeholder="مثال: 25000" min="1000" max="45000">
-        </div>
+    <div class="map-container" id="mapContainer">
+      <div id="leafletMap"></div>
+      <div class="map-loading" id="mapLoading">
+        <div class="map-spinner"></div>
+        <p>جارٍ تحميل الخريطة...</p>
+      </div>
+    </div>
 
-        <div class="input-group">
-          <label>طريقة السحب *</label>
-          <div class="payment-options">
-            <label class="payment-option active">
-              <input type="radio" name="withdrawMethod" value="zaincash" checked>
-              <div class="payment-option-content">
-                <span>📱</span>
-                <div>
-                  <h4>ZainCash</h4>
-                </div>
-              </div>
-            </label>
-            <label class="payment-option">
-              <input type="radio" name="withdrawMethod" value="fib">
-              <div class="payment-option-content">
-                <span>🏦</span>
-                <div>
-                  <h4>FIB</h4>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div>
+    <div class="map-controls">
+      <button class="map-control-btn" onclick="centerOnMe()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        موقعي
+      </button>
+      <button class="map-control-btn" onclick="showAllOrders()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        الطلبات
+      </button>
+    </div>
 
-        <div class="input-group">
-          <label>رقم الحساب *</label>
-          <input type="tel" id="withdrawAccount" placeholder="07701234567" required>
+    <div class="nearby-orders-section">
+      <div class="section-header">
+        <h3>الطلبات القريبة</h3>
+        <span class="nearby-count" id="nearbyCount">0</span>
+      </div>
+      <div class="nearby-orders-list" id="nearbyOrdersList">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🗺️</div>
+          <h3>لا توجد طلبات قريبة</h3>
+          <p>سيظهر هنا الطلبات عند تفعيل الرادار</p>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <button class="btn-primary" onclick="submitWithdraw()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <polyline points="19 12 12 19 5 12"/>
-          </svg>
-          تأكيد السحب
-        </button>
+  <!-- صفحة تتبع المندوب (للمريض) -->
+  <div class="screen" id="trackingScreen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="closeTrackingScreen()">←</button>
+      <button class="refresh-location-btn" onclick="refreshTracking()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+      </button>
+    </div>
+    <h2 class="screen-title">تتبع الطلب 🚴</h2>
+    <p class="screen-subtitle" id="trackingSubtitle">جارٍ تحديد موقع المندوب...</p>
+
+    <div class="tracking-delivery-card">
+      <div class="tracking-delivery-avatar">🚴</div>
+      <div class="tracking-delivery-info">
+        <h4 id="trackingDeliveryName">أحمد محمد</h4>
+        <p>⭐ 4.9 • دراجة نارية</p>
+      </div>
+      <button class="tracking-call-btn" onclick="showToast('جارٍ الاتصال...')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="map-container tracking-map-container">
+      <div id="trackingMap"></div>
+    </div>
+
+    <div class="tracking-status">
+      <div class="tracking-status-row">
+        <span>⏱️ الوقت المتوقع</span>
+        <strong id="trackingETA">15 دقيقة</strong>
+      </div>
+      <div class="tracking-status-row">
+        <span>📍 المسافة المتبقية</span>
+        <strong id="trackingDistance">2.5 كم</strong>
+      </div>
+      <div class="tracking-status-row">
+        <span>💰 المبلغ</span>
+        <strong>23,000 دينار</strong>
+      </div>
+    </div>
+
+    <div class="tracking-progress-section">
+      <div class="tracking-progress-bar">
+        <div class="tracking-progress-fill" id="trackingProgressFill" style="width: 40%;"></div>
+      </div>
+      <div class="tracking-steps">
+        <div class="tracking-step done">✅ تم القبول</div>
+        <div class="tracking-step active">🚴 في الطريق</div>
+        <div class="tracking-step">🏠 وصل</div>
       </div>
     </div>
   </div>
@@ -2037,6 +1990,8 @@
       <span>🧭</span>
       اختر كيف تريد الانتقال
     </h3>
+
+    <p class="nav-sheet-destination" id="navDestination">📍 الوجهة: صيدلية النور</p>
 
     <div class="nav-sheet-options">
       <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
@@ -2106,62 +2061,73 @@
       </form>
     </div>
   </div>
-   <!-- Bottom Sheet: اختيار نظام الملاحة -->
-<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="closeNavSheet()"></div>
-<div class="nav-sheet" id="navSheet">
-  <div class="nav-sheet-handle"></div>
-  
-  <h3 class="nav-sheet-title">
-    <span>🧭</span>
-    اختر كيف تريد الانتقال
-  </h3>
 
-  <div class="nav-sheet-options">
-    <!-- Waze -->
-    <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
-      <div class="nav-sheet-btn-text">
-        <h4>Waze</h4>
-        <p>الأفضل للملاحة والزحام</p>
+  <!-- Bottom Sheet: طلب جديد -->
+  <div class="bottom-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
+  <div class="bottom-sheet" id="orderSheet">
+    <div class="bottom-sheet-handle"></div>
+
+    <div class="sheet-success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <h2 class="sheet-title">طلب جديد!</h2>
+
+    <div class="sheet-info">
+      <div class="sheet-row">
+        <span class="sheet-icon">🏪</span>
+        <span class="sheet-label">من:</span>
+        <span class="sheet-value">صيدلية النور - الكرادة</span>
       </div>
-      <div class="nav-sheet-btn-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
-          <path d="M18.5 5h-2V3.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5V5h-3V3.5C10.5 2.7 9.8 2 9 2S7.5 2.7 7.5 3.5V5h-2C4.1 5 3 6.1 3 7.5v4c0 .8.7 1.5 1.5 1.5h.7l.4 6.3c0 .9.8 1.7 1.7 1.7h6.4c.9 0 1.7-.8 1.7-1.7l.4-6.3h.7c.8 0 1.5-.7 1.5-1.5v-4C19 6.1 19.9 5 18.5 5zM9 9.5c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm6 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"/>
-        </svg>
+      <div class="sheet-row">
+        <span class="sheet-icon">🏠</span>
+        <span class="sheet-label">إلى:</span>
+        <span class="sheet-value">الجادرية، شارع 62</span>
       </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">📍</span>
+        <span class="sheet-label">المسافة:</span>
+        <span class="sheet-value">2.5 كم</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">💰</span>
+        <span class="sheet-label">العمولة:</span>
+        <span class="sheet-value highlight-green">3,000 دينار</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">⏱️</span>
+        <span class="sheet-label">الوقت:</span>
+        <span class="sheet-value">15 دقيقة</span>
+      </div>
+      <div class="sheet-row">
+        <span class="sheet-icon">💵</span>
+        <span class="sheet-label">الدفع:</span>
+        <span class="sheet-value">كاش</span>
+      </div>
+    </div>
+
+    <div class="sheet-timer">
+      <div class="timer-bar">
+        <div class="timer-progress" id="timerProgress"></div>
+      </div>
+      <div class="timer-text">
+        <span>10 ثواني</span>
+        <span>70%</span>
+        <span>30%</span>
+      </div>
+    </div>
+
+    <button class="sheet-accept-btn" onclick="acceptFromSheet()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      قبول الطلب
     </button>
 
-    <!-- Google Maps -->
-    <button class="nav-sheet-btn google-btn" onclick="chooseNavigation('google')">
-      <div class="nav-sheet-btn-text">
-        <h4>Google Maps</h4>
-        <p>الخريطة الأشهر عالمياً</p>
-      </div>
-      <div class="nav-sheet-btn-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-        </svg>
-      </div>
-    </button>
-
-    <!-- عرض على الخريطة -->
-    <button class="nav-sheet-btn map-btn" onclick="chooseNavigation('map')">
-      <div class="nav-sheet-btn-text">
-        <h4>عرض على الخريطة هنا</h4>
-        <p>داخل التطبيق</p>
-      </div>
-      <div class="nav-sheet-btn-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-      </div>
-    </button>
+    <button class="sheet-reject-btn" onclick="closeOrderSheet()">رفض</button>
   </div>
-
-  <button class="nav-sheet-cancel" onclick="closeNavSheet()">
-    إلغاء
-  </button>
-</div>
 
   <!-- شريط التنقل السفلي -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
@@ -2224,4 +2190,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
