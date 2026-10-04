@@ -8,11 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   
-  <!-- Leaflet Maps -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
-  <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -275,7 +273,6 @@
       </div>
     </div>
 
-    <!-- زر سلة التسوق -->
     <div class="cart-cta" onclick="openCartScreen()">
       <div class="cart-cta-icon">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -291,7 +288,6 @@
       <div class="cart-cta-badge" id="cartBadge">0</div>
     </div>
 
-    <!-- زر طلب بروشتة -->
     <div class="prescription-cta" onclick="openPrescriptionScreen()">
       <div class="prescription-cta-icon">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -389,7 +385,6 @@
       <button class="alert-action" onclick="openInventoryScreen()">عرض</button>
     </div>
 
-    <!-- أزرار سريعة للصيدلية -->
     <div class="pharmacy-actions">
       <button class="pharmacy-action-btn" onclick="openInventoryScreen()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -473,27 +468,6 @@
       </div>
     </div>
 
-    <!-- زر فتح الخريطة -->
-    <div class="map-cta" onclick="openMapScreen()">
-      <div class="map-cta-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-      </div>
-      <div class="map-cta-content">
-        <h3>الخريطة التفاعلية 🗺️</h3>
-        <p>اعرض موقعك والطلبات القريبة</p>
-      </div>
-      <div class="map-cta-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- الرادار -->
     <div class="radar-section">
       <div class="radar-map">
         <div class="radar-grid"></div>
@@ -563,8 +537,8 @@
         </div>
       </div>
     </div>
-    </div>
-    <!-- صفحة طلباتي (ديناميكية) -->
+  </div>
+  <!-- صفحة طلباتي (ديناميكية) -->
 <div class="screen" id="myOrdersScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="goToDashboardByType()">←</button>
@@ -635,7 +609,7 @@
         </div>
         <div class="priority-footer">
           <span class="priority-score">Score: 7.5/10</span>
-          <button class="priority-btn yellow" onclick="showToast('عرض الطلب')">عرض</button>
+          <button class="priority-btn yellow" onclick="startOrder(1235)">عرض</button>
         </div>
       </div>
 
@@ -651,7 +625,7 @@
         </div>
         <div class="priority-footer">
           <span class="priority-score">Score: 5.5/10</span>
-          <button class="priority-btn gray" onclick="showToast('عرض الطلب')">عرض</button>
+          <button class="priority-btn gray" onclick="startOrder(1236)">عرض</button>
         </div>
       </div>
     </div>
@@ -1094,30 +1068,13 @@
     <button class="back-btn" onclick="goToDashboardByType()">←</button>
   </div>
   <h2 class="screen-title">التنبيهات</h2>
-  <p class="screen-subtitle">آخر الإشعارات</p>
+  <p class="screen-subtitle" id="notificationsSubtitle">آخر الإشعارات</p>
 
-  <div class="order-list">
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب جديد</span>
-        <span class="order-status new">الآن</span>
-      </div>
-      <div class="order-info">
-        <p>وصلك طلب جديد من أحمد علي - 23,000 دينار</p>
-      </div>
-    </div>
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">دواء قارب على الانتهاء</span>
-        <span class="order-status new">قبل ساعة</span>
-      </div>
-      <div class="order-info">
-        <p>3 أدوية ستنتهي صلاحيتها خلال 30 يوم</p>
-      </div>
-    </div>
+  <div class="order-list" id="notificationsList">
+    <!-- يتم تعبئتها ديناميكياً من script.js -->
   </div>
   </div>
-<!-- صفحة الملف الشخصي -->
+  <!-- صفحة الملف الشخصي -->
 <div class="screen" id="profileScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="closeAllScreens()">←</button>
@@ -1170,7 +1127,6 @@
     </div>
   </div>
 
-  <!-- قسم التقييمات -->
   <div class="my-ratings-section">
     <div class="section-header">
       <h3>تقييماتي</h3>
@@ -1187,237 +1143,55 @@
   <button class="btn-primary" onclick="openEditProfile()">تعديل البيانات</button>
 </div>
 
-<!-- نافذة تعديل البيانات -->
-<div class="modal-overlay" id="editProfileModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>تعديل البيانات</h3>
-      <button class="modal-close" onclick="closeEditProfile()">×</button>
-    </div>
-    <form class="modal-body" onsubmit="saveProfile(event); return false;">
-      <div class="input-group">
-        <label>الاسم الكامل</label>
-        <input type="text" id="editName" placeholder="الاسم الكامل">
-      </div>
-      <div class="input-group">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="editEmail" placeholder="example@email.com">
-      </div>
-      <div class="input-group" id="editAddressGroup">
-        <label id="editAddressLabel">العنوان</label>
-        <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
-      </div>
-      <button type="submit" class="btn-primary">حفظ التعديلات</button>
-    </form>
-  </div>
-</div>
-
-<!-- نافذة تفاصيل الدواء -->
-<div class="modal-overlay" id="productModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="productModalName">اسم الدواء</h3>
-      <button class="modal-close" onclick="closeProductModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="product-modal-image">
-        <span id="productModalIcon">💊</span>
-      </div>
-      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
-
-      <div class="product-modal-info">
-        <div class="product-modal-row">
-          <span>السعر</span>
-          <strong id="productModalPrice">0 دينار</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>التصنيف</span>
-          <strong id="productModalCategory">—</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>متوفر</span>
-          <strong id="productModalStock" class="stock-available">متوفر</strong>
-        </div>
-      </div>
-
-      <div class="quantity-selector">
-        <label>الكمية</label>
-        <div class="quantity-controls">
-          <button type="button" onclick="decreaseModalQuantity()">−</button>
-          <span id="modalQuantity">1</span>
-          <button type="button" onclick="increaseModalQuantity()">+</button>
-        </div>
-      </div>
-
-      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
-        🛒 أضف إلى السلة
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- نافذة إضافة/تعديل دواء -->
-<div class="modal-overlay" id="medicineModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="medicineModalTitle">إضافة دواء جديد</h3>
-      <button class="modal-close" onclick="closeMedicineModal()">×</button>
-    </div>
-    <form class="modal-body" onsubmit="saveMedicine(event); return false;">
-
-      <input type="hidden" id="editMedicineId">
-
-      <div class="input-group">
-        <label>اسم الدواء *</label>
-        <input type="text" id="medicineName" placeholder="مثال: بانادول" required>
-      </div>
-
-      <div class="input-group">
-        <label>التصنيف *</label>
-        <select id="medicineCategory" required>
-          <option value="">اختر...</option>
-          <option value="مسكنات">مسكنات</option>
-          <option value="فيتامينات">فيتامينات</option>
-          <option value="مضاد حيوي">مضاد حيوي</option>
-          <option value="أطفال">أطفال</option>
-          <option value="ضغط">ضغط</option>
-          <option value="سكري">سكري</option>
-          <option value="جهاز هضمي">جهاز هضمي</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>السعر (دينار) *</label>
-        <input type="number" id="medicinePrice" placeholder="3000" min="0" required>
-      </div>
-
-      <div class="input-group">
-        <label>الكمية المتوفرة *</label>
-        <input type="number" id="medicineStock" placeholder="50" min="0" required>
-      </div>
-
-      <div class="input-group">
-        <label>وصف مختصر (اختياري)</label>
-        <textarea id="medicineDesc" rows="2" placeholder="مثال: مسكن للألم وخافض للحرارة"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>الأيقونة</label>
-        <div class="icon-picker">
-          <button type="button" class="icon-option active" onclick="selectIcon('💊', this)">💊</button>
-          <button type="button" class="icon-option" onclick="selectIcon('💉', this)">💉</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🍊', this)">🍊</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🧴', this)">🧴</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🍯', this)">🍯</button>
-          <button type="button" class="icon-option" onclick="selectIcon('💧', this)">💧</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🩹', this)">🩹</button>
-          <button type="button" class="icon-option" onclick="selectIcon('🧸', this)">🧸</button>
-        </div>
-        <input type="hidden" id="medicineIcon" value="💊">
-      </div>
-
-      <button type="submit" class="btn-primary" id="medicineSubmitBtn">
-        إضافة إلى المخزون
-      </button>
-    </form>
-  </div>
-</div>
-
-<!-- نافذة التقييم -->
-<div class="modal-overlay" id="ratingModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="ratingModalTitle">قيّم تجربتك</h3>
-      <button class="modal-close" onclick="closeRatingModal()">×</button>
-    </div>
-    <div class="modal-body">
-      
-      <div class="rating-target-info" id="ratingTargetInfo">
-        <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
-        <div>
-          <h4 id="ratingTargetName">صيدلية النور</h4>
-          <p id="ratingTargetType">صيدلية</p>
-        </div>
-      </div>
-
-      <div class="rating-stars-section">
-        <label>تقييمك *</label>
-        <div class="rating-stars" id="ratingStars">
-          <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
-          <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
-          <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
-          <button type="button" class="rating-star" data-value="4" onclick="selectRating(4)">★</button>
-          <button type="button" class="rating-star" data-value="5" onclick="selectRating(5)">★</button>
-        </div>
-        <p class="rating-text" id="ratingText">اضغط على النجوم للتقييم</p>
-      </div>
-
-      <div class="input-group">
-        <label>تعليق (اختياري)</label>
-        <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
-      </div>
-
-      <input type="hidden" id="ratingTargetId">
-      <input type="hidden" id="ratingTargetType">
-
-      <button class="btn-primary" onclick="submitRating()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-        إرسال التقييم
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- صفحة محفظة الدليفري -->
+<!-- صفحة محفظة الدليفري (جديد - إلكتروني) -->
 <div class="screen" id="walletScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="closeAllScreens()">←</button>
   </div>
-  <h2 class="screen-title">محفظتي</h2>
+  <h2 class="screen-title">محفظتي 💰</h2>
+  <p class="screen-subtitle">إدارة رصيدك وأرباحك</p>
 
-  <div class="wallet-card">
-    <p class="wallet-label">الرصيد الحالي</p>
-    <h2 class="wallet-balance">45,000 <span>دينار</span></h2>
-    <button class="btn-withdraw" onclick="showToast('طلب سحب قريباً')">طلب سحب</button>
+  <!-- بطاقة الرصيد -->
+  <div class="wallet-balance-card">
+    <div class="wallet-balance-icon">💎</div>
+    <p class="wallet-balance-label">الرصيد المتاح للسحب</p>
+    <h2 class="wallet-balance-amount" id="walletBalance">45,000</h2>
+    <p class="wallet-balance-currency">دينار عراقي</p>
+    <button class="wallet-withdraw-btn" onclick="openWithdrawModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <polyline points="19 12 12 19 5 12"/>
+      </svg>
+      سحب الآن
+    </button>
   </div>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon-wrap green">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  <!-- إحصائيات سريعة -->
+  <div class="wallet-quick-stats">
+    <div class="wallet-quick-stat">
+      <span class="wallet-quick-icon">💰</span>
+      <div>
+        <h4 id="todayEarnings">12,000</h4>
+        <p>أرباح اليوم</p>
       </div>
-      <span class="stat-num">12</span>
-      <span class="stat-label">طلبات اليوم</span>
     </div>
-    <div class="stat-card">
-      <div class="stat-icon-wrap orange">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <div class="wallet-quick-stat">
+      <span class="wallet-quick-icon">📦</span>
+      <div>
+        <h4 id="todayOrders">12</h4>
+        <p>طلبات اليوم</p>
       </div>
-      <span class="stat-num">12K</span>
-      <span class="stat-label">أرباح اليوم</span>
     </div>
   </div>
 
+  <!-- سجل المعاملات -->
   <div class="section-header">
     <h3>سجل المعاملات</h3>
-    <a href="#">عرض الكل</a>
+    <a href="#" onclick="showAllTransactions(); return false;">عرض الكل</a>
   </div>
 
-  <div class="order-list">
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب رقم #1234</span>
-        <span class="order-status available">+3,000</span>
-      </div>
-      <div class="order-info">
-        <p><strong>التاريخ:</strong> 2026/10/2 - 3:00 م</p>
-        <p><strong>من:</strong> صيدلية النور</p>
-        <p><strong>إلى:</strong> شارع 62 - الجادرية</p>
-      </div>
-    </div>
+  <div class="wallet-transactions-list" id="walletTransactions">
+    <!-- يتم تعبئتها ديناميكياً من script.js -->
   </div>
 </div>
 
@@ -1898,7 +1672,6 @@
     <h2 class="screen-title">الخريطة 🗺️</h2>
     <p class="screen-subtitle" id="mapSubtitle">جارٍ تحديد موقعك...</p>
 
-    <!-- معلومات GPS -->
     <div class="gps-info-card" id="gpsInfoCard">
       <div class="gps-info-row">
         <span class="gps-info-icon">📍</span>
@@ -1912,34 +1685,7 @@
         <span id="gpsLng">--</span>
       </div>
     </div>
-     <!-- قسم فتح في Waze / Google Maps -->
-<div class="navigate-section" id="navigateSection" style="display:none;">
-  <div class="section-header">
-    <h3>افتح المسار في 🧭</h3>
-  </div>
-  <div class="navigate-buttons">
-    <button class="navigate-btn waze" onclick="openInWaze()">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.6 15.5c-.3.5-.8.8-1.4.8-.3 0-.5-.1-.8-.2-.4-.2-.8-.4-1.2-.4-.6 0-1.2.3-1.6.8l-.6.6c-.3.3-.7.4-1 .4-.4 0-.8-.1-1-.4l-.6-.6c-.4-.5-1-.8-1.6-.8-.4 0-.8.2-1.2.4-.3.1-.5.2-.8.2-.6 0-1.1-.3-1.4-.8-.3-.5-.2-1.2.2-1.6l2-1.6c.5-.4 1.2-.4 1.7 0l.6.5c.4.3.9.5 1.4.5s1-.2 1.4-.5l.6-.5c.5-.4 1.2-.4 1.7 0l2 1.6c.4.4.5 1.1.2 1.6zM10 7c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm4 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/>
-      </svg>
-      <div>
-        <h4>Waze</h4>
-        <p>الأفضل للملاحة</p>
-      </div>
-    </button>
 
-    <button class="navigate-btn google" onclick="openInGoogleMaps()">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 8 12 8 12s8-6.5 8-12c0-4.4-3.6-8-8-8zm0 11c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"/>
-      </svg>
-      <div>
-        <h4>Google Maps</h4>
-        <p>الخريطة الأشهر</p>
-      </div>
-    </button>
-  </div>
-</div>
-    <!-- الخريطة -->
     <div class="map-container" id="mapContainer">
       <div id="leafletMap"></div>
       <div class="map-loading" id="mapLoading">
@@ -1948,7 +1694,6 @@
       </div>
     </div>
 
-    <!-- أزرار التحكم -->
     <div class="map-controls">
       <button class="map-control-btn" onclick="centerOnMe()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1966,7 +1711,6 @@
       </button>
     </div>
 
-    <!-- قائمة الطلبات القريبة -->
     <div class="nearby-orders-section">
       <div class="section-header">
         <h3>الطلبات القريبة</h3>
@@ -1997,7 +1741,6 @@
     <h2 class="screen-title">تتبع الطلب 🚴</h2>
     <p class="screen-subtitle" id="trackingSubtitle">جارٍ تحديد موقع المندوب...</p>
 
-    <!-- معلومات المندوب -->
     <div class="tracking-delivery-card">
       <div class="tracking-delivery-avatar">🚴</div>
       <div class="tracking-delivery-info">
@@ -2011,12 +1754,10 @@
       </button>
     </div>
 
-    <!-- الخريطة -->
     <div class="map-container tracking-map-container">
       <div id="trackingMap"></div>
     </div>
 
-    <!-- حالة الطلب -->
     <div class="tracking-status">
       <div class="tracking-status-row">
         <span>⏱️ الوقت المتوقع</span>
@@ -2031,35 +1772,7 @@
         <strong>23,000 دينار</strong>
       </div>
     </div>
-     <!-- فتح المسار -->
-<div class="navigate-section">
-  <div class="section-header">
-    <h3>افتح المسار في 🧭</h3>
-  </div>
-  <div class="navigate-buttons">
-    <button class="navigate-btn waze" onclick="openTrackingInWaze()">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0z"/>
-      </svg>
-      <div>
-        <h4>Waze</h4>
-        <p>الملاحة الأذكى</p>
-      </div>
-    </button>
 
-    <button class="navigate-btn google" onclick="openTrackingInGoogle()">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C7.6 2 4 5.6 4 10c0 5.5 8 12 8 12s8-6.5 8-12c0-4.4-3.6-8-8-8z"/>
-      </svg>
-      <div>
-        <h4>Google Maps</h4>
-        <p>الخريطة الأشهر</p>
-      </div>
-    </button>
-  </div>
-</div>
-
-    <!-- شريط التقدم -->
     <div class="tracking-progress-section">
       <div class="tracking-progress-bar">
         <div class="tracking-progress-fill" id="trackingProgressFill" style="width: 40%;"></div>
@@ -2070,6 +1783,303 @@
         <div class="tracking-step">🏠 وصل</div>
       </div>
     </div>
+  </div>
+
+  <!-- نافذة تعديل البيانات -->
+  <div class="modal-overlay" id="editProfileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>تعديل البيانات</h3>
+        <button class="modal-close" onclick="closeEditProfile()">×</button>
+      </div>
+      <form class="modal-body" onsubmit="saveProfile(event); return false;">
+        <div class="input-group">
+          <label>الاسم الكامل</label>
+          <input type="text" id="editName" placeholder="الاسم الكامل">
+        </div>
+        <div class="input-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="editEmail" placeholder="example@email.com">
+        </div>
+        <div class="input-group" id="editAddressGroup">
+          <label id="editAddressLabel">العنوان</label>
+          <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
+        </div>
+        <button type="submit" class="btn-primary">حفظ التعديلات</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة تفاصيل الدواء -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="productModalName">اسم الدواء</h3>
+        <button class="modal-close" onclick="closeProductModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="product-modal-image">
+          <span id="productModalIcon">💊</span>
+        </div>
+        <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
+
+        <div class="product-modal-info">
+          <div class="product-modal-row">
+            <span>السعر</span>
+            <strong id="productModalPrice">0 دينار</strong>
+          </div>
+          <div class="product-modal-row">
+            <span>التصنيف</span>
+            <strong id="productModalCategory">—</strong>
+          </div>
+          <div class="product-modal-row">
+            <span>متوفر</span>
+            <strong id="productModalStock" class="stock-available">متوفر</strong>
+          </div>
+        </div>
+
+        <div class="quantity-selector">
+          <label>الكمية</label>
+          <div class="quantity-controls">
+            <button type="button" onclick="decreaseModalQuantity()">−</button>
+            <span id="modalQuantity">1</span>
+            <button type="button" onclick="increaseModalQuantity()">+</button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">
+          🛒 أضف إلى السلة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة/تعديل دواء -->
+  <div class="modal-overlay" id="medicineModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="medicineModalTitle">إضافة دواء جديد</h3>
+        <button class="modal-close" onclick="closeMedicineModal()">×</button>
+      </div>
+      <form class="modal-body" onsubmit="saveMedicine(event); return false;">
+
+        <input type="hidden" id="editMedicineId">
+
+        <div class="input-group">
+          <label>اسم الدواء *</label>
+          <input type="text" id="medicineName" placeholder="مثال: بانادول" required>
+        </div>
+
+        <div class="input-group">
+          <label>التصنيف *</label>
+          <select id="medicineCategory" required>
+            <option value="">اختر...</option>
+            <option value="مسكنات">مسكنات</option>
+            <option value="فيتامينات">فيتامينات</option>
+            <option value="مضاد حيوي">مضاد حيوي</option>
+            <option value="أطفال">أطفال</option>
+            <option value="ضغط">ضغط</option>
+            <option value="سكري">سكري</option>
+            <option value="جهاز هضمي">جهاز هضمي</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>السعر (دينار) *</label>
+          <input type="number" id="medicinePrice" placeholder="3000" min="0" required>
+        </div>
+
+        <div class="input-group">
+          <label>الكمية المتوفرة *</label>
+          <input type="number" id="medicineStock" placeholder="50" min="0" required>
+        </div>
+
+        <div class="input-group">
+          <label>وصف مختصر (اختياري)</label>
+          <textarea id="medicineDesc" rows="2" placeholder="مثال: مسكن للألم وخافض للحرارة"></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>الأيقونة</label>
+          <div class="icon-picker">
+            <button type="button" class="icon-option active" onclick="selectIcon('💊', this)">💊</button>
+            <button type="button" class="icon-option" onclick="selectIcon('💉', this)">💉</button>
+            <button type="button" class="icon-option" onclick="selectIcon('🍊', this)">🍊</button>
+            <button type="button" class="icon-option" onclick="selectIcon('🧴', this)">🧴</button>
+            <button type="button" class="icon-option" onclick="selectIcon('🍯', this)">🍯</button>
+            <button type="button" class="icon-option" onclick="selectIcon('💧', this)">💧</button>
+            <button type="button" class="icon-option" onclick="selectIcon('🩹', this)">🩹</button>
+            <button type="button" class="icon-option" onclick="selectIcon('🧸', this)">🧸</button>
+          </div>
+          <input type="hidden" id="medicineIcon" value="💊">
+        </div>
+
+        <button type="submit" class="btn-primary" id="medicineSubmitBtn">
+          إضافة إلى المخزون
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- نافذة التقييم -->
+  <div class="modal-overlay" id="ratingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="ratingModalTitle">قيّم تجربتك</h3>
+        <button class="modal-close" onclick="closeRatingModal()">×</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="rating-target-info" id="ratingTargetInfo">
+          <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
+          <div>
+            <h4 id="ratingTargetName">صيدلية النور</h4>
+            <p id="ratingTargetType">صيدلية</p>
+          </div>
+        </div>
+
+        <div class="rating-stars-section">
+          <label>تقييمك *</label>
+          <div class="rating-stars" id="ratingStars">
+            <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
+            <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
+            <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
+            <button type="button" class="rating-star" data-value="4" onclick="selectRating(4)">★</button>
+            <button type="button" class="rating-star" data-value="5" onclick="selectRating(5)">★</button>
+          </div>
+          <p class="rating-text" id="ratingText">اضغط على النجوم للتقييم</p>
+        </div>
+
+        <div class="input-group">
+          <label>تعليق (اختياري)</label>
+          <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
+        </div>
+
+        <input type="hidden" id="ratingTargetId">
+        <input type="hidden" id="ratingTargetType">
+
+        <button class="btn-primary" onclick="submitRating()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          إرسال التقييم
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة السحب (Withdraw) -->
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>سحب الرصيد 💵</h3>
+        <button class="modal-close" onclick="closeWithdrawModal()">×</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="withdraw-amount-display">
+          <p>الرصيد المتاح</p>
+          <h2 id="withdrawAvailable">45,000 دينار</h2>
+        </div>
+
+        <div class="input-group">
+          <label>المبلغ المطلوب سحبه *</label>
+          <input type="number" id="withdrawAmount" placeholder="مثال: 25000" min="1000" max="45000">
+        </div>
+
+        <div class="input-group">
+          <label>طريقة السحب *</label>
+          <div class="payment-options">
+            <label class="payment-option active">
+              <input type="radio" name="withdrawMethod" value="zaincash" checked>
+              <div class="payment-option-content">
+                <span>📱</span>
+                <div>
+                  <h4>ZainCash</h4>
+                </div>
+              </div>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="withdrawMethod" value="fib">
+              <div class="payment-option-content">
+                <span>🏦</span>
+                <div>
+                  <h4>FIB</h4>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>رقم الحساب *</label>
+          <input type="tel" id="withdrawAccount" placeholder="07701234567" required>
+        </div>
+
+        <button class="btn-primary" onclick="submitWithdraw()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-left:8px;">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
+          تأكيد السحب
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Sheet: اختيار نظام الملاحة -->
+  <div class="nav-sheet-overlay" id="navSheetOverlay" onclick="closeNavSheet()"></div>
+  <div class="nav-sheet" id="navSheet">
+    <div class="nav-sheet-handle"></div>
+    
+    <h3 class="nav-sheet-title">
+      <span>🧭</span>
+      اختر كيف تريد الانتقال
+    </h3>
+
+    <div class="nav-sheet-options">
+      <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
+        <div class="nav-sheet-btn-text">
+          <h4>Waze</h4>
+          <p>الأفضل للملاحة والزحام</p>
+        </div>
+        <div class="nav-sheet-btn-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+            <path d="M18.5 5h-2V3.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5V5h-3V3.5C10.5 2.7 9.8 2 9 2S7.5 2.7 7.5 3.5V5h-2C4.1 5 3 6.1 3 7.5v4c0 .8.7 1.5 1.5 1.5h.7l.4 6.3c0 .9.8 1.7 1.7 1.7h6.4c.9 0 1.7-.8 1.7-1.7l.4-6.3h.7c.8 0 1.5-.7 1.5-1.5v-4C19 6.1 19.9 5 18.5 5zM9 9.5c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5zm6 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5-.7 1.5-1.5 1.5z"/>
+          </svg>
+        </div>
+      </button>
+
+      <button class="nav-sheet-btn google-btn" onclick="chooseNavigation('google')">
+        <div class="nav-sheet-btn-text">
+          <h4>Google Maps</h4>
+          <p>الخريطة الأشهر عالمياً</p>
+        </div>
+        <div class="nav-sheet-btn-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </div>
+      </button>
+
+      <button class="nav-sheet-btn map-btn" onclick="chooseNavigation('map')">
+        <div class="nav-sheet-btn-text">
+          <h4>عرض على الخريطة هنا</h4>
+          <p>داخل التطبيق</p>
+        </div>
+        <div class="nav-sheet-btn-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    <button class="nav-sheet-cancel" onclick="closeNavSheet()">
+      إلغاء
+    </button>
   </div>
 
   <!-- نافذة إضافة عرض -->
@@ -2225,4 +2235,4 @@
     }
   </script>
 </body>
-</html>
+  </html>
