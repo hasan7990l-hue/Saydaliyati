@@ -3474,3 +3474,120 @@ window.focusOnOrder = function(lat, lng, orderId) {
   }
   setDestination(lat, lng);
 };
+
+// ============================================
+// 🧭 نظام Bottom Sheet (Waze/Google Maps)
+// ============================================
+
+var pendingOrderDestination = null;
+
+// فتح Bottom Sheet
+function openNavSheet(lat, lng) {
+  pendingOrderDestination = { lat: lat, lng: lng };
+  
+  var sheet = document.getElementById('navSheet');
+  var overlay = document.getElementById('navSheetOverlay');
+  
+  if (overlay) overlay.classList.add('active');
+  if (sheet) sheet.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  if (navigator.vibrate) navigator.vibrate([50]);
+}
+
+// إغلاق Bottom Sheet
+function closeNavSheet() {
+  var sheet = document.getElementById('navSheet');
+  var overlay = document.getElementById('navSheetOverlay');
+  
+  if (overlay) overlay.classList.remove('active');
+  if (sheet) sheet.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// اختيار نظام الملاحة
+function chooseNavigation(type) {
+  if (!pendingOrderDestination) {
+    showToast('⚠️ لا توجد وجهة');
+    closeNavSheet();
+    return;
+  }
+  
+  var lat = pendingOrderDestination.lat;
+  var lng = pendingOrderDestination.lng;
+  
+  closeNavSheet();
+  
+  setTimeout(function() {
+    if (type === 'waze') {
+      openWazeDirect(lat, lng);
+    } else if (type === 'google') {
+      openGoogleDirect(lat, lng);
+    } else if (type === 'map') {
+      openMapDirect(lat, lng);
+    }
+  }, 400);
+}
+
+// فتح Waze
+function openWazeDirect(lat, lng) {
+  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
+  
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua);
+  var isAndroid = /android/i.test(ua);
+  
+  if (isIOS) {
+    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
+    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
+  } else if (isAndroid) {
+    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
+    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
+  } else {
+    window.open(wazeUrl, '_blank');
+  }
+  
+  showToast('🚗 جارٍ فتح Waze...');
+}
+
+// فتح Google Maps
+function openGoogleDirect(lat, lng) {
+  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
+  window.open(googleUrl, '_blank');
+  showToast('🗺️ جارٍ فتح Google Maps...');
+}
+
+// عرض على الخريطة داخل التطبيق
+function openMapDirect(lat, lng) {
+  openMapScreen();
+  
+  setTimeout(function() {
+    if (mainMap) {
+      mainMap.setView([lat, lng], 16);
+      setDestination(lat, lng);
+    }
+  }, 500);
+  
+  showToast('📍 عرض على الخريطة');
+}
+
+// ============================================
+// تعديل startOrder ليفتح Bottom Sheet
+// ============================================
+function startOrder(orderId) {
+  var orderLocations = {
+    1234: { lat: 33.3000, lng: 44.4000 },
+    1235: { lat: 33.2800, lng: 44.3800 },
+    1236: { lat: 33.3300, lng: 44.3500 }
+  };
+  
+  var loc = orderLocations[orderId] || { lat: 33.3000, lng: 44.4000 };
+  
+  if (navigator.vibrate) navigator.vibrate([50]);
+  
+  openNavSheet(loc.lat, loc.lng);
+  
+  showToast('📍 طلب #' + orderId + ' - اختر نظام الملاحة');
+}
+
+console.log('✅ نظام Bottom Sheet جاهز');
