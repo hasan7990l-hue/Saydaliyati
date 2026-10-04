@@ -1,5 +1,5 @@
 /* ============================================
-   صيدليتي - Clean Medical Design v7
+   صيدليتي - Clean Medical Design v8
    الجزء 1 من 4
    ============================================ */
 
@@ -23,6 +23,8 @@
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
   --shadow-primary: 0 8px 24px rgba(37, 99, 235, 0.25);
+  --cyan: #22D3EE;
+  --cyan-glow: rgba(34, 211, 238, 0.4);
 }
 
 [data-theme="dark"] {
@@ -45,6 +47,8 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
   --shadow-primary: 0 8px 24px rgba(59, 130, 246, 0.4);
+  --cyan: #22D3EE;
+  --cyan-glow: rgba(34, 211, 238, 0.5);
 }
 
 * {
@@ -399,6 +403,32 @@ body {
   font-size: 28px;
   cursor: pointer;
   padding: 8px;
+}
+
+.top-bar-settings {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.top-bar-settings:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.top-bar-settings svg {
+  stroke: var(--text);
+}
+
+.top-bar-settings:hover svg {
+  stroke: var(--primary);
 }
 
 .progress-badge {
@@ -1176,8 +1206,7 @@ body {
 
 [data-theme="dark"] .pharmacy-action-btn:hover {
   background: rgba(59, 130, 246, 0.15);
-   }
-
+     }
 /* ============================================
    💊 صفحة المخزون
    ============================================ */
@@ -2377,7 +2406,7 @@ body {
 }
 
 /* ============================================
-   📋 طلباتي الذكية (المندوب)
+   🎯 طلباتي الذكية
    ============================================ */
 .active-order {
   border: 2px solid var(--primary);
@@ -2399,10 +2428,10 @@ body {
 #patientOrdersContent,
 #pharmacyOrdersContent {
   animation: fadeIn 0.4s ease;
-   }
+}
 
 /* ============================================
-   🎯 الرادار (للمندوب)
+   🎯 الرادار
    ============================================ */
 .radar-section { margin-bottom: 20px; }
 
@@ -2548,10 +2577,9 @@ body {
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: #FFFFFF;
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
-}
-
+   }
 /* ============================================
-   🧠 AI Suggestion Card
+   🧠 بطاقة AI Suggestion
    ============================================ */
 .ai-suggestion-card {
   position: relative;
@@ -2886,229 +2914,6 @@ body {
 }
 
 /* ============================================
-   💰 المحفظة الإلكترونية (جديد)
-   ============================================ */
-.wallet-balance-card {
-  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-  border-radius: 24px;
-  padding: 32px 24px;
-  text-align: center;
-  margin-bottom: 16px;
-  border: 1.5px solid #334155;
-  position: relative;
-  overflow: hidden;
-}
-
-[data-theme="light"] .wallet-balance-card {
-  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-}
-
-.wallet-balance-icon {
-  font-size: 42px;
-  margin-bottom: 12px;
-  filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.6));
-}
-
-.wallet-balance-label {
-  font-size: 13px;
-  color: #94A3B8;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.wallet-balance-amount {
-  font-size: 52px;
-  font-weight: 900;
-  color: #FFFFFF;
-  line-height: 1;
-  margin-bottom: 8px;
-  letter-spacing: -1px;
-}
-
-.wallet-balance-currency {
-  font-size: 14px;
-  color: #94A3B8;
-  font-weight: 600;
-  margin-bottom: 24px;
-}
-
-.wallet-withdraw-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%);
-  color: #0F172A;
-  border: none;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 900;
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.4);
-  transition: all 0.3s ease;
-}
-
-.wallet-withdraw-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(34, 211, 238, 0.6);
-}
-
-.wallet-withdraw-btn svg { stroke: #0F172A; }
-
-.wallet-quick-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.wallet-quick-stat {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
-}
-
-.wallet-quick-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--primary-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.wallet-quick-stat h4 {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--primary);
-  margin: 0 0 2px;
-}
-
-.wallet-quick-stat p {
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin: 0;
-  font-weight: 600;
-}
-
-.wallet-transactions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 24px;
-}
-
-.wallet-transaction-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 12px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  transition: all 0.3s ease;
-}
-
-.wallet-transaction-item:first-child {
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-}
-
-.wallet-transaction-item:last-child {
-  border-bottom: none;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
-}
-
-.wallet-transaction-item:hover {
-  background: var(--bg-secondary);
-}
-
-.wallet-transaction-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--bg-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.wallet-transaction-item.income .wallet-transaction-icon {
-  background: rgba(16, 185, 129, 0.15);
-}
-
-.wallet-transaction-item.withdraw .wallet-transaction-icon {
-  background: rgba(100, 116, 139, 0.15);
-}
-
-.wallet-transaction-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.wallet-transaction-title {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0 0 2px;
-}
-
-.wallet-transaction-date {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin: 0;
-  font-weight: 600;
-}
-
-.wallet-transaction-amount {
-  font-size: 15px;
-  font-weight: 900;
-  flex-shrink: 0;
-  direction: ltr;
-}
-
-.wallet-transaction-amount.positive { color: var(--success); }
-.wallet-transaction-amount.negative { color: var(--danger); }
-
-/* ============================================
-   💵 نافذة السحب
-   ============================================ */
-.withdraw-amount-display {
-  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-  border-radius: 16px;
-  padding: 20px;
-  text-align: center;
-  margin-bottom: 20px;
-  border: 1.5px solid #334155;
-}
-
-.withdraw-amount-display p {
-  font-size: 13px;
-  color: #94A3B8;
-  margin: 0 0 8px;
-  font-weight: 600;
-}
-
-.withdraw-amount-display h2 {
-  font-size: 32px;
-  font-weight: 900;
-  color: #22D3EE;
-  margin: 0;
-  text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
-}
-
-/* ============================================
    🧭 Bottom Sheet (Waze/Google)
    ============================================ */
 .nav-sheet-overlay {
@@ -3147,7 +2952,9 @@ body {
   background: #FFFFFF;
 }
 
-.nav-sheet.active { bottom: 0; }
+.nav-sheet.active {
+  bottom: 0;
+}
 
 .nav-sheet-handle {
   width: 40px;
@@ -3166,7 +2973,7 @@ body {
   font-weight: 900;
   color: #FFFFFF;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3177,7 +2984,28 @@ body {
   color: #0F172A;
 }
 
-.nav-sheet-title span { font-size: 26px; }
+.nav-sheet-title span {
+  font-size: 26px;
+}
+
+.nav-sheet-destination {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #22D3EE;
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin: 0 0 20px;
+  direction: rtl;
+}
+
+[data-theme="light"] .nav-sheet-destination {
+  color: #0891B2;
+  background: rgba(34, 211, 238, 0.15);
+  border-color: rgba(34, 211, 238, 0.4);
+}
 
 .nav-sheet-options {
   display: flex;
@@ -3201,7 +3029,9 @@ body {
   overflow: hidden;
 }
 
-.nav-sheet-btn:active { transform: scale(0.98); }
+.nav-sheet-btn:active {
+  transform: scale(0.98);
+}
 
 .nav-sheet-btn-text {
   flex: 1;
@@ -3778,119 +3608,298 @@ body {
 .marker-delivery .custom-marker-pin {
   background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
    }
-
 /* ============================================
-   👤 الملف الشخصي
+   👤 الملف الشخصي الجديد
    ============================================ */
-.profile-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  margin-bottom: 16px;
+.profile-hero-card {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  border: 1.5px solid var(--cyan);
+  border-radius: 24px;
+  padding: 32px 24px 24px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 40px rgba(34, 211, 238, 0.03);
+}
+
+[data-theme="light"] .profile-hero-card {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+}
+
+.profile-hero-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+  animation: profileGlow 4s ease-in-out infinite;
+}
+
+@keyframes profileGlow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
 }
 
 .profile-avatar-wrapper {
   position: relative;
-  margin-bottom: 12px;
-  cursor: pointer;
-  display: inline-block;
-}
-
-.profile-avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  margin: 0 auto 16px;
+  width: 110px;
+  height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.profile-avatar-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.5) 0%, transparent 70%);
+  animation: avatarGlow 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+@keyframes avatarGlow {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+.profile-avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1E3A5F 0%, #0F172A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
   color: #FFFFFF;
   font-weight: 900;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+  border: 3px solid var(--cyan);
+  box-shadow: 
+    0 0 0 4px rgba(34, 211, 238, 0.15),
+    0 0 30px rgba(34, 211, 238, 0.4),
+    inset 0 0 20px rgba(34, 211, 238, 0.1);
   overflow: hidden;
   background-size: cover;
   background-position: center;
   transition: all 0.3s ease;
+  z-index: 2;
 }
 
 .profile-avatar-wrapper:hover .profile-avatar {
   transform: scale(1.05);
-  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.5);
+  box-shadow: 
+    0 0 0 6px rgba(34, 211, 238, 0.25),
+    0 0 40px rgba(34, 211, 238, 0.6),
+    inset 0 0 25px rgba(34, 211, 238, 0.15);
 }
 
 .avatar-edit-badge {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 30px;
-  height: 30px;
+  bottom: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: var(--primary);
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--bg-card);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  border: 3px solid #0F172A;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5);
   transition: all 0.3s ease;
+  z-index: 3;
 }
 
 .avatar-edit-badge svg { stroke: #FFFFFF; }
 
-.profile-header h3 {
-  font-size: 18px;
+.profile-avatar-wrapper:hover .avatar-edit-badge {
+  transform: scale(1.15);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.profile-name {
+  font-size: 22px;
   font-weight: 900;
-  color: var(--text);
-  margin-bottom: 4px;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+  position: relative;
+  z-index: 2;
 }
 
-.profile-header p {
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 600;
+.profile-role {
+  font-size: 14px;
+  color: var(--cyan);
+  font-weight: 700;
+  margin: 0 0 14px;
+  position: relative;
+  z-index: 2;
 }
 
-.profile-card {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 16px;
-  margin-bottom: 16px;
-}
-
-.profile-row {
-  display: flex;
-  justify-content: space-between;
+.profile-status-badge {
+  display: inline-flex;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #10B981;
+  position: relative;
+  z-index: 2;
 }
 
-.profile-row:last-child { border-bottom: none; }
-.profile-row.locked { opacity: 0.7; }
-
-.profile-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 600;
+.profile-status-badge .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+  animation: statusPulse 2s ease-in-out infinite;
 }
 
-.profile-value {
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 600;
-  max-width: 60%;
-  text-align: left;
-  word-break: break-word;
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
 }
 
 /* ============================================
-   ℹ️ صفحة من نحن
+   📋 قائمة المعلومات
+   ============================================ */
+.profile-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.profile-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  transition: all 0.3s ease;
+}
+
+.profile-info-row:hover {
+  border-color: var(--primary);
+  transform: translateX(-3px);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-info-icon svg {
+  stroke: var(--primary);
+}
+
+[data-theme="dark"] .profile-info-icon {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.profile-info-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.profile-info-value {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+  margin-right: auto;
+  text-align: left;
+  word-break: break-word;
+  direction: ltr;
+}
+
+.profile-info-value:not([dir="ltr"]) {
+  direction: rtl;
+}
+
+/* ============================================
+   🔘 أزرار الإجراءات
+   ============================================ */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.profile-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #22D3EE 0%, #06B6D4 100%);
+  color: #0F172A;
+  border: none;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 900;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.35);
+  transition: all 0.3s ease;
+}
+
+.profile-edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(34, 211, 238, 0.55);
+}
+
+.profile-edit-btn svg {
+  stroke: #0F172A;
+}
+
+.profile-logout-btn {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--danger);
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--danger);
+}
+
+/* ============================================
+   ℹ️ من نحن
    ============================================ */
 .about-hero {
   display: flex;
@@ -4720,7 +4729,7 @@ body {
 }
 
 /* ============================================
-   📱 شريط التنقل السفلي
+   📱 الشريط السفلي
    ============================================ */
 .bottom-nav {
   position: fixed;
@@ -4830,7 +4839,7 @@ body {
 }
 
 /* ============================================
-   🎯 تمييز الطلب الجديد
+   🎯 تمييز الطلب
    ============================================ */
 .priority-card.highlighted,
 .order-card.highlighted {
@@ -4895,10 +4904,12 @@ body {
   .radar-sweep { width: 220px; height: 220px; }
   .ai-score { width: 50px; height: 50px; }
   .ai-score span { font-size: 16px; }
-  .wallet-balance-amount { font-size: 42px; }
-  .wallet-balance-icon { font-size: 36px; }
   .map-container { height: 340px; }
   .tracking-map-container { height: 280px; }
   .gps-info-card { padding: 12px; }
   .inventory-stats { grid-template-columns: repeat(2, 1fr); }
+  .profile-avatar-wrapper { width: 100px; height: 100px; }
+  .profile-avatar { width: 90px; height: 90px; font-size: 36px; }
+  .profile-name { font-size: 20px; }
+  .profile-info-icon { width: 36px; height: 36px; }
    }
