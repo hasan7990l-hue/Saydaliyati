@@ -1,12 +1,12 @@
 // ============================================
-// توصيل طبي - Clean Medical v10
-// الجزء 1 من 4
+// توصيل طبي - Clean Medical v11
+// الجزء 1 من 5
 // ============================================
 
 console.log('توصيل طبي - بدأ التحميل');
 
 // ============================================
-// نظام الوضع الليلي / النهاري
+// 🌙 نظام الوضع الليلي / النهاري
 // ============================================
 function toggleTheme() {
   var current = document.documentElement.getAttribute('data-theme');
@@ -43,7 +43,7 @@ function loadTheme() {
 }
 
 // ============================================
-// الأصوات (Web Audio API)
+// 🔊 الأصوات (Web Audio API)
 // ============================================
 var audioCtx = null;
 
@@ -58,7 +58,6 @@ function initAudio() {
   return audioCtx;
 }
 
-// صوت البحث (Sonar)
 function playSonarPing() {
   try {
     var ctx = initAudio();
@@ -81,7 +80,6 @@ function playSonarPing() {
   } catch(e) {}
 }
 
-// صوت الرصد
 function playAlertDing() {
   try {
     var ctx = initAudio();
@@ -112,7 +110,6 @@ function playAlertDing() {
   } catch(e) {}
 }
 
-// صوت النجاح
 function playSuccessSound() {
   try {
     var ctx = initAudio();
@@ -136,7 +133,6 @@ function playSuccessSound() {
   } catch(e) {}
 }
 
-// صوت تفعيل الرادار
 function playRadarActivateSound() {
   try {
     var ctx = initAudio();
@@ -160,7 +156,7 @@ function playRadarActivateSound() {
 }
 
 // ============================================
-// اهتزاز الجهاز
+// 📳 اهتزاز الجهاز
 // ============================================
 function vibrateDevice(pattern) {
   if (navigator.vibrate) {
@@ -294,329 +290,6 @@ function createRegParticles(containerId) {
     
     container.appendChild(particle);
   }
-}
-
-// ============================================
-// 📡 الرادار (نسخة جديدة)
-// ============================================
-var radarActive = false;
-var radarInterval = null;
-var orderSimulationInterval = null;
-
-function toggleRadar() {
-  var radarSimple = document.getElementById('radarSimple');
-  var radarTitle = document.getElementById('radarTitle');
-  var btnText = document.getElementById('radarBtnText');
-  var btn = document.getElementById('radarBtn');
-  
-  if (!radarActive) {
-    // ✅ تفعيل الرادار
-    radarActive = true;
-    
-    if (radarSimple) radarSimple.classList.add('active');
-    if (radarTitle) radarTitle.textContent = 'جارٍ البحث...';
-    if (btnText) btnText.textContent = 'إيقاف البحث';
-    if (btn) btn.classList.add('active');
-    
-    playRadarActivateSound();
-    vibrateDevice([100, 50, 100]);
-    showToast('📡 الرادار يعمل - جاري البحث...');
-    
-    if (radarInterval) clearInterval(radarInterval);
-    radarInterval = setInterval(function() {
-      playSonarPing();
-    }, 2000);
-    
-    setTimeout(function() {
-      if (radarActive) {
-        playAlertDing();
-        vibrateDevice([200, 100, 200]);
-        openOrderSheet();
-        if (radarTitle) radarTitle.textContent = '📦 تم رصد طلب!';
-      }
-    }, 5000);
-    
-    startOrderSimulation();
-    
-  } else {
-    // ❌ إيقاف الرادار
-    radarActive = false;
-    
-    if (radarSimple) radarSimple.classList.remove('active');
-    if (radarTitle) radarTitle.textContent = 'ابدأ البحث';
-    if (btnText) btnText.textContent = 'ابدأ البحث';
-    if (btn) btn.classList.remove('active');
-    
-    if (radarInterval) {
-      clearInterval(radarInterval);
-      radarInterval = null;
-    }
-    
-    if (orderSimulationInterval) {
-      clearInterval(orderSimulationInterval);
-      orderSimulationInterval = null;
-    }
-    
-    showToast('⏹️ تم إيقاف الرادار');
-  }
-}
-
-function startOrderSimulation() {
-  if (orderSimulationInterval) clearInterval(orderSimulationInterval);
-  
-  orderSimulationInterval = setInterval(function() {
-    if (radarActive) {
-      var sheet = document.getElementById('orderSheet');
-      if (sheet && !sheet.classList.contains('active')) {
-        playAlertDing();
-        vibrateDevice([200, 100, 200]);
-        openOrderSheet();
-      }
-    }
-  }, 15000);
-}
-
-// ============================================
-// Bottom Sheet الطلب (القديم)
-// ============================================
-function openOrderSheet() {
-  var overlay = document.getElementById('orderSheetOverlay');
-  var sheet = document.getElementById('orderSheet');
-  
-  if (overlay) overlay.classList.add('active');
-  if (sheet) sheet.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  
-  startOrderTimer();
-}
-
-function closeOrderSheet() {
-  var overlay = document.getElementById('orderSheetOverlay');
-  var sheet = document.getElementById('orderSheet');
-  
-  if (overlay) overlay.classList.remove('active');
-  if (sheet) sheet.classList.remove('active');
-  document.body.style.overflow = '';
-  
-  if (orderTimerInterval) {
-    clearInterval(orderTimerInterval);
-    orderTimerInterval = null;
-  }
-  
-  var radarTitle = document.getElementById('radarTitle');
-  if (radarTitle && radarActive) {
-    radarTitle.textContent = 'جارٍ البحث...';
-  }
-}
-
-var orderTimerInterval = null;
-var orderTimerSeconds = 10;
-
-function startOrderTimer() {
-  orderTimerSeconds = 10;
-  var progressEl = document.getElementById('timerProgress');
-  
-  if (progressEl) progressEl.style.width = '100%';
-  
-  if (orderTimerInterval) clearInterval(orderTimerInterval);
-  
-  orderTimerInterval = setInterval(function() {
-    orderTimerSeconds--;
-    
-    if (progressEl) {
-      progressEl.style.width = (orderTimerSeconds * 10) + '%';
-    }
-    
-    if (orderTimerSeconds <= 0) {
-      clearInterval(orderTimerInterval);
-      orderTimerInterval = null;
-      closeOrderSheet();
-      showToast('انتهى وقت الطلب');
-    }
-  }, 1000);
-}
-
-function acceptFromSheet() {
-  playSuccessSound();
-  closeOrderSheet();
-  showToast('تم قبول الطلب - الرادار يعمل');
-  
-  setTimeout(function() {
-    if (radarActive && !radarInterval) {
-      radarInterval = setInterval(function() {
-        playSonarPing();
-      }, 2000);
-    }
-  }, 1000);
-  
-  setTimeout(function() {
-    goToMyOrders();
-  }, 500);
-}
-
-function acceptOrder(orderId) {
-  playAlertDing();
-  showToast('تم قبول الطلب #' + orderId);
-  
-  setTimeout(function() {
-    goToMyOrders();
-  }, 500);
-}
-
-// ============================================
-// 🧭 Bottom Sheet التنقل (Waze/Google)
-// ============================================
-var pendingOrderDestination = null;
-
-function openNavSheet(lat, lng, destinationType) {
-  pendingOrderDestination = { 
-    lat: lat, 
-    lng: lng, 
-    type: destinationType || 'صيدلية'
-  };
-  
-  var destEl = document.getElementById('navDestination');
-  if (destEl) {
-    destEl.textContent = '📍 الوجهة: ' + (destinationType || 'صيدلية');
-  }
-  
-  var sheet = document.getElementById('navSheet');
-  var overlay = document.getElementById('navSheetOverlay');
-  
-  if (overlay) overlay.classList.add('active');
-  if (sheet) sheet.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
-}
-
-function closeNavSheet() {
-  var sheet = document.getElementById('navSheet');
-  var overlay = document.getElementById('navSheetOverlay');
-  
-  if (overlay) overlay.classList.remove('active');
-  if (sheet) sheet.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function chooseNavigation(type) {
-  if (!pendingOrderDestination) {
-    showToast('⚠️ لا توجد وجهة');
-    closeNavSheet();
-    return;
-  }
-  
-  var lat = pendingOrderDestination.lat;
-  var lng = pendingOrderDestination.lng;
-  
-  closeNavSheet();
-  
-  setTimeout(function() {
-    if (type === 'waze') {
-      openWazeDirect(lat, lng);
-    } else if (type === 'google') {
-      openGoogleDirect(lat, lng);
-    } else if (type === 'map') {
-      openMapDirect(lat, lng);
-    }
-  }, 400);
-}
-
-function openWazeDirect(lat, lng) {
-  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
-  
-  var ua = navigator.userAgent || '';
-  var isIOS = /iPad|iPhone|iPod/.test(ua);
-  var isAndroid = /android/i.test(ua);
-  
-  if (isIOS) {
-    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
-    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
-  } else if (isAndroid) {
-    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
-    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
-  } else {
-    window.open(wazeUrl, '_blank');
-  }
-  
-  showToast('🚗 جارٍ فتح Waze...');
-}
-
-function openGoogleDirect(lat, lng) {
-  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
-  window.open(googleUrl, '_blank');
-  showToast('🗺️ جارٍ فتح Google Maps...');
-}
-
-function openMapDirect(lat, lng) {
-  openMapScreen();
-  
-  setTimeout(function() {
-    if (mainMap) {
-      mainMap.setView([lat, lng], 16);
-    }
-  }, 500);
-  
-  showToast('📍 عرض على الخريطة');
-}
-
-// ============================================
-// بدء الطلب (للمندوب)
-// ============================================
-function startOrder(orderId) {
-  var orderLocations = {
-    1234: { 
-      pharmacy: { lat: 33.3000, lng: 44.4000, name: 'صيدلية النور' },
-      customer: { lat: 33.3152, lng: 44.3661, name: 'أحمد علي - الجادرية' }
-    },
-    1235: { 
-      pharmacy: { lat: 33.2800, lng: 44.3800, name: 'صيدلية الحياة' },
-      customer: { lat: 33.3200, lng: 44.3700, name: 'سارة محمد - الكرادة' }
-    },
-    1236: { 
-      pharmacy: { lat: 33.3300, lng: 44.3500, name: 'صيدلية الشفاء' },
-      customer: { lat: 33.3100, lng: 44.3900, name: 'علي حسن - الكاظمية' }
-    }
-  };
-  
-  var order = orderLocations[orderId];
-  if (!order) {
-    showToast('⚠️ الطلب غير موجود');
-    return;
-  }
-  
-  localStorage.setItem('saydaliyati_active_order', JSON.stringify({
-    id: orderId,
-    pharmacy: order.pharmacy,
-    customer: order.customer,
-    stage: 'pickup'
-  }));
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
-  
-  openNavSheet(order.pharmacy.lat, order.pharmacy.lng, order.pharmacy.name);
-  
-  showToast('📍 الوجهة: ' + order.pharmacy.name);
-}
-
-function goToPickup() {
-  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
-  if (!activeOrder.pharmacy) {
-    showToast('⚠️ لا يوجد طلب نشط');
-    return;
-  }
-  
-  openNavSheet(activeOrder.pharmacy.lat, activeOrder.pharmacy.lng, activeOrder.pharmacy.name);
-}
-
-function goToCustomer() {
-  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
-  if (!activeOrder.customer) {
-    showToast('⚠️ لا يوجد طلب نشط');
-    return;
-  }
-  
-  openNavSheet(activeOrder.customer.lat, activeOrder.customer.lng, activeOrder.customer.name);
 }
 
 // ============================================
@@ -773,6 +446,217 @@ function closeLegalModal(btn) {
     }, 300);
   }
 }
+
+// ============================================
+// 🧭 Bottom Sheet التنقل (Waze/Google)
+// ============================================
+var pendingOrderDestination = null;
+
+function openNavSheet(lat, lng, destinationType) {
+  pendingOrderDestination = { 
+    lat: lat, 
+    lng: lng, 
+    type: destinationType || 'صيدلية'
+  };
+  
+  var destEl = document.getElementById('navDestination');
+  if (destEl) {
+    destEl.textContent = '📍 الوجهة: ' + (destinationType || 'صيدلية');
+  }
+  
+  var sheet = document.getElementById('navSheet');
+  var overlay = document.getElementById('navSheetOverlay');
+  
+  if (overlay) overlay.classList.add('active');
+  if (sheet) sheet.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  if (navigator.vibrate) navigator.vibrate([50]);
+}
+
+function closeNavSheet() {
+  var sheet = document.getElementById('navSheet');
+  var overlay = document.getElementById('navSheetOverlay');
+  
+  if (overlay) overlay.classList.remove('active');
+  if (sheet) sheet.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function chooseNavigation(type) {
+  if (!pendingOrderDestination) {
+    showToast('⚠️ لا توجد وجهة');
+    closeNavSheet();
+    return;
+  }
+  
+  var lat = pendingOrderDestination.lat;
+  var lng = pendingOrderDestination.lng;
+  
+  closeNavSheet();
+  
+  setTimeout(function() {
+    if (type === 'waze') {
+      openWazeDirect(lat, lng);
+    } else if (type === 'google') {
+      openGoogleDirect(lat, lng);
+    } else if (type === 'map') {
+      openMapDirect(lat, lng);
+    }
+  }, 400);
+}
+
+function openWazeDirect(lat, lng) {
+  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
+  
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua);
+  var isAndroid = /android/i.test(ua);
+  
+  if (isIOS) {
+    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
+    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
+  } else if (isAndroid) {
+    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
+    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
+  } else {
+    window.open(wazeUrl, '_blank');
+  }
+  
+  showToast('🚗 جارٍ فتح Waze...');
+}
+
+function openGoogleDirect(lat, lng) {
+  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
+  window.open(googleUrl, '_blank');
+  showToast('🗺️ جارٍ فتح Google Maps...');
+}
+
+function openMapDirect(lat, lng) {
+  openMapScreen();
+  
+  setTimeout(function() {
+    if (mainMap) {
+      mainMap.setView([lat, lng], 16);
+    }
+  }, 500);
+  
+  showToast('📍 عرض على الخريطة');
+}
+
+// ============================================
+// 🚀 بدء الطلب (للمندوب)
+// ============================================
+function startOrder(orderId) {
+  var orderLocations = {
+    1234: { 
+      pharmacy: { lat: 33.3000, lng: 44.4000, name: 'صيدلية النور' },
+      customer: { lat: 33.3152, lng: 44.3661, name: 'أحمد علي - الجادرية' }
+    },
+    1235: { 
+      pharmacy: { lat: 33.2800, lng: 44.3800, name: 'صيدلية الحياة' },
+      customer: { lat: 33.3200, lng: 44.3700, name: 'سارة محمد - الكرادة' }
+    },
+    1236: { 
+      pharmacy: { lat: 33.3300, lng: 44.3500, name: 'صيدلية الشفاء' },
+      customer: { lat: 33.3100, lng: 44.3900, name: 'علي حسن - الكاظمية' }
+    }
+  };
+  
+  var order = orderLocations[orderId];
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+  
+  localStorage.setItem('saydaliyati_active_order', JSON.stringify({
+    id: orderId,
+    pharmacy: order.pharmacy,
+    customer: order.customer,
+    stage: 'pickup'
+  }));
+  
+  if (navigator.vibrate) navigator.vibrate([50]);
+  
+  openNavSheet(order.pharmacy.lat, order.pharmacy.lng, order.pharmacy.name);
+  
+  showToast('📍 الوجهة: ' + order.pharmacy.name);
+}
+
+function goToPickup() {
+  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
+  if (!activeOrder.pharmacy) {
+    showToast('⚠️ لا يوجد طلب نشط');
+    return;
+  }
+  
+  openNavSheet(activeOrder.pharmacy.lat, activeOrder.pharmacy.lng, activeOrder.pharmacy.name);
+}
+
+function goToCustomer() {
+  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
+  if (!activeOrder.customer) {
+    showToast('⚠️ لا يوجد طلب نشط');
+    return;
+  }
+  
+  openNavSheet(activeOrder.customer.lat, activeOrder.customer.lng, activeOrder.customer.name);
+}
+
+// ============================================
+// 📦 نافذة تفاصيل الطلب (للمندوب)
+// ============================================
+var currentOrderDetails = null;
+
+function showOrderDetails(orderId, pharmacy, distance, commission) {
+  currentOrderDetails = { orderId: orderId, pharmacy: pharmacy };
+  
+  var titleEl = document.getElementById('orderDetailsTitle');
+  var pharmacyEl = document.getElementById('orderDetailsPharmacy');
+  var distanceEl = document.getElementById('orderDetailsDistance');
+  var commissionEl = document.getElementById('orderDetailsCommission');
+  
+  if (titleEl) titleEl.textContent = 'تفاصيل الطلب #' + orderId;
+  if (pharmacyEl) pharmacyEl.textContent = pharmacy;
+  if (distanceEl) distanceEl.textContent = distance + ' كم';
+  if (commissionEl) commissionEl.textContent = parseInt(commission).toLocaleString() + ' دينار';
+  
+  var modal = document.getElementById('orderDetailsModal');
+  if (modal) {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  if (navigator.vibrate) navigator.vibrate([30]);
+}
+
+function closeOrderDetailsModal() {
+  var modal = document.getElementById('orderDetailsModal');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  currentOrderDetails = null;
+}
+
+function acceptOrderFromDetails() {
+  if (currentOrderDetails) {
+    var orderId = currentOrderDetails.orderId;
+    closeOrderDetailsModal();
+    setTimeout(function() {
+      acceptOrder(orderId);
+    }, 300);
+  }
+}
+
+function acceptOrder(orderId) {
+  playAlertDing();
+  showToast('✅ تم قبول الطلب #' + orderId);
+  
+  setTimeout(function() {
+    goToMyOrders();
+  }, 800);
+  }
 // ============================================
 // 📱 إدارة الشاشات
 // ============================================
@@ -831,7 +715,7 @@ function updateBottomNav(screenId) {
 }
 
 // ============================================
-// 🔄 تبديل التبويب (بدون زر "طلباتي")
+// 🔄 تبديل التبويب
 // ============================================
 function switchTab(tab) {
   document.querySelectorAll('.nav-btn').forEach(function(btn) {
@@ -1461,10 +1345,10 @@ function logout() {
   if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
     localStorage.removeItem('saydaliyati_current_user');
     
-    if (radarActive) {
+    if (typeof radarActive !== 'undefined' && radarActive) {
       radarActive = false;
-      if (radarInterval) clearInterval(radarInterval);
-      if (orderSimulationInterval) clearInterval(orderSimulationInterval);
+      if (typeof radarInterval !== 'undefined' && radarInterval) clearInterval(radarInterval);
+      if (typeof orderSimulationInterval !== 'undefined' && orderSimulationInterval) clearInterval(orderSimulationInterval);
     }
     
     closeSidebar();
@@ -1833,7 +1717,7 @@ function loadOffers() {
   });
   
   offersList.innerHTML = html;
-      }
+}
 // ============================================
 // 📸 نظام طلب الروشتة
 // ============================================
@@ -2665,8 +2549,7 @@ function deleteMedicine(medId) {
   saveInventory(inventory);
   renderInventory();
   showToast('تم حذف الدواء');
-}
-
+  }
 // ============================================
 // ⭐ نظام التقييم
 // ============================================
@@ -2792,7 +2675,7 @@ function submitRating() {
 }
 
 // ============================================
-// 🔔 التنبيهات الداخلية (Helper)
+// 🔔 التنبيهات الداخلية
 // ============================================
 function addInternalNotification(type, title, message) {
   var notif = {
@@ -2838,7 +2721,166 @@ function updateNotifBadge() {
     badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
     navBtn.appendChild(badge);
   }
+}
+
+// ============================================
+// 📡 الرادار
+// ============================================
+var radarActive = false;
+var radarInterval = null;
+var orderSimulationInterval = null;
+
+function toggleRadar() {
+  var radarSimple = document.getElementById('radarSimple');
+  var radarTitle = document.getElementById('radarTitle');
+  var btnText = document.getElementById('radarBtnText');
+  var btn = document.getElementById('radarBtn');
+  
+  if (!radarActive) {
+    radarActive = true;
+    
+    if (radarSimple) radarSimple.classList.add('active');
+    if (radarTitle) radarTitle.textContent = 'جارٍ البحث...';
+    if (btnText) btnText.textContent = 'إيقاف البحث';
+    if (btn) btn.classList.add('active');
+    
+    playRadarActivateSound();
+    vibrateDevice([100, 50, 100]);
+    showToast('📡 الرادار يعمل - جاري البحث...');
+    
+    if (radarInterval) clearInterval(radarInterval);
+    radarInterval = setInterval(function() {
+      playSonarPing();
+    }, 2000);
+    
+    setTimeout(function() {
+      if (radarActive) {
+        playAlertDing();
+        vibrateDevice([200, 100, 200]);
+        openOrderSheet();
+        if (radarTitle) radarTitle.textContent = '📦 تم رصد طلب!';
+      }
+    }, 5000);
+    
+    startOrderSimulation();
+    
+  } else {
+    radarActive = false;
+    
+    if (radarSimple) radarSimple.classList.remove('active');
+    if (radarTitle) radarTitle.textContent = 'ابدأ البحث';
+    if (btnText) btnText.textContent = 'ابدأ البحث';
+    if (btn) btn.classList.remove('active');
+    
+    if (radarInterval) {
+      clearInterval(radarInterval);
+      radarInterval = null;
+    }
+    
+    if (orderSimulationInterval) {
+      clearInterval(orderSimulationInterval);
+      orderSimulationInterval = null;
+    }
+    
+    showToast('⏹️ تم إيقاف الرادار');
   }
+}
+
+function startOrderSimulation() {
+  if (orderSimulationInterval) clearInterval(orderSimulationInterval);
+  
+  orderSimulationInterval = setInterval(function() {
+    if (radarActive) {
+      var sheet = document.getElementById('orderSheet');
+      if (sheet && !sheet.classList.contains('active')) {
+        playAlertDing();
+        vibrateDevice([200, 100, 200]);
+        openOrderSheet();
+      }
+    }
+  }, 15000);
+}
+
+function openOrderSheet() {
+  var overlay = document.getElementById('orderSheetOverlay');
+  var sheet = document.getElementById('orderSheet');
+  
+  if (overlay) overlay.classList.add('active');
+  if (sheet) sheet.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  startOrderTimer();
+}
+
+function closeOrderSheet() {
+  var overlay = document.getElementById('orderSheetOverlay');
+  var sheet = document.getElementById('orderSheet');
+  
+  if (overlay) overlay.classList.remove('active');
+  if (sheet) sheet.classList.remove('active');
+  document.body.style.overflow = '';
+  
+  if (orderTimerInterval) {
+    clearInterval(orderTimerInterval);
+    orderTimerInterval = null;
+  }
+  
+  var radarTitle = document.getElementById('radarTitle');
+  if (radarTitle && radarActive) {
+    radarTitle.textContent = 'جارٍ البحث...';
+  }
+}
+
+var orderTimerInterval = null;
+var orderTimerSeconds = 10;
+
+function startOrderTimer() {
+  orderTimerSeconds = 10;
+  var progressEl = document.getElementById('timerProgress');
+  var textEl = document.getElementById('timerText');
+  
+  if (progressEl) progressEl.style.width = '100%';
+  if (textEl) textEl.textContent = orderTimerSeconds;
+  
+  if (orderTimerInterval) clearInterval(orderTimerInterval);
+  
+  orderTimerInterval = setInterval(function() {
+    orderTimerSeconds--;
+    
+    if (progressEl) {
+      progressEl.style.width = (orderTimerSeconds * 10) + '%';
+    }
+    if (textEl) {
+      textEl.textContent = orderTimerSeconds;
+    }
+    
+    if (orderTimerSeconds <= 0) {
+      clearInterval(orderTimerInterval);
+      orderTimerInterval = null;
+      closeOrderSheet();
+      showToast('انتهى وقت الطلب');
+    }
+  }, 1000);
+}
+
+function acceptFromSheet() {
+  playSuccessSound();
+  closeOrderSheet();
+  showToast('تم قبول الطلب - الرادار يعمل');
+  
+  setTimeout(function() {
+    if (radarActive && !radarInterval) {
+      radarInterval = setInterval(function() {
+        playSonarPing();
+      }, 2000);
+    }
+  }, 1000);
+  
+  setTimeout(function() {
+    goToMyOrders();
+  }, 500);
+}
+
 // ============================================
 // 🗺️ نظام الخريطة + GPS
 // ============================================
@@ -3228,8 +3270,7 @@ function simulateDeliveryMovement(marker, start, end) {
 
 function refreshTracking() {
   showToast('🔄 جارٍ تحديث موقع المندوب...');
-}
-
+    }
 // ============================================
 // 🔔 إشعارات Push
 // ============================================
@@ -3362,7 +3403,7 @@ function checkForNewOrders() {
   
   var user = JSON.parse(userStr);
   
-  if (user.type === 'delivery' && radarActive) {
+  if (user.type === 'delivery' && typeof radarActive !== 'undefined' && radarActive) {
     simulateDeliveryOrder(user);
   }
   if (user.type === 'pharmacy') {
@@ -3445,7 +3486,7 @@ document.addEventListener('gesturestart', function(e) {
 });
 
 // ============================================
-// 🚀 عند التحميل + إخفاء Bottom Sheets
+// 🚀 عند التحميل
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
   console.log('توصيل طبي جاهز');
@@ -3531,4 +3572,4 @@ window.logout = function() {
 // ============================================
 // 🎉 نهاية الملف
 // ============================================
-console.log('توصيل طبي - اكتمل التحميل v10');
+console.log('توصيل طبي - اكتمل التحميل v11');
