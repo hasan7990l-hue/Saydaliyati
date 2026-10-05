@@ -6330,8 +6330,8 @@ body {
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-around;
+  align-items: flex-end;
   padding: 8px 0 max(8px, env(safe-area-inset-bottom));
   z-index: 100;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
@@ -6353,9 +6353,10 @@ body {
   cursor: pointer;
   padding: 6px 4px;
   transition: all 0.3s ease;
-  flex: 1;
+  flex: 1 1 0;
   position: relative;
   min-width: 0;
+  max-width: 90px;
 }
 
 .nav-btn svg {
