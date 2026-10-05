@@ -287,34 +287,40 @@ function createRegParticles(containerId) {
     container.appendChild(particle);
   }
 }
-
 // ============================================
-// 🔵 Google Sign-In (تجريبي)
+// 🔵 Google Sign-In (للدخول، ليس للتسجيل)
 // ============================================
-function signInWithGoogleTest() {
+async function signInWithGoogleTest() {
   showToast('🔄 جاري الاتصال بـ Google...');
   
-  setTimeout(function() {
-    var mockUser = {
+  try {
+    const provider = window.firebaseProvider;
+    const auth = window.firebaseAuth;
+    const signInWithPopup = window.firebaseSignInWithPopup;
+    
+    if (!provider || !auth || !signInWithPopup) {
+      showError('Firebase غير جاهز. حاول لاحقاً.');
+      return;
+    }
+    
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    
+    console.log('✅ تم تسجيل الدخول:', user);
+    
+    const userData = {
       type: 'patient',
-      name: 'حسن التجريبي',
-      phone: '07701234567',
-      email: 'test@gmail.com',
-      address: 'بغداد - الكرادة',
-      avatar: '',
-      googleId: 'mock_google_' + Date.now(),
+      name: user.displayName || 'مستخدم Google',
+      phone: user.phoneNumber || '',
+      email: user.email || '',
+      address: '',
+      avatar: user.photoURL || '',
+      googleId: user.uid,
       loginMethod: 'google',
       date: new Date().toISOString()
     };
     
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(mockUser));
-    
-    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    var exists = registrations.find(function(r) { return r.phone === mockUser.phone; });
-    if (!exists) {
-      registrations.push(mockUser);
-      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
-    }
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
     
     playSuccessSound();
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -324,43 +330,19 @@ function signInWithGoogleTest() {
     setTimeout(function() {
       goToDashboardByType();
     }, 800);
-  }, 1200);
-}
-
-function signUpWithGoogleTest() {
-  showToast('🔄 جاري التسجيل بـ Google...');
-  
-  setTimeout(function() {
-    var mockUser = {
-      type: 'patient',
-      name: 'حسن التجريبي',
-      phone: '07701234567',
-      email: 'test@gmail.com',
-      address: 'بغداد - الكرادة',
-      avatar: '',
-      googleId: 'mock_google_' + Date.now(),
-      loginMethod: 'google',
-      date: new Date().toISOString()
-    };
     
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(mockUser));
+  } catch (error) {
+    console.error('❌ خطأ Google Sign-In:', error);
     
-    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    var exists = registrations.find(function(r) { return r.phone === mockUser.phone; });
-    if (!exists) {
-      registrations.push(mockUser);
-      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    if (error.code === 'auth/popup-closed-by-user') {
+      showToast('⚠️ تم إغلاق نافذة Google');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      showError('النطاق غير مصرح به. أضف النطاق في Firebase.');
+    } else {
+      showError('فشل الدخول: ' + error.message);
     }
-    
-    playSuccessSound();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    
-    showToast('✅ تم التسجيل بنجاح');
-    
-    showSuccessMessage('مرحباً بك', 'تم إنشاء حسابك بـ Google، ' + mockUser.name);
-  }, 1200);
-}
-
+  }
+      }
 // ============================================
 // 📜 الشروط والأحكام + سياسة الخصوصية
 // ============================================
