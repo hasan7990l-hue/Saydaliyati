@@ -1616,7 +1616,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('صيدليتي جاهز');
   
   loadTheme();
-  
+  setTimeout(createSplashParticles, 100);
   // إخفاء جميع Bottom Sheets عند التحميل
   var orderSheet = document.getElementById('orderSheet');
   var orderSheetOverlay = document.getElementById('orderSheetOverlay');
