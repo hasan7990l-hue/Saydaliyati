@@ -2710,6 +2710,38 @@
   <!-- ============================================
        🔗 ربط JavaScript + Service Worker
        ============================================ -->
+     <!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDo_IU84fPcBf8fUloq6CWHcWMjWIo08kc",
+    authDomain: "saydaliyati-6d68e.firebaseapp.com",
+    projectId: "saydaliyati-6d68e",
+    storageBucket: "saydaliyati-6d68e.firebasestorage.app",
+    messagingSenderId: "476716520164",
+    appId: "1:476716520164:web:057c87b0ecaa187fa852f1"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // جعل المتغيرات متاحة عالمياً لاستخدامها في script.js
+  window.firebaseAuth = auth;
+  window.firebaseDB = db;
+  window.firebaseProvider = provider;
+  window.firebaseSignInWithPopup = signInWithPopup;
+  window.firebaseOnAuthStateChanged = onAuthStateChanged;
+  window.firebaseDoc = doc;
+  window.firebaseSetDoc = setDoc;
+  window.firebaseGetDoc = getDoc;
+
+  console.log('✅ Firebase تم تهيئته بنجاح');
+</script>
   <script src="script.js"></script>
   
   <script>
