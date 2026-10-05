@@ -19,28 +19,71 @@
 </head>
 <body>
 
-  <!-- ============================================
-       شاشة البداية
-       ============================================ -->
-  <div class="screen active" id="splashScreen">
-    <button class="theme-toggle" onclick="toggleTheme()">
-      <span class="theme-icon">🌙</span>
-    </button>
-    <div class="splash-content">
-      <div class="animated-logo">
-        <div class="logo-pulse"></div>
-        <div class="logo-cross">
-          <span class="cross-symbol">✚</span>
-        </div>
-      </div>
-      <h1 class="app-name">صيدليتي</h1>
-      <p class="tagline">صحتك أولويتنا</p>
-    </div>
-    <div class="splash-buttons">
-      <button class="btn-primary" onclick="goToLogin()">تسجيل الدخول</button>
-      <button class="btn-outline" onclick="goToRoleSelection()">إنشاء حساب</button>
-    </div>
+<!-- ============================================
+     🎬 شاشة البداية (تصميم Cyberpunk فخم)
+     ============================================ -->
+<div class="screen active" id="splashScreen">
+  
+  <!-- خلفية Cyberpunk -->
+  <div class="splash-bg">
+    <div class="splash-hex-grid"></div>
+    <div class="splash-particles" id="splashParticles"></div>
+    <div class="splash-glow-blob"></div>
   </div>
+
+  <!-- محتوى الشاشة -->
+  <div class="splash-content">
+    
+    <!-- الشعار -->
+    <div class="splash-logo-wrap">
+      <div class="splash-logo-glow"></div>
+      <svg class="splash-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="splashCrossGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" 
+              stroke="#22D3EE" stroke-width="2.5" fill="none" filter="url(#splashCrossGlow)"/>
+        <circle cx="50" cy="50" r="10" stroke="#22D3EE" stroke-width="1" fill="none" opacity="0.6"/>
+        <circle cx="50" cy="50" r="4" fill="#22D3EE" opacity="0.9"/>
+        <path d="M50 8 V20 M50 80 V92 M8 50 H20 M80 50 H92" stroke="#22D3EE" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="8" r="2" fill="#22D3EE"/>
+        <circle cx="50" cy="92" r="2" fill="#22D3EE"/>
+        <circle cx="8" cy="50" r="2" fill="#22D3EE"/>
+        <circle cx="92" cy="50" r="2" fill="#22D3EE"/>
+      </svg>
+    </div>
+    
+    <!-- اسم التطبيق -->
+    <h1 class="splash-app-name">توصيل طبي</h1>
+    
+    <!-- الأزرار -->
+    <div class="splash-buttons">
+      <button class="splash-btn-primary" onclick="goToLogin()">
+        <span>تسجيل الدخول</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      <button class="splash-btn-outline" onclick="goToRoleSelection()">
+        <span>إنشاء حساب</span>
+      </button>
+    </div>
+    
+  </div>
+  
+  <!-- زر الوضع الليلي -->
+  <button class="theme-toggle splash-theme-toggle" onclick="toggleTheme()">
+    <span class="theme-icon">🌙</span>
+  </button>
+  
+</div>
 
   <!-- ============================================
        🔐 تسجيل الدخول (تصميم فخم Cyberpunk)
