@@ -43,34 +43,100 @@
   </div>
 
   <!-- ============================================
-       تسجيل الدخول
+       🔐 تسجيل الدخول (تصميم فخم Cyberpunk)
        ============================================ -->
   <div class="screen" id="loginScreen">
-    <div class="top-bar">
-      <button class="back-btn" onclick="goToSplash()">←</button>
+    
+    <!-- خلفية Cyberpunk -->
+    <div class="login-bg">
+      <div class="login-hex-grid"></div>
+      <div class="login-particles" id="loginParticles"></div>
+      <div class="login-glow-blob"></div>
     </div>
-    <h2 class="screen-title">تسجيل الدخول</h2>
-    <p class="screen-subtitle">أدخل بياناتك للدخول</p>
-    <form class="blue-form" onsubmit="submitLogin(event); return false;">
-      <div class="input-group">
-        <label>رقم الهاتف *</label>
-        <input type="tel" id="loginPhone" placeholder="07XX XXX XXXX" required>
+
+    <!-- محتوى الشاشة -->
+    <div class="login-content">
+      
+      <!-- الشعار -->
+      <div class="login-logo-wrap">
+        <div class="login-logo-glow"></div>
+        <svg class="login-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="crossGlow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- شكل الصليب -->
+          <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" 
+                stroke="#22D3EE" stroke-width="2.5" fill="none" filter="url(#crossGlow)"/>
+          <!-- خطوط الدائرة الإلكترونية -->
+          <circle cx="50" cy="50" r="10" stroke="#22D3EE" stroke-width="1" fill="none" opacity="0.6"/>
+          <circle cx="50" cy="50" r="4" fill="#22D3EE" opacity="0.9"/>
+          <path d="M50 8 V20 M50 80 V92 M8 50 H20 M80 50 H92" stroke="#22D3EE" stroke-width="1" opacity="0.5"/>
+          <circle cx="50" cy="8" r="2" fill="#22D3EE"/>
+          <circle cx="50" cy="92" r="2" fill="#22D3EE"/>
+          <circle cx="8" cy="50" r="2" fill="#22D3EE"/>
+          <circle cx="92" cy="50" r="2" fill="#22D3EE"/>
+        </svg>
       </div>
-      <div class="input-group">
-        <label>كلمة المرور *</label>
-        <div class="password-wrapper">
-          <input type="password" id="loginPassword" placeholder="••••••••" required>
-          <button type="button" class="toggle-password" onclick="togglePasswordVisibility('loginPassword', this)">
-            <span>👁️</span>
+      
+      <!-- اسم التطبيق -->
+      <h1 class="login-app-name">توصيل طبي</h1>
+      
+      <!-- بطاقة تسجيل الدخول الزجاجية -->
+      <div class="login-glass-card">
+        
+        <h2 class="login-title">تسجيل الدخول</h2>
+        
+        <form class="login-form" onsubmit="submitLogin(event); return false;">
+          
+          <!-- حقل رقم الهاتف -->
+          <div class="login-input-wrap">
+            <input type="tel" id="loginPhone" class="login-input" placeholder="رقم الهاتف" required>
+            <div class="login-input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- حقل كلمة المرور -->
+          <div class="login-input-wrap">
+            <input type="password" id="loginPassword" class="login-input" placeholder="كلمة المرور" required>
+            <div class="login-input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <button type="button" class="login-eye-btn" onclick="togglePasswordVisibility('loginPassword', this)">
+              <span>👁️</span>
+            </button>
+          </div>
+          
+          <!-- زر الدخول -->
+          <button type="submit" class="login-submit-btn">
+            دخول
           </button>
-        </div>
+          
+          <!-- رابط إنشاء حساب -->
+          <a href="#" class="login-create-link" onclick="goToRoleSelection(); return false;">
+            إنشاء حساب
+          </a>
+          
+        </form>
+        
       </div>
-      <button type="submit" class="btn-primary">دخول</button>
-    </form>
-    <p class="form-link">
-      ما عندك حساب؟ 
-      <a href="#" onclick="goToRoleSelection(); return false;">إنشاء حساب جديد</a>
-    </p>
+      
+      <!-- زر الرجوع -->
+      <button class="login-back-btn" onclick="goToSplash()">←</button>
+      
+    </div>
+    
   </div>
 
   <!-- ============================================
@@ -475,84 +541,126 @@
 </div>
 
 <!-- ============================================
-     لوحة الدليفري
+     🚴 لوحة الدليفري (تصميم جديد - الرادار البسيط)
      ============================================ -->
 <div class="screen" id="deliveryDashboard">
-  <div class="home-header">
-    <div class="greeting-section">
-      <h1 class="greeting-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span></h1>
-      <p class="greeting-sub">جاهز للعمل اليوم؟</p>
+  
+  <!-- الرأس -->
+  <div class="delivery-header">
+    <div class="delivery-greeting">
+      <h1 class="delivery-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span></h1>
+      <p class="delivery-sub">جاهز للعمل اليوم؟</p>
     </div>
-  </div>
-
-  <div class="radar-section">
-    <div class="radar-map">
-      <div class="radar-grid"></div>
-      <div class="radar-circle radar-circle-1"></div>
-      <div class="radar-circle radar-circle-2"></div>
-      <div class="radar-circle radar-circle-3"></div>
-      <div class="radar-sweep"></div>
-      <div class="radar-center"></div>
-      <div class="radar-dot" style="top: 25%; left: 30%;"></div>
-      <div class="radar-dot" style="top: 45%; left: 70%;"></div>
-      <div class="radar-dot" style="top: 70%; left: 45%;"></div>
-      <div class="radar-label-top">3 طلبات قريبة</div>
-      <button class="radar-btn" onclick="toggleRadar()" id="radarBtn">
-        <span id="radarBtnText">تفعيل الرادار</span>
+    <div class="delivery-header-actions">
+      <button class="delivery-notif-btn" onclick="openNotifications()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="delivery-notif-badge">3</span>
       </button>
+      <div class="delivery-avatar" onclick="openProfile()">
+        <span>ح</span>
+      </div>
     </div>
   </div>
 
+  <!-- الرادار البسيط -->
+  <div class="radar-section">
+    <div class="radar-simple" id="radarSimple">
+      
+      <!-- النقاط الطافية -->
+      <div class="radar-dot" style="top: 8%; left: 20%;"></div>
+      <div class="radar-dot" style="top: 18%; left: 78%;"></div>
+      <div class="radar-dot" style="top: 32%; left: 90%;"></div>
+      <div class="radar-dot" style="top: 55%; left: 92%;"></div>
+      <div class="radar-dot" style="top: 78%; left: 82%;"></div>
+      <div class="radar-dot" style="top: 88%; left: 60%;"></div>
+      <div class="radar-dot" style="top: 85%; left: 25%;"></div>
+      <div class="radar-dot" style="top: 62%; left: 8%;"></div>
+      <div class="radar-dot" style="top: 35%; left: 6%;"></div>
+      <div class="radar-dot" style="top: 15%; left: 45%;"></div>
+      
+      <!-- الحلقات السماوية -->
+      <div class="radar-ring radar-ring-1"></div>
+      <div class="radar-ring radar-ring-2"></div>
+      <div class="radar-ring radar-ring-3"></div>
+      <div class="radar-ring radar-ring-4"></div>
+      
+      <!-- الدائرة المركزية -->
+      <div class="radar-core">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+          <path d="M7.76 7.76a6 6 0 0 0 0 8.48"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          <path d="M16.24 7.76a6 6 0 0 1 0 8.48"/>
+          <circle cx="12" cy="12" r="2" fill="#22D3EE"/>
+        </svg>
+      </div>
+      
+      <!-- النص -->
+      <div class="radar-text">
+        <span class="radar-title" id="radarTitle">ابدأ البحث</span>
+      </div>
+    </div>
+    
+    <!-- زر بدء البحث -->
+    <button class="radar-start-btn" onclick="toggleRadar()" id="radarBtn">
+      <span id="radarBtnText">ابدأ البحث</span>
+    </button>
+  </div>
+
+  <!-- عنوان الطلبات -->
   <div class="section-header">
-    <h3>الطلبات المتاحة</h3>
+    <h3>الطلبات</h3>
     <a href="#" onclick="goToMyOrders(); return false;">عرض الكل</a>
   </div>
 
-  <div class="order-list">
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب #1234 - صيدلية النور</span>
-        <span class="order-status available">متاح</span>
+  <!-- قائمة الطلبات -->
+  <div class="delivery-orders-list">
+    
+    <div class="delivery-order-card">
+      <div class="delivery-order-info">
+        <h4 class="delivery-order-title">طلب #1234 - صيدلية النور</h4>
+        <div class="delivery-order-meta">
+          <span>📍 2.5 كم</span>
+          <span>💰 3,000 د</span>
+        </div>
       </div>
-      <div class="order-info">
-        <p><strong>المسافة:</strong> 2.5 كم</p>
-        <p><strong>العمولة:</strong> <span class="price">3,000</span> دينار</p>
-      </div>
-      <div class="order-actions">
-        <button class="btn-accept" onclick="acceptOrder(1234)">قبول</button>
-        <button class="btn-reject">تفاصيل</button>
-      </div>
-    </div>
-
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب #1235</span>
-        <span class="order-status available">متاح</span>
-      </div>
-      <div class="order-info">
-        <p><strong>المسافة:</strong> 3.2 كم</p>
-        <p><strong>العمولة:</strong> <span class="price">4,000</span> دينار</p>
-      </div>
-      <div class="order-actions">
-        <button class="btn-accept" onclick="acceptOrder(1235)">قبول</button>
-        <button class="btn-reject">تفاصيل</button>
+      <div class="delivery-order-actions">
+        <button class="delivery-accept-btn" onclick="acceptOrder(1234)">قبول</button>
+        <button class="delivery-details-btn">تفاصيل</button>
       </div>
     </div>
 
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب #1236</span>
-        <span class="order-status available">متاح</span>
+    <div class="delivery-order-card">
+      <div class="delivery-order-info">
+        <h4 class="delivery-order-title">طلب #1235 - صيدلية الحياة</h4>
+        <div class="delivery-order-meta">
+          <span>📍 3.2 كم</span>
+          <span>💰 4,000 د</span>
+        </div>
       </div>
-      <div class="order-info">
-        <p><strong>المسافة:</strong> 4.1 كم</p>
-        <p><strong>العمولة:</strong> <span class="price">5,000</span> دينار</p>
-      </div>
-      <div class="order-actions">
-        <button class="btn-accept" onclick="acceptOrder(1236)">قبول</button>
-        <button class="btn-reject">تفاصيل</button>
+      <div class="delivery-order-actions">
+        <button class="delivery-accept-btn" onclick="acceptOrder(1235)">قبول</button>
+        <button class="delivery-details-btn">تفاصيل</button>
       </div>
     </div>
+
+    <div class="delivery-order-card">
+      <div class="delivery-order-info">
+        <h4 class="delivery-order-title">طلب #1236 - صيدلية الشفاء</h4>
+        <div class="delivery-order-meta">
+          <span>📍 4.1 كم</span>
+          <span>💰 5,000 د</span>
+        </div>
+      </div>
+      <div class="delivery-order-actions">
+        <button class="delivery-accept-btn" onclick="acceptOrder(1236)">قبول</button>
+        <button class="delivery-details-btn">تفاصيل</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -795,8 +903,8 @@
     </div>
   </div>
 
-</div>
-  <!-- ============================================
+  </div>
+    <!-- ============================================
        صفحة إدارة المخزون
        ============================================ -->
   <div class="screen" id="inventoryScreen">
@@ -1059,7 +1167,7 @@
   </div>
 
   <!-- ============================================
-       صفحة الطلبات (السجل)
+       صفحة الطلبات (السجل) - بدون تبويب "الجديدة"
        ============================================ -->
   <div class="screen" id="ordersScreen">
     <div class="top-bar">
@@ -1070,7 +1178,6 @@
 
     <div class="filter-tabs">
       <button class="filter-tab active">الكل</button>
-      <button class="filter-tab">الجديدة</button>
       <button class="filter-tab">المكتملة</button>
     </div>
 
@@ -1118,7 +1225,6 @@
       </button>
     </div>
 
-    <!-- بطاقة الملف الشخصي -->
     <div class="profile-hero-card">
       <div class="profile-avatar-wrapper" onclick="openImagePicker()">
         <div class="profile-avatar-glow"></div>
@@ -1141,7 +1247,6 @@
       </div>
     </div>
 
-    <!-- المعلومات الشخصية -->
     <div class="profile-info-list">
       <div class="profile-info-row">
         <div class="profile-info-icon">
@@ -1216,7 +1321,6 @@
       </div>
     </div>
 
-    <!-- أزرار الإجراءات -->
     <div class="profile-actions">
       <button class="profile-edit-btn" onclick="openEditProfile()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1231,7 +1335,6 @@
       </button>
     </div>
 
-    <!-- قسم التقييمات -->
     <div class="my-ratings-section">
       <div class="section-header">
         <h3>تقييماتي</h3>
@@ -2126,7 +2229,7 @@
   </div>
 
   <!-- ============================================
-       شريط التنقل السفلي
+       الشريط السفلي (بدون زر "طلباتي")
        ============================================ -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
     <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
@@ -2135,17 +2238,6 @@
         <polyline points="14 2 14 8 20 8"/>
       </svg>
       <small>الطلبات</small>
-    </button>
-    <button class="nav-btn" data-tab="myorders" onclick="switchTab('myorders')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="8" y1="6" x2="21" y2="6"/>
-        <line x1="8" y1="12" x2="21" y2="12"/>
-        <line x1="8" y1="18" x2="21" y2="18"/>
-        <line x1="3" y1="6" x2="3.01" y2="6"/>
-        <line x1="3" y1="12" x2="3.01" y2="12"/>
-        <line x1="3" y1="18" x2="3.01" y2="18"/>
-      </svg>
-      <small>طلباتي</small>
     </button>
     <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
       <div class="nav-center-icon">
@@ -2191,4 +2283,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
