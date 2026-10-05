@@ -6042,7 +6042,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  padding: 8px 60px max(8px, env(safe-area-inset-bottom));
   height: 70px;
   box-sizing: border-box;
   z-index: 100;
