@@ -1,6 +1,6 @@
 // ============================================
 // صيدليتي - Clean Medical v8
-// الجزء 1 من 4
+// الجزء 1 من 3
 // ============================================
 
 console.log('صيدليتي - بدأ التحميل');
@@ -235,7 +235,7 @@ function startOrderSimulation() {
 }
 
 // ============================================
-// Bottom Sheet الطلب
+// Bottom Sheet الطلب (القديم)
 // ============================================
 function openOrderSheet() {
   var overlay = document.getElementById('orderSheetOverlay');
@@ -314,155 +314,6 @@ function acceptOrder(orderId) {
   setTimeout(function() {
     goToMyOrders();
   }, 500);
-}
-
-// ============================================
-// إدارة الشاشات
-// ============================================
-function showScreen(screenId) {
-  document.querySelectorAll('.screen').forEach(function(screen) {
-    screen.classList.remove('active');
-    screen.style.display = 'none';
-  });
-  
-  var target = document.getElementById(screenId);
-  if (target) {
-    target.classList.add('active');
-    target.style.display = 'flex';
-    window.scrollTo(0, 0);
-    updateBottomNav(screenId);
-  } else {
-    console.warn('الشاشة غير موجودة:', screenId);
-  }
-}
-
-function updateBottomNav(screenId) {
-  var nav = document.getElementById('mainBottomNav');
-  if (!nav) return;
-  
-  var navScreens = [
-    'homeScreen',
-    'pharmacyDashboard',
-    'deliveryDashboard',
-    'ordersScreen',
-    'myOrdersScreen',
-    'notificationsScreen'
-  ];
-  
-  if (navScreens.indexOf(screenId) !== -1) {
-    nav.style.display = 'flex';
-  } else {
-    nav.style.display = 'none';
-  }
-}
-
-// ============================================
-// تبديل التبويب
-// ============================================
-function switchTab(tab) {
-  document.querySelectorAll('.nav-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
-  
-  var activeBtn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
-  if (activeBtn) activeBtn.classList.add('active');
-  
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = userStr ? JSON.parse(userStr) : {};
-  var userType = user.type || 'patient';
-  
-  if (tab === 'home') {
-    goToDashboardByType();
-  } else if (tab === 'orders') {
-    openOrders();
-  } else if (tab === 'myorders') {
-    goToMyOrders();
-  } else if (tab === 'notifications') {
-    openNotifications();
-  } else if (tab === 'myaccount') {
-    openProfile();
-  } else if (tab === 'more') {
-    openSidebar();
-  }
-}
-
-// ============================================
-// طلباتي الديناميكية
-// ============================================
-function goToMyOrders() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = userStr ? JSON.parse(userStr) : {};
-  var userType = user.type || 'patient';
-  
-  var deliveryContent = document.getElementById('deliveryOrdersContent');
-  var patientContent = document.getElementById('patientOrdersContent');
-  var pharmacyContent = document.getElementById('pharmacyOrdersContent');
-  
-  if (deliveryContent) deliveryContent.style.display = 'none';
-  if (patientContent) patientContent.style.display = 'none';
-  if (pharmacyContent) pharmacyContent.style.display = 'none';
-  
-  var titleEl = document.getElementById('myOrdersTitle');
-  var subtitleEl = document.getElementById('myOrdersSubtitle');
-  
-  if (userType === 'delivery') {
-    if (titleEl) titleEl.textContent = 'طلباتي الذكية';
-    if (subtitleEl) subtitleEl.textContent = 'ترتيب تلقائي حسب الأولوية';
-    if (deliveryContent) deliveryContent.style.display = 'block';
-  } else if (userType === 'pharmacy') {
-    if (titleEl) titleEl.textContent = 'الطلبات الواردة';
-    if (subtitleEl) subtitleEl.textContent = 'إدارة طلبات المرضى';
-    if (pharmacyContent) pharmacyContent.style.display = 'block';
-  } else {
-    if (titleEl) titleEl.textContent = 'طلباتي';
-    if (subtitleEl) subtitleEl.textContent = 'تتبع طلباتك الحالية والسابقة';
-    if (patientContent) patientContent.style.display = 'block';
-  }
-  
-  showScreen('myOrdersScreen');
-  
-  document.querySelectorAll('.nav-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-  });
-  var myBtn = document.querySelector('.nav-btn[data-tab="myorders"]');
-  if (myBtn) myBtn.classList.add('active');
-}
-
-// ============================================
-// الصيدلية: قبول / رفض
-// ============================================
-function acceptPharmacyOrder(orderId) {
-  playSuccessSound();
-  showToast('تم قبول الطلب #' + orderId);
-  
-  setTimeout(function() {
-    showToast('تم إشعار المندوب لتوصيل الطلب');
-  }, 1500);
-}
-
-function rejectPharmacyOrder(orderId) {
-  if (confirm('هل تريد رفض الطلب #' + orderId + '؟')) {
-    showToast('تم رفض الطلب #' + orderId);
-  }
-}
-
-function switchPharmacyFilter(filter, btn) {
-  document.querySelectorAll('#pharmacyOrdersContent .filter-tab').forEach(function(t) {
-    t.classList.remove('active');
-  });
-  if (btn) btn.classList.add('active');
-  
-  var newSection = document.getElementById('newPharmacyOrders');
-  var acceptedSection = document.getElementById('acceptedPharmacyOrders');
-  var doneSection = document.getElementById('donePharmacyOrders');
-  
-  if (newSection) newSection.style.display = 'none';
-  if (acceptedSection) acceptedSection.style.display = 'none';
-  if (doneSection) doneSection.style.display = 'none';
-  
-  if (filter === 'new' && newSection) newSection.style.display = 'block';
-  else if (filter === 'accepted' && acceptedSection) acceptedSection.style.display = 'block';
-  else if (filter === 'done' && doneSection) doneSection.style.display = 'block';
 }
 
 // ============================================
@@ -620,7 +471,156 @@ function goToCustomer() {
   }
   
   openNavSheet(activeOrder.customer.lat, activeOrder.customer.lng, activeOrder.customer.name);
-      }
+        }
+// ============================================
+// إدارة الشاشات
+// ============================================
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(function(screen) {
+    screen.classList.remove('active');
+    screen.style.display = 'none';
+  });
+  
+  var target = document.getElementById(screenId);
+  if (target) {
+    target.classList.add('active');
+    target.style.display = 'flex';
+    window.scrollTo(0, 0);
+    updateBottomNav(screenId);
+  } else {
+    console.warn('الشاشة غير موجودة:', screenId);
+  }
+}
+
+function updateBottomNav(screenId) {
+  var nav = document.getElementById('mainBottomNav');
+  if (!nav) return;
+  
+  var navScreens = [
+    'homeScreen',
+    'pharmacyDashboard',
+    'deliveryDashboard',
+    'ordersScreen',
+    'myOrdersScreen',
+    'notificationsScreen'
+  ];
+  
+  if (navScreens.indexOf(screenId) !== -1) {
+    nav.style.display = 'flex';
+  } else {
+    nav.style.display = 'none';
+  }
+}
+
+// ============================================
+// تبديل التبويب
+// ============================================
+function switchTab(tab) {
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  
+  var activeBtn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  var userType = user.type || 'patient';
+  
+  if (tab === 'home') {
+    goToDashboardByType();
+  } else if (tab === 'orders') {
+    openOrders();
+  } else if (tab === 'myorders') {
+    goToMyOrders();
+  } else if (tab === 'notifications') {
+    openNotifications();
+  } else if (tab === 'myaccount') {
+    openProfile();
+  } else if (tab === 'more') {
+    openSidebar();
+  }
+}
+
+// ============================================
+// طلباتي الديناميكية
+// ============================================
+function goToMyOrders() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+  var userType = user.type || 'patient';
+  
+  var deliveryContent = document.getElementById('deliveryOrdersContent');
+  var patientContent = document.getElementById('patientOrdersContent');
+  var pharmacyContent = document.getElementById('pharmacyOrdersContent');
+  
+  if (deliveryContent) deliveryContent.style.display = 'none';
+  if (patientContent) patientContent.style.display = 'none';
+  if (pharmacyContent) pharmacyContent.style.display = 'none';
+  
+  var titleEl = document.getElementById('myOrdersTitle');
+  var subtitleEl = document.getElementById('myOrdersSubtitle');
+  
+  if (userType === 'delivery') {
+    if (titleEl) titleEl.textContent = 'طلباتي الذكية';
+    if (subtitleEl) subtitleEl.textContent = 'ترتيب تلقائي حسب الأولوية';
+    if (deliveryContent) deliveryContent.style.display = 'block';
+  } else if (userType === 'pharmacy') {
+    if (titleEl) titleEl.textContent = 'الطلبات الواردة';
+    if (subtitleEl) subtitleEl.textContent = 'إدارة طلبات المرضى';
+    if (pharmacyContent) pharmacyContent.style.display = 'block';
+  } else {
+    if (titleEl) titleEl.textContent = 'طلباتي';
+    if (subtitleEl) subtitleEl.textContent = 'تتبع طلباتك الحالية والسابقة';
+    if (patientContent) patientContent.style.display = 'block';
+  }
+  
+  showScreen('myOrdersScreen');
+  
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  var myBtn = document.querySelector('.nav-btn[data-tab="myorders"]');
+  if (myBtn) myBtn.classList.add('active');
+}
+
+// ============================================
+// الصيدلية: قبول / رفض
+// ============================================
+function acceptPharmacyOrder(orderId) {
+  playSuccessSound();
+  showToast('تم قبول الطلب #' + orderId);
+  
+  setTimeout(function() {
+    showToast('تم إشعار المندوب لتوصيل الطلب');
+  }, 1500);
+}
+
+function rejectPharmacyOrder(orderId) {
+  if (confirm('هل تريد رفض الطلب #' + orderId + '؟')) {
+    showToast('تم رفض الطلب #' + orderId);
+  }
+}
+
+function switchPharmacyFilter(filter, btn) {
+  document.querySelectorAll('#pharmacyOrdersContent .filter-tab').forEach(function(t) {
+    t.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+  
+  var newSection = document.getElementById('newPharmacyOrders');
+  var acceptedSection = document.getElementById('acceptedPharmacyOrders');
+  var doneSection = document.getElementById('donePharmacyOrders');
+  
+  if (newSection) newSection.style.display = 'none';
+  if (acceptedSection) acceptedSection.style.display = 'none';
+  if (doneSection) doneSection.style.display = 'none';
+  
+  if (filter === 'new' && newSection) newSection.style.display = 'block';
+  else if (filter === 'accepted' && acceptedSection) acceptedSection.style.display = 'block';
+  else if (filter === 'done' && doneSection) doneSection.style.display = 'block';
+}
+
 // ============================================
 // فتح الصفحات
 // ============================================
@@ -1111,6 +1111,7 @@ function goToDashboardByType() {
     setTimeout(loadOffers, 100);
   }
 }
+
 // ============================================
 // تسجيل الدخول
 // ============================================
@@ -1578,7 +1579,7 @@ function requestNotificationPermission() {
       }
     });
   }
-}
+    }
 // ============================================
 // 📸 نظام طلب الروشتة
 // ============================================
