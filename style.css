@@ -385,7 +385,6 @@ body {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
 }
-
 /* ============================================
    الشريط العلوي
    ============================================ */
@@ -2577,7 +2576,8 @@ body {
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: #FFFFFF;
   box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
-   }
+}
+
 /* ============================================
    🧠 بطاقة AI Suggestion
    ============================================ */
@@ -2914,7 +2914,42 @@ body {
 }
 
 /* ============================================
-   🧭 Bottom Sheet (Waze/Google)
+   🧭 Bottom Sheet (القديم - طلب جديد)
+   ⚠️ الإصلاح المطلوب: bottom: -100vh
+   ============================================ */
+.bottom-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -100vh; /* استخدام vh بدلاً من % لضمان الخروج خارج الشاشة تماماً */
+  width: 100%;
+  background: var(--bg-card);
+  border-radius: 28px 28px 0 0;
+  padding: 16px 20px 32px;
+  z-index: 9999;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+  direction: rtl;
+  
+  /* خصائص الإخفاء */
+  visibility: hidden;
+  opacity: 0;
+  
+  /* انتقال سلس */
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              opacity 0.3s ease-in-out, 
+              visibility 0.3s;
+}
+
+.bottom-sheet.active {
+  bottom: 0;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ============================================
+   🧭 Bottom Sheet (الجديد - Waze/Google)
    ============================================ */
 .nav-sheet-overlay {
   position: fixed;
@@ -2931,6 +2966,7 @@ body {
   opacity: 1;
   pointer-events: all;
 }
+
 .nav-sheet {
   position: fixed;
   bottom: -100vh;
@@ -2953,13 +2989,10 @@ body {
   bottom: 0;
   visibility: visible;
   opacity: 1;
-} 
-[data-theme="light"] .nav-sheet {
-  background: #FFFFFF;
 }
 
-.nav-sheet.active {
-  bottom: 0;
+[data-theme="light"] .nav-sheet {
+  background: #FFFFFF;
 }
 
 .nav-sheet-handle {
@@ -3143,8 +3176,7 @@ body {
 [data-theme="light"] .nav-sheet-cancel:hover {
   background: rgba(0, 0, 0, 0.05);
   color: #64748B;
-}
-
+     }
 /* ============================================
    🔔 التنبيهات
    ============================================ */
@@ -3613,7 +3645,8 @@ body {
 
 .marker-delivery .custom-marker-pin {
   background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
-   }
+}
+
 /* ============================================
    👤 الملف الشخصي الجديد
    ============================================ */
@@ -4918,4 +4951,4 @@ body {
   .profile-avatar { width: 90px; height: 90px; font-size: 36px; }
   .profile-name { font-size: 20px; }
   .profile-info-icon { width: 36px; height: 36px; }
-   }
+}
