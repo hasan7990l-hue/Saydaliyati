@@ -1,9 +1,9 @@
 // ============================================
-// صيدليتي - Clean Medical v9
-// الجزء 1 من 3
+// توصيل طبي - Clean Medical v10
+// الجزء 1 من 4
 // ============================================
 
-console.log('صيدليتي - بدأ التحميل');
+console.log('توصيل طبي - بدأ التحميل');
 
 // ============================================
 // نظام الوضع الليلي / النهاري
@@ -167,6 +167,7 @@ function vibrateDevice(pattern) {
     navigator.vibrate(pattern);
   }
 }
+
 // ============================================
 // 🎬 إنشاء جزيئات شاشة البداية (Splash)
 // ============================================
@@ -199,6 +200,9 @@ function createSplashParticles() {
   }
 }
 
+// ============================================
+// 🔐 إنشاء جزيئات شاشة تسجيل الدخول
+// ============================================
 function createLoginParticles() {
   var container = document.getElementById('loginParticles');
   if (!container) return;
@@ -210,6 +214,70 @@ function createLoginParticles() {
   for (var i = 0; i < particleCount; i++) {
     var particle = document.createElement('div');
     particle.className = 'login-particle' + (Math.random() > 0.6 ? ' white' : '');
+    
+    var size = Math.random() * 4 + 2;
+    var top = Math.random() * 100;
+    var left = Math.random() * 100;
+    var delay = Math.random() * 6;
+    var duration = 4 + Math.random() * 4;
+    
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.top = top + '%';
+    particle.style.left = left + '%';
+    particle.style.animationDelay = delay + 's';
+    particle.style.animationDuration = duration + 's';
+    
+    container.appendChild(particle);
+  }
+}
+
+// ============================================
+// 🎯 إنشاء جزيئات شاشة اختيار الحساب
+// ============================================
+function createRoleParticles() {
+  var container = document.getElementById('roleParticles');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  var particleCount = 30;
+  
+  for (var i = 0; i < particleCount; i++) {
+    var particle = document.createElement('div');
+    particle.className = 'role-particle' + (Math.random() > 0.6 ? ' white' : '');
+    
+    var size = Math.random() * 4 + 2;
+    var top = Math.random() * 100;
+    var left = Math.random() * 100;
+    var delay = Math.random() * 6;
+    var duration = 4 + Math.random() * 4;
+    
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.top = top + '%';
+    particle.style.left = left + '%';
+    particle.style.animationDelay = delay + 's';
+    particle.style.animationDuration = duration + 's';
+    
+    container.appendChild(particle);
+  }
+}
+
+// ============================================
+// 🎨 إنشاء جزيئات شاشات التسجيل
+// ============================================
+function createRegParticles(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  var particleCount = 25;
+  
+  for (var i = 0; i < particleCount; i++) {
+    var particle = document.createElement('div');
+    particle.className = 'reg-particle' + (Math.random() > 0.6 ? ' white' : '');
     
     var size = Math.random() * 4 + 2;
     var top = Math.random() * 100;
@@ -254,13 +322,11 @@ function toggleRadar() {
     vibrateDevice([100, 50, 100]);
     showToast('📡 الرادار يعمل - جاري البحث...');
     
-    // صوت السونار كل ثانيتين
     if (radarInterval) clearInterval(radarInterval);
     radarInterval = setInterval(function() {
       playSonarPing();
     }, 2000);
     
-    // محاكاة ظهور طلب بعد 5 ثواني
     setTimeout(function() {
       if (radarActive) {
         playAlertDing();
@@ -337,7 +403,6 @@ function closeOrderSheet() {
     orderTimerInterval = null;
   }
   
-  // إعادة النص الأصلي
   var radarTitle = document.getElementById('radarTitle');
   if (radarTitle && radarActive) {
     radarTitle.textContent = 'جارٍ البحث...';
@@ -489,7 +554,6 @@ function openMapDirect(lat, lng) {
   setTimeout(function() {
     if (mainMap) {
       mainMap.setView([lat, lng], 16);
-      setDestination(lat, lng);
     }
   }, 500);
   
@@ -553,9 +617,164 @@ function goToCustomer() {
   }
   
   openNavSheet(activeOrder.customer.lat, activeOrder.customer.lng, activeOrder.customer.name);
-  }
+}
+
 // ============================================
-// إدارة الشاشات
+// 🔵 Google Sign-In (تجريبي)
+// ============================================
+function signInWithGoogleTest() {
+  showToast('🔄 جاري الاتصال بـ Google...');
+  
+  setTimeout(function() {
+    var mockUser = {
+      type: 'patient',
+      name: 'حسن التجريبي',
+      phone: '07701234567',
+      email: 'test@gmail.com',
+      address: 'بغداد - الكرادة',
+      avatar: '',
+      googleId: 'mock_google_' + Date.now(),
+      loginMethod: 'google',
+      date: new Date().toISOString()
+    };
+    
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(mockUser));
+    
+    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+    var exists = registrations.find(function(r) { return r.phone === mockUser.phone; });
+    if (!exists) {
+      registrations.push(mockUser);
+      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    }
+    
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    
+    showToast('✅ تم الدخول بنجاح');
+    
+    setTimeout(function() {
+      goToDashboardByType();
+    }, 800);
+  }, 1200);
+}
+
+function signUpWithGoogleTest() {
+  showToast('🔄 جاري التسجيل بـ Google...');
+  
+  setTimeout(function() {
+    var mockUser = {
+      type: 'patient',
+      name: 'حسن التجريبي',
+      phone: '07701234567',
+      email: 'test@gmail.com',
+      address: 'بغداد - الكرادة',
+      avatar: '',
+      googleId: 'mock_google_' + Date.now(),
+      loginMethod: 'google',
+      date: new Date().toISOString()
+    };
+    
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(mockUser));
+    
+    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+    var exists = registrations.find(function(r) { return r.phone === mockUser.phone; });
+    if (!exists) {
+      registrations.push(mockUser);
+      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    }
+    
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    
+    showToast('✅ تم التسجيل بنجاح');
+    
+    showSuccessMessage('مرحباً بك', 'تم إنشاء حسابك بـ Google، ' + mockUser.name);
+  }, 1200);
+}
+
+// ============================================
+// 📜 الشروط والأحكام + سياسة الخصوصية
+// ============================================
+function openTerms() {
+  var modal = document.createElement('div');
+  modal.className = 'legal-modal';
+  modal.innerHTML = 
+    '<div class="legal-modal-content">' +
+      '<div class="legal-modal-header">' +
+        '<h2>الشروط والأحكام</h2>' +
+        '<button class="legal-modal-close" onclick="closeLegalModal(this)">×</button>' +
+      '</div>' +
+      '<div class="legal-modal-body">' +
+        '<h3>1. قبول الشروط</h3>' +
+        '<p>باستخدامك لتطبيق "توصيل طبي"، فإنك توافق على جميع الشروط والأحكام المذكورة هنا.</p>' +
+        '<h3>2. استخدام التطبيق</h3>' +
+        '<p>يجب استخدام التطبيق للأغراض المشروعة فقط، ولا يجوز استخدامه لأي نشاط غير قانوني.</p>' +
+        '<h3>3. الحساب</h3>' +
+        '<p>أنت مسؤول عن الحفاظ على سرية حسابك وكلمة المرور الخاصة بك.</p>' +
+        '<h3>4. الطلبات والدفع</h3>' +
+        '<p>جميع الطلبات تخضع للتوفر والتأكيد. الأسعار قابلة للتغيير دون إشعار مسبق.</p>' +
+        '<h3>5. التوصيل</h3>' +
+        '<p>نعمل على توصيل الطلبات خلال الوقت المحدد، لكن قد تحدث تأخيرات بسبب ظروف خارجة عن إرادتنا.</p>' +
+        '<h3>6. التعديلات</h3>' +
+        '<p>نحتفظ بالحق في تعديل هذه الشروط في أي وقت. استمرارك في استخدام التطبيق يعني موافقتك على الشروط المحدثة.</p>' +
+        '<p style="margin-top: 24px; color: #22D3EE; font-weight: 700;">آخر تحديث: 2026/10/5</p>' +
+      '</div>' +
+      '<div class="legal-modal-footer">' +
+        '<button class="btn-primary" onclick="closeLegalModal(this)">فهمت</button>' +
+      '</div>' +
+    '</div>';
+  
+  document.body.appendChild(modal);
+  setTimeout(function() { modal.classList.add('show'); }, 50);
+  document.body.style.overflow = 'hidden';
+}
+
+function openPrivacy() {
+  var modal = document.createElement('div');
+  modal.className = 'legal-modal';
+  modal.innerHTML = 
+    '<div class="legal-modal-content">' +
+      '<div class="legal-modal-header">' +
+        '<h2>سياسة الخصوصية</h2>' +
+        '<button class="legal-modal-close" onclick="closeLegalModal(this)">×</button>' +
+      '</div>' +
+      '<div class="legal-modal-body">' +
+        '<h3>1. المعلومات التي نجمعها</h3>' +
+        '<p>نجمع المعلومات التي تقدمها عند التسجيل (الاسم، الهاتف، العنوان، البريد الإلكتروني).</p>' +
+        '<h3>2. كيف نستخدم معلوماتك</h3>' +
+        '<p>نستخدم معلوماتك لتقديم الخدمات، تحسين التطبيق، والتواصل معك بخصوص طلباتك.</p>' +
+        '<h3>3. مشاركة المعلومات</h3>' +
+        '<p>لا نشارك معلوماتك مع أطراف ثالثة إلا عند الضرورة لتقديم الخدمة (مثل الصيدليات والمندوبين).</p>' +
+        '<h3>4. أمان البيانات</h3>' +
+        '<p>نستخدم تقنيات تشفير متقدمة لحماية بياناتك من الوصول غير المصرح به.</p>' +
+        '<h3>5. حقوقك</h3>' +
+        '<p>لك الحق في الوصول إلى بياناتك أو حذفها في أي وقت.</p>' +
+        '<h3>6. الاتصال بنا</h3>' +
+        '<p>لأي استفسار بخصوص الخصوصية، تواصل معنا عبر واتساب: +964 775 145 9130</p>' +
+        '<p style="margin-top: 24px; color: #22D3EE; font-weight: 700;">آخر تحديث: 2026/10/5</p>' +
+      '</div>' +
+      '<div class="legal-modal-footer">' +
+        '<button class="btn-primary" onclick="closeLegalModal(this)">فهمت</button>' +
+      '</div>' +
+    '</div>';
+  
+  document.body.appendChild(modal);
+  setTimeout(function() { modal.classList.add('show'); }, 50);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLegalModal(btn) {
+  var modal = btn.closest('.legal-modal');
+  if (modal) {
+    modal.classList.remove('show');
+    setTimeout(function() { 
+      modal.remove();
+      document.body.style.overflow = '';
+    }, 300);
+  }
+}
+// ============================================
+// 📱 إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(function(screen) {
@@ -570,9 +789,21 @@ function showScreen(screenId) {
     window.scrollTo(0, 0);
     updateBottomNav(screenId);
     
-    // إنشاء جزيئات شاشة الدخول إذا كانت هي المفتوحة
+    // إنشاء الجزيئات عند فتح الشاشات
     if (screenId === 'loginScreen') {
       setTimeout(createLoginParticles, 100);
+    }
+    if (screenId === 'roleScreen') {
+      setTimeout(createRoleParticles, 100);
+    }
+    if (screenId === 'patientScreen') {
+      setTimeout(function() { createRegParticles('patientParticles'); }, 100);
+    }
+    if (screenId === 'pharmacyScreen') {
+      setTimeout(function() { createRegParticles('pharmacyParticles'); }, 100);
+    }
+    if (screenId === 'deliveryScreen') {
+      setTimeout(function() { createRegParticles('deliveryParticles'); }, 100);
     }
   } else {
     console.warn('الشاشة غير موجودة:', screenId);
@@ -600,7 +831,7 @@ function updateBottomNav(screenId) {
 }
 
 // ============================================
-// تبديل التبويب (بدون زر "طلباتي")
+// 🔄 تبديل التبويب (بدون زر "طلباتي")
 // ============================================
 function switchTab(tab) {
   document.querySelectorAll('.nav-btn').forEach(function(btn) {
@@ -609,10 +840,6 @@ function switchTab(tab) {
   
   var activeBtn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
   if (activeBtn) activeBtn.classList.add('active');
-  
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = userStr ? JSON.parse(userStr) : {};
-  var userType = user.type || 'patient';
   
   if (tab === 'home') {
     goToDashboardByType();
@@ -626,7 +853,7 @@ function switchTab(tab) {
 }
 
 // ============================================
-// طلباتي الديناميكية
+// 📋 طلباتي الديناميكية
 // ============================================
 function goToMyOrders() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -668,7 +895,7 @@ function goToMyOrders() {
 }
 
 // ============================================
-// الصيدلية: قبول / رفض
+// 🏪 قبول / رفض الطلبات (للصيدلية)
 // ============================================
 function acceptPharmacyOrder(orderId) {
   playSuccessSound();
@@ -705,7 +932,7 @@ function switchPharmacyFilter(filter, btn) {
 }
 
 // ============================================
-// فتح الملف الشخصي
+// 👤 الملف الشخصي
 // ============================================
 function openProfile() {
   closeSidebar();
@@ -804,7 +1031,7 @@ function openProfile() {
 }
 
 // ============================================
-// تعديل صورة الملف الشخصي
+// 🖼️ تعديل صورة الملف الشخصي
 // ============================================
 function openImagePicker() {
   var input = document.getElementById('avatarInput');
@@ -852,7 +1079,7 @@ function handleAvatarUpload(event) {
 }
 
 // ============================================
-// تعديل البيانات
+// ✏️ تعديل البيانات
 // ============================================
 function openEditProfile() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -931,7 +1158,7 @@ function saveProfile(event) {
 }
 
 // ============================================
-// عرض تقييماتي
+// ⭐ عرض تقييماتي
 // ============================================
 function renderMyRatings() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -988,7 +1215,7 @@ function renderMyRatings() {
 }
 
 // ============================================
-// فتح الطلبات (السجل)
+// 📋 فتح الطلبات (السجل)
 // ============================================
 function openOrders() {
   closeSidebar();
@@ -1017,7 +1244,7 @@ function openOrders() {
 }
 
 // ============================================
-// التنبيهات الديناميكية
+// 🔔 التنبيهات الديناميكية
 // ============================================
 function openNotifications() {
   closeSidebar();
@@ -1092,7 +1319,7 @@ function getDefaultNotifications(userType) {
 }
 
 // ============================================
-// الإعدادات + من نحن + تواصل
+// ⚙️ الإعدادات + من نحن + تواصل
 // ============================================
 function openSettings() {
   closeSidebar();
@@ -1131,7 +1358,7 @@ function closeAllScreens() {
 }
 
 // ============================================
-// القائمة الجانبية
+// 📂 القائمة الجانبية
 // ============================================
 function openSidebar() {
   var sidebar = document.getElementById('sidebar');
@@ -1150,7 +1377,7 @@ function closeSidebar() {
 }
 
 // ============================================
-// التنقل
+// 🔀 التنقل بين الشاشات
 // ============================================
 function goToSplash() { showScreen('splashScreen'); }
 function goToLogin() { showScreen('loginScreen'); }
@@ -1164,7 +1391,7 @@ function selectRole(role) {
 }
 
 // ============================================
-// التوجيه حسب نوع المستخدم
+// 🎯 التوجيه حسب نوع المستخدم
 // ============================================
 function goToDashboardByType() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -1181,7 +1408,7 @@ function goToDashboardByType() {
 }
 
 // ============================================
-// تسجيل الدخول
+// 🔐 تسجيل الدخول
 // ============================================
 function submitLogin(event) {
   if (event) event.preventDefault();
@@ -1228,7 +1455,7 @@ function submitLogin(event) {
 }
 
 // ============================================
-// تسجيل الخروج
+// 🚪 تسجيل الخروج
 // ============================================
 function logout() {
   if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
@@ -1247,7 +1474,7 @@ function logout() {
 }
 
 // ============================================
-// إرسال النماذج
+// 📝 إرسال النماذج
 // ============================================
 function submitPatient(event) {
   if (event) event.preventDefault();
@@ -1287,7 +1514,7 @@ function submitPatient(event) {
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   saveUserToFirebase(user);
   playSuccessSound();
-  showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في صيدليتي، ' + name);
+  showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
 
 function submitPharmacy(event) {
@@ -1296,7 +1523,6 @@ function submitPharmacy(event) {
   var name = document.getElementById('pharmacyName').value.trim();
   var owner = document.getElementById('ownerName').value.trim();
   var phone = document.getElementById('pharmacyPhone').value.trim();
-  var email = document.getElementById('pharmacyEmail').value.trim();
   var address = document.getElementById('pharmacyAddress').value.trim();
   var license = document.getElementById('licenseNumber').value.trim();
   var password = document.getElementById('pharmacyPassword').value.trim();
@@ -1321,7 +1547,7 @@ function submitPharmacy(event) {
     name: name,
     owner: owner,
     phone: phone,
-    email: email,
+    email: '',
     address: address,
     license: license,
     password: password,
@@ -1379,7 +1605,7 @@ function submitDelivery(event) {
 }
 
 // ============================================
-// حفظ التسجيلات
+// 💾 حفظ التسجيلات
 // ============================================
 function saveRegistration(data) {
   data.date = new Date().toISOString();
@@ -1389,7 +1615,7 @@ function saveRegistration(data) {
 }
 
 // ============================================
-// Firebase
+// 🔥 Firebase (اختياري)
 // ============================================
 function saveUserToFirebase(user) {
   if (window.firebaseDB && window.firebaseDoc && window.firebaseSetDoc) {
@@ -1420,14 +1646,14 @@ function saveUserToFirebase(user) {
 }
 
 // ============================================
-// التحقق من رقم الهاتف
+// ✅ التحقق من رقم الهاتف
 // ============================================
 function validatePhone(phone) {
   return /^07[0-9]{9}$/.test(phone.replace(/\s/g, ''));
 }
 
 // ============================================
-// إظهار/إخفاء كلمة المرور
+// 👁️ إظهار/إخفاء كلمة المرور
 // ============================================
 function togglePasswordVisibility(inputId, button) {
   var input = document.getElementById(inputId);
@@ -1443,7 +1669,7 @@ function togglePasswordVisibility(inputId, button) {
 }
 
 // ============================================
-// فحص قوة كلمة المرور
+// 🔒 فحص قوة كلمة المرور
 // ============================================
 function checkPasswordStrength(inputId, strengthId) {
   var input = document.getElementById(inputId);
@@ -1461,7 +1687,7 @@ function checkPasswordStrength(inputId, strengthId) {
   if (/[0-9]/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
   
-  strengthEl.className = 'password-strength';
+  strengthEl.className = 'reg-strength';
   
   if (password.length === 0) {
     strengthEl.textContent = '';
@@ -1478,7 +1704,7 @@ function checkPasswordStrength(inputId, strengthId) {
 }
 
 // ============================================
-// رسائل النجاح والخطأ
+// ✅ رسائل النجاح والخطأ
 // ============================================
 function showSuccessMessage(title, message) {
   var overlay = document.createElement('div');
@@ -1513,7 +1739,7 @@ function showError(message) {
 }
 
 // ============================================
-// Toast
+// 💬 Toast
 // ============================================
 function showToast(message) {
   var toast = document.createElement('div');
@@ -1529,7 +1755,7 @@ function showToast(message) {
 }
 
 // ============================================
-// إدارة العروض (للصيدلية)
+// 📢 إدارة العروض (للصيدلية)
 // ============================================
 function openAddOfferModal() {
   var modal = document.getElementById('addOfferModal');
@@ -1607,63 +1833,7 @@ function loadOffers() {
   });
   
   offersList.innerHTML = html;
-}
-
-// ============================================
-// عند التحميل + إخفاء Bottom Sheets
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('صيدليتي جاهز');
-  
-  loadTheme();
-  setTimeout(createSplashParticles, 100);
-  // إخفاء جميع Bottom Sheets عند التحميل
-  var orderSheet = document.getElementById('orderSheet');
-  var orderSheetOverlay = document.getElementById('orderSheetOverlay');
-  if (orderSheet) orderSheet.classList.remove('active');
-  if (orderSheetOverlay) orderSheetOverlay.classList.remove('active');
-  
-  var navSheet = document.getElementById('navSheet');
-  var navSheetOverlay = document.getElementById('navSheetOverlay');
-  if (navSheet) navSheet.classList.remove('active');
-  if (navSheetOverlay) navSheetOverlay.classList.remove('active');
-  
-  // إخفاء جميع النوافذ المنبثقة
-  document.querySelectorAll('.modal-overlay').forEach(function(modal) {
-    modal.classList.remove('active');
-  });
-  
-  document.body.addEventListener('click', function() {
-    initAudio();
-  }, { once: true });
-  
-  var currentUser = localStorage.getItem('saydaliyati_current_user');
-  if (currentUser) {
-    goToDashboardByType();
-  } else {
-    showScreen('splashScreen');
-  }
-});
-
-// ============================================
-// منع التكبير
-// ============================================
-document.addEventListener('gesturestart', function(e) {
-  e.preventDefault();
-});
-
-// ============================================
-// طلب إذن الإشعارات
-// ============================================
-function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission().then(function(permission) {
-      if (permission === 'granted') {
-        console.log('تم تفعيل الإشعارات');
       }
-    });
-  }
-}
 // ============================================
 // 📸 نظام طلب الروشتة
 // ============================================
@@ -2622,6 +2792,54 @@ function submitRating() {
 }
 
 // ============================================
+// 🔔 التنبيهات الداخلية (Helper)
+// ============================================
+function addInternalNotification(type, title, message) {
+  var notif = {
+    id: 'NOTIF_' + Date.now(),
+    type: type,
+    title: title,
+    message: message,
+    icon: getNotifIcon(type),
+    read: false,
+    date: new Date().toISOString(),
+    time: 'الآن'
+  };
+  
+  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  notifs.unshift(notif);
+  if (notifs.length > 50) notifs = notifs.slice(0, 50);
+  localStorage.setItem('saydaliyati_notifications', JSON.stringify(notifs));
+  
+  updateNotifBadge();
+}
+
+function getNotifIcon(type) {
+  var icons = {
+    'order': '📦', 'accepted': '✅', 'delivered': '🎉',
+    'stock': '⚠️', 'offer': '📢', 'wallet': '💰', 'system': '⚙️'
+  };
+  return icons[type] || '🔔';
+}
+
+function updateNotifBadge() {
+  var navBtn = document.querySelector('.nav-btn[data-tab="notifications"]');
+  if (!navBtn) return;
+  
+  var oldBadge = navBtn.querySelector('.notif-badge');
+  if (oldBadge) oldBadge.remove();
+  
+  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  var unreadCount = notifs.filter(function(n) { return !n.read; }).length;
+  
+  if (unreadCount > 0) {
+    var badge = document.createElement('span');
+    badge.className = 'notif-badge';
+    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+    navBtn.appendChild(badge);
+  }
+  }
+// ============================================
 // 🗺️ نظام الخريطة + GPS
 // ============================================
 var mainMap = null;
@@ -3013,56 +3231,7 @@ function refreshTracking() {
 }
 
 // ============================================
-// 🔔 التنبيهات الداخلية + Push
-// ============================================
-function addInternalNotification(type, title, message) {
-  var notif = {
-    id: 'NOTIF_' + Date.now(),
-    type: type,
-    title: title,
-    message: message,
-    icon: getNotifIcon(type),
-    read: false,
-    date: new Date().toISOString(),
-    time: 'الآن'
-  };
-  
-  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
-  notifs.unshift(notif);
-  if (notifs.length > 50) notifs = notifs.slice(0, 50);
-  localStorage.setItem('saydaliyati_notifications', JSON.stringify(notifs));
-  
-  updateNotifBadge();
-}
-
-function getNotifIcon(type) {
-  var icons = {
-    'order': '📦', 'accepted': '✅', 'delivered': '🎉',
-    'stock': '⚠️', 'offer': '📢', 'wallet': '💰', 'system': '⚙️'
-  };
-  return icons[type] || '🔔';
-}
-
-function updateNotifBadge() {
-  var navBtn = document.querySelector('.nav-btn[data-tab="notifications"]');
-  if (!navBtn) return;
-  
-  var oldBadge = navBtn.querySelector('.notif-badge');
-  if (oldBadge) oldBadge.remove();
-  
-  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
-  var unreadCount = notifs.filter(function(n) { return !n.read; }).length;
-  
-  if (unreadCount > 0) {
-    var badge = document.createElement('span');
-    badge.className = 'notif-badge';
-    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-    navBtn.appendChild(badge);
-  }
-}
-
-// ============================================
-// إشعارات Push
+// 🔔 إشعارات Push
 // ============================================
 function sendNotification(options) {
   if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
@@ -3160,7 +3329,7 @@ function checkUrlForOrder() {
 }
 
 // ============================================
-// نظام الرادار الخلفي
+// 🎯 نظام الرادار الخلفي
 // ============================================
 var radarSystemActive = false;
 var radarCheckInterval = null;
@@ -3269,18 +3438,63 @@ function requestNotificationPermission() {
 }
 
 // ============================================
-// عند التحميل
+// 📱 منع التكبير
+// ============================================
+document.addEventListener('gesturestart', function(e) {
+  e.preventDefault();
+});
+
+// ============================================
+// 🚀 عند التحميل + إخفاء Bottom Sheets
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('توصيل طبي جاهز');
+  
+  loadTheme();
+  
+  // إنشاء جزيئات Splash عند التحميل
+  setTimeout(createSplashParticles, 100);
+  
+  // إخفاء جميع Bottom Sheets عند التحميل
+  var orderSheet = document.getElementById('orderSheet');
+  var orderSheetOverlay = document.getElementById('orderSheetOverlay');
+  if (orderSheet) orderSheet.classList.remove('active');
+  if (orderSheetOverlay) orderSheetOverlay.classList.remove('active');
+  
+  var navSheet = document.getElementById('navSheet');
+  var navSheetOverlay = document.getElementById('navSheetOverlay');
+  if (navSheet) navSheet.classList.remove('active');
+  if (navSheetOverlay) navSheetOverlay.classList.remove('active');
+  
+  // إخفاء جميع النوافذ المنبثقة
+  document.querySelectorAll('.modal-overlay').forEach(function(modal) {
+    modal.classList.remove('active');
+  });
+  
+  // تفعيل الصوت عند أول نقرة
+  document.body.addEventListener('click', function() {
+    initAudio();
+  }, { once: true });
+  
+  // فحص URL
   setTimeout(checkUrlForOrder, 500);
   
+  // فحص المستخدم الحالي
+  var currentUser = localStorage.getItem('saydaliyati_current_user');
+  if (currentUser) {
+    goToDashboardByType();
+  } else {
+    showScreen('splashScreen');
+  }
+  
+  // تفعيل الرادار في الخلفية
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (userStr && Notification.permission === 'granted') {
+  if (userStr && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
     startRadarSystem();
   }
   
   setTimeout(function() {
-    if (userStr && Notification.permission === 'default') {
+    if (userStr && typeof Notification !== 'undefined' && Notification.permission === 'default') {
       var user = JSON.parse(userStr);
       if (user.type === 'delivery' || user.type === 'pharmacy') {
         requestNotificationPermission();
@@ -3291,12 +3505,15 @@ document.addEventListener('DOMContentLoaded', function() {
   updateNotifBadge();
 });
 
+// ============================================
+// 🛑 تعديلات إضافية للـ Radar
+// ============================================
 var originalToggleRadar = window.toggleRadar;
 window.toggleRadar = function() {
   if (originalToggleRadar) originalToggleRadar.apply(this, arguments);
   
   if (radarActive) {
-    if (Notification.permission !== 'granted') {
+    if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
       requestNotificationPermission();
     }
     startRadarSystem();
@@ -3312,6 +3529,6 @@ window.logout = function() {
 };
 
 // ============================================
-// نهاية الملف
+// 🎉 نهاية الملف
 // ============================================
-console.log('صيدليتي - اكتمل التحميل v9');
+console.log('توصيل طبي - اكتمل التحميل v10');
