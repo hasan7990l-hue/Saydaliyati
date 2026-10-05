@@ -1,6 +1,6 @@
 /* ============================================
-   صيدليتي - Clean Medical Design v10
-   الجزء 1 من 4
+   توصيل طبي - Clean Medical v11
+   الجزء 1 من 5
    ============================================ */
 
 :root {
@@ -94,13 +94,25 @@ body {
 }
 
 /* ============================================
-   🎬 شاشة البداية (تصميم Cyberpunk فخم)
+   🔒 إجبار الخلفية الداكنة على شاشات Cyberpunk
+   ============================================ */
+#splashScreen,
+#loginScreen,
+#roleScreen,
+#patientScreen,
+#pharmacyScreen,
+#deliveryScreen {
+  background: #050810 !important;
+  color: #FFFFFF !important;
+}
+
+/* ============================================
+   🎬 شاشة البداية (Cyberpunk)
    ============================================ */
 #splashScreen {
   position: relative;
   padding: 0;
   overflow: hidden;
-  background: #050810;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -218,7 +230,7 @@ body {
 .splash-app-name {
   font-size: 38px;
   font-weight: 900;
-  color: #22D3EE;
+  color: #22D3EE !important;
   margin: 0 0 50px;
   letter-spacing: 3px;
   text-shadow: 
@@ -288,10 +300,6 @@ body {
     0 0 70px rgba(34, 211, 238, 0.5);
 }
 
-.splash-btn-primary:active {
-  transform: translateY(-1px);
-}
-
 .splash-btn-outline {
   width: 100%;
   padding: 16px 24px;
@@ -341,13 +349,12 @@ body {
 }
 
 /* ============================================
-   🔐 شاشة تسجيل الدخول (تصميم Cyberpunk)
+   🔐 شاشة تسجيل الدخول (Cyberpunk)
    ============================================ */
 #loginScreen {
   position: relative;
   padding: 0;
   overflow: hidden;
-  background: #050810;
   min-height: 100vh;
 }
 
@@ -461,7 +468,7 @@ body {
 .login-app-name {
   font-size: 32px;
   font-weight: 900;
-  color: #22D3EE;
+  color: #22D3EE !important;
   margin: 0 0 30px;
   letter-spacing: 2px;
   text-shadow: 
@@ -515,7 +522,7 @@ body {
 .login-title {
   font-size: 22px;
   font-weight: 900;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   text-align: center;
   margin: 0 0 24px;
   text-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
@@ -630,10 +637,6 @@ body {
     0 0 60px rgba(34, 211, 238, 0.4);
 }
 
-.login-submit-btn:active {
-  transform: translateY(0);
-}
-
 .login-create-link {
   display: block;
   text-align: center;
@@ -681,19 +684,18 @@ body {
 }
 
 /* ============================================
-   📜 النص القانوني (Terms & Privacy)
+   📜 النص القانوني
    ============================================ */
 .splash-legal,
 .login-legal {
   margin-top: 24px;
   font-size: 11px;
   line-height: 1.8;
-  color: rgba(148, 163, 184, 0.7);
+  color: rgba(148, 163, 184, 0.7) !important;
   text-align: center;
   font-weight: 400;
   padding: 0 20px;
   letter-spacing: 0.3px;
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
 
 .splash-legal a,
@@ -714,7 +716,7 @@ body {
 }
 
 /* ============================================
-   🔵 أزرار Google Sign-In
+   🔵 أزرار Google
    ============================================ */
 .login-divider,
 .reg-divider {
@@ -928,298 +930,292 @@ body {
 
 .legal-modal-footer .btn-primary {
   max-width: 200px;
-   }
+       }
 /* ============================================
-   الرأس (الترحيب)
+   🎯 شاشة اختيار نوع الحساب (Cyberpunk)
    ============================================ */
-.home-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin-bottom: 20px;
-  padding: 4px 0;
-}
-
-.greeting-section {
-  width: 100%;
-}
-
-.greeting-title {
-  font-size: 24px;
-  font-weight: 900;
-  color: var(--text);
-  margin: 0 0 6px 0;
-  line-height: 1.3;
-}
-
-.greeting-title span {
-  color: var(--primary);
-}
-
-.greeting-sub {
-  font-size: 15px;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin: 0;
-}
-
-/* ============================================
-   الشعار المصغّر
-   ============================================ */
-.mini-logo {
+#roleScreen {
   position: relative;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  overflow: hidden;
+  min-height: 100vh;
 }
 
-.mini-pulse {
+.role-bg {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.5) 0%, transparent 70%);
-  animation: miniPulse 2s ease-in-out infinite;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.mini-pulse::before,
-.mini-pulse::after {
-  content: '';
+.role-hex-grid {
   position: absolute;
   inset: 0;
+  background-image: 
+    linear-gradient(rgba(34, 211, 238, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 211, 238, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+}
+
+.role-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.role-particle {
+  position: absolute;
   border-radius: 50%;
-  border: 1.5px solid var(--primary);
-  animation: miniRipple 2s ease-out infinite;
+  background: #22D3EE;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.9);
+  animation: roleParticleFloat 6s ease-in-out infinite;
 }
 
-.mini-pulse::after { animation-delay: 1s; }
-
-@keyframes miniPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.15); opacity: 0.7; }
+.role-particle.white {
+  background: #FFFFFF;
 }
 
-@keyframes miniRipple {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(1.6); opacity: 0; }
+@keyframes roleParticleFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+  50% { transform: translateY(-15px) scale(1.4); opacity: 1; }
 }
 
-.mini-cross {
+.role-glow-blob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
+  filter: blur(60px);
+  animation: roleBlobPulse 4s ease-in-out infinite;
+}
+
+@keyframes roleBlobPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+}
+
+.role-content {
   position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: #FFFFFF;
-  font-weight: 900;
-  line-height: 1;
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
   z-index: 1;
-}
-
-.mini-cross::before {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  animation: miniRotate 6s linear infinite;
-}
-
-@keyframes miniRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ============================================
-   الأزرار الأساسية
-   ============================================ */
-.btn-primary {
-  width: 100%;
-  padding: 18px;
-  background: var(--primary);
-  color: #FFFFFF;
-  border: none;
-  border-radius: 14px;
-  font-size: 17px;
-  font-weight: 700;
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  cursor: pointer;
-  box-shadow: var(--shadow-primary);
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-}
-
-.btn-outline {
-  width: 100%;
-  padding: 18px;
-  background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  border-radius: 14px;
-  font-size: 17px;
-  font-weight: 700;
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
-  cursor: pointer;
-}
-
-/* ============================================
-   الشريط العلوي
-   ============================================ */
-.top-bar {
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 24px;
+  justify-content: center;
+  padding: 60px 24px 40px;
 }
 
-.back-btn {
-  background: transparent;
-  border: none;
-  color: var(--primary);
-  font-size: 28px;
+.role-back-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(34, 211, 238, 0.3);
+  color: #22D3EE;
+  font-size: 22px;
   cursor: pointer;
-  padding: 8px;
-}
-
-.top-bar-settings {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   transition: all 0.3s ease;
+  z-index: 10;
 }
 
-.top-bar-settings:hover {
-  border-color: var(--primary);
-  background: var(--primary-light);
+.role-back-btn:hover {
+  border-color: #22D3EE;
+  background: rgba(34, 211, 238, 0.15);
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
+  transform: scale(1.05);
 }
 
-.top-bar-settings svg {
-  stroke: var(--text);
-}
-
-.top-bar-settings:hover svg {
-  stroke: var(--primary);
-}
-
-.progress-badge {
-  background: var(--primary);
-  color: #FFFFFF;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-/* ============================================
-   عناوين الشاشات
-   ============================================ */
-.screen-title {
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 8px;
+.role-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #FFFFFF !important;
+  margin: 0 0 8px;
   text-align: center;
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
 }
 
-.screen-subtitle {
+.role-subtitle {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: #94A3B8 !important;
+  margin: 0 0 40px;
   text-align: center;
-  margin-bottom: 32px;
+  font-weight: 500;
 }
 
-/* ============================================
-   بطاقات الأدوار
-   ============================================ */
-.role-cards {
+.role-cards-new {
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 20px;
 }
 
-.role-card {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.role-card:hover {
-  border-color: var(--primary);
-  transform: translateX(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-.role-info {
+.role-card-new {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
-  flex: 1;
+  padding: 20px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
-.role-icon-circle {
+.role-card-patient {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.05) 100%);
+  border: 1.5px solid rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.15);
+}
+
+.role-card-pharmacy {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+}
+
+.role-card-delivery {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+}
+
+.role-card-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.7s ease;
+}
+
+.role-card-new:hover .role-card-glow {
+  left: 100%;
+}
+
+.role-card-new:hover {
+  transform: translateY(-4px);
+}
+
+.role-card-patient:hover {
+  box-shadow: 0 0 50px rgba(34, 211, 238, 0.4);
+}
+
+.role-card-pharmacy:hover {
+  box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+}
+
+.role-card-delivery:hover {
+  box-shadow: 0 0 50px rgba(245, 158, 11, 0.4);
+}
+
+.role-card-icon {
   width: 56px;
   height: 56px;
-  border-radius: 50%;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: 900;
   flex-shrink: 0;
-  color: #FFFFFF;
+  position: relative;
+  z-index: 2;
 }
 
-.role-icon-circle.blue { background: var(--primary); }
-.role-icon-circle.green { background: var(--success); }
-.role-icon-circle.orange { background: var(--warning); }
-
-.role-text h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
+.role-card-patient .role-card-icon {
+  background: rgba(34, 211, 238, 0.2);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+  color: #22D3EE;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
 }
 
-.role-text p {
+.role-card-pharmacy .role-card-icon {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #10B981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.role-card-delivery .role-card-icon {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #F59E0B;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.role-card-text {
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.role-card-text h3 {
+  font-size: 18px;
+  font-weight: 900;
+  color: #FFFFFF !important;
+  margin: 0 0 4px;
+}
+
+.role-card-patient .role-card-text h3 {
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+}
+
+.role-card-pharmacy .role-card-text h3 {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+}
+
+.role-card-delivery .role-card-text h3 {
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
+
+.role-card-text p {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: #94A3B8 !important;
+  margin: 0;
+  font-weight: 500;
 }
 
-.arrow {
-  color: var(--primary);
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
+.role-card-arrow {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.role-card-patient .role-card-arrow { color: #22D3EE; }
+.role-card-pharmacy .role-card-arrow { color: #10B981; }
+.role-card-delivery .role-card-arrow { color: #F59E0B; }
+
+.role-card-new:hover .role-card-arrow {
+  transform: translateX(-6px);
 }
 
 /* ============================================
-   🎨 شاشات التسجيل الجديدة (Cyberpunk)
+   🎨 شاشات التسجيل (Reg - Cyberpunk)
    ============================================ */
+#patientScreen,
+#pharmacyScreen,
+#deliveryScreen {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
 .reg-bg {
   position: absolute;
   inset: 0;
@@ -1392,7 +1388,7 @@ body {
 .reg-title {
   font-size: 24px;
   font-weight: 900;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   margin: 0 0 6px;
   text-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
   text-align: center;
@@ -1400,7 +1396,7 @@ body {
 
 .reg-subtitle {
   font-size: 13px;
-  color: #94A3B8;
+  color: #94A3B8 !important;
   margin: 0 0 24px;
   font-weight: 500;
   text-align: center;
@@ -1545,7 +1541,7 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #94A3B8;
+  color: #94A3B8 !important;
   cursor: pointer;
   padding: 6px 0;
 }
@@ -1610,284 +1606,297 @@ body {
 
 .reg-btn-orange:hover {
   box-shadow: 0 12px 32px rgba(245, 158, 11, 0.6);
+   }
+/* ============================================
+   🏠 الرأس (الترحيب)
+   ============================================ */
+.home-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 4px 0;
+}
+
+.greeting-section {
+  width: 100%;
+}
+
+.greeting-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.greeting-title span {
+  color: var(--primary);
+}
+
+.greeting-sub {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
 }
 
 /* ============================================
-   🎯 شاشة اختيار نوع الحساب (Cyberpunk)
+   🎯 الشعار المصغّر
    ============================================ */
-#roleScreen {
+.mini-logo {
   position: relative;
-  padding: 0;
-  overflow: hidden;
-  background: #050810;
-  min-height: 100vh;
-}
-
-.role-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.role-hex-grid {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(34, 211, 238, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 211, 238, 0.06) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
-}
-
-.role-particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.role-particle {
-  position: absolute;
-  border-radius: 50%;
-  background: #22D3EE;
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.9);
-  animation: roleParticleFloat 6s ease-in-out infinite;
-}
-
-.role-particle.white {
-  background: #FFFFFF;
-}
-
-@keyframes roleParticleFloat {
-  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
-  50% { transform: translateY(-15px) scale(1.4); opacity: 1; }
-}
-
-.role-glow-blob {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  height: 400px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 60%);
-  filter: blur(60px);
-  animation: roleBlobPulse 4s ease-in-out infinite;
-}
-
-@keyframes roleBlobPulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-}
-
-.role-content {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 24px 40px;
-}
-
-.role-back-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(30, 41, 59, 0.5);
-  backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(34, 211, 238, 0.3);
-  color: #22D3EE;
-  font-size: 22px;
-  cursor: pointer;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  z-index: 10;
 }
 
-.role-back-btn:hover {
-  border-color: #22D3EE;
-  background: rgba(34, 211, 238, 0.15);
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
-  transform: scale(1.05);
+.mini-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.5) 0%, transparent 70%);
+  animation: miniPulse 2s ease-in-out infinite;
 }
 
-.role-title {
-  font-size: 28px;
-  font-weight: 900;
+.mini-pulse::before,
+.mini-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--primary);
+  animation: miniRipple 2s ease-out infinite;
+}
+
+.mini-pulse::after { animation-delay: 1s; }
+
+@keyframes miniPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+@keyframes miniRipple {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.mini-cross {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
   color: #FFFFFF;
-  margin: 0 0 8px;
-  text-align: center;
-  text-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+  z-index: 1;
 }
 
-.role-subtitle {
-  font-size: 14px;
-  color: #94A3B8;
-  margin: 0 0 40px;
-  text-align: center;
-  font-weight: 500;
+.mini-cross::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  animation: miniRotate 6s linear infinite;
 }
 
-.role-cards-new {
+@keyframes miniRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   🔘 الأزرار الأساسية
+   ============================================ */
+.btn-primary {
   width: 100%;
-  max-width: 400px;
+  padding: 18px;
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  width: 100%;
+  padding: 18px;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  cursor: pointer;
+}
+
+/* ============================================
+   📱 الشريط العلوي
+   ============================================ */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 28px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.top-bar-settings {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.top-bar-settings:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.top-bar-settings svg {
+  stroke: var(--text);
+}
+
+.top-bar-settings:hover svg {
+  stroke: var(--primary);
+}
+
+.progress-badge {
+  background: var(--primary);
+  color: #FFFFFF;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ============================================
+   📝 عناوين الشاشات
+   ============================================ */
+.screen-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.screen-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+/* ============================================
+   🃏 بطاقات الأدوار (للتوافق)
+   ============================================ */
+.role-cards {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 20px;
 }
 
-.role-card-new {
-  position: relative;
+.role-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.role-card:hover {
+  border-color: var(--primary);
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.role-info {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 20px;
-  border-radius: 18px;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  overflow: hidden;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  flex: 1;
 }
 
-.role-card-patient {
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.05) 100%);
-  border: 1.5px solid rgba(34, 211, 238, 0.4);
-  box-shadow: 0 0 30px rgba(34, 211, 238, 0.15);
-}
-
-.role-card-pharmacy {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-  border: 1.5px solid rgba(16, 185, 129, 0.4);
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
-}
-
-.role-card-delivery {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
-  border: 1.5px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
-}
-
-.role-card-glow {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.7s ease;
-}
-
-.role-card-new:hover .role-card-glow {
-  left: 100%;
-}
-
-.role-card-new:hover {
-  transform: translateY(-4px);
-}
-
-.role-card-patient:hover {
-  box-shadow: 0 0 50px rgba(34, 211, 238, 0.4);
-}
-
-.role-card-pharmacy:hover {
-  box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
-}
-
-.role-card-delivery:hover {
-  box-shadow: 0 0 50px rgba(245, 158, 11, 0.4);
-}
-
-.role-card-icon {
+.role-icon-circle {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-}
-
-.role-card-patient .role-card-icon {
-  background: rgba(34, 211, 238, 0.2);
-  border: 1px solid rgba(34, 211, 238, 0.4);
-  color: #22D3EE;
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.4);
-}
-
-.role-card-pharmacy .role-card-icon {
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #10B981;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-}
-
-.role-card-delivery .role-card-icon {
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #F59E0B;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
-}
-
-.role-card-text {
-  flex: 1;
-  position: relative;
-  z-index: 2;
-}
-
-.role-card-text h3 {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 900;
-  color: #FFFFFF;
-  margin: 0 0 4px;
-}
-
-.role-card-patient .role-card-text h3 {
-  text-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
-}
-
-.role-card-pharmacy .role-card-text h3 {
-  text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
-}
-
-.role-card-delivery .role-card-text h3 {
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
-}
-
-.role-card-text p {
-  font-size: 12px;
-  color: #94A3B8;
-  margin: 0;
-  font-weight: 500;
-}
-
-.role-card-arrow {
   flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-  transition: transform 0.3s ease;
+  color: #FFFFFF;
 }
 
-.role-card-patient .role-card-arrow { color: #22D3EE; }
-.role-card-pharmacy .role-card-arrow { color: #10B981; }
-.role-card-delivery .role-card-arrow { color: #F59E0B; }
+.role-icon-circle.blue { background: var(--primary); }
+.role-icon-circle.green { background: var(--success); }
+.role-icon-circle.orange { background: var(--warning); }
 
-.role-card-new:hover .role-card-arrow {
-  transform: translateX(-6px);
+.role-text h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.role-text p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.arrow {
+  color: var(--primary);
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* ============================================
-   النماذج (القديمة - للتوافق)
+   📝 النماذج
    ============================================ */
 .blue-form {
   display: flex;
@@ -2003,7 +2012,7 @@ body {
 }
 
 /* ============================================
-   رسالة النجاح
+   ✅ رسالة النجاح
    ============================================ */
 .success-overlay {
   position: fixed;
@@ -2064,7 +2073,7 @@ body {
 }
 
 /* ============================================
-   شريط البحث
+   🔍 شريط البحث
    ============================================ */
 .search-wrapper { margin-bottom: 16px; }
 
@@ -2091,7 +2100,7 @@ body {
 }
 
 /* ============================================
-   التصنيفات
+   🏷️ التصنيفات
    ============================================ */
 .categories-scroll {
   display: flex;
@@ -2124,7 +2133,7 @@ body {
 }
 
 /* ============================================
-   عناوين الأقسام
+   📢 عناوين الأقسام
    ============================================ */
 .section-header {
   display: flex;
@@ -2147,7 +2156,7 @@ body {
 }
 
 /* ============================================
-   بطاقات الصيدليات
+   🏪 بطاقات الصيدليات
    ============================================ */
 .pharmacy-list {
   display: flex;
@@ -2211,7 +2220,7 @@ body {
 }
 
 /* ============================================
-   شريط العروض
+   📢 شريط العروض
    ============================================ */
 .offers-section { margin-bottom: 20px; }
 
@@ -2277,7 +2286,7 @@ body {
 }
 
 /* ============================================
-   الإحصائيات
+   📊 الإحصائيات
    ============================================ */
 .stats-grid {
   display: grid;
@@ -2330,7 +2339,7 @@ body {
 }
 
 /* ============================================
-   بطاقات الطلبات
+   📋 بطاقات الطلبات
    ============================================ */
 .order-list {
   display: flex;
@@ -2395,7 +2404,7 @@ body {
   border: 1.5px solid var(--border);
 }
 /* ============================================
-   رسالة مهمة
+   ⚠️ رسالة مهمة
    ============================================ */
 .alert-banner {
   display: flex;
@@ -2457,7 +2466,7 @@ body {
 }
 
 /* ============================================
-   Switch
+   🔄 Switch
    ============================================ */
 .switch {
   position: relative;
@@ -2493,7 +2502,7 @@ body {
 .switch input:checked + .slider::before { transform: translateX(24px); }
 
 /* ============================================
-   Tabs الفلترة
+   📑 Tabs الفلترة
    ============================================ */
 .filter-tabs {
   display: flex;
@@ -2523,7 +2532,7 @@ body {
 }
 
 /* ============================================
-   أزرار سريعة للصيدلية
+   🏪 أزرار سريعة للصيدلية
    ============================================ */
 .pharmacy-actions {
   display: grid;
@@ -3766,7 +3775,7 @@ body {
 }
 
 /* ============================================
-   📡 الرادار الجديد (deliveryDashboard)
+   📡 الرادار الجديد
    ============================================ */
 .radar-section {
   margin: 20px 0 30px;
@@ -4007,7 +4016,7 @@ body {
 }
 
 /* ============================================
-   🚴 واجهة المندوب - الرأس الجديد
+   🚴 واجهة المندوب
    ============================================ */
 .delivery-header {
   display: flex;
@@ -4524,7 +4533,7 @@ body {
 }
 
 /* ============================================
-   🧭 Bottom Sheet (القديم) - مُصلح
+   🧭 Bottom Sheet (القديم) - للرادار
    ============================================ */
 .bottom-sheet {
   position: fixed;
@@ -5339,7 +5348,7 @@ body {
 .profile-name {
   font-size: 22px;
   font-weight: 900;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   margin: 0 0 6px;
   position: relative;
   z-index: 2;
@@ -5347,7 +5356,7 @@ body {
 
 .profile-role {
   font-size: 14px;
-  color: var(--cyan);
+  color: var(--cyan) !important;
   font-weight: 700;
   margin: 0 0 14px;
   position: relative;
@@ -6311,7 +6320,7 @@ body {
 }
 
 /* ============================================
-   📱 الشريط السفلي
+   📱 الشريط السفلي - مع توازن الأزرار ✅
    ============================================ */
 .bottom-nav {
   position: fixed;
@@ -6321,7 +6330,7 @@ body {
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   padding: 8px 0 max(8px, env(safe-area-inset-bottom));
   z-index: 100;
@@ -6342,10 +6351,11 @@ body {
   color: var(--text-secondary);
   font-family: 'IBM Plex Sans Arabic', sans-serif;
   cursor: pointer;
-  padding: 6px 12px;
+  padding: 6px 4px;
   transition: all 0.3s ease;
   flex: 1;
   position: relative;
+  min-width: 0;
 }
 
 .nav-btn svg {
@@ -6364,10 +6374,15 @@ body {
 .nav-btn.active { color: var(--primary); }
 .nav-btn.active svg { stroke: var(--primary); }
 
+/* ✅ الزر المركزي - بحجم ثابت لتوازن الأزرار */
 .nav-center {
   position: relative;
-  flex: 0 0 auto;
-  padding: 0 20px;
+  flex: 0 0 76px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-center-icon {
@@ -6396,12 +6411,22 @@ body {
   animation: rotateBorder 8s linear infinite;
 }
 
+@keyframes rotateBorder {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .nav-cross {
   font-size: 28px;
   color: #FFFFFF;
   font-weight: 900;
   line-height: 1;
   animation: crossPulse 2s ease-in-out infinite;
+}
+
+@keyframes crossPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
 .nav-center:hover .nav-center-icon {
@@ -6506,6 +6531,19 @@ body {
     height: 20px;
   }
   
+  /* Role */
+  .role-title { font-size: 24px; }
+  .role-card-new { padding: 16px; }
+  .role-card-icon { width: 48px; height: 48px; }
+  .role-card-text h3 { font-size: 16px; }
+  
+  /* Registration */
+  .reg-title { font-size: 22px; }
+  .reg-glass-card { padding: 20px 16px; }
+  .reg-input { padding: 12px 42px 12px 12px; font-size: 13px; }
+  .reg-submit-btn { padding: 12px; font-size: 14px; }
+  .reg-logo-wrap { width: 70px; height: 70px; }
+  
   /* Radar */
   .radar-simple { width: 200px; height: 200px; }
   .radar-core { width: 70px; height: 70px; }
@@ -6533,27 +6571,21 @@ body {
   .profile-name { font-size: 20px; }
   .profile-info-icon { width: 36px; height: 36px; }
   
-  /* Role */
-  .role-title { font-size: 24px; }
-  .role-card-new { padding: 16px; }
-  .role-card-icon { width: 48px; height: 48px; }
-  .role-card-text h3 { font-size: 16px; }
-  
-  /* Registration */
-  .reg-title { font-size: 22px; }
-  .reg-glass-card { padding: 20px 16px; }
-  .reg-input { padding: 12px 42px 12px 12px; font-size: 13px; }
-  .reg-submit-btn { padding: 12px; font-size: 14px; }
-  .reg-logo-wrap { width: 70px; height: 70px; }
-  
   /* Delivery */
   .delivery-title { font-size: 20px; }
   .delivery-notif-btn,
   .delivery-avatar { width: 38px; height: 38px; }
   .delivery-accept-btn { padding: 10px 18px; font-size: 13px; }
   .delivery-details-btn { padding: 10px 14px; font-size: 13px; }
+  
+  /* Bottom Nav - توازن على الموبايل */
+  .nav-center { flex: 0 0 70px; }
+  .nav-center-icon { width: 50px; height: 50px; }
+  .nav-cross { font-size: 24px; }
+  .nav-btn small { font-size: 9px; }
+  .nav-btn svg { width: 20px; height: 20px; }
 }
 
 /* ============================================
-   🎯 نهاية الملف
+   🎉 نهاية الملف
    ============================================ */
