@@ -6087,26 +6087,18 @@ body {
 .nav-btn.active svg { stroke: var(--primary); }
 
 .nav-center {
-  position: relative;
-  flex: 1;
-  max-width: 90px;
-  padding: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+  padding: 0;
+  height: auto;
 } 
-
-.nav-center {
-  position: relative;
-  flex: 1;
-  max-width: 90px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 .nav-center-icon {
   width: 42px; height: 42px;
   border-radius: 50%;
