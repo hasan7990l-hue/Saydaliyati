@@ -167,10 +167,38 @@ function vibrateDevice(pattern) {
     navigator.vibrate(pattern);
   }
 }
+// ============================================
+// 🎬 إنشاء جزيئات شاشة البداية (Splash)
+// ============================================
+function createSplashParticles() {
+  var container = document.getElementById('splashParticles');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  var particleCount = 35;
+  
+  for (var i = 0; i < particleCount; i++) {
+    var particle = document.createElement('div');
+    particle.className = 'splash-particle' + (Math.random() > 0.6 ? ' white' : '');
+    
+    var size = Math.random() * 4 + 2;
+    var top = Math.random() * 100;
+    var left = Math.random() * 100;
+    var delay = Math.random() * 6;
+    var duration = 4 + Math.random() * 4;
+    
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.top = top + '%';
+    particle.style.left = left + '%';
+    particle.style.animationDelay = delay + 's';
+    particle.style.animationDuration = duration + 's';
+    
+    container.appendChild(particle);
+  }
+}
 
-// ============================================
-// 🎨 إنشاء جزيئات شاشة تسجيل الدخول
-// ============================================
 function createLoginParticles() {
   var container = document.getElementById('loginParticles');
   if (!container) return;
