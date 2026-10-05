@@ -1,5 +1,5 @@
 // ============================================
-// توصيل طبي - Clean Medical v11
+// توصيل طبي - Clean Medical v12
 // الجزء 1 من 5
 // ============================================
 
@@ -65,16 +65,12 @@ function playSonarPing() {
     
     var oscillator = ctx.createOscillator();
     var gainNode = ctx.createGain();
-    
     oscillator.connect(gainNode);
     gainNode.connect(ctx.destination);
-    
     oscillator.frequency.value = 800;
     oscillator.type = 'sine';
-    
     gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-    
     oscillator.start(ctx.currentTime);
     oscillator.stop(ctx.currentTime + 0.5);
   } catch(e) {}
@@ -656,7 +652,7 @@ function acceptOrder(orderId) {
   setTimeout(function() {
     goToMyOrders();
   }, 800);
-  }
+        }
 // ============================================
 // 📱 إدارة الشاشات
 // ============================================
@@ -1128,7 +1124,7 @@ function openOrders() {
 }
 
 // ============================================
-// 🔔 التنبيهات الديناميكية
+// 🔔 التنبيهات الديناميكية (التصميم الجديد)
 // ============================================
 function openNotifications() {
   closeSidebar();
@@ -1151,7 +1147,7 @@ function renderNotifications() {
   var notifs = allNotifs.length > 0 ? allNotifs : defaultNotifs;
   
   if (subtitleEl) {
-    subtitleEl.textContent = notifs.length + ' إشعار';
+    subtitleEl.textContent = notifs.length + ' إشعارات';
   }
   
   if (notifs.length === 0) {
@@ -1165,14 +1161,16 @@ function renderNotifications() {
   
   var html = '';
   notifs.forEach(function(n) {
-    var unreadClass = n.read ? '' : ' unread';
+    var unreadClass = n.read ? 'read' : 'unread';
+    var iconHtml = getNotifIconHtml(n.type, n.read);
+    
     html += 
-      '<div class="notif-card' + unreadClass + '">' +
-        '<div class="notif-icon">' + (n.icon || '🔔') + '</div>' +
-        '<div class="notif-content">' +
-          '<h4 class="notif-title">' + n.title + '</h4>' +
-          '<p class="notif-message">' + n.message + '</p>' +
-          '<span class="notif-time">' + (n.time || 'الآن') + '</span>' +
+      '<div class="notif-card-new ' + unreadClass + '">' +
+        '<div class="notif-card-icon-new">' + iconHtml + '</div>' +
+        '<div class="notif-card-content-new">' +
+          '<h4 class="notif-card-title-new">' + n.title + '</h4>' +
+          '<p class="notif-card-message-new">' + n.message + '</p>' +
+          '<span class="notif-card-time-new">' + (n.time || 'الآن') + '</span>' +
         '</div>' +
       '</div>';
   });
@@ -1180,24 +1178,52 @@ function renderNotifications() {
   listEl.innerHTML = html;
 }
 
+function getNotifIconHtml(type, read) {
+  var color = read ? '#94A3B8' : '#22D3EE';
+  var glow = read ? 'rgba(148, 163, 184, 0.3)' : 'rgba(34, 211, 238, 0.6)';
+  
+  if (type === 'order' || type === 'order_new') {
+    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
+      '<path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>' +
+      '<line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>' +
+    '</svg>';
+  } else if (type === 'stock' || type === 'warning') {
+    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
+      '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>' +
+      '<line x1="12" y1="9" x2="12" y2="13"/>' +
+      '<line x1="12" y1="17" x2="12.01" y2="17"/>' +
+    '</svg>';
+  } else if (type === 'rating' || type === 'star') {
+    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
+      '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' +
+    '</svg>';
+  }
+  
+  // Default bell icon
+  return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
+    '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>' +
+    '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
+  '</svg>';
+}
+
 function getDefaultNotifications(userType) {
   if (userType === 'delivery') {
     return [
-      { icon: '🚴', title: 'طلب جديد متاح', message: 'صيدلية النور - 2.5 كم - 3,000 دينار', time: 'الآن', read: false },
-      { icon: '💰', title: 'أرباح اليوم', message: '12,000 دينار من 12 طلب', time: 'قبل ساعة', read: false },
-      { icon: '⭐', title: 'تقييم جديد', message: 'حصلت على 5 نجوم من أحمد علي', time: 'قبل 3 ساعات', read: true }
+      { icon: '🚴', type: 'order', title: 'طلب جديد متاح', message: 'صيدلية النور - 2.5 كم - 3,000 دينار', time: 'الآن', read: false },
+      { icon: '💰', type: 'wallet', title: 'أرباح اليوم', message: '12,000 دينار من 12 طلب', time: 'قبل ساعة', read: false },
+      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 5 نجوم من أحمد علي', time: 'قبل 3 ساعات', read: true }
     ];
   } else if (userType === 'pharmacy') {
     return [
-      { icon: '💊', title: 'طلب جديد وارد', message: 'أحمد علي - 23,000 دينار', time: 'الآن', read: false },
-      { icon: '⚠️', title: 'تنبيه المخزون', message: '3 أدوية قاربت على الانتهاء', time: 'قبل ساعة', read: false },
-      { icon: '⭐', title: 'تقييم جديد', message: 'حصلت على 4.8 من سارة محمد', time: 'قبل 3 ساعات', read: true }
+      { icon: '💊', type: 'order', title: 'طلب جديد وارد', message: 'أحمد علي - 23,000 دينار', time: 'الآن', read: false },
+      { icon: '⚠️', type: 'stock', title: 'تنبيه المخزون', message: '3 أدوية قاربت على الانتهاء', time: 'قبل ساعة', read: false },
+      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 4.8 من سارة محمد', time: 'قبل 3 ساعات', read: true }
     ];
   } else {
     return [
-      { icon: '✅', title: 'تم قبول طلبك', message: 'صيدلية النور قبلت طلبك #1234', time: 'الآن', read: false },
-      { icon: '🚴', title: 'المندوب في الطريق', message: 'أحمد محمد سيصل خلال 15 دقيقة', time: 'قبل 5 دقائق', read: false },
-      { icon: '🎉', title: 'تم توصيل طلبك', message: 'طلب #1220 وصل بأمان', time: 'قبل 3 أيام', read: true }
+      { icon: '✅', type: 'order', title: 'تم قبول طلبك', message: 'صيدلية النور قبلت طلبك #1234', time: 'الآن', read: false },
+      { icon: '🚴', type: 'order', title: 'المندوب في الطريق', message: 'أحمد محمد سيصل خلال 15 دقيقة', time: 'قبل 5 دقائق', read: false },
+      { icon: '🎉', type: 'rating', title: 'تم توصيل طلبك', message: 'طلب #1220 وصل بأمان', time: 'قبل 3 أيام', read: true }
     ];
   }
 }
@@ -1717,7 +1743,7 @@ function loadOffers() {
   });
   
   offersList.innerHTML = html;
-}
+    }
 // ============================================
 // 📸 نظام طلب الروشتة
 // ============================================
@@ -2424,13 +2450,16 @@ function openAddMedicineModal() {
     if (el) el.value = '';
   });
   
+  var stockEl = document.getElementById('medicineStock');
+  if (stockEl) stockEl.value = '50';
+  
   var iconEl = document.getElementById('medicineIcon');
   if (iconEl) iconEl.value = '💊';
   
   var btnEl = document.getElementById('medicineSubmitBtn');
   if (btnEl) btnEl.textContent = 'إضافة إلى المخزون';
   
-  document.querySelectorAll('.icon-option').forEach(function(btn, i) {
+  document.querySelectorAll('.medicine-icon-option').forEach(function(btn, i) {
     btn.classList.toggle('active', i === 0);
   });
   
@@ -2464,8 +2493,8 @@ function openEditMedicineModal(medId) {
   var btnEl = document.getElementById('medicineSubmitBtn');
   if (btnEl) btnEl.textContent = 'حفظ التعديلات';
   
-  document.querySelectorAll('.icon-option').forEach(function(btn) {
-    btn.classList.toggle('active', btn.textContent.trim() === med.icon);
+  document.querySelectorAll('.medicine-icon-option').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-icon') === med.icon);
   });
   
   var modal = document.getElementById('medicineModal');
@@ -2483,12 +2512,29 @@ function closeMedicineModal() {
   }
 }
 
+function selectIconNew(icon, btn) {
+  var iconInput = document.getElementById('medicineIcon');
+  if (iconInput) iconInput.value = icon;
+  
+  document.querySelectorAll('.medicine-icon-option').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  
+  if (navigator.vibrate) navigator.vibrate([20]);
+}
+
 function selectIcon(icon, btn) {
   var iconInput = document.getElementById('medicineIcon');
   if (iconInput) iconInput.value = icon;
   
   document.querySelectorAll('.icon-option').forEach(function(b) { b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
+}
+
+function saveMedicineFromHeader() {
+  var form = document.querySelector('#medicineModal form');
+  if (form) {
+    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  }
 }
 
 function saveMedicine(event) {
@@ -2498,11 +2544,11 @@ function saveMedicine(event) {
   var name = document.getElementById('medicineName').value.trim();
   var category = document.getElementById('medicineCategory').value;
   var price = parseInt(document.getElementById('medicinePrice').value);
-  var stock = parseInt(document.getElementById('medicineStock').value);
+  var stock = parseInt(document.getElementById('medicineStock').value) || 50;
   var desc = document.getElementById('medicineDesc').value.trim();
   var icon = document.getElementById('medicineIcon').value;
   
-  if (!name || !category || isNaN(price) || isNaN(stock)) {
+  if (!name || !category || isNaN(price)) {
     showError('املأ كل الحقول المطلوبة');
     return;
   }
@@ -2549,7 +2595,8 @@ function deleteMedicine(medId) {
   saveInventory(inventory);
   renderInventory();
   showToast('تم حذف الدواء');
-  }
+}
+
 // ============================================
 // ⭐ نظام التقييم
 // ============================================
@@ -2721,8 +2768,7 @@ function updateNotifBadge() {
     badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
     navBtn.appendChild(badge);
   }
-}
-
+     }
 // ============================================
 // 📡 الرادار
 // ============================================
@@ -3572,4 +3618,4 @@ window.logout = function() {
 // ============================================
 // 🎉 نهاية الملف
 // ============================================
-console.log('توصيل طبي - اكتمل التحميل v11');
+console.log('توصيل طبي - اكتمل التحميل v12');
