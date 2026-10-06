@@ -81,11 +81,13 @@ body {
   padding-bottom: 120px;
   animation: fadeIn 0.4s ease;
   background: var(--bg);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .screen.active {
-  display: flex !important;
-  flex-direction: column;
+  display: block !important;
+  min-height: 100vh;
 }
 
 @keyframes fadeIn {
