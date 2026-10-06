@@ -935,15 +935,20 @@ function acceptOrder(orderId) {
 // 📱 إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
+  // إخفاء كل الشاشات بشكل قوي
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
-    screen.style.display = '';
+    screen.style.display = 'none';
+    screen.style.position = '';
+    screen.style.zIndex = '';
   });
   
   var target = document.getElementById(screenId);
   if (target) {
     target.classList.add('active');
     target.style.display = 'flex';
+    target.style.position = 'relative';
+    target.style.zIndex = '1';
     window.scrollTo(0, 0);
     updateBottomNav(screenId);
     
@@ -962,30 +967,12 @@ function showScreen(screenId) {
     if (screenId === 'deliveryScreen') {
       setTimeout(function() { createRegParticles('deliveryParticles'); }, 100);
     }
+    
+    console.log('✅ showScreen:', screenId);
   } else {
-    console.warn('الشاشة غير موجودة:', screenId);
+    console.warn('❌ الشاشة غير موجودة:', screenId);
   }
 }
-function updateBottomNav(screenId) {
-  var nav = document.getElementById('mainBottomNav');
-  if (!nav) return;
-  
-  var navScreens = [
-    'homeScreen',
-    'pharmacyDashboard',
-    'deliveryDashboard',
-    'ordersScreen',
-    'myOrdersScreen',
-    'notificationsScreen'
-  ];
-  
-  if (navScreens.indexOf(screenId) !== -1) {
-    nav.style.display = 'flex';
-  } else {
-    nav.style.display = 'none';
-  }
-}
-
 // ============================================
 // 🔄 تبديل التبويب
 // ============================================
