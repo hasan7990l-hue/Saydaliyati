@@ -1452,6 +1452,9 @@ function goToDashboardByType() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = userStr ? JSON.parse(userStr) : {};
   
+  // ✅ تحديث اسم المستخدم
+  updateUserName();
+  
   if (user.type === 'pharmacy') {
     showScreen('pharmacyDashboard');
   } else if (user.type === 'delivery') {
@@ -1461,7 +1464,39 @@ function goToDashboardByType() {
     setTimeout(loadOffers, 100);
   }
 }
-
+// ============================================
+// 👤 تحديث اسم المستخدم في الصفحة الرئيسية
+// ============================================
+function updateUserName() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return;
+  
+  try {
+    var user = JSON.parse(userStr);
+    var userName = user.name || 'مستخدم';
+    
+    // تحديث في الشاشة الرئيسية للمريض
+    var userGreeting = document.getElementById('userGreeting');
+    if (userGreeting) {
+      userGreeting.textContent = userName;
+    }
+    
+    // تحديث في شاشة الصيدلية
+    var pharmacyGreeting = document.getElementById('pharmacyGreeting');
+    if (pharmacyGreeting) {
+      pharmacyGreeting.textContent = userName;
+    }
+    
+    // تحديث في شاشة المندوب
+    var deliveryGreeting = document.getElementById('deliveryGreeting');
+    if (deliveryGreeting) {
+      deliveryGreeting.textContent = userName;
+    }
+    
+  } catch (e) {
+    console.error('خطأ تحديث الاسم:', e);
+  }
+}
 // ============================================
 // 🔐 تسجيل الدخول
 // ============================================
