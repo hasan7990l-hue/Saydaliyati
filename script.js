@@ -937,7 +937,7 @@ function acceptOrder(orderId) {
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
-    screen.style.display = 'none';
+    screen.style.display = '';
   });
   
   var target = document.getElementById(screenId);
