@@ -1634,7 +1634,7 @@ function updateUserName() {
 // ============================================
 // 🔐 تسجيل الدخول
 // ============================================
-function submitLogin(event) {
+ async function submitLogin(event) {
   if (event) event.preventDefault();
   
   var phone = document.getElementById('loginPhone').value.trim();
@@ -1650,8 +1650,24 @@ function submitLogin(event) {
     return;
   }
   
+  // 1. ابحث في localStorage أولاً
   var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
   var user = registrations.find(function(r) { return r.phone === phone; });
+  
+  // 2. إذا لم يوجد، ابحث في Firestore
+  if (!user) {
+    try {
+      var fsUser = await getUserFromFirestore(phone);
+      if (fsUser) {
+        user = fsUser;
+        // احفظه محلياً للاستخدام المستقبلي
+        registrations.push(user);
+        localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+      }
+    } catch (e) {
+      console.log('⚠️ خطأ البحث في Firestore:', e);
+    }
+  }
   
   if (user) {
     if (user.password && user.password !== password) {
@@ -1664,20 +1680,14 @@ function submitLogin(event) {
     showToast('أهلاً بك ' + (user.name || ''));
     
     setTimeout(function() {
-      if (user.type === 'pharmacy') showScreen('pharmacyDashboard');
-      else if (user.type === 'delivery') showScreen('deliveryDashboard');
-      else {
-        showScreen('homeScreen');
-        setTimeout(loadOffers, 100);
-      }
+      goToDashboardByType();
     }, 500);
     
     return;
   }
   
   showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
-}
-
+ }
 // ============================================
 // 🚪 تسجيل الخروج
 // ============================================
