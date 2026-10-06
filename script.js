@@ -1672,33 +1672,6 @@ function saveRegistration(data) {
 // ============================================
 // 🔥 Firebase (اختياري)
 // ============================================
-function saveUserToFirebase(user) {
-  if (window.firebaseDB && window.firebaseDoc && window.firebaseSetDoc) {
-    try {
-      var userRef = window.firebaseDoc(window.firebaseDB, 'users', user.phone);
-      var userData = {
-        name: user.name,
-        phone: user.phone,
-        email: user.email || '',
-        type: user.type,
-        address: user.address || user.area || '',
-        license: user.license || '',
-        vehicle: user.vehicle || '',
-        createdAt: new Date().toISOString()
-      };
-      
-      window.firebaseSetDoc(userRef, userData, { merge: true })
-        .then(function() {
-          console.log('تم حفظ المستخدم في Firebase');
-        })
-        .catch(function(err) {
-          console.log('خطأ Firebase:', err);
-        });
-    } catch(e) {
-      console.log('Firebase غير متاح');
-    }
-  }
-}
 
 // ============================================
 // ✅ التحقق من رقم الهاتف
