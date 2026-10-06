@@ -1531,7 +1531,7 @@ function logout() {
 // ============================================
 // 📝 إرسال النماذج
 // ============================================
-function submitPatient(event) {
+async function submitPatient(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('patientName').value.trim();
@@ -1567,12 +1567,12 @@ function submitPatient(event) {
   
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  saveUserToFirebase(user);
+  await saveUserToFirestore(user);
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
 
-function submitPharmacy(event) {
+async function submitPharmacy(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('pharmacyName').value.trim();
@@ -1611,12 +1611,12 @@ function submitPharmacy(event) {
   
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  saveUserToFirebase(user);
+  await saveUserToFirestore(user);
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
 }
 
-function submitDelivery(event) {
+async function submitDelivery(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('deliveryName').value.trim();
@@ -1654,7 +1654,7 @@ function submitDelivery(event) {
   
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  saveUserToFirebase(user);
+  await saveUserToFirestore(user);
   playSuccessSound();
   showSuccessMessage('مرحباً بك في فريقنا', 'سنتواصل معك قريباً');
 }
