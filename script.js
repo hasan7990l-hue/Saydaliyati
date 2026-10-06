@@ -167,53 +167,59 @@ async function loadPharmaciesFromFirestore() {
 // 🏪 عرض الصيدليات للمريض (ديناميكي)
 // ============================================
 async function loadPharmaciesForPatient() {
+  console.log('🔄 بدء loadPharmaciesForPatient...');
+  
   var container = document.getElementById('pharmacyListContainer');
-  if (!container) return;
-  
-  container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">⏳ جاري التحميل...</div>';
-  
-  var pharmacies = await loadPharmaciesFromFirestore();
-  
-  if (pharmacies.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">لا توجد صيدليات متاحة حالياً</div>';
+  if (!container) {
+    console.error('❌ pharmacyListContainer غير موجود!');
     return;
   }
   
-  var colorMap = {
-    'green': '#10B981',
-    'blue': '#2563EB',
-    'orange': '#F59E0B',
-    'purple': '#8B5CF6',
-    'red': '#EF4444'
-  };
+  console.log('✅ Container موجود');
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">⏳ جاري التحميل...</div>';
   
-  var html = '';
-  pharmacies.forEach(function(pharmacy) {
-    var bgColor = colorMap[pharmacy.color] || colorMap['green'];
-    var logo = pharmacy.logo || 'ص';
-    var rating = pharmacy.rating || 5.0;
-    var deliveryTime = pharmacy.deliveryTime || '30 دقيقة';
-    var address = pharmacy.address || 'بغداد';
+  try {
+    var pharmacies = await loadPharmaciesFromFirestore();
+    console.log('📦 عدد الصيدليات:', pharmacies.length);
     
-    html += 
-      '<div class="pharmacy-card">' +
-        '<div class="pharmacy-logo" style="background:' + bgColor + ';color:white;">' + logo + '</div>' +
-        '<div class="pharmacy-info">' +
-          '<h4>' + pharmacy.name + '</h4>' +
-          '<p>' + address + '</p>' +
-          '<div class="pharmacy-meta">' +
-            '<span class="rating">' + rating + ' ★</span>' +
-            '<span class="badge">توصيل ' + deliveryTime + '</span>' +
+    if (pharmacies.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">لا توجد صيدليات متاحة حالياً</div>';
+      return;
+    }
+    
+    var html = '';
+    pharmacies.forEach(function(pharmacy) {
+      var color = pharmacy.color === 'blue' ? '#2563EB' : 
+                  pharmacy.color === 'orange' ? '#F59E0B' : 
+                  pharmacy.color === 'purple' ? '#8B5CF6' : '#10B981';
+      var logo = pharmacy.logo || 'ص';
+      var rating = pharmacy.rating || 5.0;
+      var deliveryTime = pharmacy.deliveryTime || '30 دقيقة';
+      var address = pharmacy.address || 'بغداد';
+      
+      html += 
+        '<div class="pharmacy-card">' +
+          '<div class="pharmacy-logo" style="background:' + color + ';color:white;">' + logo + '</div>' +
+          '<div class="pharmacy-info">' +
+            '<h4>' + pharmacy.name + '</h4>' +
+            '<p>' + address + '</p>' +
+            '<div class="pharmacy-meta">' +
+              '<span class="rating">' + rating + ' ★</span>' +
+              '<span class="badge">توصيل ' + deliveryTime + '</span>' +
+            '</div>' +
           '</div>' +
-        '</div>' +
-        '<button class="btn-order" onclick="orderFromPharmacy(\'' + pharmacy.id + '\', \'' + pharmacy.name + '\')">اطلب</button>' +
-      '</div>';
-  });
-  
-  container.innerHTML = html;
-  console.log('✅ تم عرض', pharmacies.length, 'صيدلية للمريض');
+          '<button class="btn-order" onclick="orderFromPharmacy(\'' + pharmacy.id + '\', \'' + pharmacy.name + '\')">اطلب</button>' +
+        '</div>';
+    });
+    
+    container.innerHTML = html;
+    console.log('✅ تم عرض', pharmacies.length, 'صيدلية');
+    
+  } catch (error) {
+    console.error('❌ خطأ في loadPharmaciesForPatient:', error);
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#EF4444;">حدث خطأ في التحميل: ' + error.message + '</div>';
+  }
 }
-
 // ============================================
 // 🛒 الطلب من صيدلية محددة
 // ============================================
