@@ -935,20 +935,16 @@ function acceptOrder(orderId) {
 // 📱 إدارة الشاشات
 // ============================================
 function showScreen(screenId) {
-  // إخفاء كل الشاشات بشكل قوي
+  // إخفاء كل الشاشات
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
     screen.style.display = 'none';
-    screen.style.position = '';
-    screen.style.zIndex = '';
   });
   
   var target = document.getElementById(screenId);
   if (target) {
     target.classList.add('active');
     target.style.display = 'flex';
-    target.style.position = 'relative';
-    target.style.zIndex = '1';
     window.scrollTo(0, 0);
     updateBottomNav(screenId);
     
