@@ -77,8 +77,7 @@ body {
 .screen {
   display: none;
   min-height: 100vh;
-  padding: 24px;
-  padding-bottom: 120px;
+  padding: 0;              /* ← بدون padding */
   animation: fadeIn 0.4s ease;
   background: var(--bg);
   width: 100%;
@@ -89,6 +88,9 @@ body {
   display: flex !important;
   flex-direction: column;
   min-height: 100vh;
+  padding: 24px;           /* ← padding هنا فقط */
+  padding-bottom: 120px;
+  box-sizing: border-box;
 } 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
