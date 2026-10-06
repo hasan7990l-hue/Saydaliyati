@@ -398,8 +398,10 @@ async function signUpWithGoogleTest() {
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     
     showToast('✅ تم التسجيل بنجاح');
-    
-    showSuccessMessage('مرحباً بك', 'تم إنشاء حسابك بـ Google، ' + userData.name);
+
+setTimeout(function() {
+  goToDashboardByType();
+}, 800);
     
   } catch (error) {
     console.error('❌ خطأ Google Sign-Up:', error);
