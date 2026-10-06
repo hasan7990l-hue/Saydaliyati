@@ -4,7 +4,96 @@
 // ============================================
 
 console.log('توصيل طبي - بدأ التحميل');
+// ============================================
+// 🔥 دوال Firestore
+// ============================================
 
+// حفظ مستخدم في Firestore
+async function saveUserToFirestore(userData) {
+  if (!window.firebaseDB || !window.firebaseSetDoc || !window.firebaseDoc) {
+    console.log('⚠️ Firestore غير جاهز');
+    return null;
+  }
+  
+  try {
+    const userId = userData.googleId || userData.phone || ('user_' + Date.now());
+    const userRef = window.firebaseDoc(window.firebaseDB, 'users', userId);
+    await window.firebaseSetDoc(userRef, {
+      ...userData,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    console.log('✅ تم حفظ المستخدم في Firestore:', userId);
+    return userId;
+  } catch (error) {
+    console.error('❌ خطأ حفظ المستخدم:', error);
+    return null;
+  }
+}
+
+// جلب مستخدم من Firestore
+async function getUserFromFirestore(userId) {
+  if (!window.firebaseDB || !window.firebaseGetDoc || !window.firebaseDoc) {
+    return null;
+  }
+  
+  try {
+    const userRef = window.firebaseDoc(window.firebaseDB, 'users', userId);
+    const userSnap = await window.firebaseGetDoc(userRef);
+    
+    if (userSnap.exists()) {
+      return userSnap.data();
+    }
+    return null;
+  } catch (error) {
+    console.error('❌ خطأ جلب المستخدم:', error);
+    return null;
+  }
+}
+
+// حفظ طلب في Firestore
+async function saveOrderToFirestore(orderData) {
+  if (!window.firebaseDB || !window.firebaseAddDoc || !window.firebaseCollection) {
+    return null;
+  }
+  
+  try {
+    const orderRef = await window.firebaseAddDoc(
+      window.firebaseCollection(window.firebaseDB, 'orders'),
+      {
+        ...orderData,
+        createdAt: new Date().toISOString(),
+        status: orderData.status || 'pending'
+      }
+    );
+    console.log('✅ تم حفظ الطلب في Firestore:', orderRef.id);
+    return orderRef.id;
+  } catch (error) {
+    console.error('❌ خطأ حفظ الطلب:', error);
+    return null;
+  }
+}
+
+// حفظ تقييم في Firestore
+async function saveRatingToFirestore(ratingData) {
+  if (!window.firebaseDB || !window.firebaseAddDoc || !window.firebaseCollection) {
+    return null;
+  }
+  
+  try {
+    const ratingRef = await window.firebaseAddDoc(
+      window.firebaseCollection(window.firebaseDB, 'ratings'),
+      {
+        ...ratingData,
+        createdAt: new Date().toISOString()
+      }
+    );
+    console.log('✅ تم حفظ التقييم في Firestore:', ratingRef.id);
+    return ratingRef.id;
+  } catch (error) {
+    console.error('❌ خطأ حفظ التقييم:', error);
+    return null;
+  }
+}
 // ============================================
 // 🌙 نظام الوضع الليلي / النهاري
 // ============================================
