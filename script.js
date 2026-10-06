@@ -937,15 +937,16 @@ function acceptOrder(orderId) {
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
+    screen.style.display = 'none';
   });
   
   var target = document.getElementById(screenId);
   if (target) {
     target.classList.add('active');
+    target.style.display = 'flex';
     window.scrollTo(0, 0);
     updateBottomNav(screenId);
     
-    // إنشاء الجزيئات عند فتح الشاشات
     if (screenId === 'loginScreen') {
       setTimeout(createLoginParticles, 100);
     }
@@ -965,7 +966,6 @@ function showScreen(screenId) {
     console.warn('الشاشة غير موجودة:', screenId);
   }
 }
-
 function updateBottomNav(screenId) {
   var nav = document.getElementById('mainBottomNav');
   if (!nav) return;
