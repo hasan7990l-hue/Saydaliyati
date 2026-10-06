@@ -344,6 +344,78 @@ async function signInWithGoogleTest() {
   }
       }
 // ============================================
+// 🔵 Google Sign-Up (للتسجيل)
+// ============================================
+async function signUpWithGoogleTest() {
+  showToast('🔄 جاري الاتصال بـ Google...');
+  
+  try {
+    const provider = window.firebaseProvider;
+    const auth = window.firebaseAuth;
+    const signInWithPopup = window.firebaseSignInWithPopup;
+    
+    if (!provider || !auth || !signInWithPopup) {
+      showError('Firebase غير جاهز. حاول لاحقاً.');
+      return;
+    }
+    
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    
+    console.log('✅ تم تسجيل الدخول:', user);
+    
+    const userData = {
+      type: 'patient',
+      name: user.displayName || 'مستخدم Google',
+      phone: user.phoneNumber || '',
+      email: user.email || '',
+      address: '',
+      avatar: user.photoURL || '',
+      googleId: user.uid,
+      loginMethod: 'google',
+      date: new Date().toISOString()
+    };
+    
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
+    
+    const registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
+    const exists = registrations.find(function(r) { return r.email === userData.email; });
+    if (!exists) {
+      registrations.push(userData);
+      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    }
+    
+    if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
+      try {
+        const userRef = window.firebaseDoc(window.firebaseDB, 'users', user.uid);
+        await window.firebaseSetDoc(userRef, userData, { merge: true });
+      } catch (e) {
+        console.log('⚠️ خطأ Firestore:', e);
+      }
+    }
+    
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    
+    showToast('✅ تم التسجيل بنجاح');
+    
+    showSuccessMessage('مرحباً بك', 'تم إنشاء حسابك بـ Google، ' + userData.name);
+    
+  } catch (error) {
+    console.error('❌ خطأ Google Sign-Up:', error);
+    
+    if (error.code === 'auth/popup-closed-by-user') {
+      showToast('⚠️ تم إغلاق نافذة Google');
+    } else if (error.code === 'auth/popup-blocked') {
+      showError('المتصفح منع النافذة المنبثقة.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      showError('النطاق غير مصرح به. أضف النطاق في Firebase.');
+    } else {
+      showError('فشل التسجيل: ' + error.message);
+    }
+  }
+}
+// ============================================
 // 📜 الشروط والأحكام + سياسة الخصوصية
 // ============================================
 function openTerms() {
