@@ -1641,6 +1641,19 @@ async function submitPatient(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   await saveUserToFirestore(user);
+  // ✅ إضافة الصيدلية إلى collection منفصلة (للمريض)
+await savePharmacyToFirestore({
+  name: name,
+  owner: owner,
+  phone: phone,
+  address: address,
+  license: license,
+  rating: 5.0,
+  logo: 'ص',
+  color: 'green',
+  deliveryTime: '30 دقيقة',
+  active: true
+});
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
