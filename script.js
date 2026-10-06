@@ -1594,7 +1594,10 @@ function goToDashboardByType() {
     showScreen('deliveryDashboard');
   } else {
     showScreen('homeScreen');
-    setTimeout(loadOffers, 100);
+   setTimeout(function() {
+  loadOffers();
+  loadPharmaciesForPatient();
+}, 100);
   }
 }
 // ============================================
