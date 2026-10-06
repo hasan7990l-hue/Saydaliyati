@@ -1843,14 +1843,18 @@ async function submitDelivery(event) {
     password: password,
     date: new Date().toISOString()
   };
-  
+
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  await saveUserToFirestore(user);
+  
+  // ✅ حفظ في الخلفية (بدون انتظار)
+  saveUserToFirestore(user).catch(function(e) {
+    console.log('⚠️ خطأ حفظ المستخدم:', e);
+  });
+  
   playSuccessSound();
   showSuccessMessage('مرحباً بك في فريقنا', 'سنتواصل معك قريباً');
 }
-
 // ============================================
 // 💾 حفظ التسجيلات
 // ============================================
