@@ -95,6 +95,44 @@ async function saveRatingToFirestore(ratingData) {
   }
 }
 // ============================================
+// 🏪 حفظ صيدلية في collection منفصلة (للمريض)
+// ============================================
+async function savePharmacyToFirestore(pharmacyData) {
+  if (!window.firebaseDB || !window.firebaseSetDoc || !window.firebaseDoc) {
+    console.log('⚠️ Firestore غير جاهز');
+    return null;
+  }
+  
+  try {
+    const pharmacyRef = window.firebaseDoc(
+      window.firebaseDB, 
+      'pharmacies', 
+      pharmacyData.phone
+    );
+    
+    await window.firebaseSetDoc(pharmacyRef, {
+      name: pharmacyData.name,
+      owner: pharmacyData.owner,
+      phone: pharmacyData.phone,
+      address: pharmacyData.address,
+      license: pharmacyData.license,
+      rating: pharmacyData.rating || 5.0,
+      logo: pharmacyData.logo || 'ص',
+      color: pharmacyData.color || 'green',
+      deliveryTime: pharmacyData.deliveryTime || '30 دقيقة',
+      active: pharmacyData.active !== undefined ? pharmacyData.active : true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    
+    console.log('✅ تم إضافة الصيدلية للمريض:', pharmacyData.name);
+    return pharmacyData.phone;
+  } catch (error) {
+    console.error('❌ خطأ إضافة الصيدلية:', error);
+    return null;
+  }
+}
+// ============================================
 // 🌙 نظام الوضع الليلي / النهاري
 // ============================================
 function toggleTheme() {
