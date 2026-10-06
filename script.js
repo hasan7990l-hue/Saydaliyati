@@ -1,14 +1,13 @@
 // ============================================
 // توصيل طبي - Clean Medical v12
-// الجزء 1 من 5
 // ============================================
 
 console.log('توصيل طبي - بدأ التحميل');
+
 // ============================================
 // 🔥 دوال Firestore
 // ============================================
 
-// حفظ مستخدم في Firestore
 async function saveUserToFirestore(userData) {
   if (!window.firebaseDB || !window.firebaseSetDoc || !window.firebaseDoc) {
     console.log('⚠️ Firestore غير جاهز');
@@ -30,7 +29,6 @@ async function saveUserToFirestore(userData) {
   }
 }
 
-// جلب مستخدم من Firestore
 async function getUserFromFirestore(userId) {
   if (!window.firebaseDB || !window.firebaseGetDoc || !window.firebaseDoc) {
     return null;
@@ -50,7 +48,6 @@ async function getUserFromFirestore(userId) {
   }
 }
 
-// حفظ طلب في Firestore
 async function saveOrderToFirestore(orderData) {
   if (!window.firebaseDB || !window.firebaseAddDoc || !window.firebaseCollection) {
     return null;
@@ -73,7 +70,6 @@ async function saveOrderToFirestore(orderData) {
   }
 }
 
-// حفظ تقييم في Firestore
 async function saveRatingToFirestore(ratingData) {
   if (!window.firebaseDB || !window.firebaseAddDoc || !window.firebaseCollection) {
     return null;
@@ -94,9 +90,7 @@ async function saveRatingToFirestore(ratingData) {
     return null;
   }
 }
-// ============================================
-// 🏪 حفظ صيدلية في collection منفصلة (للمريض)
-// ============================================
+
 async function savePharmacyToFirestore(pharmacyData) {
   if (!window.firebaseDB || !window.firebaseSetDoc || !window.firebaseDoc) {
     console.log('⚠️ Firestore غير جاهز');
@@ -132,9 +126,7 @@ async function savePharmacyToFirestore(pharmacyData) {
     return null;
   }
 }
-// ============================================
-// 🏪 جلب الصيدليات من Firestore
-// ============================================
+
 async function loadPharmaciesFromFirestore() {
   if (!window.firebaseDB || !window.firebaseGetDocs || !window.firebaseCollection) {
     console.log('⚠️ Firestore غير جاهز');
@@ -163,9 +155,6 @@ async function loadPharmaciesFromFirestore() {
   }
 }
 
-// ============================================
-// 🏪 عرض الصيدليات للمريض (ديناميكي)
-// ============================================
 async function loadPharmaciesForPatient() {
   console.log('🔄 بدء loadPharmaciesForPatient...');
   
@@ -220,9 +209,7 @@ async function loadPharmaciesForPatient() {
     container.innerHTML = '<div style="text-align:center;padding:20px;color:#EF4444;">حدث خطأ في التحميل: ' + error.message + '</div>';
   }
 }
-// ============================================
-// 🛒 الطلب من صيدلية محددة
-// ============================================
+
 function orderFromPharmacy(pharmacyId, pharmacyName) {
   console.log('🛒 طلب من:', pharmacyName, '| ID:', pharmacyId);
   
@@ -233,8 +220,9 @@ function orderFromPharmacy(pharmacyId, pharmacyName) {
   
   showToast('🛒 ستنشئ طلباً من: ' + pharmacyName);
 }
+
 // ============================================
-// 🌙 نظام الوضع الليلي / النهاري
+// 🌙 نظام الوضع الليلي
 // ============================================
 function toggleTheme() {
   var current = document.documentElement.getAttribute('data-theme');
@@ -271,7 +259,7 @@ function loadTheme() {
 }
 
 // ============================================
-// 🔊 الأصوات (Web Audio API)
+// 🔊 الأصوات
 // ============================================
 var audioCtx = null;
 
@@ -290,7 +278,6 @@ function playSonarPing() {
   try {
     var ctx = initAudio();
     if (!ctx) return;
-    
     var oscillator = ctx.createOscillator();
     var gainNode = ctx.createGain();
     oscillator.connect(gainNode);
@@ -308,7 +295,6 @@ function playAlertDing() {
   try {
     var ctx = initAudio();
     if (!ctx) return;
-    
     var osc1 = ctx.createOscillator();
     var gain1 = ctx.createGain();
     osc1.connect(gain1);
@@ -319,18 +305,6 @@ function playAlertDing() {
     gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
     osc1.start(ctx.currentTime);
     osc1.stop(ctx.currentTime + 0.8);
-    
-    var osc2 = ctx.createOscillator();
-    var gain2 = ctx.createGain();
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.frequency.value = 1600;
-    osc2.type = 'triangle';
-    gain2.gain.setValueAtTime(0, ctx.currentTime + 0.15);
-    gain2.gain.setValueAtTime(0.25, ctx.currentTime + 0.15);
-    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
-    osc2.start(ctx.currentTime + 0.15);
-    osc2.stop(ctx.currentTime + 1);
   } catch(e) {}
 }
 
@@ -338,7 +312,6 @@ function playSuccessSound() {
   try {
     var ctx = initAudio();
     if (!ctx) return;
-    
     var notes = [523, 659, 784];
     notes.forEach(function(freq, i) {
       var osc = ctx.createOscillator();
@@ -361,162 +334,102 @@ function playRadarActivateSound() {
   try {
     var ctx = initAudio();
     if (!ctx) return;
-    
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
-    
     osc.frequency.setValueAtTime(300, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.4);
     osc.type = 'sawtooth';
-    
     gain.gain.setValueAtTime(0.15, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-    
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + 0.5);
   } catch(e) {}
 }
 
-// ============================================
-// 📳 اهتزاز الجهاز
-// ============================================
 function vibrateDevice(pattern) {
   if (navigator.vibrate) {
     navigator.vibrate(pattern);
   }
 }
-
 // ============================================
-// 🎬 إنشاء جزيئات شاشة البداية (Splash)
+// 🎬 الجزيئات
 // ============================================
 function createSplashParticles() {
   var container = document.getElementById('splashParticles');
   if (!container) return;
-  
   container.innerHTML = '';
-  
-  var particleCount = 35;
-  
-  for (var i = 0; i < particleCount; i++) {
+  for (var i = 0; i < 35; i++) {
     var particle = document.createElement('div');
     particle.className = 'splash-particle' + (Math.random() > 0.6 ? ' white' : '');
-    
     var size = Math.random() * 4 + 2;
-    var top = Math.random() * 100;
-    var left = Math.random() * 100;
-    var delay = Math.random() * 6;
-    var duration = 4 + Math.random() * 4;
-    
     particle.style.width = size + 'px';
     particle.style.height = size + 'px';
-    particle.style.top = top + '%';
-    particle.style.left = left + '%';
-    particle.style.animationDelay = delay + 's';
-    particle.style.animationDuration = duration + 's';
-    
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 6 + 's';
+    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
     container.appendChild(particle);
   }
 }
 
-// ============================================
-// 🔐 إنشاء جزيئات شاشة تسجيل الدخول
-// ============================================
 function createLoginParticles() {
   var container = document.getElementById('loginParticles');
   if (!container) return;
-  
   container.innerHTML = '';
-  
-  var particleCount = 30;
-  
-  for (var i = 0; i < particleCount; i++) {
+  for (var i = 0; i < 30; i++) {
     var particle = document.createElement('div');
     particle.className = 'login-particle' + (Math.random() > 0.6 ? ' white' : '');
-    
     var size = Math.random() * 4 + 2;
-    var top = Math.random() * 100;
-    var left = Math.random() * 100;
-    var delay = Math.random() * 6;
-    var duration = 4 + Math.random() * 4;
-    
     particle.style.width = size + 'px';
     particle.style.height = size + 'px';
-    particle.style.top = top + '%';
-    particle.style.left = left + '%';
-    particle.style.animationDelay = delay + 's';
-    particle.style.animationDuration = duration + 's';
-    
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 6 + 's';
+    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
     container.appendChild(particle);
   }
 }
 
-// ============================================
-// 🎯 إنشاء جزيئات شاشة اختيار الحساب
-// ============================================
 function createRoleParticles() {
   var container = document.getElementById('roleParticles');
   if (!container) return;
-  
   container.innerHTML = '';
-  
-  var particleCount = 30;
-  
-  for (var i = 0; i < particleCount; i++) {
+  for (var i = 0; i < 30; i++) {
     var particle = document.createElement('div');
     particle.className = 'role-particle' + (Math.random() > 0.6 ? ' white' : '');
-    
     var size = Math.random() * 4 + 2;
-    var top = Math.random() * 100;
-    var left = Math.random() * 100;
-    var delay = Math.random() * 6;
-    var duration = 4 + Math.random() * 4;
-    
     particle.style.width = size + 'px';
     particle.style.height = size + 'px';
-    particle.style.top = top + '%';
-    particle.style.left = left + '%';
-    particle.style.animationDelay = delay + 's';
-    particle.style.animationDuration = duration + 's';
-    
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 6 + 's';
+    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+    container.appendChild(particle);
+  }
+}
+
+function createRegParticles(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  for (var i = 0; i < 25; i++) {
+    var particle = document.createElement('div');
+    particle.className = 'reg-particle' + (Math.random() > 0.6 ? ' white' : '');
+    var size = Math.random() * 4 + 2;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 6 + 's';
+    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
     container.appendChild(particle);
   }
 }
 
 // ============================================
-// 🎨 إنشاء جزيئات شاشات التسجيل
-// ============================================
-function createRegParticles(containerId) {
-  var container = document.getElementById(containerId);
-  if (!container) return;
-  
-  container.innerHTML = '';
-  
-  var particleCount = 25;
-  
-  for (var i = 0; i < particleCount; i++) {
-    var particle = document.createElement('div');
-    particle.className = 'reg-particle' + (Math.random() > 0.6 ? ' white' : '');
-    
-    var size = Math.random() * 4 + 2;
-    var top = Math.random() * 100;
-    var left = Math.random() * 100;
-    var delay = Math.random() * 6;
-    var duration = 4 + Math.random() * 4;
-    
-    particle.style.width = size + 'px';
-    particle.style.height = size + 'px';
-    particle.style.top = top + '%';
-    particle.style.left = left + '%';
-    particle.style.animationDelay = delay + 's';
-    particle.style.animationDuration = duration + 's';
-    
-    container.appendChild(particle);
-  }
-}
-// ============================================
-// 🔵 Google Sign-In (للدخول، ليس للتسجيل)
+// 🔵 Google Sign-In
 // ============================================
 async function signInWithGoogleTest() {
   showToast('🔄 جاري الاتصال بـ Google...');
@@ -534,8 +447,6 @@ async function signInWithGoogleTest() {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
     
-    console.log('✅ تم تسجيل الدخول:', user);
-    
     const userData = {
       type: 'patient',
       name: user.displayName || 'مستخدم Google',
@@ -549,10 +460,7 @@ async function signInWithGoogleTest() {
     };
     
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
-    
     playSuccessSound();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    
     showToast('✅ تم الدخول بنجاح');
     
     setTimeout(function() {
@@ -561,19 +469,16 @@ async function signInWithGoogleTest() {
     
   } catch (error) {
     console.error('❌ خطأ Google Sign-In:', error);
-    
     if (error.code === 'auth/popup-closed-by-user') {
       showToast('⚠️ تم إغلاق نافذة Google');
     } else if (error.code === 'auth/unauthorized-domain') {
-      showError('النطاق غير مصرح به. أضف النطاق في Firebase.');
+      showError('النطاق غير مصرح به.');
     } else {
       showError('فشل الدخول: ' + error.message);
     }
   }
-      }
-// ============================================
-// 🔵 Google Sign-Up (للتسجيل)
-// ============================================
+}
+
 async function signUpWithGoogleTest() {
   showToast('🔄 جاري الاتصال بـ Google...');
   
@@ -583,14 +488,12 @@ async function signUpWithGoogleTest() {
     const signInWithPopup = window.firebaseSignInWithPopup;
     
     if (!provider || !auth || !signInWithPopup) {
-      showError('Firebase غير جاهز. حاول لاحقاً.');
+      showError('Firebase غير جاهز.');
       return;
     }
     
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    
-    console.log('✅ تم تسجيل الدخول:', user);
     
     const userData = {
       type: 'patient',
@@ -606,47 +509,31 @@ async function signUpWithGoogleTest() {
     
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
     
-    const registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    const exists = registrations.find(function(r) { return r.email === userData.email; });
-    if (!exists) {
-      registrations.push(userData);
-      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
-    }
-    
     if (window.firebaseDB && window.firebaseSetDoc && window.firebaseDoc) {
       try {
         const userRef = window.firebaseDoc(window.firebaseDB, 'users', user.uid);
         await window.firebaseSetDoc(userRef, userData, { merge: true });
-      } catch (e) {
-        console.log('⚠️ خطأ Firestore:', e);
-      }
+      } catch (e) {}
     }
     
     playSuccessSound();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-    
     showToast('✅ تم التسجيل بنجاح');
-
-setTimeout(function() {
-  goToDashboardByType();
-}, 800);
+    
+    setTimeout(function() {
+      goToDashboardByType();
+    }, 800);
     
   } catch (error) {
-    console.error('❌ خطأ Google Sign-Up:', error);
-    
     if (error.code === 'auth/popup-closed-by-user') {
       showToast('⚠️ تم إغلاق نافذة Google');
-    } else if (error.code === 'auth/popup-blocked') {
-      showError('المتصفح منع النافذة المنبثقة.');
-    } else if (error.code === 'auth/unauthorized-domain') {
-      showError('النطاق غير مصرح به. أضف النطاق في Firebase.');
     } else {
       showError('فشل التسجيل: ' + error.message);
     }
   }
 }
+
 // ============================================
-// 📜 الشروط والأحكام + سياسة الخصوصية
+// 📜 الشروط والأحكام
 // ============================================
 function openTerms() {
   var modal = document.createElement('div');
@@ -661,16 +548,9 @@ function openTerms() {
         '<h3>1. قبول الشروط</h3>' +
         '<p>باستخدامك لتطبيق "توصيل طبي"، فإنك توافق على جميع الشروط والأحكام المذكورة هنا.</p>' +
         '<h3>2. استخدام التطبيق</h3>' +
-        '<p>يجب استخدام التطبيق للأغراض المشروعة فقط، ولا يجوز استخدامه لأي نشاط غير قانوني.</p>' +
+        '<p>يجب استخدام التطبيق للأغراض المشروعة فقط.</p>' +
         '<h3>3. الحساب</h3>' +
-        '<p>أنت مسؤول عن الحفاظ على سرية حسابك وكلمة المرور الخاصة بك.</p>' +
-        '<h3>4. الطلبات والدفع</h3>' +
-        '<p>جميع الطلبات تخضع للتوفر والتأكيد. الأسعار قابلة للتغيير دون إشعار مسبق.</p>' +
-        '<h3>5. التوصيل</h3>' +
-        '<p>نعمل على توصيل الطلبات خلال الوقت المحدد، لكن قد تحدث تأخيرات بسبب ظروف خارجة عن إرادتنا.</p>' +
-        '<h3>6. التعديلات</h3>' +
-        '<p>نحتفظ بالحق في تعديل هذه الشروط في أي وقت. استمرارك في استخدام التطبيق يعني موافقتك على الشروط المحدثة.</p>' +
-        '<p style="margin-top: 24px; color: #22D3EE; font-weight: 700;">آخر تحديث: 2026/10/5</p>' +
+        '<p>أنت مسؤول عن الحفاظ على سرية حسابك.</p>' +
       '</div>' +
       '<div class="legal-modal-footer">' +
         '<button class="btn-primary" onclick="closeLegalModal(this)">فهمت</button>' +
@@ -693,18 +573,9 @@ function openPrivacy() {
       '</div>' +
       '<div class="legal-modal-body">' +
         '<h3>1. المعلومات التي نجمعها</h3>' +
-        '<p>نجمع المعلومات التي تقدمها عند التسجيل (الاسم، الهاتف، العنوان، البريد الإلكتروني).</p>' +
+        '<p>نجمع المعلومات التي تقدمها عند التسجيل.</p>' +
         '<h3>2. كيف نستخدم معلوماتك</h3>' +
-        '<p>نستخدم معلوماتك لتقديم الخدمات، تحسين التطبيق، والتواصل معك بخصوص طلباتك.</p>' +
-        '<h3>3. مشاركة المعلومات</h3>' +
-        '<p>لا نشارك معلوماتك مع أطراف ثالثة إلا عند الضرورة لتقديم الخدمة (مثل الصيدليات والمندوبين).</p>' +
-        '<h3>4. أمان البيانات</h3>' +
-        '<p>نستخدم تقنيات تشفير متقدمة لحماية بياناتك من الوصول غير المصرح به.</p>' +
-        '<h3>5. حقوقك</h3>' +
-        '<p>لك الحق في الوصول إلى بياناتك أو حذفها في أي وقت.</p>' +
-        '<h3>6. الاتصال بنا</h3>' +
-        '<p>لأي استفسار بخصوص الخصوصية، تواصل معنا عبر واتساب: +964 775 145 9130</p>' +
-        '<p style="margin-top: 24px; color: #22D3EE; font-weight: 700;">آخر تحديث: 2026/10/5</p>' +
+        '<p>نستخدم معلوماتك لتقديم الخدمات.</p>' +
       '</div>' +
       '<div class="legal-modal-footer">' +
         '<button class="btn-primary" onclick="closeLegalModal(this)">فهمت</button>' +
@@ -728,220 +599,31 @@ function closeLegalModal(btn) {
 }
 
 // ============================================
-// 🧭 Bottom Sheet التنقل (Waze/Google)
-// ============================================
-var pendingOrderDestination = null;
-
-function openNavSheet(lat, lng, destinationType) {
-  pendingOrderDestination = { 
-    lat: lat, 
-    lng: lng, 
-    type: destinationType || 'صيدلية'
-  };
-  
-  var destEl = document.getElementById('navDestination');
-  if (destEl) {
-    destEl.textContent = '📍 الوجهة: ' + (destinationType || 'صيدلية');
-  }
-  
-  var sheet = document.getElementById('navSheet');
-  var overlay = document.getElementById('navSheetOverlay');
-  
-  if (overlay) overlay.classList.add('active');
-  if (sheet) sheet.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
-}
-
-function closeNavSheet() {
-  var sheet = document.getElementById('navSheet');
-  var overlay = document.getElementById('navSheetOverlay');
-  
-  if (overlay) overlay.classList.remove('active');
-  if (sheet) sheet.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function chooseNavigation(type) {
-  if (!pendingOrderDestination) {
-    showToast('⚠️ لا توجد وجهة');
-    closeNavSheet();
-    return;
-  }
-  
-  var lat = pendingOrderDestination.lat;
-  var lng = pendingOrderDestination.lng;
-  
-  closeNavSheet();
-  
-  setTimeout(function() {
-    if (type === 'waze') {
-      openWazeDirect(lat, lng);
-    } else if (type === 'google') {
-      openGoogleDirect(lat, lng);
-    } else if (type === 'map') {
-      openMapDirect(lat, lng);
-    }
-  }, 400);
-}
-
-function openWazeDirect(lat, lng) {
-  var wazeUrl = 'https://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes&zoom=17';
-  
-  var ua = navigator.userAgent || '';
-  var isIOS = /iPad|iPhone|iPod/.test(ua);
-  var isAndroid = /android/i.test(ua);
-  
-  if (isIOS) {
-    window.location.href = 'waze://?ll=' + lat + ',' + lng + '&navigate=yes';
-    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
-  } else if (isAndroid) {
-    window.location.href = 'intent://waze.com/ul?ll=' + lat + ',' + lng + '&navigate=yes#Intent;scheme=https;package=com.waze;end';
-    setTimeout(function() { window.open(wazeUrl, '_blank'); }, 1500);
-  } else {
-    window.open(wazeUrl, '_blank');
-  }
-  
-  showToast('🚗 جارٍ فتح Waze...');
-}
-
-function openGoogleDirect(lat, lng) {
-  var googleUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng + '&travelmode=driving';
-  window.open(googleUrl, '_blank');
-  showToast('🗺️ جارٍ فتح Google Maps...');
-}
-
-function openMapDirect(lat, lng) {
-  openMapScreen();
-  
-  setTimeout(function() {
-    if (mainMap) {
-      mainMap.setView([lat, lng], 16);
-    }
-  }, 500);
-  
-  showToast('📍 عرض على الخريطة');
-}
-
-// ============================================
-// 🚀 بدء الطلب (للمندوب)
-// ============================================
-function startOrder(orderId) {
-  var orderLocations = {
-    1234: { 
-      pharmacy: { lat: 33.3000, lng: 44.4000, name: 'صيدلية النور' },
-      customer: { lat: 33.3152, lng: 44.3661, name: 'أحمد علي - الجادرية' }
-    },
-    1235: { 
-      pharmacy: { lat: 33.2800, lng: 44.3800, name: 'صيدلية الحياة' },
-      customer: { lat: 33.3200, lng: 44.3700, name: 'سارة محمد - الكرادة' }
-    },
-    1236: { 
-      pharmacy: { lat: 33.3300, lng: 44.3500, name: 'صيدلية الشفاء' },
-      customer: { lat: 33.3100, lng: 44.3900, name: 'علي حسن - الكاظمية' }
-    }
-  };
-  
-  var order = orderLocations[orderId];
-  if (!order) {
-    showToast('⚠️ الطلب غير موجود');
-    return;
-  }
-  
-  localStorage.setItem('saydaliyati_active_order', JSON.stringify({
-    id: orderId,
-    pharmacy: order.pharmacy,
-    customer: order.customer,
-    stage: 'pickup'
-  }));
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
-  
-  openNavSheet(order.pharmacy.lat, order.pharmacy.lng, order.pharmacy.name);
-  
-  showToast('📍 الوجهة: ' + order.pharmacy.name);
-}
-
-function goToPickup() {
-  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
-  if (!activeOrder.pharmacy) {
-    showToast('⚠️ لا يوجد طلب نشط');
-    return;
-  }
-  
-  openNavSheet(activeOrder.pharmacy.lat, activeOrder.pharmacy.lng, activeOrder.pharmacy.name);
-}
-
-function goToCustomer() {
-  var activeOrder = JSON.parse(localStorage.getItem('saydaliyati_active_order') || '{}');
-  if (!activeOrder.customer) {
-    showToast('⚠️ لا يوجد طلب نشط');
-    return;
-  }
-  
-  openNavSheet(activeOrder.customer.lat, activeOrder.customer.lng, activeOrder.customer.name);
-}
-
-// ============================================
-// 📦 نافذة تفاصيل الطلب (للمندوب)
-// ============================================
-var currentOrderDetails = null;
-
-function showOrderDetails(orderId, pharmacy, distance, commission) {
-  currentOrderDetails = { orderId: orderId, pharmacy: pharmacy };
-  
-  var titleEl = document.getElementById('orderDetailsTitle');
-  var pharmacyEl = document.getElementById('orderDetailsPharmacy');
-  var distanceEl = document.getElementById('orderDetailsDistance');
-  var commissionEl = document.getElementById('orderDetailsCommission');
-  
-  if (titleEl) titleEl.textContent = 'تفاصيل الطلب #' + orderId;
-  if (pharmacyEl) pharmacyEl.textContent = pharmacy;
-  if (distanceEl) distanceEl.textContent = distance + ' كم';
-  if (commissionEl) commissionEl.textContent = parseInt(commission).toLocaleString() + ' دينار';
-  
-  var modal = document.getElementById('orderDetailsModal');
-  if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  
-  if (navigator.vibrate) navigator.vibrate([30]);
-}
-
-function closeOrderDetailsModal() {
-  var modal = document.getElementById('orderDetailsModal');
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  currentOrderDetails = null;
-}
-
-function acceptOrderFromDetails() {
-  if (currentOrderDetails) {
-    var orderId = currentOrderDetails.orderId;
-    closeOrderDetailsModal();
-    setTimeout(function() {
-      acceptOrder(orderId);
-    }, 300);
-  }
-}
-
-function acceptOrder(orderId) {
-  playAlertDing();
-  showToast('✅ تم قبول الطلب #' + orderId);
-  
-  setTimeout(function() {
-    goToMyOrders();
-  }, 800);
-        }
-// ============================================
 // 📱 إدارة الشاشات
 // ============================================
+
+// ✅ دالة تحديث الشريط السفلي (كانت مفقودة!)
+function updateBottomNav(screenId) {
+  var nav = document.getElementById('mainBottomNav');
+  if (!nav) return;
+  
+  var navScreens = [
+    'homeScreen',
+    'pharmacyDashboard',
+    'deliveryDashboard',
+    'ordersScreen',
+    'myOrdersScreen',
+    'notificationsScreen'
+  ];
+  
+  if (navScreens.indexOf(screenId) !== -1) {
+    nav.style.display = 'flex';
+  } else {
+    nav.style.display = 'none';
+  }
+}
+
 function showScreen(screenId) {
-  // إخفاء كل الشاشات
   document.querySelectorAll('.screen').forEach(function(screen) {
     screen.classList.remove('active');
     screen.style.display = 'none';
@@ -952,7 +634,11 @@ function showScreen(screenId) {
     target.classList.add('active');
     target.style.display = 'flex';
     window.scrollTo(0, 0);
-    updateBottomNav(screenId);
+    
+    // ✅ استدعاء updateBottomNav بأمان
+    if (typeof updateBottomNav === 'function') {
+      updateBottomNav(screenId);
+    }
     
     if (screenId === 'loginScreen') {
       setTimeout(createLoginParticles, 100);
@@ -974,7 +660,7 @@ function showScreen(screenId) {
   } else {
     console.warn('❌ الشاشة غير موجودة:', screenId);
   }
-}
+  }
 // ============================================
 // 🔄 تبديل التبويب
 // ============================================
@@ -1045,7 +731,6 @@ function goToMyOrders() {
 function acceptPharmacyOrder(orderId) {
   playSuccessSound();
   showToast('تم قبول الطلب #' + orderId);
-  
   setTimeout(function() {
     showToast('تم إشعار المندوب لتوصيل الطلب');
   }, 1500);
@@ -1209,15 +894,6 @@ function handleAvatarUpload(event) {
     user.avatar = imageData;
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
     
-    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    for (var i = 0; i < registrations.length; i++) {
-      if (registrations[i].phone === user.phone) {
-        registrations[i].avatar = imageData;
-        break;
-      }
-    }
-    localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
-    
     showToast('تم تحديث الصورة');
   };
   reader.readAsDataURL(file);
@@ -1287,15 +963,6 @@ function saveProfile(event) {
   }
   
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  
-  var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-  for (var i = 0; i < registrations.length; i++) {
-    if (registrations[i].phone === user.phone) {
-      registrations[i] = user;
-      break;
-    }
-  }
-  localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
   
   closeEditProfile();
   openProfile();
@@ -1389,7 +1056,7 @@ function openOrders() {
 }
 
 // ============================================
-// 🔔 التنبيهات الديناميكية (التصميم الجديد)
+// 🔔 التنبيهات
 // ============================================
 function openNotifications() {
   closeSidebar();
@@ -1464,7 +1131,6 @@ function getNotifIconHtml(type, read) {
     '</svg>';
   }
   
-  // Default bell icon
   return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
     '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>' +
     '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
@@ -1475,20 +1141,17 @@ function getDefaultNotifications(userType) {
   if (userType === 'delivery') {
     return [
       { icon: '🚴', type: 'order', title: 'طلب جديد متاح', message: 'صيدلية النور - 2.5 كم - 3,000 دينار', time: 'الآن', read: false },
-      { icon: '💰', type: 'wallet', title: 'أرباح اليوم', message: '12,000 دينار من 12 طلب', time: 'قبل ساعة', read: false },
-      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 5 نجوم من أحمد علي', time: 'قبل 3 ساعات', read: true }
+      { icon: '💰', type: 'wallet', title: 'أرباح اليوم', message: '12,000 دينار من 12 طلب', time: 'قبل ساعة', read: false }
     ];
   } else if (userType === 'pharmacy') {
     return [
       { icon: '💊', type: 'order', title: 'طلب جديد وارد', message: 'أحمد علي - 23,000 دينار', time: 'الآن', read: false },
-      { icon: '⚠️', type: 'stock', title: 'تنبيه المخزون', message: '3 أدوية قاربت على الانتهاء', time: 'قبل ساعة', read: false },
-      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 4.8 من سارة محمد', time: 'قبل 3 ساعات', read: true }
+      { icon: '⚠️', type: 'stock', title: 'تنبيه المخزون', message: '3 أدوية قاربت على الانتهاء', time: 'قبل ساعة', read: false }
     ];
   } else {
     return [
       { icon: '✅', type: 'order', title: 'تم قبول طلبك', message: 'صيدلية النور قبلت طلبك #1234', time: 'الآن', read: false },
-      { icon: '🚴', type: 'order', title: 'المندوب في الطريق', message: 'أحمد محمد سيصل خلال 15 دقيقة', time: 'قبل 5 دقائق', read: false },
-      { icon: '🎉', type: 'rating', title: 'تم توصيل طلبك', message: 'طلب #1220 وصل بأمان', time: 'قبل 3 أيام', read: true }
+      { icon: '🚴', type: 'order', title: 'المندوب في الطريق', message: 'أحمد محمد سيصل خلال 15 دقيقة', time: 'قبل 5 دقائق', read: false }
     ];
   }
 }
@@ -1516,17 +1179,9 @@ function openContact() {
   showScreen('contactScreen');
 }
 
-function openAboutUs() {
-  showScreen('aboutUsScreen');
-}
-
-function openVision() {
-  showScreen('visionScreen');
-}
-
-function openValues() {
-  showScreen('valuesScreen');
-}
+function openAboutUs() { showScreen('aboutUsScreen'); }
+function openVision() { showScreen('visionScreen'); }
+function openValues() { showScreen('valuesScreen'); }
 
 function closeAllScreens() {
   goToDashboardByType();
@@ -1572,7 +1227,6 @@ function goToDashboardByType() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = userStr ? JSON.parse(userStr) : {};
   
-  // ✅ تحديث اسم المستخدم
   updateUserName();
   
   if (user.type === 'pharmacy') {
@@ -1581,14 +1235,15 @@ function goToDashboardByType() {
     showScreen('deliveryDashboard');
   } else {
     showScreen('homeScreen');
-   setTimeout(function() {
-  loadOffers();
-  loadPharmaciesForPatient();
-}, 100);
+    setTimeout(function() {
+      loadOffers();
+      loadPharmaciesForPatient();
+    }, 100);
   }
 }
+
 // ============================================
-// 👤 تحديث اسم المستخدم في الصفحة الرئيسية
+// 👤 تحديث اسم المستخدم
 // ============================================
 function updateUserName() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -1598,32 +1253,24 @@ function updateUserName() {
     var user = JSON.parse(userStr);
     var userName = user.name || 'مستخدم';
     
-    // تحديث في الشاشة الرئيسية للمريض
     var userGreeting = document.getElementById('userGreeting');
-    if (userGreeting) {
-      userGreeting.textContent = userName;
-    }
+    if (userGreeting) userGreeting.textContent = userName;
     
-    // تحديث في شاشة الصيدلية
     var pharmacyGreeting = document.getElementById('pharmacyGreeting');
-    if (pharmacyGreeting) {
-      pharmacyGreeting.textContent = userName;
-    }
+    if (pharmacyGreeting) pharmacyGreeting.textContent = userName;
     
-    // تحديث في شاشة المندوب
     var deliveryGreeting = document.getElementById('deliveryGreeting');
-    if (deliveryGreeting) {
-      deliveryGreeting.textContent = userName;
-    }
+    if (deliveryGreeting) deliveryGreeting.textContent = userName;
     
   } catch (e) {
     console.error('خطأ تحديث الاسم:', e);
   }
 }
+
 // ============================================
 // 🔐 تسجيل الدخول
 // ============================================
- async function submitLogin(event) {
+async function submitLogin(event) {
   if (event) event.preventDefault();
   
   var phone = document.getElementById('loginPhone').value.trim();
@@ -1639,17 +1286,14 @@ function updateUserName() {
     return;
   }
   
-  // 1. ابحث في localStorage أولاً
   var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
   var user = registrations.find(function(r) { return r.phone === phone; });
   
-  // 2. إذا لم يوجد، ابحث في Firestore
   if (!user) {
     try {
       var fsUser = await getUserFromFirestore(phone);
       if (fsUser) {
         user = fsUser;
-        // احفظه محلياً للاستخدام المستقبلي
         registrations.push(user);
         localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
       }
@@ -1676,20 +1320,14 @@ function updateUserName() {
   }
   
   showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
- }
+}
+
 // ============================================
 // 🚪 تسجيل الخروج
 // ============================================
 function logout() {
   if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
     localStorage.removeItem('saydaliyati_current_user');
-    
-    if (typeof radarActive !== 'undefined' && radarActive) {
-      radarActive = false;
-      if (typeof radarInterval !== 'undefined' && radarInterval) clearInterval(radarInterval);
-      if (typeof orderSimulationInterval !== 'undefined' && orderSimulationInterval) clearInterval(orderSimulationInterval);
-    }
-    
     closeSidebar();
     goToSplash();
     showToast('تم تسجيل الخروج');
@@ -1699,7 +1337,7 @@ function logout() {
 // ============================================
 // 📝 إرسال النماذج
 // ============================================
- async function submitPatient(event) {
+async function submitPatient(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('patientName').value.trim();
@@ -1736,15 +1374,15 @@ function logout() {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  // ✅ حفظ في الخلفية (بدون انتظار)
   saveUserToFirestore(user).catch(function(e) {
     console.log('⚠️ خطأ حفظ المستخدم:', e);
   });
   
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
- }
-  async function submitPharmacy(event) {
+}
+
+async function submitPharmacy(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('pharmacyName').value.trim();
@@ -1784,7 +1422,6 @@ function logout() {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  // ✅ حفظ في الخلفية (بدون انتظار)
   saveUserToFirestore(user).catch(function(e) {
     console.log('⚠️ خطأ حفظ المستخدم:', e);
   });
@@ -1806,7 +1443,8 @@ function logout() {
   
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
-  }
+}
+
 async function submitDelivery(event) {
   if (event) event.preventDefault();
   
@@ -1846,7 +1484,6 @@ async function submitDelivery(event) {
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   
-  // ✅ حفظ في الخلفية (بدون انتظار)
   saveUserToFirestore(user).catch(function(e) {
     console.log('⚠️ خطأ حفظ المستخدم:', e);
   });
@@ -1854,6 +1491,7 @@ async function submitDelivery(event) {
   playSuccessSound();
   showSuccessMessage('مرحباً بك في فريقنا', 'سنتواصل معك قريباً');
 }
+
 // ============================================
 // 💾 حفظ التسجيلات
 // ============================================
@@ -1863,10 +1501,6 @@ function saveRegistration(data) {
   registrations.push(data);
   localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
 }
-
-// ============================================
-// 🔥 Firebase (اختياري)
-// ============================================
 
 // ============================================
 // ✅ التحقق من رقم الهاتف
@@ -2024,7 +1658,6 @@ function publishOffer(event) {
   localStorage.setItem('saydaliyati_offers', JSON.stringify(offers));
   
   closeAddOfferModal();
-  
   document.getElementById('offerTitle').value = '';
   document.getElementById('offerDescription').value = '';
   document.getElementById('offerExpiry').value = '';
@@ -2056,7 +1689,8 @@ function loadOffers() {
   });
   
   offersList.innerHTML = html;
-    }
+}
+
 // ============================================
 // 📸 نظام طلب الروشتة
 // ============================================
@@ -2064,31 +1698,20 @@ var prescriptionImageData = null;
 
 function openPrescriptionScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) {
-    showToast('سجّل دخول أولاً');
-    return;
-  }
+  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
   
   var user = JSON.parse(userStr);
-  if (user.type !== 'patient') {
-    showToast('هذه الميزة للمرضى فقط');
-    return;
-  }
+  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
   
   var addressInput = document.getElementById('prescriptionAddress');
-  if (addressInput && user.address) {
-    addressInput.value = user.address;
-  }
+  if (addressInput && user.address) addressInput.value = user.address;
   
   prescriptionImageData = null;
   resetPrescriptionUpload();
-  
   showScreen('prescriptionScreen');
 }
 
-function closePrescriptionScreen() {
-  showScreen('homeScreen');
-}
+function closePrescriptionScreen() { showScreen('homeScreen'); }
 
 function openPrescriptionPicker() {
   var input = document.getElementById('prescriptionInput');
@@ -2101,11 +1724,6 @@ function handlePrescriptionUpload(event) {
   
   if (file.size > 5 * 1024 * 1024) {
     showError('حجم الصورة كبير جداً - الحد الأقصى 5MB');
-    return;
-  }
-  
-  if (!file.type.startsWith('image/')) {
-    showError('يجب أن تكون الصورة بصيغة صورة');
     return;
   }
   
@@ -2128,10 +1746,8 @@ function handlePrescriptionUpload(event) {
 
 function removePrescriptionImage(event) {
   if (event) event.stopPropagation();
-  
   prescriptionImageData = null;
   resetPrescriptionUpload();
-  
   var input = document.getElementById('prescriptionInput');
   if (input) input.value = '';
 }
@@ -2139,7 +1755,6 @@ function removePrescriptionImage(event) {
 function resetPrescriptionUpload() {
   var placeholder = document.getElementById('prescriptionPlaceholder');
   var preview = document.getElementById('prescriptionPreview');
-  
   if (placeholder) placeholder.style.display = 'block';
   if (preview) preview.style.display = 'none';
 }
@@ -2147,20 +1762,10 @@ function resetPrescriptionUpload() {
 function submitPrescription(event) {
   if (event) event.preventDefault();
   
-  if (!prescriptionImageData) {
-    showError('ارفع صورة الوصفة أولاً');
-    return;
-  }
+  if (!prescriptionImageData) { showError('ارفع صورة الوصفة أولاً'); return; }
   
   var address = document.getElementById('prescriptionAddress').value.trim();
-  var notes = document.getElementById('prescriptionNotes').value.trim();
-  var pharmacy = document.getElementById('prescriptionPharmacy').value;
-  var deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
-  
-  if (!address) {
-    showError('أدخل عنوان التوصيل');
-    return;
-  }
+  if (!address) { showError('أدخل عنوان التوصيل'); return; }
   
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = JSON.parse(userStr);
@@ -2172,9 +1777,6 @@ function submitPrescription(event) {
     patientName: user.name,
     patientPhone: user.phone,
     address: address,
-    notes: notes,
-    preferredPharmacy: pharmacy || 'النظام يختار',
-    deliveryType: deliveryType,
     image: prescriptionImageData,
     status: 'pending',
     createdAt: new Date().toISOString()
@@ -2184,19 +1786,13 @@ function submitPrescription(event) {
   orders.unshift(order);
   localStorage.setItem('saydaliyati_prescription_orders', JSON.stringify(orders));
   
-  addInternalNotification('order', '📸 تم إرسال روشتتك', 'صيدلية ' + (pharmacy || 'قريبة منك') + ' ستتواصل معك');
+  addInternalNotification('order', '📸 تم إرسال روشتتك', 'ستتواصل معك صيدلية قريبة');
   
   playSuccessSound();
-  showSuccessMessage('✅ تم إرسال طلبك', 'صيدلية ' + (pharmacy || 'قريبة منك') + ' ستتواصل معك خلال دقائق');
+  showSuccessMessage('✅ تم إرسال طلبك', 'ستتواصل معك صيدلية قريبة خلال دقائق');
   
   prescriptionImageData = null;
   resetPrescriptionUpload();
-  
-  setTimeout(function() {
-    document.getElementById('prescriptionAddress').value = '';
-    document.getElementById('prescriptionNotes').value = '';
-    document.getElementById('prescriptionPharmacy').value = '';
-  }, 500);
 }
 
 // ============================================
@@ -2204,26 +1800,11 @@ function submitPrescription(event) {
 // ============================================
 var PHARMACY_INVENTORY = {
   'صيدلية النور': [
-    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3000, icon: '💊', stock: 50, desc: 'مسكن للألم وخافض للحرارة' },
-    { id: 'P002', name: 'فيتامين C', category: 'فيتامينات', price: 5000, icon: '🍊', stock: 30, desc: 'مكمل غذائي لتقوية المناعة' },
-    { id: 'P003', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, icon: '💉', stock: 20, desc: 'مضاد حيوي واسع المجال' },
-    { id: 'P004', name: 'فولتارين', category: 'مسكنات', price: 4500, icon: '💊', stock: 40, desc: 'مسكن للألم والالتهابات' },
-    { id: 'P005', name: 'أوميغا 3', category: 'فيتامينات', price: 12000, icon: '🐟', stock: 15, desc: 'مكمل لصحة القلب' },
-    { id: 'P006', name: 'شراب كحة', category: 'أطفال', price: 4000, icon: '🍯', stock: 25, desc: 'شراب مهدئ للكحة' }
+    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3000, icon: '💊', stock: 50, desc: 'مسكن للألم' },
+    { id: 'P002', name: 'فيتامين C', category: 'فيتامينات', price: 5000, icon: '🍊', stock: 30, desc: 'مكمل غذائي' }
   ],
   'صيدلية الحياة': [
-    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3500, icon: '💊', stock: 60, desc: 'مسكن للألم' },
-    { id: 'P002', name: 'فيتامين D', category: 'فيتامينات', price: 6000, icon: '☀️', stock: 35, desc: 'لتقوية العظام' },
-    { id: 'P003', name: 'أوميبرازول', category: 'ضغط', price: 7000, icon: '💊', stock: 22, desc: 'لعلاج حموضة المعدة' },
-    { id: 'P004', name: 'حبوب زنك', category: 'فيتامينات', price: 4500, icon: '⚡', stock: 30, desc: 'لتقوية المناعة' },
-    { id: 'P005', name: 'شراب سعال', category: 'أطفال', price: 4500, icon: '🍯', stock: 20, desc: 'للسعال الجاف' }
-  ],
-  'صيدلية الشفاء': [
-    { id: 'P001', name: 'أسبرين', category: 'مسكنات', price: 2500, icon: '💊', stock: 45, desc: 'مسكن ومضاد للالتهاب' },
-    { id: 'P002', name: 'ميترونيدازول', category: 'مضاد حيوي', price: 6500, icon: '💉', stock: 18, desc: 'مضاد حيوي للعدوى' },
-    { id: 'P003', name: 'حديد + فوليك', category: 'فيتامينات', price: 5500, icon: '🩸', stock: 28, desc: 'لعلاج فقر الدم' },
-    { id: 'P004', name: 'مسكن أطفال', category: 'أطفال', price: 3500, icon: '🧸', stock: 32, desc: 'شراب للأطفال' },
-    { id: 'P005', name: 'أملوديبين', category: 'ضغط', price: 8000, icon: '💊', stock: 15, desc: 'لعلاج الضغط' }
+    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3500, icon: '💊', stock: 60, desc: 'مسكن للألم' }
   ]
 };
 
@@ -2233,176 +1814,18 @@ var modalQuantity = 1;
 
 function openCartScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) {
-    showToast('سجّل دخول أولاً');
-    return;
-  }
+  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
   
   var user = JSON.parse(userStr);
-  if (user.type !== 'patient') {
-    showToast('هذه الميزة للمرضى فقط');
-    return;
-  }
+  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
   
   cart = JSON.parse(localStorage.getItem('saydaliyati_cart') || '[]');
   
   var addressInput = document.getElementById('cartAddress');
-  if (addressInput && user.address) {
-    addressInput.value = user.address;
-  }
-  
-  var infoBanner = document.getElementById('cartInfoBanner');
-  var productsSection = document.getElementById('cartProducts');
-  var itemsSection = document.getElementById('cartItemsSection');
-  var emptySection = document.getElementById('cartEmpty');
-  var summarySection = document.getElementById('cartSummary');
-  
-  if (infoBanner) infoBanner.style.display = 'flex';
-  if (productsSection) productsSection.style.display = 'none';
-  if (itemsSection) itemsSection.style.display = 'none';
-  if (emptySection) emptySection.style.display = 'block';
-  if (summarySection) summarySection.style.display = 'none';
+  if (addressInput && user.address) addressInput.value = user.address;
   
   renderCart();
   showScreen('cartScreen');
-}
-
-function onPharmacyChange() {
-  var pharmacy = document.getElementById('cartPharmacySelect').value;
-  
-  if (!pharmacy) {
-    var infoBanner = document.getElementById('cartInfoBanner');
-    var productsSection = document.getElementById('cartProducts');
-    if (infoBanner) infoBanner.style.display = 'flex';
-    if (productsSection) productsSection.style.display = 'none';
-    return;
-  }
-  
-  if (cart.length > 0 && cart[0].pharmacy !== pharmacy) {
-    if (!confirm('السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟')) {
-      document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
-      return;
-    }
-    cart = [];
-    saveCart();
-  }
-  
-  var infoBanner = document.getElementById('cartInfoBanner');
-  var productsSection = document.getElementById('cartProducts');
-  if (infoBanner) infoBanner.style.display = 'none';
-  if (productsSection) productsSection.style.display = 'block';
-  
-  renderProducts(pharmacy);
-  renderCart();
-}
-
-function renderProducts(pharmacy) {
-  var grid = document.getElementById('productsGrid');
-  if (!grid) return;
-  
-  var products = PHARMACY_INVENTORY[pharmacy] || [];
-  
-  if (products.length === 0) {
-    grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">لا توجد أدوية متوفرة</p>';
-    return;
-  }
-  
-  var html = '';
-  products.forEach(function(p) {
-    html += 
-      '<div class="product-card" onclick="openProductModal(\'' + p.id + '\', \'' + pharmacy + '\')">' +
-        '<div class="product-icon">' + p.icon + '</div>' +
-        '<h4 class="product-name">' + p.name + '</h4>' +
-        '<p class="product-category">' + p.category + '</p>' +
-        '<p class="product-price">' + p.price.toLocaleString() + ' دينار</p>' +
-      '</div>';
-  });
-  
-  grid.innerHTML = html;
-}
-
-function openProductModal(productId, pharmacy) {
-  var products = PHARMACY_INVENTORY[pharmacy] || [];
-  var product = products.find(function(p) { return p.id === productId; });
-  
-  if (!product) return;
-  
-  currentModalProduct = Object.assign({}, product, { pharmacy: pharmacy });
-  modalQuantity = 1;
-  
-  document.getElementById('productModalName').textContent = product.name;
-  document.getElementById('productModalIcon').textContent = product.icon;
-  document.getElementById('productModalDesc').textContent = product.desc;
-  document.getElementById('productModalPrice').textContent = product.price.toLocaleString() + ' دينار';
-  document.getElementById('productModalCategory').textContent = product.category;
-  document.getElementById('modalQuantity').textContent = modalQuantity;
-  
-  var stockEl = document.getElementById('productModalStock');
-  if (product.stock > 10) {
-    stockEl.textContent = 'متوفر (' + product.stock + ')';
-    stockEl.className = 'stock-available';
-  } else if (product.stock > 0) {
-    stockEl.textContent = 'كمية محدودة (' + product.stock + ')';
-    stockEl.className = 'stock-low';
-  } else {
-    stockEl.textContent = 'غير متوفر';
-    stockEl.className = 'stock-out';
-  }
-  
-  document.getElementById('productModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeProductModal() {
-  document.getElementById('productModal').classList.remove('active');
-  document.body.style.overflow = '';
-  currentModalProduct = null;
-}
-
-function increaseModalQuantity() {
-  if (!currentModalProduct) return;
-  if (modalQuantity < currentModalProduct.stock) {
-    modalQuantity++;
-    document.getElementById('modalQuantity').textContent = modalQuantity;
-  } else {
-    showToast('الكمية المتوفرة: ' + currentModalProduct.stock);
-  }
-}
-
-function decreaseModalQuantity() {
-  if (modalQuantity > 1) {
-    modalQuantity--;
-    document.getElementById('modalQuantity').textContent = modalQuantity;
-  }
-}
-
-function addToCartFromModal() {
-  if (!currentModalProduct) return;
-  
-  var existingIndex = cart.findIndex(function(item) {
-    return item.id === currentModalProduct.id;
-  });
-  
-  if (existingIndex !== -1) {
-    cart[existingIndex].quantity += modalQuantity;
-  } else {
-    cart.push({
-      id: currentModalProduct.id,
-      name: currentModalProduct.name,
-      price: currentModalProduct.price,
-      icon: currentModalProduct.icon,
-      category: currentModalProduct.category,
-      quantity: modalQuantity,
-      pharmacy: currentModalProduct.pharmacy
-    });
-  }
-  
-  saveCart();
-  closeProductModal();
-  renderCart();
-  showToast('✅ تمت الإضافة إلى السلة');
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
 }
 
 function renderCart() {
@@ -2410,22 +1833,12 @@ function renderCart() {
   var emptyEl = document.getElementById('cartEmpty');
   var sectionEl = document.getElementById('cartItemsSection');
   var summaryEl = document.getElementById('cartSummary');
-  var subtitleEl = document.getElementById('cartSubtitle');
-  var countEl = document.getElementById('cartItemsCount');
   var badgeEl = document.getElementById('cartBadge');
   
   var totalItems = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
-  
-  if (badgeEl) {
-    badgeEl.textContent = totalItems;
-    badgeEl.setAttribute('data-count', totalItems);
-  }
-  
-  if (subtitleEl) subtitleEl.textContent = totalItems + ' منتج';
-  if (countEl) countEl.textContent = totalItems;
+  if (badgeEl) badgeEl.textContent = totalItems;
   
   if (cart.length === 0) {
-    if (itemsEl) itemsEl.innerHTML = '';
     if (sectionEl) sectionEl.style.display = 'none';
     if (emptyEl) emptyEl.style.display = 'block';
     if (summaryEl) summaryEl.style.display = 'none';
@@ -2449,465 +1862,28 @@ function renderCart() {
           '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', -1)">−</button>' +
           '<span class="cart-item-qty">' + item.quantity + '</span>' +
           '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', 1)">+</button>' +
-          '<button class="cart-qty-btn remove" onclick="removeFromCart(' + index + ')">×</button>' +
         '</div>' +
       '</div>';
   });
   
   if (itemsEl) itemsEl.innerHTML = html;
-  
-  var subtotal = cart.reduce(function(sum, item) {
-    return sum + (item.price * item.quantity);
-  }, 0);
-  var delivery = 3000;
-  var total = subtotal + delivery;
-  
-  document.getElementById('cartSubtotal').textContent = subtotal.toLocaleString() + ' دينار';
-  document.getElementById('cartDelivery').textContent = delivery.toLocaleString() + ' دينار';
-  document.getElementById('cartTotal').textContent = total.toLocaleString() + ' دينار';
 }
 
 function changeQuantity(index, delta) {
   if (index < 0 || index >= cart.length) return;
-  
   cart[index].quantity += delta;
-  
-  if (cart[index].quantity <= 0) {
-    cart.splice(index, 1);
-  }
-  
-  saveCart();
+  if (cart[index].quantity <= 0) cart.splice(index, 1);
+  localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
   renderCart();
-  updateCartBadge();
-}
-
-function removeFromCart(index) {
-  if (index < 0 || index >= cart.length) return;
-  cart.splice(index, 1);
-  saveCart();
-  renderCart();
-  updateCartBadge();
-  showToast('تم الحذف من السلة');
 }
 
 function clearCart() {
   if (cart.length === 0) return;
   if (!confirm('مسح جميع المنتجات من السلة؟')) return;
-  
   cart = [];
-  saveCart();
-  renderCart();
-  updateCartBadge();
-  showToast('تم مسح السلة');
-}
-
-function saveCart() {
   localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
-}
-
-function updateCartBadge() {
-  var badgeEl = document.getElementById('cartBadge');
-  if (!badgeEl) return;
-  
-  var total = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
-  badgeEl.textContent = total;
-  badgeEl.setAttribute('data-count', total);
-}
-
-function submitCartOrder() {
-  if (cart.length === 0) {
-    showError('السلة فارغة');
-    return;
-  }
-  
-  var pharmacy = document.getElementById('cartPharmacySelect').value;
-  var address = document.getElementById('cartAddress').value.trim();
-  var notes = document.getElementById('cartNotes').value.trim();
-  var payment = document.querySelector('input[name="paymentMethod"]:checked').value;
-  
-  if (!pharmacy) {
-    showError('اختر صيدلية');
-    return;
-  }
-  
-  if (!address) {
-    showError('أدخل عنوان التوصيل');
-    return;
-  }
-  
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = JSON.parse(userStr);
-  
-  var subtotal = cart.reduce(function(sum, item) {
-    return sum + (item.price * item.quantity);
-  }, 0);
-  var delivery = 3000;
-  var total = subtotal + delivery;
-  
-  var orderId = Math.floor(1000 + Math.random() * 9000);
-  var order = {
-    id: orderId,
-    type: 'cart',
-    patientName: user.name,
-    patientPhone: user.phone,
-    pharmacy: pharmacy,
-    address: address,
-    notes: notes,
-    payment: payment,
-    items: cart.slice(),
-    subtotal: subtotal,
-    delivery: delivery,
-    total: total,
-    status: 'pending',
-    createdAt: new Date().toISOString()
-  };
-  
-  var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
-  orders.unshift(order);
-  localStorage.setItem('saydaliyati_cart_orders', JSON.stringify(orders));
-  
-  addInternalNotification('order', '🛒 طلبك #' + orderId, 'في انتظار قبول الصيدلية');
-  
-  cart = [];
-  saveCart();
-  updateCartBadge();
-  
-  playSuccessSound();
-  showSuccessMessage('✅ تم إرسال طلبك', 'طلب #' + orderId + ' - ' + pharmacy + ' ستتواصل معك قريباً');
-}
-
-// ============================================
-// 💊 نظام المخزون
-// ============================================
-var currentInventoryFilter = 'all';
-var currentInventorySearch = '';
-
-function getInventoryKey() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return 'saydaliyati_inventory_default';
-  var user = JSON.parse(userStr);
-  return 'saydaliyati_inventory_' + (user.phone || 'default');
-}
-
-function loadInventory() {
-  var key = getInventoryKey();
-  var inventory = JSON.parse(localStorage.getItem(key) || 'null');
-  
-  if (!inventory) {
-    inventory = [
-      { id: 'MED_' + Date.now() + '_1', name: 'بانادول', category: 'مسكنات', price: 3000, stock: 50, icon: '💊', desc: 'مسكن للألم' },
-      { id: 'MED_' + Date.now() + '_2', name: 'فيتامين C', category: 'فيتامينات', price: 5000, stock: 30, icon: '🍊', desc: 'مكمل غذائي' },
-      { id: 'MED_' + Date.now() + '_3', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, stock: 5, icon: '💉', desc: 'مضاد حيوي' }
-    ];
-    saveInventory(inventory);
-  }
-  
-  return inventory;
-}
-
-function saveInventory(inventory) {
-  var key = getInventoryKey();
-  localStorage.setItem(key, JSON.stringify(inventory));
-  
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (userStr && typeof PHARMACY_INVENTORY !== 'undefined') {
-    try {
-      var user = JSON.parse(userStr);
-      var pharmacyName = user.name || 'صيدلية';
-      PHARMACY_INVENTORY[pharmacyName] = inventory.map(function(med) {
-        return {
-          id: med.id, name: med.name, category: med.category,
-          price: med.price, icon: med.icon, stock: med.stock, desc: med.desc
-        };
-      });
-    } catch(e) {}
-  }
-}
-
-function openInventoryScreen() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) {
-    showToast('سجّل دخول أولاً');
-    return;
-  }
-  
-  var user = JSON.parse(userStr);
-  if (user.type !== 'pharmacy') {
-    showToast('هذه الميزة للصيدليات فقط');
-    return;
-  }
-  
-  currentInventoryFilter = 'all';
-  currentInventorySearch = '';
-  
-  var searchInput = document.getElementById('inventorySearch');
-  if (searchInput) searchInput.value = '';
-  
-  document.querySelectorAll('.inv-filter').forEach(function(btn, i) {
-    btn.classList.toggle('active', i === 0);
-  });
-  
-  renderInventory();
-  showScreen('inventoryScreen');
-}
-
-function closeInventoryScreen() {
-  showScreen('pharmacyDashboard');
-}
-
-function renderInventory() {
-  var inventory = loadInventory();
-  var listEl = document.getElementById('inventoryList');
-  var subtitleEl = document.getElementById('inventorySubtitle');
-  
-  if (!listEl) return;
-  
-  var totalMeds = inventory.length;
-  var lowStock = inventory.filter(function(m) { return m.stock > 0 && m.stock <= 10; }).length;
-  var outOfStock = inventory.filter(function(m) { return m.stock === 0; }).length;
-  var totalValue = inventory.reduce(function(sum, m) { return sum + (m.price * m.stock); }, 0);
-  
-  var elTotalMeds = document.getElementById('invTotalMeds');
-  var elLowStock = document.getElementById('invLowStock');
-  var elOutOfStock = document.getElementById('invOutOfStock');
-  var elValue = document.getElementById('invValue');
-  
-  if (elTotalMeds) elTotalMeds.textContent = totalMeds;
-  if (elLowStock) elLowStock.textContent = lowStock;
-  if (elOutOfStock) elOutOfStock.textContent = outOfStock;
-  if (elValue) elValue.textContent = (totalValue / 1000).toFixed(0) + 'K';
-  
-  var alertEl = document.getElementById('inventoryAlert');
-  var alertText = document.getElementById('inventoryAlertText');
-  if (alertEl && alertText) {
-    if (lowStock + outOfStock > 0) {
-      alertEl.style.display = 'flex';
-      alertText.textContent = (lowStock + outOfStock) + ' دواء يحتاج إعادة تعبئة';
-    } else {
-      alertEl.style.display = 'none';
-    }
-  }
-  
-  var filtered = inventory.filter(function(m) {
-    if (currentInventoryFilter === 'available' && m.stock <= 10) return false;
-    if (currentInventoryFilter === 'low' && (m.stock === 0 || m.stock > 10)) return false;
-    if (currentInventoryFilter === 'out' && m.stock !== 0) return false;
-    
-    if (currentInventorySearch) {
-      var search = currentInventorySearch.toLowerCase();
-      if (m.name.toLowerCase().indexOf(search) === -1 && m.category.toLowerCase().indexOf(search) === -1) {
-        return false;
-      }
-    }
-    return true;
-  });
-  
-  if (subtitleEl) subtitleEl.textContent = filtered.length + ' من ' + totalMeds + ' دواء';
-  
-  if (filtered.length === 0) {
-    listEl.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">💊</div><h3>لا توجد أدوية</h3><p>اضغط "+ إضافة دواء" للبدء</p></div>';
-    return;
-  }
-  
-  var html = '';
-  filtered.forEach(function(med) {
-    var stockClass = med.stock === 0 ? 'out' : (med.stock <= 10 ? 'low' : 'available');
-    var stockText = med.stock === 0 ? 'نفد' : (med.stock <= 10 ? 'قارب على النفاد (' + med.stock + ')' : 'متوفر (' + med.stock + ')');
-    var cardClass = med.stock === 0 ? 'out-of-stock' : (med.stock <= 10 ? 'low-stock' : '');
-    
-    html += 
-      '<div class="medicine-card ' + cardClass + '">' +
-        '<div class="medicine-card-icon">' + med.icon + '</div>' +
-        '<div class="medicine-card-info">' +
-          '<h4 class="medicine-card-name">' + med.name + '</h4>' +
-          '<div class="medicine-card-meta">' +
-            '<span>📁 ' + med.category + '</span>' +
-            '<span class="medicine-card-price">💰 ' + med.price.toLocaleString() + ' د</span>' +
-            '<span class="medicine-card-stock ' + stockClass + '">📦 ' + stockText + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="medicine-card-actions">' +
-          '<button class="medicine-action-btn edit" onclick="openEditMedicineModal(\'' + med.id + '\')">' +
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
-          '</button>' +
-          '<button class="medicine-action-btn delete" onclick="deleteMedicine(\'' + med.id + '\')">' +
-            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>' +
-          '</button>' +
-        '</div>' +
-      '</div>';
-  });
-  
-  listEl.innerHTML = html;
-}
-
-function filterInventoryBy(filter, btn) {
-  currentInventoryFilter = filter;
-  document.querySelectorAll('.inv-filter').forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  renderInventory();
-}
-
-function filterInventory() {
-  var input = document.getElementById('inventorySearch');
-  currentInventorySearch = input ? input.value.trim() : '';
-  renderInventory();
-}
-
-function openAddMedicineModal() {
-  var titleEl = document.getElementById('medicineModalTitle');
-  if (titleEl) titleEl.textContent = 'إضافة دواء جديد';
-  
-  var fields = ['editMedicineId', 'medicineName', 'medicineCategory', 'medicinePrice', 'medicineStock', 'medicineDesc'];
-  fields.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  
-  var stockEl = document.getElementById('medicineStock');
-  if (stockEl) stockEl.value = '50';
-  
-  var iconEl = document.getElementById('medicineIcon');
-  if (iconEl) iconEl.value = '💊';
-  
-  var btnEl = document.getElementById('medicineSubmitBtn');
-  if (btnEl) btnEl.textContent = 'إضافة إلى المخزون';
-  
-  document.querySelectorAll('.medicine-icon-option').forEach(function(btn, i) {
-    btn.classList.toggle('active', i === 0);
-  });
-  
-  var modal = document.getElementById('medicineModal');
-  if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function openEditMedicineModal(medId) {
-  var inventory = loadInventory();
-  var med = inventory.find(function(m) { return m.id === medId; });
-  
-  if (!med) {
-    showError('الدواء غير موجود');
-    return;
-  }
-  
-  var titleEl = document.getElementById('medicineModalTitle');
-  if (titleEl) titleEl.textContent = 'تعديل الدواء';
-  
-  document.getElementById('editMedicineId').value = med.id;
-  document.getElementById('medicineName').value = med.name;
-  document.getElementById('medicineCategory').value = med.category;
-  document.getElementById('medicinePrice').value = med.price;
-  document.getElementById('medicineStock').value = med.stock;
-  document.getElementById('medicineDesc').value = med.desc || '';
-  document.getElementById('medicineIcon').value = med.icon;
-  
-  var btnEl = document.getElementById('medicineSubmitBtn');
-  if (btnEl) btnEl.textContent = 'حفظ التعديلات';
-  
-  document.querySelectorAll('.medicine-icon-option').forEach(function(btn) {
-    btn.classList.toggle('active', btn.getAttribute('data-icon') === med.icon);
-  });
-  
-  var modal = document.getElementById('medicineModal');
-  if (modal) {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function closeMedicineModal() {
-  var modal = document.getElementById('medicineModal');
-  if (modal) {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-
-function selectIconNew(icon, btn) {
-  var iconInput = document.getElementById('medicineIcon');
-  if (iconInput) iconInput.value = icon;
-  
-  document.querySelectorAll('.medicine-icon-option').forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  
-  if (navigator.vibrate) navigator.vibrate([20]);
-}
-
-function selectIcon(icon, btn) {
-  var iconInput = document.getElementById('medicineIcon');
-  if (iconInput) iconInput.value = icon;
-  
-  document.querySelectorAll('.icon-option').forEach(function(b) { b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-}
-
-function saveMedicineFromHeader() {
-  var form = document.querySelector('#medicineModal form');
-  if (form) {
-    form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-  }
-}
-
-function saveMedicine(event) {
-  if (event) event.preventDefault();
-  
-  var medId = document.getElementById('editMedicineId').value;
-  var name = document.getElementById('medicineName').value.trim();
-  var category = document.getElementById('medicineCategory').value;
-  var price = parseInt(document.getElementById('medicinePrice').value);
-  var stock = parseInt(document.getElementById('medicineStock').value) || 50;
-  var desc = document.getElementById('medicineDesc').value.trim();
-  var icon = document.getElementById('medicineIcon').value;
-  
-  if (!name || !category || isNaN(price)) {
-    showError('املأ كل الحقول المطلوبة');
-    return;
-  }
-  
-  if (price < 0 || stock < 0) {
-    showError('السعر والكمية يجب أن يكونا موجبين');
-    return;
-  }
-  
-  var inventory = loadInventory();
-  
-  if (medId) {
-    var index = inventory.findIndex(function(m) { return m.id === medId; });
-    if (index !== -1) {
-      inventory[index].name = name;
-      inventory[index].category = category;
-      inventory[index].price = price;
-      inventory[index].stock = stock;
-      inventory[index].desc = desc;
-      inventory[index].icon = icon;
-    }
-    showToast('✅ تم حفظ التعديلات');
-  } else {
-    var newMed = {
-      id: 'MED_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-      name: name, category: category, price: price, stock: stock, desc: desc, icon: icon
-    };
-    inventory.unshift(newMed);
-    showToast('✅ تمت إضافة الدواء');
-  }
-  
-  saveInventory(inventory);
-  closeMedicineModal();
-  renderInventory();
-  
-  if (navigator.vibrate) navigator.vibrate([50]);
-}
-
-function deleteMedicine(medId) {
-  if (!confirm('هل تريد حذف هذا الدواء؟')) return;
-  
-  var inventory = loadInventory();
-  inventory = inventory.filter(function(m) { return m.id !== medId; });
-  saveInventory(inventory);
-  renderInventory();
-  showToast('تم حذف الدواء');
+  renderCart();
+  showToast('تم مسح السلة');
 }
 
 // ============================================
@@ -2917,34 +1893,14 @@ var currentRating = 0;
 
 function openRatingModal(targetName, targetType, orderId) {
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) {
-    showToast('سجّل دخول أولاً');
-    return;
-  }
+  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
   
   var user = JSON.parse(userStr);
-  if (user.type !== 'patient') {
-    showToast('هذه الميزة للمرضى فقط');
-    return;
-  }
+  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
   
   currentRating = 0;
   
-  var titleEl = document.getElementById('ratingModalTitle');
   var nameEl = document.getElementById('ratingTargetName');
-  var typeEl = document.getElementById('ratingTargetType');
-  var iconEl = document.getElementById('ratingTargetIcon');
-  
-  if (targetType === 'delivery') {
-    if (titleEl) titleEl.textContent = 'قيّم تجربتك مع المندوب';
-    if (iconEl) iconEl.textContent = '🚴';
-    if (typeEl) typeEl.textContent = 'مندوب توصيل';
-  } else {
-    if (titleEl) titleEl.textContent = 'قيّم تجربتك مع الصيدلية';
-    if (iconEl) iconEl.textContent = '🏪';
-    if (typeEl) typeEl.textContent = 'صيدلية';
-  }
-  
   if (nameEl) nameEl.textContent = targetName;
   
   document.getElementById('ratingTargetId').value = orderId || '';
@@ -2954,12 +1910,6 @@ function openRatingModal(targetName, targetType, orderId) {
   document.querySelectorAll('.rating-star').forEach(function(star) {
     star.classList.remove('active');
   });
-  
-  var textEl = document.getElementById('ratingText');
-  if (textEl) {
-    textEl.textContent = 'اضغط على النجوم للتقييم';
-    textEl.className = 'rating-text';
-  }
   
   document.getElementById('ratingModal').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -2973,47 +1923,25 @@ function closeRatingModal() {
 
 function selectRating(value) {
   currentRating = value;
-  
-  var stars = document.querySelectorAll('.rating-star');
-  stars.forEach(function(star, index) {
+  document.querySelectorAll('.rating-star').forEach(function(star, index) {
     star.classList.toggle('active', index < value);
   });
-  
-  var textEl = document.getElementById('ratingText');
-  var texts = { 1: '😞 سيء جداً', 2: '😕 ضعيف', 3: '😐 مقبول', 4: '😊 جيد', 5: '🤩 ممتاز!' };
-  var classes = { 1: 'bad', 2: 'bad', 3: 'medium', 4: 'good', 5: 'good' };
-  
-  if (textEl) {
-    textEl.textContent = texts[value];
-    textEl.className = 'rating-text ' + classes[value];
-  }
-  
-  if (navigator.vibrate) navigator.vibrate([30]);
 }
 
 function submitRating() {
-  if (currentRating === 0) {
-    showError('اختر تقييماً أولاً');
-    return;
-  }
+  if (currentRating === 0) { showError('اختر تقييماً أولاً'); return; }
   
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = JSON.parse(userStr);
   
-  var targetName = document.getElementById('ratingTargetName').textContent;
-  var targetType = document.getElementById('ratingTargetType').value;
-  var orderId = document.getElementById('ratingTargetId').value;
-  var comment = document.getElementById('ratingComment').value.trim();
-  
   var rating = {
-    id: 'RATING_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    id: 'RATING_' + Date.now(),
     from: user.name,
     fromPhone: user.phone,
-    targetName: targetName,
-    targetType: targetType,
-    orderId: orderId,
+    targetName: document.getElementById('ratingTargetName').textContent,
+    targetType: document.getElementById('ratingTargetType').value,
     rating: currentRating,
-    comment: comment,
+    comment: document.getElementById('ratingComment').value.trim(),
     date: new Date().toISOString()
   };
   
@@ -3021,17 +1949,9 @@ function submitRating() {
   ratings.unshift(rating);
   localStorage.setItem('saydaliyati_ratings', JSON.stringify(ratings));
   
-  addInternalNotification('system', '⭐ شكراً لتقييمك', 'قيّمت ' + targetName + ' بـ ' + currentRating + ' نجوم');
-  
   playSuccessSound();
-  if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-  
   closeRatingModal();
-  showToast('⭐ شكراً لتقييمك ' + targetName);
-  
-  if (document.getElementById('profileScreen').classList.contains('active')) {
-    renderMyRatings();
-  }
+  showToast('⭐ شكراً لتقييمك');
 }
 
 // ============================================
@@ -3043,7 +1963,6 @@ function addInternalNotification(type, title, message) {
     type: type,
     title: title,
     message: message,
-    icon: getNotifIcon(type),
     read: false,
     date: new Date().toISOString(),
     time: 'الآن'
@@ -3053,35 +1972,8 @@ function addInternalNotification(type, title, message) {
   notifs.unshift(notif);
   if (notifs.length > 50) notifs = notifs.slice(0, 50);
   localStorage.setItem('saydaliyati_notifications', JSON.stringify(notifs));
-  
-  updateNotifBadge();
 }
 
-function getNotifIcon(type) {
-  var icons = {
-    'order': '📦', 'accepted': '✅', 'delivered': '🎉',
-    'stock': '⚠️', 'offer': '📢', 'wallet': '💰', 'system': '⚙️'
-  };
-  return icons[type] || '🔔';
-}
-
-function updateNotifBadge() {
-  var navBtn = document.querySelector('.nav-btn[data-tab="notifications"]');
-  if (!navBtn) return;
-  
-  var oldBadge = navBtn.querySelector('.notif-badge');
-  if (oldBadge) oldBadge.remove();
-  
-  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
-  var unreadCount = notifs.filter(function(n) { return !n.read; }).length;
-  
-  if (unreadCount > 0) {
-    var badge = document.createElement('span');
-    badge.className = 'notif-badge';
-    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-    navBtn.appendChild(badge);
-  }
-     }
 // ============================================
 // 📡 الرادار
 // ============================================
@@ -3097,147 +1989,58 @@ function toggleRadar() {
   
   if (!radarActive) {
     radarActive = true;
-    
     if (radarSimple) radarSimple.classList.add('active');
     if (radarTitle) radarTitle.textContent = 'جارٍ البحث...';
     if (btnText) btnText.textContent = 'إيقاف البحث';
     if (btn) btn.classList.add('active');
     
     playRadarActivateSound();
-    vibrateDevice([100, 50, 100]);
     showToast('📡 الرادار يعمل - جاري البحث...');
     
-    if (radarInterval) clearInterval(radarInterval);
-    radarInterval = setInterval(function() {
-      playSonarPing();
-    }, 2000);
+    radarInterval = setInterval(function() { playSonarPing(); }, 2000);
     
     setTimeout(function() {
       if (radarActive) {
         playAlertDing();
-        vibrateDevice([200, 100, 200]);
         openOrderSheet();
         if (radarTitle) radarTitle.textContent = '📦 تم رصد طلب!';
       }
     }, 5000);
     
-    startOrderSimulation();
-    
   } else {
     radarActive = false;
-    
     if (radarSimple) radarSimple.classList.remove('active');
     if (radarTitle) radarTitle.textContent = 'ابدأ البحث';
     if (btnText) btnText.textContent = 'ابدأ البحث';
     if (btn) btn.classList.remove('active');
     
-    if (radarInterval) {
-      clearInterval(radarInterval);
-      radarInterval = null;
-    }
-    
-    if (orderSimulationInterval) {
-      clearInterval(orderSimulationInterval);
-      orderSimulationInterval = null;
-    }
+    if (radarInterval) clearInterval(radarInterval);
+    if (orderSimulationInterval) clearInterval(orderSimulationInterval);
     
     showToast('⏹️ تم إيقاف الرادار');
   }
 }
 
-function startOrderSimulation() {
-  if (orderSimulationInterval) clearInterval(orderSimulationInterval);
-  
-  orderSimulationInterval = setInterval(function() {
-    if (radarActive) {
-      var sheet = document.getElementById('orderSheet');
-      if (sheet && !sheet.classList.contains('active')) {
-        playAlertDing();
-        vibrateDevice([200, 100, 200]);
-        openOrderSheet();
-      }
-    }
-  }, 15000);
-}
-
 function openOrderSheet() {
   var overlay = document.getElementById('orderSheetOverlay');
   var sheet = document.getElementById('orderSheet');
-  
   if (overlay) overlay.classList.add('active');
   if (sheet) sheet.classList.add('active');
   document.body.style.overflow = 'hidden';
-  
-  startOrderTimer();
 }
 
 function closeOrderSheet() {
   var overlay = document.getElementById('orderSheetOverlay');
   var sheet = document.getElementById('orderSheet');
-  
   if (overlay) overlay.classList.remove('active');
   if (sheet) sheet.classList.remove('active');
   document.body.style.overflow = '';
-  
-  if (orderTimerInterval) {
-    clearInterval(orderTimerInterval);
-    orderTimerInterval = null;
-  }
-  
-  var radarTitle = document.getElementById('radarTitle');
-  if (radarTitle && radarActive) {
-    radarTitle.textContent = 'جارٍ البحث...';
-  }
-}
-
-var orderTimerInterval = null;
-var orderTimerSeconds = 10;
-
-function startOrderTimer() {
-  orderTimerSeconds = 10;
-  var progressEl = document.getElementById('timerProgress');
-  var textEl = document.getElementById('timerText');
-  
-  if (progressEl) progressEl.style.width = '100%';
-  if (textEl) textEl.textContent = orderTimerSeconds;
-  
-  if (orderTimerInterval) clearInterval(orderTimerInterval);
-  
-  orderTimerInterval = setInterval(function() {
-    orderTimerSeconds--;
-    
-    if (progressEl) {
-      progressEl.style.width = (orderTimerSeconds * 10) + '%';
-    }
-    if (textEl) {
-      textEl.textContent = orderTimerSeconds;
-    }
-    
-    if (orderTimerSeconds <= 0) {
-      clearInterval(orderTimerInterval);
-      orderTimerInterval = null;
-      closeOrderSheet();
-      showToast('انتهى وقت الطلب');
-    }
-  }, 1000);
 }
 
 function acceptFromSheet() {
   playSuccessSound();
   closeOrderSheet();
-  showToast('تم قبول الطلب - الرادار يعمل');
-  
-  setTimeout(function() {
-    if (radarActive && !radarInterval) {
-      radarInterval = setInterval(function() {
-        playSonarPing();
-      }, 2000);
-    }
-  }, 1000);
-  
-  setTimeout(function() {
-    goToMyOrders();
-  }, 500);
+  showToast('تم قبول الطلب');
 }
 
 // ============================================
@@ -3248,601 +2051,89 @@ var trackingMap = null;
 var myLocation = null;
 var myMarker = null;
 var routeLine = null;
-
 var BAGHDAD_CENTER = [33.3152, 44.3661];
-
-var PHARMACY_LOCATIONS = {
-  'صيدلية النور': [33.3000, 44.4000],
-  'صيدلية الحياة': [33.2800, 44.3800],
-  'صيدلية الشفاء': [33.3300, 44.3500]
-};
 
 function openMapScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) {
-    showToast('سجّل دخول أولاً');
-    return;
-  }
+  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
   
   var user = JSON.parse(userStr);
-  if (user.type !== 'delivery') {
-    showToast('هذه الميزة للمندوبين فقط');
-    return;
-  }
+  if (user.type !== 'delivery') { showToast('هذه الميزة للمندوبين فقط'); return; }
   
   showScreen('mapScreen');
   
   setTimeout(function() {
     initMainMap();
     requestMyLocation();
-    loadNearbyOrders();
   }, 300);
 }
 
 function closeMapScreen() {
-  if (mainMap) {
-    mainMap.remove();
-    mainMap = null;
-  }
+  if (mainMap) { mainMap.remove(); mainMap = null; }
   showScreen('deliveryDashboard');
 }
 
 function initMainMap() {
   var mapEl = document.getElementById('leafletMap');
   if (!mapEl) return;
-  
   if (mainMap) mainMap.remove();
   
   mainMap = L.map('leafletMap').setView(BAGHDAD_CENTER, 13);
-  
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap',
-    maxZoom: 19
+    attribution: '© OpenStreetMap', maxZoom: 19
   }).addTo(mainMap);
   
   var loading = document.getElementById('mapLoading');
   if (loading) loading.style.display = 'none';
-  
-  addPharmacyMarkers();
-  console.log('✅ تم تحميل الخريطة');
 }
 
 function requestMyLocation() {
   if (!navigator.geolocation) {
     showToast('المتصفح لا يدعم GPS');
-    updateGpsInfo(null);
     return;
   }
-  
-  var subtitleEl = document.getElementById('mapSubtitle');
-  if (subtitleEl) subtitleEl.textContent = 'جارٍ تحديد موقعك...';
   
   navigator.geolocation.getCurrentPosition(
     function(position) {
       myLocation = [position.coords.latitude, position.coords.longitude];
-      
-      updateGpsInfo(position);
-      addMyLocationMarker();
-      
       if (mainMap) mainMap.setView(myLocation, 15);
       
-      if (subtitleEl) subtitleEl.textContent = 'تم تحديد موقعك ✅';
+      if (myMarker) mainMap.removeLayer(myMarker);
+      var myIcon = L.divIcon({
+        className: 'custom-map-marker marker-me',
+        html: '<div class="custom-marker-pin"><span>📍</span></div>',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40]
+      });
+      myMarker = L.marker(myLocation, { icon: myIcon })
+        .addTo(mainMap)
+        .bindPopup('<strong>موقعك الحالي</strong>')
+        .openPopup();
     },
     function(error) {
       myLocation = BAGHDAD_CENTER;
-      updateGpsInfo(null);
-      addMyLocationMarker();
-      
-      if (subtitleEl) subtitleEl.textContent = 'تعذّر تحديد الموقع - استخدمنا بغداد';
       showToast('⚠️ تعذّر تحديد موقعك');
     },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
-function updateGpsInfo(position) {
-  var latEl = document.getElementById('gpsLat');
-  var lngEl = document.getElementById('gpsLng');
-  var addrEl = document.getElementById('gpsAddress');
-  
-  if (position && myLocation) {
-    if (latEl) latEl.textContent = 'Lat: ' + myLocation[0].toFixed(5);
-    if (lngEl) lngEl.textContent = 'Lng: ' + myLocation[1].toFixed(5);
-    if (addrEl) addrEl.textContent = 'بغداد، العراق';
-  } else {
-    if (latEl) latEl.textContent = 'Lat: --';
-    if (lngEl) lngEl.textContent = 'Lng: --';
-    if (addrEl) addrEl.textContent = 'الموقع غير متاح';
-  }
-}
-
-function addMyLocationMarker() {
-  if (!mainMap || !myLocation) return;
-  
-  if (myMarker) mainMap.removeLayer(myMarker);
-  
-  var myIcon = L.divIcon({
-    className: 'custom-map-marker marker-me',
-    html: '<div class="custom-marker-pin"><span>📍</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  
-  myMarker = L.marker(myLocation, { icon: myIcon })
-    .addTo(mainMap)
-    .bindPopup('<strong>موقعك الحالي</strong><br>أنت هنا')
-    .openPopup();
-}
-
-function addPharmacyMarkers() {
-  if (!mainMap) return;
-  
-  var pharmacyIcon = L.divIcon({
-    className: 'custom-map-marker marker-pharmacy',
-    html: '<div class="custom-marker-pin"><span>🏪</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  
-  for (var name in PHARMACY_LOCATIONS) {
-    if (PHARMACY_LOCATIONS.hasOwnProperty(name)) {
-      var loc = PHARMACY_LOCATIONS[name];
-      L.marker(loc, { icon: pharmacyIcon })
-        .addTo(mainMap)
-        .bindPopup('<strong>' + name + '</strong><br>صيدلية');
-    }
-  }
-}
-
-function loadNearbyOrders() {
-  var listEl = document.getElementById('nearbyOrdersList');
-  var countEl = document.getElementById('nearbyCount');
-  if (!listEl) return;
-  
-  var nearbyOrders = [
-    { id: 1234, name: 'أحمد علي', pharmacy: 'صيدلية النور', distance: '2.5 كم', commission: 3000, lat: 33.3000, lng: 44.4000 },
-    { id: 1235, name: 'سارة محمد', pharmacy: 'صيدلية الحياة', distance: '3.2 كم', commission: 4000, lat: 33.2800, lng: 44.3800 },
-    { id: 1236, name: 'علي حسن', pharmacy: 'صيدلية الشفاء', distance: '4.1 كم', commission: 5000, lat: 33.3300, lng: 44.3500 }
-  ];
-  
-  if (countEl) countEl.textContent = nearbyOrders.length;
-  
-  var html = '';
-  nearbyOrders.forEach(function(order) {
-    html += 
-      '<div class="nearby-order-card" onclick="focusOnOrder(' + order.lat + ',' + order.lng + ', ' + order.id + ')">' +
-        '<div class="nearby-order-icon">📦</div>' +
-        '<div class="nearby-order-info">' +
-          '<h4 class="nearby-order-name">طلب #' + order.id + ' - ' + order.name + '</h4>' +
-          '<div class="nearby-order-meta">' +
-            '<span>📍 ' + order.distance + '</span>' +
-            '<span>💰 ' + order.commission.toLocaleString() + ' د</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-  });
-  
-  listEl.innerHTML = html;
-}
-
-function focusOnOrder(lat, lng, orderId) {
-  if (!mainMap) return;
-  
-  mainMap.setView([lat, lng], 16);
-  
-  var orderIcon = L.divIcon({
-    className: 'custom-map-marker marker-patient',
-    html: '<div class="custom-marker-pin"><span>🏠</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  
-  L.marker([lat, lng], { icon: orderIcon })
-    .addTo(mainMap)
-    .bindPopup('<strong>طلب #' + orderId + '</strong><br>موقع التسليم')
-    .openPopup();
-  
-  drawRoute(myLocation, [lat, lng]);
-  showToast('📍 تم تحديد موقع الطلب #' + orderId);
-}
-
-function drawRoute(from, to) {
-  if (!mainMap || !from || !to) return;
-  
-  if (routeLine) mainMap.removeLayer(routeLine);
-  
-  routeLine = L.polyline([from, to], {
-    color: '#2563EB',
-    weight: 4,
-    opacity: 0.7,
-    dashArray: '10, 10',
-    lineCap: 'round'
-  }).addTo(mainMap);
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  var R = 6371;
-  var dLat = (lat2 - lat1) * Math.PI / 180;
-  var dLon = (lon2 - lon1) * Math.PI / 180;
-  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
 function centerOnMe() {
-  if (!mainMap || !myLocation) {
-    showToast('جاري تحديد موقعك...');
-    requestMyLocation();
-    return;
-  }
-  
+  if (!mainMap || !myLocation) { requestMyLocation(); return; }
   mainMap.setView(myLocation, 16);
-  if (myMarker) myMarker.openPopup();
   showToast('📍 تم التركيز على موقعك');
 }
 
-function showAllOrders() {
-  if (!mainMap || !myLocation) return;
-  
-  var orders = [
-    { lat: 33.3000, lng: 44.4000 },
-    { lat: 33.2800, lng: 44.3800 },
-    { lat: 33.3300, lng: 44.3500 }
-  ];
-  
-  orders.forEach(function(order) {
-    drawRoute(myLocation, [order.lat, order.lng]);
-  });
-  
-  var group = new L.featureGroup([
-    L.marker(myLocation),
-    L.marker([33.3000, 44.4000]),
-    L.marker([33.2800, 44.3800]),
-    L.marker([33.3300, 44.3500])
-  ]);
-  
-  mainMap.fitBounds(group.getBounds().pad(0.2));
-  showToast('🗺️ عرض كل الطلبات');
-}
-
-function refreshMyLocation() {
-  showToast('🔄 جارٍ تحديث موقعك...');
-  requestMyLocation();
-}
+function refreshMyLocation() { requestMyLocation(); }
 
 // ============================================
 // 🚴 تتبع المندوب (للمريض)
 // ============================================
 function trackDeliveryOnMap(deliveryName, pharmacyLat, pharmacyLng) {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  
-  var user = JSON.parse(userStr);
-  if (user.type !== 'patient') {
-    showToast('هذه الميزة للمرضى فقط');
-    return;
-  }
-  
   showScreen('trackingScreen');
-  
-  var nameEl = document.getElementById('trackingDeliveryName');
-  if (nameEl) nameEl.textContent = deliveryName;
-  
-  setTimeout(function() {
-    initTrackingMap(pharmacyLat, pharmacyLng);
-  }, 300);
 }
 
-function closeTrackingScreen() {
-  if (trackingMap) {
-    trackingMap.remove();
-    trackingMap = null;
-  }
-  showScreen('myOrdersScreen');
-}
-
-function initTrackingMap(pharmacyLat, pharmacyLng) {
-  var mapEl = document.getElementById('trackingMap');
-  if (!mapEl) return;
-  
-  if (trackingMap) trackingMap.remove();
-  
-  var patientLoc = [33.3152, 44.3661];
-  var pharmacyLoc = [pharmacyLat, pharmacyLng];
-  
-  trackingMap = L.map('trackingMap').setView(patientLoc, 13);
-  
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap',
-    maxZoom: 19
-  }).addTo(trackingMap);
-  
-  var patientIcon = L.divIcon({
-    className: 'custom-map-marker marker-patient',
-    html: '<div class="custom-marker-pin"><span>🏠</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  L.marker(patientLoc, { icon: patientIcon }).addTo(trackingMap).bindPopup('<strong>موقعك</strong>');
-  
-  var pharmacyIcon = L.divIcon({
-    className: 'custom-map-marker marker-pharmacy',
-    html: '<div class="custom-marker-pin"><span>🏪</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  L.marker(pharmacyLoc, { icon: pharmacyIcon }).addTo(trackingMap).bindPopup('<strong>الصيدلية</strong>');
-  
-  var midLat = (patientLoc[0] + pharmacyLoc[0]) / 2;
-  var midLng = (patientLoc[1] + pharmacyLoc[1]) / 2;
-  var deliveryIcon = L.divIcon({
-    className: 'custom-map-marker marker-delivery',
-    html: '<div class="custom-marker-pin"><span>🚴</span></div>',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40]
-  });
-  var deliveryMarker = L.marker([midLat, midLng], { icon: deliveryIcon })
-    .addTo(trackingMap)
-    .bindPopup('<strong>المندوب</strong><br>في الطريق')
-    .openPopup();
-  
-  L.polyline([pharmacyLoc, [midLat, midLng], patientLoc], {
-    color: '#10B981', weight: 4, opacity: 0.7
-  }).addTo(trackingMap);
-  
-  var group = new L.featureGroup([
-    L.marker(patientLoc), L.marker(pharmacyLoc), L.marker([midLat, midLng])
-  ]);
-  trackingMap.fitBounds(group.getBounds().pad(0.2));
-  
-  simulateDeliveryMovement(deliveryMarker, [midLat, midLng], patientLoc);
-}
-
-function simulateDeliveryMovement(marker, start, end) {
-  var steps = 30;
-  var currentStep = 0;
-  
-  var interval = setInterval(function() {
-    currentStep++;
-    if (currentStep > steps) { clearInterval(interval); return; }
-    
-    var ratio = currentStep / steps;
-    var lat = start[0] + (end[0] - start[0]) * ratio;
-    var lng = start[1] + (end[1] - start[1]) * ratio;
-    
-    marker.setLatLng([lat, lng]);
-    
-    var distance = calculateDistance(lat, lng, end[0], end[1]);
-    var eta = Math.max(1, Math.round(distance * 3));
-    
-    var etaEl = document.getElementById('trackingETA');
-    var distEl = document.getElementById('trackingDistance');
-    var progEl = document.getElementById('trackingProgressFill');
-    
-    if (etaEl) etaEl.textContent = eta + ' دقيقة';
-    if (distEl) distEl.textContent = distance.toFixed(1) + ' كم';
-    if (progEl) progEl.style.width = (40 + (ratio * 55)) + '%';
-  }, 2000);
-}
-
-function refreshTracking() {
-  showToast('🔄 جارٍ تحديث موقع المندوب...');
-    }
-// ============================================
-// 🔔 إشعارات Push
-// ============================================
-function sendNotification(options) {
-  if (!navigator.serviceWorker || !navigator.serviceWorker.controller) {
-    addInternalNotification(options.type || 'system', options.title, options.body);
-    vibrateDevice([200, 100, 200]);
-    return;
-  }
-  
-  navigator.serviceWorker.controller.postMessage({
-    type: 'SHOW_NOTIFICATION',
-    payload: {
-      title: options.title,
-      body: options.body,
-      icon: options.icon || '/icon-192.png',
-      vibrate: options.vibrate || [200, 100, 200],
-      tag: options.tag || ('saydaliyati-' + Date.now()),
-      requireInteraction: options.requireInteraction || false,
-      data: {
-        orderId: options.orderId || null,
-        type: options.type || 'order',
-        url: options.url || '/'
-      },
-      actions: options.actions || []
-    }
-  });
-  
-  vibrateDevice(options.vibrate || [200, 100, 200]);
-}
-
-function handleNotificationClick(data) {
-  console.log('🖱️ تم الضغط على الإشعار:', data);
-  
-  var action = data.action;
-  var orderId = data.orderId;
-  
-  vibrateDevice([100]);
-  
-  if (action === 'reject') {
-    showToast('تم رفض الطلب #' + orderId);
-    return;
-  }
-  
-  if (action === 'accept' || action === 'open') {
-    acceptOrderFromNotification(orderId);
-    
-    setTimeout(function() {
-      goToMyOrders();
-      setTimeout(function() {
-        scrollToOrderAndHighlight(orderId);
-      }, 300);
-    }, 100);
-  }
-}
-
-function acceptOrderFromNotification(orderId) {
-  showToast('✅ تم قبول الطلب #' + orderId);
-  
-  var acceptedOrders = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
-  acceptedOrders.unshift({ id: orderId, acceptedAt: new Date().toISOString() });
-  localStorage.setItem('saydaliyati_accepted_orders', JSON.stringify(acceptedOrders));
-  
-  addInternalNotification('accepted', '✅ تم قبول الطلب #' + orderId, 'جاري التوصيل');
-  updateNotifBadge();
-}
-
-function scrollToOrderAndHighlight(orderId) {
-  var cards = document.querySelectorAll('.priority-card, .order-card, .delivery-order-card');
-  cards.forEach(function(card) {
-    var text = card.textContent || '';
-    if (text.indexOf('#' + orderId) !== -1) {
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      card.classList.add('highlighted');
-      setTimeout(function() { card.classList.remove('highlighted'); }, 3000);
-    }
-  });
-}
-
-function checkUrlForOrder() {
-  var params = new URLSearchParams(window.location.search);
-  var orderId = params.get('order');
-  var action = params.get('action');
-  
-  if (orderId) {
-    console.log('🎯 orderId من URL:', orderId, '| action:', action);
-    
-    if (action === 'accept') acceptOrderFromNotification(orderId);
-    
-    setTimeout(function() {
-      goToMyOrders();
-      setTimeout(function() { scrollToOrderAndHighlight(orderId); }, 500);
-    }, 300);
-    
-    window.history.replaceState({}, '', '/');
-  }
-}
-
-// ============================================
-// 🎯 نظام الرادار الخلفي
-// ============================================
-var radarSystemActive = false;
-var radarCheckInterval = null;
-
-function startRadarSystem() {
-  if (radarSystemActive) return;
-  radarSystemActive = true;
-  console.log('🚀 نظام الرادار يعمل...');
-  
-  if (radarCheckInterval) clearInterval(radarCheckInterval);
-  radarCheckInterval = setInterval(function() {
-    checkForNewOrders();
-  }, 10000);
-  
-  checkForNewOrders();
-}
-
-function stopRadarSystem() {
-  radarSystemActive = false;
-  if (radarCheckInterval) {
-    clearInterval(radarCheckInterval);
-    radarCheckInterval = null;
-  }
-  console.log('🛑 نظام الرادار متوقف');
-}
-
-function checkForNewOrders() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  
-  var user = JSON.parse(userStr);
-  
-  if (user.type === 'delivery' && typeof radarActive !== 'undefined' && radarActive) {
-    simulateDeliveryOrder(user);
-  }
-  if (user.type === 'pharmacy') {
-    simulatePharmacyOrder(user);
-  }
-}
-
-function simulateDeliveryOrder(user) {
-  var now = Date.now();
-  if (!window.lastDeliveryNotifTime || (now - window.lastDeliveryNotifTime) > 30000) {
-    window.lastDeliveryNotifTime = now;
-    
-    var orderId = Math.floor(1000 + Math.random() * 9000);
-    var pharmacy = ['صيدلية النور', 'صيدلية الحياة', 'صيدلية الشفاء'][Math.floor(Math.random() * 3)];
-    var commission = [3000, 4000, 5000][Math.floor(Math.random() * 3)];
-    var distance = (2 + Math.random() * 3).toFixed(1);
-    
-    sendNotification({
-      title: '📦 طلب توصيل جديد #' + orderId,
-      body: pharmacy + ' • ' + distance + ' كم • ' + commission + ' دينار',
-      type: 'order',
-      orderId: orderId,
-      vibrate: [200, 100, 200, 100, 200],
-      requireInteraction: true,
-      actions: [
-        { action: 'accept', title: '✅ قبول' },
-        { action: 'reject', title: '❌ رفض' }
-      ]
-    });
-  }
-}
-
-function simulatePharmacyOrder(user) {
-  var now = Date.now();
-  if (!window.lastPharmacyNotifTime || (now - window.lastPharmacyNotifTime) > 45000) {
-    window.lastPharmacyNotifTime = now;
-    
-    var orderId = Math.floor(1000 + Math.random() * 9000);
-    var patientName = ['أحمد علي', 'سارة محمد', 'علي حسن', 'فاطمة أحمد'][Math.floor(Math.random() * 4)];
-    var total = [15000, 23000, 18000, 12000][Math.floor(Math.random() * 4)];
-    
-    sendNotification({
-      title: '💊 طلب دواء جديد #' + orderId,
-      body: patientName + ' • ' + total.toLocaleString() + ' دينار',
-      type: 'order',
-      orderId: orderId,
-      vibrate: [300, 100, 300],
-      requireInteraction: true,
-      actions: [
-        { action: 'accept', title: '✅ قبول' },
-        { action: 'reject', title: '❌ رفض' }
-      ]
-    });
-  }
-}
-
-function requestNotificationPermission() {
-  if (!('Notification' in window)) {
-    showToast('المتصفح لا يدعم الإشعارات');
-    return Promise.resolve('unsupported');
-  }
-  
-  return Notification.requestPermission().then(function(permission) {
-    if (permission === 'granted') {
-      console.log('✅ الإشعارات مفعّلة');
-      showToast('الإشعارات مفعّلة ✅');
-      startRadarSystem();
-    } else {
-      console.log('❌ الإشعارات مرفوضة');
-    }
-    return permission;
-  });
-}
-
-// ============================================
-// 📱 منع التكبير
-// ============================================
-document.addEventListener('gesturestart', function(e) {
-  e.preventDefault();
-});
+function closeTrackingScreen() { showScreen('myOrdersScreen'); }
 
 // ============================================
 // 🚀 عند التحميل
@@ -3851,82 +2142,23 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('توصيل طبي جاهز');
   
   loadTheme();
-  
-  // إنشاء جزيئات Splash عند التحميل
   setTimeout(createSplashParticles, 100);
   
-  // إخفاء جميع Bottom Sheets عند التحميل
-  var orderSheet = document.getElementById('orderSheet');
-  var orderSheetOverlay = document.getElementById('orderSheetOverlay');
-  if (orderSheet) orderSheet.classList.remove('active');
-  if (orderSheetOverlay) orderSheetOverlay.classList.remove('active');
-  
-  var navSheet = document.getElementById('navSheet');
-  var navSheetOverlay = document.getElementById('navSheetOverlay');
-  if (navSheet) navSheet.classList.remove('active');
-  if (navSheetOverlay) navSheetOverlay.classList.remove('active');
-  
-  // إخفاء جميع النوافذ المنبثقة
   document.querySelectorAll('.modal-overlay').forEach(function(modal) {
     modal.classList.remove('active');
   });
   
-  // تفعيل الصوت عند أول نقرة
   document.body.addEventListener('click', function() {
     initAudio();
   }, { once: true });
   
-  // فحص URL
-  setTimeout(checkUrlForOrder, 500);
-  
-  // فحص المستخدم الحالي
   var currentUser = localStorage.getItem('saydaliyati_current_user');
   if (currentUser) {
     goToDashboardByType();
   } else {
     showScreen('splashScreen');
   }
-  
-  // تفعيل الرادار في الخلفية
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (userStr && typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-    startRadarSystem();
-  }
-  
-  setTimeout(function() {
-    if (userStr && typeof Notification !== 'undefined' && Notification.permission === 'default') {
-      var user = JSON.parse(userStr);
-      if (user.type === 'delivery' || user.type === 'pharmacy') {
-        requestNotificationPermission();
-      }
-    }
-  }, 3000);
-  
-  updateNotifBadge();
 });
-
-// ============================================
-// 🛑 تعديلات إضافية للـ Radar
-// ============================================
-var originalToggleRadar = window.toggleRadar;
-window.toggleRadar = function() {
-  if (originalToggleRadar) originalToggleRadar.apply(this, arguments);
-  
-  if (radarActive) {
-    if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
-      requestNotificationPermission();
-    }
-    startRadarSystem();
-  } else {
-    stopRadarSystem();
-  }
-};
-
-var originalLogout = window.logout;
-window.logout = function() {
-  stopRadarSystem();
-  if (originalLogout) originalLogout.apply(this, arguments);
-};
 
 // ============================================
 // 🎉 نهاية الملف
