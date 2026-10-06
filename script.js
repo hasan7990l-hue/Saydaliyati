@@ -133,6 +133,101 @@ async function savePharmacyToFirestore(pharmacyData) {
   }
 }
 // ============================================
+// 🏪 جلب الصيدليات من Firestore
+// ============================================
+async function loadPharmaciesFromFirestore() {
+  if (!window.firebaseDB || !window.firebaseGetDocs || !window.firebaseCollection) {
+    console.log('⚠️ Firestore غير جاهز');
+    return [];
+  }
+  
+  try {
+    const snapshot = await window.firebaseGetDocs(
+      window.firebaseCollection(window.firebaseDB, 'pharmacies')
+    );
+    
+    const pharmacies = [];
+    snapshot.forEach(function(doc) {
+      const data = doc.data();
+      if (data.active !== false) {
+        pharmacies.push({ id: doc.id, ...data });
+      }
+    });
+    
+    console.log('✅ تم جلب', pharmacies.length, 'صيدلية من Firestore');
+    return pharmacies;
+    
+  } catch (error) {
+    console.error('❌ خطأ جلب الصيدليات:', error);
+    return [];
+  }
+}
+
+// ============================================
+// 🏪 عرض الصيدليات للمريض (ديناميكي)
+// ============================================
+async function loadPharmaciesForPatient() {
+  var container = document.getElementById('pharmacyListContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">⏳ جاري التحميل...</div>';
+  
+  var pharmacies = await loadPharmaciesFromFirestore();
+  
+  if (pharmacies.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#94A3B8;">لا توجد صيدليات متاحة حالياً</div>';
+    return;
+  }
+  
+  var colorMap = {
+    'green': '#10B981',
+    'blue': '#2563EB',
+    'orange': '#F59E0B',
+    'purple': '#8B5CF6',
+    'red': '#EF4444'
+  };
+  
+  var html = '';
+  pharmacies.forEach(function(pharmacy) {
+    var bgColor = colorMap[pharmacy.color] || colorMap['green'];
+    var logo = pharmacy.logo || 'ص';
+    var rating = pharmacy.rating || 5.0;
+    var deliveryTime = pharmacy.deliveryTime || '30 دقيقة';
+    var address = pharmacy.address || 'بغداد';
+    
+    html += 
+      '<div class="pharmacy-card">' +
+        '<div class="pharmacy-logo" style="background:' + bgColor + ';color:white;">' + logo + '</div>' +
+        '<div class="pharmacy-info">' +
+          '<h4>' + pharmacy.name + '</h4>' +
+          '<p>' + address + '</p>' +
+          '<div class="pharmacy-meta">' +
+            '<span class="rating">' + rating + ' ★</span>' +
+            '<span class="badge">توصيل ' + deliveryTime + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn-order" onclick="orderFromPharmacy(\'' + pharmacy.id + '\', \'' + pharmacy.name + '\')">اطلب</button>' +
+      '</div>';
+  });
+  
+  container.innerHTML = html;
+  console.log('✅ تم عرض', pharmacies.length, 'صيدلية للمريض');
+}
+
+// ============================================
+// 🛒 الطلب من صيدلية محددة
+// ============================================
+function orderFromPharmacy(pharmacyId, pharmacyName) {
+  console.log('🛒 طلب من:', pharmacyName, '| ID:', pharmacyId);
+  
+  localStorage.setItem('saydaliyati_selected_pharmacy', JSON.stringify({
+    id: pharmacyId,
+    name: pharmacyName
+  }));
+  
+  showToast('🛒 ستنشئ طلباً من: ' + pharmacyName);
+}
+// ============================================
 // 🌙 نظام الوضع الليلي / النهاري
 // ============================================
 function toggleTheme() {
