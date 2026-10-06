@@ -1745,7 +1745,7 @@ function logout() {
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
  }
-async function submitPharmacy(event) {
+  async function submitPharmacy(event) {
   if (event) event.preventDefault();
   
   var name = document.getElementById('pharmacyName').value.trim();
@@ -1784,11 +1784,30 @@ async function submitPharmacy(event) {
   
   saveRegistration(user);
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
-  await saveUserToFirestore(user);
+  
+  // ✅ حفظ في الخلفية (بدون انتظار)
+  saveUserToFirestore(user).catch(function(e) {
+    console.log('⚠️ خطأ حفظ المستخدم:', e);
+  });
+  
+  savePharmacyToFirestore({
+    name: name,
+    owner: owner,
+    phone: phone,
+    address: address,
+    license: license,
+    rating: 5.0,
+    logo: 'ص',
+    color: 'green',
+    deliveryTime: '30 دقيقة',
+    active: true
+  }).catch(function(e) {
+    console.log('⚠️ خطأ حفظ الصيدلية:', e);
+  });
+  
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
-}
-
+  }
 async function submitDelivery(event) {
   if (event) event.preventDefault();
   
