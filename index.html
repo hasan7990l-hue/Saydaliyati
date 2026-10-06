@@ -2714,7 +2714,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDo_IU84fPcBf8fUloq6CWHcWMjWIo08kc",
@@ -2739,7 +2739,15 @@
   window.firebaseDoc = doc;
   window.firebaseSetDoc = setDoc;
   window.firebaseGetDoc = getDoc;
-
+  window.firebaseCollection = collection;
+  window.firebaseAddDoc = addDoc;
+  window.firebaseGetDocs = getDocs;
+  window.firebaseQuery = query;
+  window.firebaseWhere = where;
+  window.firebaseUpdateDoc = updateDoc;
+  window.firebaseDeleteDoc = deleteDoc;
+  window.firebaseOnSnapshot = onSnapshot;
+  window.firebaseServerTimestamp = serverTimestamp;
   console.log('✅ Firebase تم تهيئته بنجاح');
 </script>
   <script src="script.js"></script>
