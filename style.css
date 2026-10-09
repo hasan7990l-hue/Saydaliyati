@@ -6425,7 +6425,92 @@ a {
   .post-price-value { font-size: 20px; }
   .post-order-btn { padding: 12px; font-size: 14px; }
 }
+/* ============================================
+   ✅ Success Message Overlay
+   ============================================ */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 
+.success-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.success-box {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-2xl);
+  padding: 40px 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--success);
+  color: #FFFFFF;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 24px var(--shadow-success);
+}
+
+.success-box h2 {
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.success-box p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.success-box .btn-primary {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  padding: 14px 24px;
+  border-radius: var(--r-md);
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  transition: all var(--t-base);
+}
+
+.success-box .btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
 /* ============================================
    🎉 نهاية style.css
    ============================================ */
