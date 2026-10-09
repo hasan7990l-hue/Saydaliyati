@@ -3440,70 +3440,10 @@ function stopRadarSystem() {
   if (radarCheckInterval) { clearInterval(radarCheckInterval); radarCheckInterval = null; }
   console.log('🛑 نظام الرادار متوقف');
 }
-
 function checkForNewOrders() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-
-  var user = JSON.parse(userStr);
-
-  if (user.type === 'delivery' && typeof radarActive !== 'undefined' && radarActive) {
-    simulateDeliveryOrder(user);
-  }
-  if (user.type === 'pharmacy') {
-    simulatePharmacyOrder(user);
-  }
+  // معطّل — الإشعارات الحقيقية تجي من Firestore
+  return;
 }
-
-function simulateDeliveryOrder(user) {
-  var now = Date.now();
-  if (!window.lastDeliveryNotifTime || (now - window.lastDeliveryNotifTime) > 30000) {
-    window.lastDeliveryNotifTime = now;
-
-    var orderId = Math.floor(1000 + Math.random() * 9000);
-    var pharmacy = ['صيدلية النور', 'صيدلية الحياة', 'صيدلية الشفاء'][Math.floor(Math.random() * 3)];
-    var commission = [3000, 4000, 5000][Math.floor(Math.random() * 3)];
-    var distance = (2 + Math.random() * 3).toFixed(1);
-
-    sendNotification({
-      title: '📦 طلب توصيل جديد #' + orderId,
-      body: pharmacy + ' • ' + distance + ' كم • ' + commission + ' دينار',
-      type: 'order',
-      orderId: orderId,
-      vibrate: [200, 100, 200, 100, 200],
-      requireInteraction: true,
-      actions: [
-        { action: 'accept', title: '✅ قبول' },
-        { action: 'reject', title: '❌ رفض' }
-      ]
-    });
-  }
-}
-
-function simulatePharmacyOrder(user) {
-  var now = Date.now();
-  if (!window.lastPharmacyNotifTime || (now - window.lastPharmacyNotifTime) > 45000) {
-    window.lastPharmacyNotifTime = now;
-
-    var orderId = Math.floor(1000 + Math.random() * 9000);
-    var patientName = ['أحمد علي', 'سارة محمد', 'علي حسن', 'فاطمة أحمد'][Math.floor(Math.random() * 4)];
-    var total = [15000, 23000, 18000, 12000][Math.floor(Math.random() * 4)];
-
-    sendNotification({
-      title: '💊 طلب دواء جديد #' + orderId,
-      body: patientName + ' • ' + total.toLocaleString() + ' دينار',
-      type: 'order',
-      orderId: orderId,
-      vibrate: [300, 100, 300],
-      requireInteraction: true,
-      actions: [
-        { action: 'accept', title: '✅ قبول' },
-        { action: 'reject', title: '❌ رفض' }
-      ]
-    });
-  }
-}
-
 function requestNotificationPermission() {
   if (!('Notification' in window)) {
     showToast('المتصفح لا يدعم الإشعارات');
