@@ -687,13 +687,13 @@
     </div>
   </div>
   </div>
-<!-- ============================================
+   <!-- ============================================
      🚴 لوحة الدليفري (الرادار)
      ============================================ -->
 <div class="screen" id="deliveryDashboard">
   <div class="delivery-header">
     <div class="delivery-greeting">
-      <h1 class="delivery-title">أهلاً بك يا <span id="deliveryGreeting">أحمد</span></h1>
+      <h1 class="delivery-title">أهلاً بك يا <span id="deliveryGreeting">مندوب</span></h1>
       <p class="delivery-sub">جاهز للعمل اليوم؟</p>
     </div>
     <div class="delivery-header-actions">
@@ -702,10 +702,10 @@
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
-        <span class="delivery-notif-badge">3</span>
+        <span class="delivery-notif-badge" id="deliveryNotifBadge" style="display:none;">0</span>
       </button>
       <div class="delivery-avatar" onclick="openProfile()">
-        <span>ح</span>
+        <span id="deliveryAvatarLetter">م</span>
       </div>
     </div>
   </div>
@@ -749,51 +749,14 @@
     <a href="#" onclick="goToMyOrders(); return false;">عرض الكل</a>
   </div>
 
-  <div class="delivery-orders-list">
-    <div class="delivery-order-card">
-      <div class="delivery-order-info">
-        <h4 class="delivery-order-title">طلب #1234 - صيدلية النور</h4>
-        <div class="delivery-order-meta">
-          <span>📍 2.5 كم</span>
-          <span>💰 3,000 د</span>
-        </div>
-      </div>
-      <div class="delivery-order-actions">
-        <button class="delivery-accept-btn" onclick="acceptOrder(1234)">قبول</button>
-        <button class="delivery-details-btn" onclick="showOrderDetails(1234, 'صيدلية النور', '2.5', '3000')">تفاصيل</button>
-      </div>
-    </div>
-
-    <div class="delivery-order-card">
-      <div class="delivery-order-info">
-        <h4 class="delivery-order-title">طلب #1235 - صيدلية الحياة</h4>
-        <div class="delivery-order-meta">
-          <span>📍 3.2 كم</span>
-          <span>💰 4,000 د</span>
-        </div>
-      </div>
-      <div class="delivery-order-actions">
-        <button class="delivery-accept-btn" onclick="acceptOrder(1235)">قبول</button>
-        <button class="delivery-details-btn" onclick="showOrderDetails(1235, 'صيدلية الحياة', '3.2', '4000')">تفاصيل</button>
-      </div>
-    </div>
-
-    <div class="delivery-order-card">
-      <div class="delivery-order-info">
-        <h4 class="delivery-order-title">طلب #1236 - صيدلية الشفاء</h4>
-        <div class="delivery-order-meta">
-          <span>📍 4.1 كم</span>
-          <span>💰 5,000 د</span>
-        </div>
-      </div>
-      <div class="delivery-order-actions">
-        <button class="delivery-accept-btn" onclick="acceptOrder(1236)">قبول</button>
-        <button class="delivery-details-btn" onclick="showOrderDetails(1236, 'صيدلية الشفاء', '4.1', '5000')">تفاصيل</button>
-      </div>
+  <div class="delivery-orders-list" id="deliveryDashboardOrdersList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📦</div>
+      <h3>لا توجد طلبات</h3>
+      <p>شغّل الرادار لاستقبال الطلبات</p>
     </div>
   </div>
 </div>
-
 <!-- ============================================
      📋 صفحة طلباتي (ديناميكية)
      ============================================ -->
