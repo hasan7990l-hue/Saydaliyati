@@ -3934,23 +3934,17 @@ function getInventoryKey() {
   var user = JSON.parse(userStr);
   return 'saydaliyati_inventory_' + (user.phone || 'default');
 }
-
 function loadInventory() {
   var key = getInventoryKey();
   var inventory = JSON.parse(localStorage.getItem(key) || 'null');
 
   if (!inventory) {
-    inventory = [
-      { id: 'MED_' + Date.now() + '_1', name: 'بانادول', category: 'مسكنات', price: 3000, stock: 50, icon: '💊', desc: 'مسكن للألم' },
-      { id: 'MED_' + Date.now() + '_2', name: 'فيتامين C', category: 'فيتامينات', price: 5000, stock: 30, icon: '🍊', desc: 'مكمل غذائي' },
-      { id: 'MED_' + Date.now() + '_3', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, stock: 5, icon: '💉', desc: 'مضاد حيوي' }
-    ];
+    inventory = [];
     saveInventory(inventory);
   }
 
   return inventory;
 }
-
 function saveInventory(inventory) {
   var key = getInventoryKey();
   localStorage.setItem(key, JSON.stringify(inventory));
