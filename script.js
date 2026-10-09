@@ -1055,10 +1055,15 @@ function goToDashboardByType() {
       loadOffers();
       loadPharmaciesForPatient();
       initPostsFeed();
+      
+      // ✅ إخفاء زر "إضافة عرض" للمريض
+      var addBtn = document.querySelector('.posts-feed-add-btn');
+      if (addBtn) {
+        addBtn.style.display = 'none';  // إخفاء للمريض
+      }
     }, 100);
   }
 }
-
 // ============================================
 // 👤 تحديث اسم المستخدم
 // ============================================
