@@ -3596,38 +3596,20 @@ function addPharmacyMarkers() {
     }
   }
 }
-
 function loadNearbyOrders() {
   var listEl = document.getElementById('nearbyOrdersList');
   var countEl = document.getElementById('nearbyCount');
   if (!listEl) return;
 
-  var nearbyOrders = [
-    { id: 1234, name: 'أحمد علي', pharmacy: 'صيدلية النور', distance: '2.5 كم', commission: 3000, lat: 33.3000, lng: 44.4000 },
-    { id: 1235, name: 'سارة محمد', pharmacy: 'صيدلية الحياة', distance: '3.2 كم', commission: 4000, lat: 33.2800, lng: 44.3800 },
-    { id: 1236, name: 'علي حسن', pharmacy: 'صيدلية الشفاء', distance: '4.1 كم', commission: 5000, lat: 33.3300, lng: 44.3500 }
-  ];
+  if (countEl) countEl.textContent = '0';
 
-  if (countEl) countEl.textContent = nearbyOrders.length;
-
-  var html = '';
-  nearbyOrders.forEach(function (order) {
-    html +=
-      '<div class="nearby-order-card" onclick="focusOnOrder(' + order.lat + ',' + order.lng + ', ' + order.id + ')">' +
-        '<div class="nearby-order-icon">📦</div>' +
-        '<div class="nearby-order-info">' +
-          '<h4 class="nearby-order-name">طلب #' + order.id + ' - ' + order.name + '</h4>' +
-          '<div class="nearby-order-meta">' +
-            '<span>📍 ' + order.distance + '</span>' +
-            '<span>💰 ' + order.commission.toLocaleString() + ' د</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-  });
-
-  listEl.innerHTML = html;
+  listEl.innerHTML =
+    '<div class="cart-empty">' +
+      '<div class="cart-empty-icon">📦</div>' +
+      '<h3>لا توجد طلبات قريبة</h3>' +
+      '<p>ستظهر هنا الطلبات القريبة منك</p>' +
+    '</div>';
 }
-
 function focusOnOrder(lat, lng, orderId) {
   if (!mainMap) return;
   mainMap.setView([lat, lng], 16);
