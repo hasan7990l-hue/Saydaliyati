@@ -175,21 +175,13 @@ async function loadPharmaciesFromFirestore() {
     return loadPharmaciesFromLocal();
   }
 }
-
 function loadPharmaciesFromLocal() {
   try {
     var local = JSON.parse(localStorage.getItem('saydaliyati_pharmacies_cache') || '[]');
     if (local.length > 0) return local;
   } catch (e) {}
-
-  // Fallback — بيانات تجريبية
-  return [
-    { id: 'demo1', name: 'صيدلية النور', owner: 'د. أحمد', phone: '07701111111', address: 'بغداد - الكرادة', rating: 4.8, logo: 'ص', color: 'green', deliveryTime: '30 دقيقة', lat: 33.3000, lng: 44.4000, active: true },
-    { id: 'demo2', name: 'صيدلية الحياة', owner: 'د. سارة', phone: '07702222222', address: 'بغداد - الجادرية', rating: 4.6, logo: 'ح', color: 'blue', deliveryTime: '45 دقيقة', lat: 33.2800, lng: 44.3800, active: true },
-    { id: 'demo3', name: 'صيدلية الشفاء', owner: 'د. علي', phone: '07703333333', address: 'بغداد - الكاظمية', rating: 4.9, logo: 'ش', color: 'purple', deliveryTime: '20 دقيقة', lat: 33.3300, lng: 44.3500, active: true }
-  ];
+  return [];
 }
-
 async function loadPharmaciesForPatient() {
   console.log('🔄 loadPharmaciesForPatient...');
 
