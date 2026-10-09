@@ -1187,6 +1187,14 @@ async function goToMyOrders() {
     if (titleEl) titleEl.textContent = 'طلباتي الذكية';
     if (subtitleEl) subtitleEl.textContent = 'ترتيب تلقائي حسب الأولوية';
     if (deliveryContent) deliveryContent.style.display = 'block';
+
+    // جلب الطلبات من Firestore + عرض النظام الذكي
+    if (isFirebaseReady()) {
+      var deliveryOrders = await loadDeliveryOrdersFromFirestore();
+      renderAiSuggestion(deliveryOrders);
+    } else {
+      renderAiSuggestion([]);
+    }
   } else if (userType === 'pharmacy') {
     if (titleEl) titleEl.textContent = 'الطلبات الواردة';
     if (subtitleEl) subtitleEl.textContent = 'إدارة طلبات المرضى';
