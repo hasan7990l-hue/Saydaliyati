@@ -848,56 +848,36 @@
   </div>
 </div>
   <!-- 🧑 قسم المريض -->
-  <div id="patientOrdersContent" style="display:none;">
-    <div class="section-header">
-      <h3>الطلب الحالي</h3>
-    </div>
+<div id="patientOrdersContent" style="display:none;">
+  <div class="section-header">
+    <h3>الطلب الحالي</h3>
+  </div>
 
-    <div class="order-card active-order">
-      <div class="order-top">
-        <span class="order-id">طلب #1234</span>
-        <span class="order-status new">في الطريق 🚴</span>
-      </div>
-      <div class="order-info">
-        <p><strong>الصيدلية:</strong> صيدلية النور</p>
-        <p><strong>الأدوية:</strong> بانادول، فايتامين C</p>
-        <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-        <p><strong>الوقت المتوقع:</strong> 15 دقيقة</p>
-        <p><strong>المندوب:</strong> أحمد محمد ⭐ 4.9</p>
-      </div>
-      <div class="order-actions">
-        <button class="btn-accept full" onclick="trackDeliveryOnMap('أحمد محمد', 33.3000, 44.4000)">📍 تتبع المندوب على الخريطة</button>
-      </div>
-    </div>
-
-    <div class="section-header">
-      <h3>الطلبات السابقة</h3>
-    </div>
-
-    <div class="order-list">
-      <div class="order-card">
-        <div class="order-top">
-          <span class="order-id">طلب #1220</span>
-          <span class="order-status available">تم التسليم ✓</span>
-        </div>
-        <div class="order-info">
-          <p><strong>الصيدلية:</strong> صيدلية الحياة</p>
-          <p><strong>المندوب:</strong> أحمد محمد</p>
-          <p><strong>التاريخ:</strong> 2026/9/28</p>
-          <p><strong>الإجمالي:</strong> <span class="price">15,000</span> دينار</p>
-        </div>
-        <div class="order-actions">
-          <button class="btn-accept" onclick="openRatingModal('صيدلية الحياة', 'pharmacy', '1220')">⭐ قيّم الصيدلية</button>
-          <button class="btn-reject" onclick="openRatingModal('أحمد محمد', 'delivery', '1220')">⭐ قيّم المندوب</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="summary-bar">
-      <span>إجمالي طلباتك: 12</span>
-      <span>هذا الشهر: 3 طلبات</span>
+  <div id="patientActiveOrder">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📦</div>
+      <h3>لا يوجد طلب حالي</h3>
+      <p>اطلب من إحدى الصيدليات لتظهر طلباتك هنا</p>
     </div>
   </div>
+
+  <div class="section-header">
+    <h3>الطلبات السابقة</h3>
+  </div>
+
+  <div class="order-list" id="patientPastOrdersList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📋</div>
+      <h3>لا توجد طلبات سابقة</h3>
+      <p>ستظهر هنا طلباتك السابقة</p>
+    </div>
+  </div>
+
+  <div class="summary-bar" id="patientSummaryBar">
+    <span>إجمالي طلباتك: <span id="patientTotalOrders">0</span></span>
+    <span>هذا الشهر: <span id="patientMonthOrders">0</span> طلبات</span>
+  </div>
+</div>
    <!-- 🏪 قسم الصيدلية -->
 <div id="pharmacyOrdersContent" style="display:none;">
   <div class="filter-tabs">
