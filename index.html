@@ -7,21 +7,17 @@
   <meta name="description" content="توصيل طبي - منصة عراقية لتوصيل الأدوية من الصيدليات إلى بابك">
   <title>توصيل طبي - صحتك أولويتنا</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-  <!-- PWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -492,7 +488,7 @@
     </div>
   </div>
   <!-- ============================================
-     🏠 الصفحة الرئيسية (مع العروض الجديدة)
+     🏠 الصفحة الرئيسية
      ============================================ -->
 <div class="screen" id="homeScreen">
   <div class="home-header">
@@ -502,7 +498,7 @@
     </div>
   </div>
 
-  <!-- 📢 قسم العروض (Feed) -->
+  <!-- 📢 قسم العروض -->
   <div class="posts-feed-header">
     <div class="posts-feed-title">
       <span class="posts-feed-badge">CYBER<span>RX</span></span>
@@ -589,6 +585,7 @@
     <div style="text-align:center;padding:20px;color:var(--text-muted);">⏳ جاري التحميل...</div>
   </div>
 </div>
+
 <!-- ============================================
      🏪 لوحة الصيدلية
      ============================================ -->
@@ -686,8 +683,9 @@
       <p>ستظهر هنا الطلبات الواردة</p>
     </div>
   </div>
-  </div>
-   <!-- ============================================
+</div>
+
+<!-- ============================================
      🚴 لوحة الدليفري (الرادار)
      ============================================ -->
 <div class="screen" id="deliveryDashboard">
@@ -757,6 +755,7 @@
     </div>
   </div>
 </div>
+
 <!-- ============================================
      📋 صفحة طلباتي (ديناميكية)
      ============================================ -->
@@ -766,124 +765,129 @@
   </div>
   <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
   <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
-<!-- 🚴 قسم المندوب -->
-<div id="deliveryOrdersContent" style="display:none;">
-  <div class="ai-suggestion-card" id="aiSuggestionCard" style="display:none;">
-    <div class="ai-header">
-      <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
-    </div>
-    <div class="ai-network">
-      <div class="ai-brain">
-        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-          <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-        </svg>
+
+  <!-- 🚴 قسم المندوب -->
+  <div id="deliveryOrdersContent" style="display:none;">
+    <div class="ai-suggestion-card" id="aiSuggestionCard" style="display:none;">
+      <div class="ai-header">
+        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
       </div>
-      <div class="ai-nodes">
-        <span></span><span></span><span></span>
-        <span></span><span></span><span></span>
-        <span></span><span></span><span></span>
+      <div class="ai-network">
+        <div class="ai-brain">
+          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+          </svg>
+        </div>
+        <div class="ai-nodes">
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="ai-content">
+        <h3>اقتراح ذكي</h3>
+        <p>ابدأ بطلب <span class="highlight" id="aiSuggestedOrderId">-</span></p>
+        <p class="ai-sub">الأقرب والأعلى عمولة</p>
+      </div>
+      <div class="ai-score">
+        <span id="aiSuggestedScore">0.0</span>
+        <small>/10</small>
+      </div>
+      <button class="ai-start-btn" onclick="startAiSuggestedOrder()">ابدأ الآن ←</button>
+    </div>
+
+    <div class="priority-list" id="deliveryPriorityList">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">📦</div>
+        <h3>لا توجد طلبات متاحة</h3>
+        <p>شغّل الرادار لاستقبال الطلبات</p>
       </div>
     </div>
-    <div class="ai-content">
-      <h3>اقتراح ذكي</h3>
-      <p>ابدأ بطلب <span class="highlight" id="aiSuggestedOrderId">-</span></p>
-      <p class="ai-sub">الأقرب والأعلى عمولة</p>
+
+    <div class="summary-bar" id="deliverySummaryBar" style="display:none;">
+      <span id="deliverySummaryCount">0 طلبات</span>
+      <span id="deliverySummaryEarnings">0 دينار</span>
     </div>
-    <div class="ai-score">
-      <span id="aiSuggestedScore">0.0</span>
-      <small>/10</small>
-    </div>
-    <button class="ai-start-btn" onclick="startAiSuggestedOrder()">ابدأ الآن ←</button>
   </div>
 
-  <div class="priority-list" id="deliveryPriorityList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📦</div>
-      <h3>لا توجد طلبات متاحة</h3>
-      <p>شغّل الرادار لاستقبال الطلبات</p>
-    </div>
-  </div>
-
-  <div class="summary-bar" id="deliverySummaryBar" style="display:none;">
-    <span id="deliverySummaryCount">0 طلبات</span>
-    <span id="deliverySummaryEarnings">0 دينار</span>
-  </div>
-</div>
   <!-- 🧑 قسم المريض -->
-<div id="patientOrdersContent" style="display:none;">
-  <div class="section-header">
-    <h3>الطلب الحالي</h3>
-  </div>
+  <div id="patientOrdersContent" style="display:none;">
+    <div class="section-header">
+      <h3>الطلب الحالي</h3>
+    </div>
 
-  <div id="patientActiveOrder">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📦</div>
-      <h3>لا يوجد طلب حالي</h3>
-      <p>اطلب من إحدى الصيدليات لتظهر طلباتك هنا</p>
+    <div id="patientActiveOrder">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">📦</div>
+        <h3>لا يوجد طلب حالي</h3>
+        <p>اطلب من إحدى الصيدليات لتظهر طلباتك هنا</p>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h3>الطلبات السابقة</h3>
+    </div>
+
+    <div class="order-list" id="patientPastOrdersList">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">📋</div>
+        <h3>لا توجد طلبات سابقة</h3>
+        <p>ستظهر هنا طلباتك السابقة</p>
+      </div>
+    </div>
+
+    <div class="summary-bar" id="patientSummaryBar">
+      <span>إجمالي طلباتك: <span id="patientTotalOrders">0</span></span>
+      <span>هذا الشهر: <span id="patientMonthOrders">0</span> طلبات</span>
     </div>
   </div>
 
-  <div class="section-header">
-    <h3>الطلبات السابقة</h3>
-  </div>
-
-  <div class="order-list" id="patientPastOrdersList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📋</div>
-      <h3>لا توجد طلبات سابقة</h3>
-      <p>ستظهر هنا طلباتك السابقة</p>
+  <!-- 🏪 قسم الصيدلية -->
+  <div id="pharmacyOrdersContent" style="display:none;">
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة</button>
+      <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
+      <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
     </div>
-  </div>
 
-  <div class="summary-bar" id="patientSummaryBar">
-    <span>إجمالي طلباتك: <span id="patientTotalOrders">0</span></span>
-    <span>هذا الشهر: <span id="patientMonthOrders">0</span> طلبات</span>
+    <div id="newPharmacyOrders">
+      <div class="order-list">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">💊</div>
+          <h3>لا توجد طلبات جديدة</h3>
+          <p>ستظهر هنا الطلبات الجديدة الواردة</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="acceptedPharmacyOrders" style="display:none;">
+      <div class="order-list">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🚴</div>
+          <h3>لا توجد طلبات مقبولة</h3>
+          <p>ستظهر هنا الطلبات قيد التوصيل</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="donePharmacyOrders" style="display:none;">
+      <div class="order-list">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">✓</div>
+          <h3>لا توجد طلبات مكتملة</h3>
+          <p>ستظهر هنا الطلبات المكتملة</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <span>اليوم: <span id="pharmacyTodayOrders">0</span> طلب</span>
+      <span>الإيرادات: <span id="pharmacyTodayRevenue">0</span> دينار</span>
+    </div>
   </div>
 </div>
-   <!-- 🏪 قسم الصيدلية -->
-<div id="pharmacyOrdersContent" style="display:none;">
-  <div class="filter-tabs">
-    <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة</button>
-    <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
-    <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
-  </div>
 
-  <div id="newPharmacyOrders">
-    <div class="order-list">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">💊</div>
-        <h3>لا توجد طلبات جديدة</h3>
-        <p>ستظهر هنا الطلبات الجديدة الواردة</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="acceptedPharmacyOrders" style="display:none;">
-    <div class="order-list">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">🚴</div>
-        <h3>لا توجد طلبات مقبولة</h3>
-        <p>ستظهر هنا الطلبات قيد التوصيل</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="donePharmacyOrders" style="display:none;">
-    <div class="order-list">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">✓</div>
-        <h3>لا توجد طلبات مكتملة</h3>
-        <p>ستظهر هنا الطلبات المكتملة</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="summary-bar">
-    <span>اليوم: <span id="pharmacyTodayOrders">0</span> طلب</span>
-    <span>الإيرادات: <span id="pharmacyTodayRevenue">0</span> دينار</span>
-  </div>
-</div>
 <!-- ============================================
      💊 صفحة إدارة المخزون
      ============================================ -->
@@ -918,7 +922,7 @@
     <span class="inventory-alert-icon">⚠️</span>
     <div>
       <h4>تنبيه المخزون</h4>
-      <p id="inventoryAlertText">3 أدوية تحتاج إعادة تعبئة</p>
+      <p id="inventoryAlertText">0 دواء يحتاج إعادة تعبئة</p>
     </div>
   </div>
 
@@ -946,8 +950,8 @@
       <p>اضغط "+ إضافة دواء" للبدء</p>
     </div>
   </div>
-</div>
-<!-- ============================================
+  </div>
+  <!-- ============================================
      📸 صفحة طلب بروشتة
      ============================================ -->
 <div class="screen" id="prescriptionScreen">
@@ -997,9 +1001,6 @@
       <label>صيدلية مفضلة (اختياري)</label>
       <select id="prescriptionPharmacy">
         <option value="">— دع النظام يختار الأقرب —</option>
-        <option value="صيدلية النور">صيدلية النور - الكرادة</option>
-        <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
-        <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
       </select>
     </div>
 
@@ -1053,9 +1054,6 @@
     <label>اختر الصيدلية *</label>
     <select id="cartPharmacySelect" onchange="onPharmacyChange()">
       <option value="">— اختر صيدلية —</option>
-      <option value="صيدلية النور">صيدلية النور - الكرادة</option>
-      <option value="صيدلية الحياة">صيدلية الحياة - الجادرية</option>
-      <option value="صيدلية الشفاء">صيدلية الشفاء - الكاظمية</option>
     </select>
   </div>
 
@@ -1127,7 +1125,8 @@
     <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">تأكيد الطلب</button>
   </div>
 </div>
-  <!-- ============================================
+
+<!-- ============================================
      📋 صفحة الطلبات (السجل)
      ============================================ -->
 <div class="screen" id="ordersScreen">
@@ -1150,6 +1149,7 @@
     </div>
   </div>
 </div>
+
 <!-- ============================================
      🔔 صفحة التنبيهات
      ============================================ -->
@@ -1719,8 +1719,8 @@
     <div class="tracking-delivery-card">
       <div class="tracking-delivery-avatar">🚴</div>
       <div class="tracking-delivery-info">
-        <h4 id="trackingDeliveryName">أحمد محمد</h4>
-        <p>⭐ 4.9 • دراجة نارية</p>
+        <h4 id="trackingDeliveryName">المندوب</h4>
+        <p>⭐ 5.0 • في الطريق</p>
       </div>
       <button class="tracking-call-btn" onclick="showToast('جارٍ الاتصال...')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1732,8 +1732,8 @@
       <div id="trackingMap"></div>
     </div>
     <div class="tracking-status">
-      <div class="tracking-status-row"><span>⏱️ الوقت المتوقع</span><strong id="trackingETA">15 دقيقة</strong></div>
-      <div class="tracking-status-row"><span>📍 المسافة المتبقية</span><strong id="trackingDistance">2.5 كم</strong></div>
+      <div class="tracking-status-row"><span>⏱️ الوقت المتوقع</span><strong id="trackingETA">--</strong></div>
+      <div class="tracking-status-row"><span>📍 المسافة المتبقية</span><strong id="trackingDistance">--</strong></div>
     </div>
   </div>
 
@@ -1744,7 +1744,7 @@
   <div class="nav-sheet" id="navSheet">
     <div class="nav-sheet-handle"></div>
     <h3 class="nav-sheet-title"><span>🧭</span> اختر كيف تريد الانتقال</h3>
-    <p class="nav-sheet-destination" id="navDestination">📍 الوجهة: صيدلية النور</p>
+    <p class="nav-sheet-destination" id="navDestination">📍 الوجهة</p>
     <div class="nav-sheet-options">
       <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
         <div class="nav-sheet-btn-text">
@@ -1780,13 +1780,13 @@
     <h3 class="nav-sheet-title"><span>📦</span> طلب جديد!</h3>
     <div class="order-card" style="margin-bottom: 16px; background: var(--primary-soft); border-color: var(--border);">
       <div class="order-top">
-        <span class="order-id">طلب #1234</span>
+        <span class="order-id" id="orderSheetId">طلب جديد</span>
         <span class="order-status new">جديد</span>
       </div>
-      <div class="order-info">
-        <p><strong>من:</strong> صيدلية النور - الكرادة</p>
-        <p><strong>إلى:</strong> الجادرية، شارع 62</p>
-        <p><strong>العمولة:</strong> <span class="price">3,000</span> دينار</p>
+      <div class="order-info" id="orderSheetInfo">
+        <p><strong>من:</strong> -</p>
+        <p><strong>إلى:</strong> -</p>
+        <p><strong>العمولة:</strong> <span class="price">-</span></p>
       </div>
     </div>
     <div style="display: flex; gap: 12px;">
@@ -2068,7 +2068,7 @@
         <div class="rating-target-info" id="ratingTargetInfo">
           <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
           <div>
-            <h4 id="ratingTargetName">صيدلية النور</h4>
+            <h4 id="ratingTargetName">صيدلية</h4>
             <p id="ratingTargetType">صيدلية</p>
           </div>
         </div>
@@ -2100,23 +2100,23 @@
   <div class="modal-overlay" id="orderDetailsModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="orderDetailsTitle">تفاصيل الطلب #1234</h3>
+        <h3 id="orderDetailsTitle">تفاصيل الطلب</h3>
         <button class="modal-close" onclick="closeOrderDetailsModal()">×</button>
       </div>
       <div class="modal-body">
         <div class="rating-target-info">
           <div class="rating-target-icon">📦</div>
           <div>
-            <h4 id="orderDetailsPharmacy">صيدلية النور</h4>
-            <p>صيدلية - الكرادة</p>
+            <h4 id="orderDetailsPharmacy">-</h4>
+            <p>صيدلية</p>
           </div>
         </div>
         <div class="product-modal-info">
-          <div class="product-modal-row"><span>📍 المسافة</span><strong id="orderDetailsDistance">2.5 كم</strong></div>
-          <div class="product-modal-row"><span>💰 العمولة</span><strong class="price" id="orderDetailsCommission">3,000 دينار</strong></div>
+          <div class="product-modal-row"><span>📍 المسافة</span><strong id="orderDetailsDistance">-</strong></div>
+          <div class="product-modal-row"><span>💰 العمولة</span><strong class="price" id="orderDetailsCommission">-</strong></div>
           <div class="product-modal-row"><span>⏱️ الوقت المقدر</span><strong>15 دقيقة</strong></div>
           <div class="product-modal-row"><span>💵 طريقة الدفع</span><strong>كاش</strong></div>
-          <div class="product-modal-row"><span>🏠 عنوان التسليم</span><strong>الجادرية - شارع 62</strong></div>
+          <div class="product-modal-row"><span>🏠 عنوان التسليم</span><strong id="orderDetailsAddress">-</strong></div>
         </div>
         <div style="display: flex; gap: 12px;">
           <button class="btn-accept" style="flex: 1; padding: 14px; font-size: 15px; font-weight: 800;" onclick="acceptOrderFromDetails()">✅ قبول الطلب</button>
@@ -2127,7 +2127,7 @@
   </div>
 
   <!-- ============================================
-       📱 الشريط السفلي
+       📱 الشريط السفلي (4 أزرار)
        ============================================ -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
     <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
@@ -2137,12 +2137,22 @@
       </svg>
       <small>الطلبات</small>
     </button>
+
+    <button class="nav-btn" data-tab="notifications" onclick="switchTab('notifications')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <small>التنبيهات</small>
+    </button>
+
     <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
       <div class="nav-center-icon">
         <span class="nav-cross">✚</span>
       </div>
       <small>الرئيسية</small>
     </button>
+
     <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/>
@@ -2178,7 +2188,6 @@
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    // تصدير إلى window
     window.firebaseApp = app;
     window.firebaseAuth = auth;
     window.firebaseDB = db;
@@ -2210,14 +2219,8 @@
     console.log('✅ Firebase تم تهيئته بنجاح');
   </script>
 
-  <!-- ============================================
-       🔗 Script الرئيسي
-       ============================================ -->
   <script src="script.js"></script>
 
-  <!-- ============================================
-       🔗 Service Worker + FCM
-       ============================================ -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
