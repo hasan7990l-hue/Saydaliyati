@@ -2199,29 +2199,9 @@ function getNotifIconHtml(type, read) {
     '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
   '</svg>';
 }
-
 function getDefaultNotifications(userType) {
-  if (userType === 'delivery') {
-    return [
-      { icon: '🚴', type: 'order', title: 'طلب جديد متاح', message: 'صيدلية النور - 2.5 كم - 3,000 دينار', time: 'الآن', read: false },
-      { icon: '💰', type: 'wallet', title: 'أرباح اليوم', message: '12,000 دينار من 12 طلب', time: 'قبل ساعة', read: false },
-      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 5 نجوم من أحمد علي', time: 'قبل 3 ساعات', read: true }
-    ];
-  } else if (userType === 'pharmacy') {
-    return [
-      { icon: '💊', type: 'order', title: 'طلب جديد وارد', message: 'أحمد علي - 23,000 دينار', time: 'الآن', read: false },
-      { icon: '⚠️', type: 'stock', title: 'تنبيه المخزون', message: '3 أدوية قاربت على الانتهاء', time: 'قبل ساعة', read: false },
-      { icon: '⭐', type: 'rating', title: 'تقييم جديد', message: 'حصلت على 4.8 من سارة محمد', time: 'قبل 3 ساعات', read: true }
-    ];
-  } else {
-    return [
-      { icon: '✅', type: 'order', title: 'تم قبول طلبك', message: 'صيدلية النور قبلت طلبك #1234', time: 'الآن', read: false },
-      { icon: '🚴', type: 'order', title: 'المندوب في الطريق', message: 'أحمد محمد سيصل خلال 15 دقيقة', time: 'قبل 5 دقائق', read: false },
-      { icon: '🎉', type: 'rating', title: 'تم توصيل طلبك', message: 'طلب #1220 وصل بأمان', time: 'قبل 3 أيام', read: true }
-    ];
-  }
+  return [];
 }
-
 // ============================================
 // 🔔 التنبيهات الداخلية
 // ============================================
