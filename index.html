@@ -589,19 +589,18 @@
     <div style="text-align:center;padding:20px;color:var(--text-muted);">⏳ جاري التحميل...</div>
   </div>
 </div>
-
 <!-- ============================================
      🏪 لوحة الصيدلية
      ============================================ -->
 <div class="screen" id="pharmacyDashboard">
   <div class="home-header">
     <div class="greeting-section">
-      <h1 class="greeting-title">أهلاً بك يا <span id="pharmacyGreeting">صيدلية النور</span></h1>
+      <h1 class="greeting-title">أهلاً بك يا <span id="pharmacyGreeting">صيدلية</span></h1>
       <p class="greeting-sub">إدارة صيدليتك اليوم</p>
     </div>
   </div>
 
-  <div class="alert-banner">
+  <div class="alert-banner" id="pharmacyAlertBanner" style="display:none;">
     <div class="alert-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -610,8 +609,8 @@
       </svg>
     </div>
     <div class="alert-content">
-      <h4>رسالة مهمة</h4>
-      <p>يوجد 3 أدوية قاربت على الانتهاء - راجع المخزون</p>
+      <h4>تنبيه المخزون</h4>
+      <p id="pharmacyAlertText">يوجد أدوية قاربت على الانتهاء</p>
     </div>
     <button class="alert-action" onclick="openInventoryScreen()">عرض</button>
   </div>
@@ -642,7 +641,7 @@
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
         </svg>
       </div>
-      <span class="stat-num">12</span>
+      <span class="stat-num" id="pharmacyNewOrdersCount">0</span>
       <span class="stat-label">طلبات جديدة</span>
     </div>
     <div class="stat-card">
@@ -651,7 +650,7 @@
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       </div>
-      <span class="stat-num">45</span>
+      <span class="stat-num" id="pharmacyDoneTodayCount">0</span>
       <span class="stat-label">مكتملة اليوم</span>
     </div>
     <div class="stat-card">
@@ -661,7 +660,7 @@
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
       </div>
-      <span class="stat-num">250K</span>
+      <span class="stat-num" id="pharmacyTodayRevenueStat">0</span>
       <span class="stat-label">دينار اليوم</span>
     </div>
     <div class="stat-card">
@@ -670,7 +669,7 @@
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
       </div>
-      <span class="stat-num">4.8</span>
+      <span class="stat-num" id="pharmacyRatingStat">0.0</span>
       <span class="stat-label">تقييم</span>
     </div>
   </div>
@@ -680,25 +679,14 @@
     <a href="#" onclick="goToMyOrders(); return false;">عرض الكل</a>
   </div>
 
-  <div class="order-list">
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب رقم #1234</span>
-        <span class="order-status new">جديد</span>
-      </div>
-      <div class="order-info">
-        <p><strong>العميل:</strong> أحمد علي</p>
-        <p><strong>الأدوية:</strong> 3 أدوية</p>
-        <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-      </div>
-      <div class="order-actions">
-        <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
-        <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
-      </div>
+  <div class="order-list" id="pharmacyDashboardOrdersList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">💊</div>
+      <h3>لا توجد طلبات جديدة</h3>
+      <p>ستظهر هنا الطلبات الواردة</p>
     </div>
   </div>
-</div>
-
+  </div>
 <!-- ============================================
      🚴 لوحة الدليفري (الرادار)
      ============================================ -->
