@@ -2470,22 +2470,7 @@ async function submitPrescription(event) {
 // ============================================
 // 🛒 نظام سلة التسوق
 // ============================================
-var PHARMACY_INVENTORY = {
-  'صيدلية النور': [
-    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3000, icon: '💊', stock: 50, desc: 'مسكن للألم وخافض للحرارة' },
-    { id: 'P002', name: 'فيتامين C', category: 'فيتامينات', price: 5000, icon: '🍊', stock: 30, desc: 'مكمل غذائي لتقوية المناعة' },
-    { id: 'P003', name: 'أموكسيسيلين', category: 'مضاد حيوي', price: 8000, icon: '💉', stock: 15, desc: 'مضاد حيوي واسع الطيف' }
-  ],
-  'صيدلية الحياة': [
-    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3500, icon: '💊', stock: 60, desc: 'مسكن للألم' },
-    { id: 'P004', name: 'فيتامين D', category: 'فيتامينات', price: 6000, icon: '🌿', stock: 25, desc: 'مكمل للعظام' }
-  ],
-  'صيدلية الشفاء': [
-    { id: 'P001', name: 'بانادول', category: 'مسكنات', price: 3200, icon: '💊', stock: 40, desc: 'مسكن' },
-    { id: 'P005', name: 'شراب كحة', category: 'جهاز هضمي', price: 4500, icon: '🧴', stock: 20, desc: 'شراب للكحة' }
-  ]
-};
-
+var PHARMACY_INVENTORY = {};
 var cart = [];
 var currentModalProduct = null;
 var modalQuantity = 1;
