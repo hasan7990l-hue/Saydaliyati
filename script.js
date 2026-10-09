@@ -4078,7 +4078,24 @@ document.addEventListener('gesturestart', function(e) {
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
   console.log('توصيل طبي جاهز');
-  
+  // ✅ إظهار/إخفاء زر "إضافة عرض" حسب نوع المستخدم
+var currentUserStr = localStorage.getItem('saydaliyati_current_user');
+var addPostBtn = document.querySelector('.posts-feed-add-btn');
+
+if (addPostBtn && currentUserStr) {
+  try {
+    var currentUser = JSON.parse(currentUserStr);
+    if (currentUser.type === 'pharmacy') {
+      addPostBtn.style.display = 'flex';
+    } else {
+      addPostBtn.style.display = 'none';
+    }
+  } catch(e) {
+    addPostBtn.style.display = 'none';
+  }
+} else if (addPostBtn) {
+  addPostBtn.style.display = 'none';
+}
   loadTheme();
   setTimeout(createSplashParticles, 100);
   
