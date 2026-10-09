@@ -803,94 +803,50 @@
   </div>
   <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
   <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
-
-  <!-- 🚴 قسم المندوب -->
-  <div id="deliveryOrdersContent" style="display:none;">
-    <div class="ai-suggestion-card">
-      <div class="ai-header">
-        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
-      </div>
-      <div class="ai-network">
-        <div class="ai-brain">
-          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-          </svg>
-        </div>
-        <div class="ai-nodes">
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <div class="ai-content">
-        <h3>اقتراح ذكي</h3>
-        <p>ابدأ بطلب <span class="highlight">#1234</span></p>
-        <p class="ai-sub">الأقرب والأعلى عمولة</p>
-      </div>
-      <div class="ai-score">
-        <span>9.5</span>
-        <small>/10</small>
-      </div>
-      <button class="ai-start-btn" onclick="startOrder(1234)">ابدأ الآن ←</button>
+<!-- 🚴 قسم المندوب -->
+<div id="deliveryOrdersContent" style="display:none;">
+  <div class="ai-suggestion-card" id="aiSuggestionCard" style="display:none;">
+    <div class="ai-header">
+      <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
     </div>
-
-    <div class="priority-list">
-      <div class="priority-card priority-1">
-        <div class="priority-header">
-          <span class="priority-rank">🥇 الأولوية القصوى</span>
-          <span class="priority-id">طلب #1234</span>
-        </div>
-        <div class="priority-pharmacy">صيدلية النور</div>
-        <div class="priority-info">
-          <span>📍 2.5 كم</span>
-          <span>💰 3,000 دينار</span>
-        </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 9.5/10</span>
-          <button class="priority-btn green" onclick="startOrder(1234)">توصيل الآن</button>
-        </div>
+    <div class="ai-network">
+      <div class="ai-brain">
+        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+          <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+        </svg>
       </div>
-
-      <div class="priority-card priority-2">
-        <div class="priority-header">
-          <span class="priority-rank">🥈 أولوية متوسطة</span>
-          <span class="priority-id">طلب #1235</span>
-        </div>
-        <div class="priority-pharmacy">صيدلية الحياة</div>
-        <div class="priority-info">
-          <span>📍 3.2 كم</span>
-          <span>💰 4,000 دينار</span>
-        </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 7.5/10</span>
-          <button class="priority-btn yellow" onclick="startOrder(1235)">عرض</button>
-        </div>
-      </div>
-
-      <div class="priority-card priority-3">
-        <div class="priority-header">
-          <span class="priority-rank">🥉 أولوية منخفضة</span>
-          <span class="priority-id">طلب #1236</span>
-        </div>
-        <div class="priority-pharmacy">صيدلية الشفاء</div>
-        <div class="priority-info">
-          <span>📍 4.1 كم</span>
-          <span>💰 5,000 دينار</span>
-        </div>
-        <div class="priority-footer">
-          <span class="priority-score">Score: 5.5/10</span>
-          <button class="priority-btn gray" onclick="startOrder(1236)">عرض</button>
-        </div>
+      <div class="ai-nodes">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
       </div>
     </div>
+    <div class="ai-content">
+      <h3>اقتراح ذكي</h3>
+      <p>ابدأ بطلب <span class="highlight" id="aiSuggestedOrderId">-</span></p>
+      <p class="ai-sub">الأقرب والأعلى عمولة</p>
+    </div>
+    <div class="ai-score">
+      <span id="aiSuggestedScore">0.0</span>
+      <small>/10</small>
+    </div>
+    <button class="ai-start-btn" onclick="startAiSuggestedOrder()">ابدأ الآن ←</button>
+  </div>
 
-    <div class="summary-bar">
-      <span>3 طلبات - إجمالي 12,000 دينار</span>
-      <span>الوقت المقدر: 45 دقيقة</span>
+  <div class="priority-list" id="deliveryPriorityList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📦</div>
+      <h3>لا توجد طلبات متاحة</h3>
+      <p>شغّل الرادار لاستقبال الطلبات</p>
     </div>
   </div>
 
+  <div class="summary-bar" id="deliverySummaryBar" style="display:none;">
+    <span id="deliverySummaryCount">0 طلبات</span>
+    <span id="deliverySummaryEarnings">0 دينار</span>
+  </div>
+</div>
   <!-- 🧑 قسم المريض -->
   <div id="patientOrdersContent" style="display:none;">
     <div class="section-header">
