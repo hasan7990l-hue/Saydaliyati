@@ -1207,6 +1207,136 @@ async function goToMyOrders() {
   var ordersBtn = document.querySelector('.nav-btn[data-tab="orders"]');
   if (ordersBtn) ordersBtn.classList.add('active');
 }
+// ============================================
+// 📦 دالة جلب طلبات المندوب من Firestore
+// ============================================
+async function loadDeliveryOrdersFromFirestore() {
+  if (!isFirebaseReady()) {
+    console.warn('⚠️ Firestore غير جاهز');
+    return [];
+  }
+  try {
+    var q = window.firebaseQuery(
+      window.firebaseCollection(window.firebaseDB, 'orders'),
+      window.firebaseWhere('status', '==', 'pending')
+    );
+    var snap = await window.firebaseGetDocs(q);
+    var orders = [];
+    snap.forEach(function (doc) {
+      orders.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+    console.log('✅ تم جلب', orders.length, 'طلب متاح للمندوب');
+    return orders;
+  } catch (e) {
+    console.error('❌ خطأ جلب الطلبات:', e);
+    return [];
+  }
+}
+// ============================================
+// 🧠 عرض الاقتراح الذكي + قائمة الأولويات
+// ============================================
+function renderAiSuggestion(orders) {
+  var card = document.getElementById('aiSuggestionCard');
+  var priorityList = document.getElementById('deliveryPriorityList');
+  var summaryBar = document.getElementById('deliverySummaryBar');
+
+  if (!orders || orders.length === 0) {
+    if (card) card.style.display = 'none';
+    if (summaryBar) summaryBar.style.display = 'none';
+    if (priorityList) {
+      priorityList.innerHTML =
+        '<div class="cart-empty">' +
+          '<div class="cart-empty-icon">📦</div>' +
+          '<h3>لا توجد طلبات متاحة</h3>' +
+          '<p>شغّل الرادار لاستقبال الطلبات</p>' +
+        '</div>';
+    }
+    return;
+  }
+
+  // احسب score لكل طلب
+  orders.forEach(function (o) {
+    var commission = o.commission || o.total || 3000;
+    var distance = parseFloat(o.distance) || 3;
+    var itemsCount = (o.items || []).length || 1;
+    o._score = ((commission / distance) * (1 + itemsCount * 0.1)) / 1000;
+  });
+
+  // رتب حسب الـ score (تنازلي)
+  orders.sort(function (a, b) { return b._score - a._score; });
+
+  var best = orders[0];
+
+  // عرض البطاقة الذكية
+  if (card) {
+    var idEl = document.getElementById('aiSuggestedOrderId');
+    var scoreEl = document.getElementById('aiSuggestedScore');
+    if (idEl) idEl.textContent = '#' + best.id;
+    if (scoreEl) scoreEl.textContent = best._score.toFixed(1);
+    card.style.display = 'block';
+  }
+
+  // عرض قائمة الأولويات
+  if (priorityList) {
+    var html = '';
+    orders.forEach(function (o, i) {
+      var rank = i === 0 ? '🥇 الأولوية القصوى' :
+                 i === 1 ? '🥈 أولوية متوسطة' :
+                 '🥉 أولوية منخفضة';
+      var priorityClass = i === 0 ? 'priority-1' :
+                          i === 1 ? 'priority-2' : 'priority-3';
+      var commission = o.commission || o.total || 0;
+      var distance = o.distance || '3';
+
+      html +=
+        '<div class="priority-card ' + priorityClass + '">' +
+          '<div class="priority-header">' +
+            '<span class="priority-rank">' + rank + '</span>' +
+            '<span class="priority-id">طلب #' + o.id + '</span>' +
+          '</div>' +
+          '<div class="priority-pharmacy">' + (o.pharmacy || '-') + '</div>' +
+          '<div class="priority-info">' +
+            '<span>📍 ' + distance + ' كم</span>' +
+            '<span>💰 ' + commission.toLocaleString() + ' دينار</span>' +
+          '</div>' +
+          '<div class="priority-footer">' +
+            '<span class="priority-score">Score: ' + o._score.toFixed(1) + '/10</span>' +
+            '<button class="priority-btn green" onclick="startOrder(\'' + o.id + '\')">توصيل الآن</button>' +
+          '</div>' +
+        '</div>';
+    });
+    priorityList.innerHTML = html;
+  }
+
+  // Summary Bar
+  if (summaryBar) {
+    var totalEarnings = orders.reduce(function (s, o) {
+      return s + (o.commission || o.total || 0);
+    }, 0);
+    var countEl = document.getElementById('deliverySummaryCount');
+    var earnEl = document.getElementById('deliverySummaryEarnings');
+    if (countEl) countEl.textContent = orders.length + ' طلبات';
+    if (earnEl) earnEl.textContent = totalEarnings.toLocaleString() + ' دينار';
+    summaryBar.style.display = 'flex';
+  }
+}
+
+// ============================================
+// 🚀 بدء الطلب المقترح من البطاقة الذكية
+// ============================================
+function startAiSuggestedOrder() {
+  var idEl = document.getElementById('aiSuggestedOrderId');
+  if (!idEl) return;
+
+  var orderId = idEl.textContent;
+  if (!orderId || orderId === '-' || orderId === '') {
+    showToast('⚠️ لا يوجد طلب مقترح');
+    return;
+  }
+
+  orderId = orderId.replace('#', '').trim();
+  startOrder(orderId);
+}
 
 async function loadPatientOrdersIntoDOM() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
