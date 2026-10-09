@@ -1127,8 +1127,7 @@
     <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">تأكيد الطلب</button>
   </div>
 </div>
-
-<!-- ============================================
+  <!-- ============================================
      📋 صفحة الطلبات (السجل)
      ============================================ -->
 <div class="screen" id="ordersScreen">
@@ -1143,21 +1142,14 @@
     <button class="filter-tab">المكتملة</button>
   </div>
 
-  <div class="order-list">
-    <div class="order-card">
-      <div class="order-top">
-        <span class="order-id">طلب رقم #1234</span>
-        <span class="order-status available">مكتمل</span>
-      </div>
-      <div class="order-info">
-        <p><strong>التاريخ:</strong> 2026/10/2</p>
-        <p><strong>الأدوية:</strong> 3 أدوية</p>
-        <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-      </div>
+  <div class="order-list" id="ordersHistoryList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📋</div>
+      <h3>لا توجد طلبات</h3>
+      <p>ستظهر هنا سجل طلباتك</p>
     </div>
   </div>
 </div>
-
 <!-- ============================================
      🔔 صفحة التنبيهات
      ============================================ -->
