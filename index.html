@@ -954,76 +954,49 @@
       <span>هذا الشهر: 3 طلبات</span>
     </div>
   </div>
+   <!-- 🏪 قسم الصيدلية -->
+<div id="pharmacyOrdersContent" style="display:none;">
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة</button>
+    <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
+    <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
+  </div>
 
-  <!-- 🏪 قسم الصيدلية -->
-  <div id="pharmacyOrdersContent" style="display:none;">
-    <div class="filter-tabs">
-      <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة (3)</button>
-      <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
-      <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
-    </div>
-
-    <div id="newPharmacyOrders">
-      <div class="order-list">
-        <div class="order-card">
-          <div class="order-top">
-            <span class="order-id">طلب #1234</span>
-            <span class="order-status new">جديد</span>
-          </div>
-          <div class="order-info">
-            <p><strong>المريض:</strong> أحمد علي</p>
-            <p><strong>الهاتف:</strong> 07701234567</p>
-            <p><strong>العنوان:</strong> الجادرية - شارع 62</p>
-            <p><strong>الأدوية:</strong> بانادول (2)، فايتامين C (1)</p>
-            <p><strong>الإجمالي:</strong> <span class="price">23,000</span> دينار</p>
-          </div>
-          <div class="order-actions">
-            <button class="btn-accept" onclick="acceptPharmacyOrder(1234)">قبول</button>
-            <button class="btn-reject" onclick="rejectPharmacyOrder(1234)">رفض</button>
-          </div>
-        </div>
+  <div id="newPharmacyOrders">
+    <div class="order-list">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">💊</div>
+        <h3>لا توجد طلبات جديدة</h3>
+        <p>ستظهر هنا الطلبات الجديدة الواردة</p>
       </div>
-    </div>
-
-    <div id="acceptedPharmacyOrders" style="display:none;">
-      <div class="order-list">
-        <div class="order-card">
-          <div class="order-top">
-            <span class="order-id">طلب #1230</span>
-            <span class="order-status available">مقبول — قيد التوصيل</span>
-          </div>
-          <div class="order-info">
-            <p><strong>المريض:</strong> علي حسن</p>
-            <p><strong>المندوب:</strong> أحمد محمد</p>
-            <p><strong>الإجمالي:</strong> <span class="price">12,000</span> دينار</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="donePharmacyOrders" style="display:none;">
-      <div class="order-list">
-        <div class="order-card">
-          <div class="order-top">
-            <span class="order-id">طلب #1200</span>
-            <span class="order-status available">تم التسليم ✓</span>
-          </div>
-          <div class="order-info">
-            <p><strong>المريض:</strong> فاطمة أحمد</p>
-            <p><strong>التاريخ:</strong> 2026/9/25</p>
-            <p><strong>الإجمالي:</strong> <span class="price">9,500</span> دينار</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="summary-bar">
-      <span>اليوم: 12 طلب</span>
-      <span>الإيرادات: 250,000 دينار</span>
     </div>
   </div>
-</div>
 
+  <div id="acceptedPharmacyOrders" style="display:none;">
+    <div class="order-list">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🚴</div>
+        <h3>لا توجد طلبات مقبولة</h3>
+        <p>ستظهر هنا الطلبات قيد التوصيل</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="donePharmacyOrders" style="display:none;">
+    <div class="order-list">
+      <div class="cart-empty">
+        <div class="cart-empty-icon">✓</div>
+        <h3>لا توجد طلبات مكتملة</h3>
+        <p>ستظهر هنا الطلبات المكتملة</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-bar">
+    <span>اليوم: <span id="pharmacyTodayOrders">0</span> طلب</span>
+    <span>الإيرادات: <span id="pharmacyTodayRevenue">0</span> دينار</span>
+  </div>
+</div>
 <!-- ============================================
      💊 صفحة إدارة المخزون
      ============================================ -->
