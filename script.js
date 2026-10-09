@@ -4319,7 +4319,54 @@ window.logout = async function () {
   stopRadarSystem();
   if (originalLogout) await originalLogout.apply(this, arguments);
 };
+// ============================================
+// 🛡️ منع تكرار الـ submit وإزالة overlays القديمة
+// ============================================
+document.addEventListener('DOMContentLoaded', function () {
+  // كل الفورمات في التطبيق
+  document.querySelectorAll('form').forEach(function (form) {
+    // احفظ الـ onsubmit القديم
+    var oldOnsubmit = form.onsubmit;
 
+    form.onsubmit = function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      // احذف أي overlay قديم قبل تنفيذ الـ handler
+      document.querySelectorAll('.success-overlay').forEach(function (el) { el.remove(); });
+
+      if (oldOnsubmit) {
+        try { oldOnsubmit.call(form, event); } catch (e) { console.error(e); }
+      }
+
+      return false;
+    };
+  });
+
+  // امنع أي submit افتراضي
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+  }, true);
+});
+
+// observer لإزالة أي success-overlay جديد يتراكم
+var successObserver = new MutationObserver(function (mutations) {
+  mutations.forEach(function (m) {
+    m.addedNodes.forEach(function (node) {
+      if (node.classList && node.classList.contains('success-overlay')) {
+        var all = document.querySelectorAll('.success-overlay');
+        // احتفظ بواحد فقط (الأخير)
+        for (var i = 0; i < all.length - 1; i++) {
+          all[i].remove();
+        }
+      }
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  successObserver.observe(document.body, { childList: true, subtree: true });
+});
 // ============================================
 // 🎉 نهاية script.js
 // ============================================
