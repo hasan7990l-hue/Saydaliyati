@@ -2836,8 +2836,12 @@ function openCartScreen() {
 
   renderCart();
   showScreen('cartScreen');
-}
 
+  // هيّئ الخريطة بعد ما تظهر الشاشة
+  setTimeout(function () {
+    initCartMap();
+  }, 300);
+}
 function onPharmacyChange() {
   var pharmacy = document.getElementById('cartPharmacySelect').value;
 
