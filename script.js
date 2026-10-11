@@ -2046,10 +2046,13 @@ async function handleAvatarUpload(event) {
   reader.onload = async function (e) {
     var imageData = e.target.result;
 
+    // اضغط الصورة وحوّلها لـ base64 صغير
+    var compressedImage = await compressImage(imageData, 400, 0.8);
+
     var avatarEl = document.getElementById('profileAvatar');
     if (avatarEl) {
       avatarEl.textContent = '';
-      avatarEl.style.backgroundImage = 'url(' + imageData + ')';
+      avatarEl.style.backgroundImage = 'url(' + compressedImage + ')';
       avatarEl.style.backgroundSize = 'cover';
       avatarEl.style.backgroundPosition = 'center';
     }
@@ -2057,23 +2060,13 @@ async function handleAvatarUpload(event) {
     var userStr = localStorage.getItem('saydaliyati_current_user');
     var user = userStr ? JSON.parse(userStr) : {};
 
-    var finalAvatar = imageData;
-    if (isFirebaseReady() && user.phone) {
-      try {
-        var path = 'avatars/' + user.phone + '_' + Date.now() + '.jpg';
-        finalAvatar = await uploadImageToStorage(imageData, path);
-      } catch (err) {
-        console.warn('⚠️ خطأ رفع الصورة:', err);
-      }
-    }
-
-    user.avatar = finalAvatar;
+    user.avatar = compressedImage;
     localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
 
     var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
     for (var i = 0; i < registrations.length; i++) {
       if (registrations[i].phone === user.phone) {
-        registrations[i].avatar = finalAvatar;
+        registrations[i].avatar = compressedImage;
         break;
       }
     }
@@ -2085,12 +2078,45 @@ async function handleAvatarUpload(event) {
 
     showToast('✅ تم تحديث الصورة');
 
-    // حدّث الدائرة في الرئيسية
     if (typeof updateUserName === 'function') {
       updateUserName();
     }
   };
   reader.readAsDataURL(file);
+}
+
+// ============================================
+// 🖼️ ضغط الصورة قبل الحفظ
+// ============================================
+function compressImage(base64, maxSize, quality) {
+  return new Promise(function (resolve) {
+    var img = new Image();
+    img.onload = function () {
+      var canvas = document.createElement('canvas');
+      var ratio = 1;
+
+      if (img.width > maxSize || img.height > maxSize) {
+        if (img.width > img.height) {
+          ratio = maxSize / img.width;
+        } else {
+          ratio = maxSize / img.height;
+        }
+      }
+
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      var compressed = canvas.toDataURL('image/jpeg', quality);
+      resolve(compressed);
+    };
+    img.onerror = function () {
+      resolve(base64);
+    };
+    img.src = base64;
+  });
 }
 // ============================================
 // ✏️ تعديل البيانات
