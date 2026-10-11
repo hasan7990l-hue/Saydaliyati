@@ -1545,6 +1545,23 @@ function updateUserName() {
 
     var deliveryGreeting = document.getElementById('deliveryGreeting');
     if (deliveryGreeting) deliveryGreeting.textContent = userName;
+
+    // عرض صورة الملف الشخصي في الصفحة الرئيسية
+    var homeAvatar = document.getElementById('homeAvatar');
+    var homeAvatarLetter = document.getElementById('homeAvatarLetter');
+
+    if (homeAvatar && homeAvatarLetter) {
+      if (user.avatar) {
+        homeAvatarLetter.textContent = '';
+        homeAvatar.style.backgroundImage = 'url(' + user.avatar + ')';
+        homeAvatar.style.backgroundSize = 'cover';
+        homeAvatar.style.backgroundPosition = 'center';
+      } else {
+        var letter = user.name ? user.name.charAt(0) : 'م';
+        homeAvatarLetter.textContent = letter;
+        homeAvatar.style.backgroundImage = '';
+      }
+    }
   } catch (e) {
     console.error('خطأ تحديث الاسم:', e);
   }
