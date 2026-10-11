@@ -2681,7 +2681,147 @@ var PHARMACY_INVENTORY = {};
 var cart = [];
 var currentModalProduct = null;
 var modalQuantity = 1;
+// ============================================
+// 🗺️ خريطة السلة — تحديد موقع المريض
+// ============================================
+var cartMap = null;
+var cartMarker = null;
+var cartUserLocation = null;
 
+function initCartMap() {
+  var mapEl = document.getElementById('cartMap');
+  if (!mapEl) return;
+  if (cartMap) return; // منع التكرار
+
+  var center = [33.3152, 44.3661]; // بغداد
+
+  cartMap = L.map('cartMap', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView(center, 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(cartMap);
+
+  // أيقونة المريض
+  var userIcon = L.divIcon({
+    className: 'custom-map-marker marker-me',
+    html: '<div class="custom-marker-pin"><span>📍</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+
+  cartMarker = L.marker(center, {
+    icon: userIcon,
+    draggable: true
+  }).addTo(cartMap);
+
+  cartMarker.on('dragend', function (e) {
+    var pos = e.target.getLatLng();
+    cartUserLocation = [pos.lat, pos.lng];
+    updateCartDistance();
+  });
+
+  cartMap.on('click', function (e) {
+    cartMarker.setLatLng(e.latlng);
+    cartUserLocation = [e.latlng.lat, e.latlng.lng];
+    updateCartDistance();
+  });
+}
+
+function getCartLocation() {
+  if (!navigator.geolocation) {
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
+
+  showToast('🔄 جاري تحديد موقعك...');
+
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      var loc = [position.coords.latitude, position.coords.longitude];
+      cartUserLocation = loc;
+
+      if (cartMap && cartMarker) {
+        cartMap.setView(loc, 16);
+        cartMarker.setLatLng(loc);
+      }
+
+      updateCartDistance();
+      showToast('✅ تم تحديد موقعك');
+    },
+    function (error) {
+      showToast('⚠️ تعذّر تحديد موقعك');
+      console.warn('خطأ GPS:', error);
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+async function updateCartDistance() {
+  if (!cartUserLocation) return;
+
+  var pharmacySelect = document.getElementById('cartPharmacySelect');
+  if (!pharmacySelect) return;
+
+  var pharmacyName = pharmacySelect.value;
+  if (!pharmacyName) {
+    showToast('⚠️ اختر صيدلية أولاً');
+    return;
+  }
+
+  // جلب إحداثيات الصيدلية من Firestore
+  var pharmacyLat = 33.3152;
+  var pharmacyLng = 44.3661;
+
+  if (isFirebaseReady()) {
+    try {
+      var pharmacies = await loadPharmaciesFromFirestore();
+      var pharmacy = pharmacies.find(function (p) {
+        return p.name === pharmacyName || p.id === pharmacyName;
+      });
+
+      if (pharmacy && pharmacy.lat && pharmacy.lng) {
+        pharmacyLat = pharmacy.lat;
+        pharmacyLng = pharmacy.lng;
+      }
+    } catch (e) {
+      console.warn('⚠️ خطأ جلب الصيدلية:', e);
+    }
+  }
+
+  // احسب المسافة + الأجرة
+  var fee = calculateDeliveryFeeFromLocations(
+    cartUserLocation[0],
+    cartUserLocation[1],
+    pharmacyLat,
+    pharmacyLng
+  );
+
+  // عرض المعلومات
+  var infoEl = document.getElementById('cartDistanceInfo');
+  var distEl = document.getElementById('cartDistanceValue');
+  var feeEl = document.getElementById('cartDeliveryFee');
+
+  if (infoEl) infoEl.style.display = 'flex';
+  if (distEl) distEl.textContent = fee.distance;
+  if (feeEl) feeEl.textContent = fee.total.toLocaleString();
+
+  // احفظ في localStorage للاستخدام في الطلب
+  localStorage.setItem('saydaliyati_cart_delivery', JSON.stringify(fee));
+
+  // حدّث ملخص السلة
+  var cartDeliveryEl = document.getElementById('cartDelivery');
+  if (cartDeliveryEl) {
+    cartDeliveryEl.textContent = fee.total.toLocaleString() + ' دينار';
+  }
+
+  // أعد حساب الإجمالي
+  if (typeof renderCart === 'function') {
+    renderCart();
+  }
+}
 function openCartScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   if (!userStr) { showToast('سجّل دخول أولاً'); return; }
