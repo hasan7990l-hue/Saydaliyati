@@ -2033,7 +2033,6 @@ function openImagePicker() {
   var input = document.getElementById('avatarInput');
   if (input) input.click();
 }
-
 async function handleAvatarUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
@@ -2058,7 +2057,6 @@ async function handleAvatarUpload(event) {
     var userStr = localStorage.getItem('saydaliyati_current_user');
     var user = userStr ? JSON.parse(userStr) : {};
 
-    // حاول رفع الصورة إلى Firebase Storage
     var finalAvatar = imageData;
     if (isFirebaseReady() && user.phone) {
       try {
@@ -2081,18 +2079,19 @@ async function handleAvatarUpload(event) {
     }
     localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
 
-    // حدّث Firestore
     if (isFirebaseReady()) {
-      try {
-        await saveUserToFirestore(user);
-      } catch (err) { console.warn('⚠️', err); }
+      try { await saveUserToFirestore(user); } catch (err) { console.warn('⚠️', err); }
     }
 
     showToast('✅ تم تحديث الصورة');
+
+    // حدّث الدائرة في الرئيسية
+    if (typeof updateUserName === 'function') {
+      updateUserName();
+    }
   };
   reader.readAsDataURL(file);
 }
-
 // ============================================
 // ✏️ تعديل البيانات
 // ============================================
