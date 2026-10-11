@@ -2868,6 +2868,10 @@ function onPharmacyChange() {
 
   renderProducts(pharmacy);
   renderCart();
+// حدّث المسافة والأجرة
+if (cartUserLocation) {
+  updateCartDistance();
+}
 }
 
 function renderProducts(pharmacy) {
