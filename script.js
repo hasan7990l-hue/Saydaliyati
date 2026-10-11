@@ -534,11 +534,11 @@ async function signInWithGoogleTest() {
     }
   }
 }
-
 async function signUpWithGoogleTest() {
-  showToast('🔄 جاري الاتصال بـ Google...');
+  console.log('🔄 بدء التسجيل بـ Google...');
 
-  if (!isFirebaseReady() || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
+  if (!window.firebaseAuth || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
+    console.error('❌ Firebase غير جاهز');
     showError('Firebase غير جاهز. حاول لاحقاً.');
     return;
   }
@@ -547,7 +547,10 @@ async function signUpWithGoogleTest() {
     var result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseProvider);
     var user = result.user;
 
+    console.log('✅ تم تسجيل الدخول:', user.uid);
+
     var userData = {
+      uid: user.uid,
       type: 'patient',
       name: user.displayName || 'مستخدم Google',
       phone: user.phoneNumber || '',
@@ -559,16 +562,28 @@ async function signUpWithGoogleTest() {
       date: new Date().toISOString()
     };
 
-    await saveUserToFirestore(userData);
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
-
-    // احفظ في local أيضاً
-    var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    var exists = registrations.some(function (r) { return r.email === userData.email; });
-    if (!exists) {
-      registrations.push(userData);
-      localStorage.setItem('saydaliyati_registrations', JSON.stringify(registrations));
+    // تحقق إذا المستخدم موجود مسبقاً
+    var existing = null;
+    try {
+      existing = await getUserFromFirestore(user.uid);
+    } catch (e) {
+      console.warn('⚠️ خطأ البحث:', e);
     }
+
+    if (existing) {
+      userData = Object.assign({}, userData, existing);
+      console.log('✅ المستخدم موجود مسبقاً');
+    } else {
+      console.log('📝 إنشاء حساب جديد');
+      saveRegistration(userData);
+      try {
+        await saveUserToFirestore(userData);
+      } catch (e) {
+        console.warn('⚠️ خطأ حفظ المستخدم:', e);
+      }
+    }
+
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
 
     playSuccessSound();
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -578,21 +593,23 @@ async function signUpWithGoogleTest() {
     setTimeout(function () {
       goToDashboardByType();
     }, 800);
+
   } catch (error) {
     console.error('❌ خطأ Google Sign-Up:', error);
 
     if (error.code === 'auth/popup-closed-by-user') {
       showToast('⚠️ تم إغلاق نافذة Google');
     } else if (error.code === 'auth/popup-blocked') {
-      showError('المتصفح منع النافذة المنبثقة.');
+      showError('المتصفح منع النافذة المنبثقة. اسمح بالنوافذ المنبثقة.');
     } else if (error.code === 'auth/unauthorized-domain') {
-      showError('النطاق غير مصرح به. أضف النطاق في Firebase Console.');
+      showError('النطاق غير مصرح. أضف saydaliyati-beryl.vercel.app في Firebase Console.');
+    } else if (error.code === 'auth/operation-not-allowed') {
+      showError('Google Sign-In غير مفعّل في Firebase');
     } else {
-      showError('فشل التسجيل: ' + error.message);
+      showError('فشل التسجيل: ' + (error.message || error.code));
     }
   }
 }
-
 async function signOutFromFirebase() {
   if (!window.firebaseAuth || !window.firebaseSignOut) return;
   try {
