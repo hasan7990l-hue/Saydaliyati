@@ -852,22 +852,23 @@ function createRegParticles(containerId) {
 // 💬 Toast + Errors
 // ============================================
 function showToast(message) {
+  // احذف أي toast قديم
+  document.querySelectorAll('.toast-message').forEach(function (t) { t.remove(); });
+
   var toast = document.createElement('div');
   toast.className = 'toast-message';
   toast.textContent = message;
   document.body.appendChild(toast);
 
   setTimeout(function () { toast.classList.add('show'); }, 50);
+
   setTimeout(function () {
     toast.classList.remove('show');
-    setTimeout(function () { toast.remove(); }, 300);
-  }, 2200);
+    setTimeout(function () { 
+      if (toast.parentNode) toast.remove(); 
+    }, 300);
+  }, 2500);
 }
-
-function showError(message) {
-  alert('تنبيه: ' + message);
-}
-
 // ============================================
 // 🎉 نهاية الجزء 1 من script.js
 // ============================================
