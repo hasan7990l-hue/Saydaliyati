@@ -1665,7 +1665,10 @@ async function logout() {
 // 📝 إرسال النماذج — Registration Forms
 // ============================================
 async function submitPatient(event) {
-  if (event) event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   var name = document.getElementById('patientName').value.trim();
   var phone = document.getElementById('patientPhone').value.trim();
@@ -1688,13 +1691,40 @@ async function submitPatient(event) {
     return;
   }
 
+  var authEmail = email || (phone + '@saydaliyati.app');
+  var uid = null;
+
+  if (window.firebaseAuth && window.firebaseCreateUser) {
+    try {
+      var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
+      uid = userCred.user.uid;
+      console.log('✅ تم إنشاء Firebase Auth:', uid);
+    } catch (authError) {
+      console.error('❌ خطأ Firebase Auth:', authError);
+      if (authError.code === 'auth/email-already-in-use') {
+        showError('رقم الهاتف أو البريد مسجل مسبقاً');
+      } else if (authError.code === 'auth/invalid-email') {
+        showError('البريد الإلكتروني غير صحيح');
+      } else if (authError.code === 'auth/weak-password') {
+        showError('كلمة المرور ضعيفة');
+      } else {
+        showError('فشل التسجيل: ' + authError.message);
+      }
+      return;
+    }
+  } else {
+    uid = 'local_' + phone + '_' + Date.now();
+    console.warn('⚠️ Firebase Auth غير جاهز — استخدام UID محلي');
+  }
+
   var user = {
+    uid: uid,
     type: 'patient',
     name: name,
     phone: phone,
     email: email,
     address: address,
-    password: password,
+    authEmail: authEmail,
     date: new Date().toISOString()
   };
 
@@ -1710,7 +1740,6 @@ async function submitPatient(event) {
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
-
 async function submitPharmacy(event) {
   if (event) event.preventDefault();
 
