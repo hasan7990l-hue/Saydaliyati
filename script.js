@@ -3073,17 +3073,26 @@ function removeFromCart(index) {
   updateCartBadge();
   showToast('تم الحذف من السلة');
 }
-
-function clearCart() {
+async function clearCart() {
   if (cart.length === 0) return;
-  if (!confirm('مسح جميع المنتجات من السلة؟')) return;
+
+  var confirmed = await showConfirm({
+    title: 'مسح السلة',
+    message: 'هل تريد مسح جميع المنتجات من السلة؟',
+    confirmText: 'نعم، امسح',
+    cancelText: 'إلغاء',
+    confirmColor: 'danger',
+    icon: '🗑️'
+  });
+
+  if (!confirmed) return;
+
   cart = [];
   saveCart();
   renderCart();
   updateCartBadge();
   showToast('تم مسح السلة');
 }
-
 function saveCart() {
   localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
 }
