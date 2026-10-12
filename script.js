@@ -1612,7 +1612,10 @@ function selectRole(role) {
 // 🔐 تسجيل الدخول — Firestore First
 // ============================================
 async function submitLogin(event) {
-  if (event) event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   var phone = document.getElementById('loginPhone').value.trim();
   var password = document.getElementById('loginPassword').value.trim();
@@ -1627,30 +1630,84 @@ async function submitLogin(event) {
     return;
   }
 
-  var user = null;
+  // جرّب كل الاحتمالات الممكنة للـ authEmail
+  var authEmails = [
+    phone + '@saydaliyati.app',      // مريض
+    phone + '@pharmacy.saydaliyati.app', // صيدلية
+    phone + '@driver.saydaliyati.app'  // مندوب
+  ];
 
-  // 1) حاول من Firestore
-  if (isFirebaseReady()) {
-    try {
-      user = await getUserFromFirestore(phone);
-    } catch (e) {
-      console.log('⚠️ خطأ البحث في Firestore:', e);
+  var user = null;
+  var authError = null;
+
+  // 1) جرّب Firebase Auth
+  if (window.firebaseAuth && window.firebaseSignIn) {
+    for (var i = 0; i < authEmails.length; i++) {
+      try {
+        var userCred = await window.firebaseSignIn(
+          window.firebaseAuth,
+          authEmails[i],
+          password
+        );
+        console.log('✅ تم تسجيل الدخول بـ Firebase Auth:', userCred.user.uid);
+
+        // جلب بيانات المستخدم من Firestore
+        if (isFirebaseReady()) {
+          try {
+            user = await getUserFromFirestore(userCred.user.uid);
+          } catch (e) {
+            console.warn('⚠️ خطأ جلب المستخدم:', e);
+          }
+        }
+
+        // إذا مو موجود في Firestore — استخدم Firebase Auth data
+        if (!user) {
+          user = {
+            uid: userCred.user.uid,
+            type: 'patient',
+            name: userCred.user.displayName || 'مستخدم',
+            phone: phone,
+            email: userCred.user.email || '',
+            authEmail: authEmails[i],
+            loginMethod: 'phone',
+            date: new Date().toISOString()
+          };
+        }
+
+        break; // نجح — اطلع من اللوب
+      } catch (err) {
+        authError = err;
+        // جرّب الاحتمال التالي
+      }
     }
   }
 
-  // 2) لو ما لقيته، دوّر في LocalStorage
+  // 2) لو Firebase Auth فشل — دوّر في LocalStorage (fallback)
   if (!user) {
     var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-    user = registrations.find(function (r) { return r.phone === phone; });
+    var localUser = registrations.find(function (r) {
+      return r.phone === phone && r.password === password;
+    });
+
+    if (localUser) {
+      user = localUser;
+      console.log('✅ تم تسجيل الدخول من LocalStorage');
+    }
   }
 
+  // 3) تحقق نهائي
   if (!user) {
-    showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
-    return;
-  }
-
-  if (user.password && user.password !== password) {
-    showError('كلمة المرور غير صحيحة');
+    if (authError) {
+      if (authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
+        showError('رقم الهاتف أو كلمة المرور غير صحيحة');
+      } else if (authError.code === 'auth/too-many-requests') {
+        showError('محاولات كثيرة. حاول لاحقاً');
+      } else {
+        showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
+      }
+    } else {
+      showError('رقم الهاتف غير مسجل. سجل حساب جديد أولاً.');
+    }
     return;
   }
 
@@ -1662,7 +1719,6 @@ async function submitLogin(event) {
     goToDashboardByType();
   }, 500);
 }
-
 // ============================================
 // 🚪 تسجيل الخروج
 // ============================================
