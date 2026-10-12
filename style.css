@@ -6840,5 +6840,76 @@ a {
   box-shadow: 0 6px 16px var(--shadow-primary);
 }
 /* ============================================
+   🗺️ خريطة تسجيل الصيدلية
+   ============================================ */
+.reg-map-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reg-map-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  padding-right: 4px;
+}
+
+.reg-map-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+
+#pharmacyMap {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.reg-map-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--hero-btn-primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow-primary);
+  transition: all var(--t-base);
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+
+.reg-map-btn:hover {
+  transform: translateY(-2px);
+}
+
+.reg-map-btn svg {
+  stroke: var(--text-on-primary);
+}
+
+.reg-map-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--warning);
+  padding-right: 4px;
+  min-height: 16px;
+}
+
+.reg-map-status.ok {
+  color: var(--success);
+}
+/* ============================================
    🎉 نهاية style.css
    ============================================ */
