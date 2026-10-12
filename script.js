@@ -2851,7 +2851,7 @@ function openCartScreen() {
     initCartMap();
   }, 300);
 }
-function onPharmacyChange() {
+ async function onPharmacyChange() {
   var pharmacy = document.getElementById('cartPharmacySelect').value;
 
   var infoBanner = document.getElementById('cartInfoBanner');
@@ -2864,12 +2864,22 @@ function onPharmacyChange() {
   }
 
   if (cart.length > 0 && cart[0].pharmacy !== pharmacy) {
-    if (!confirm('السلة تحتوي منتجات من صيدلية أخرى. مسحها والبدء من جديد؟')) {
-      document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
-      return;
-    }
-    cart = [];
-    saveCart();
+  var confirmed = await showConfirm({
+    title: 'تغيير الصيدلية',
+    message: 'السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟',
+    confirmText: 'نعم، امسح',
+    cancelText: 'إلغاء',
+    confirmColor: 'warning',
+    icon: '⚠️'
+  });
+
+  if (!confirmed) {
+    document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
+    return;
+  }
+
+  cart = [];
+  saveCart();
   }
 
   if (infoBanner) infoBanner.style.display = 'none';
