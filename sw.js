@@ -49,13 +49,17 @@ self.addEventListener('fetch', function (event) {
 
   // لا تخزن طلبات Firebase أو Google APIs
   if (url.indexOf('firebase') !== -1 ||
-      url.indexOf('googleapis.com') !== -1 ||
-      url.indexOf('gstatic.com') !== -1 ||
-      url.indexOf('unpkg.com') !== -1 ||
-      event.request.method !== 'GET') {
-    return;
+    url.indexOf('googleapis.com') !== -1 ||
+    url.indexOf('gstatic.com') !== -1 ||
+    url.indexOf('unpkg.com') !== -1 ||
+    url.indexOf('fonts.googleapis') !== -1 ||
+    url.indexOf('fonts.gstatic') !== -1 ||
+    url.indexOf('tile.openstreetmap.org') !== -1 ||
+    url.indexOf('openstreetmap.org') !== -1 ||
+    url.indexOf('leaflet') !== -1 ||
+    event.request.method !== 'GET') {
+  return;
   }
-
   event.respondWith(
     caches.match(event.request).then(function (response) {
       if (response) return response;
