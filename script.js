@@ -3178,29 +3178,39 @@ async function submitCartOrder() {
 
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = JSON.parse(userStr);
+var subtotal = cart.reduce(function (sum, item) {
+  return sum + (item.price * item.quantity);
+}, 0);
 
-  var subtotal = cart.reduce(function (sum, item) { return sum + (item.price * item.quantity); }, 0);
-  var delivery = 3000;
-  var total = subtotal + delivery;
-
+// استخدم التسعير من الخريطة
+var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+var delivery = deliveryData ? deliveryData.total : 3000;
+var driverShare = deliveryData ? deliveryData.driverShare : Math.round(delivery * 0.85);
+var platformShare = deliveryData ? deliveryData.platformShare : delivery - driverShare;
+var distance = deliveryData ? deliveryData.distance : 3;
+var total = subtotal + delivery;
   var orderId = Math.floor(1000 + Math.random() * 9000);
   var order = {
-    id: orderId,
-    type: 'cart',
-    patientName: user.name,
-    patientPhone: user.phone,
-    pharmacy: pharmacy,
-    address: address,
-    notes: notes,
-    payment: payment,
-    items: cart.slice(),
-    subtotal: subtotal,
-    delivery: delivery,
-    total: total,
-    status: 'pending',
-    createdAt: new Date().toISOString()
-  };
-
+  id: orderId,
+  type: 'cart',
+  patientName: user.name,
+  patientPhone: user.phone,
+  patientId: user.uid || user.phone,
+  pharmacy: pharmacy,
+  address: address,
+  notes: notes,
+  payment: payment,
+  items: cart.slice(),
+  subtotal: subtotal,
+  delivery: delivery,
+  deliveryFee: delivery,
+  driverShare: driverShare,
+  platformShare: platformShare,
+  distance: distance,
+  total: total,
+  status: 'pending',
+  createdAt: new Date().toISOString()
+};
   // محلياً
   var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
   orders.unshift(order);
