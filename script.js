@@ -3102,11 +3102,14 @@ function renderCart() {
   });
 
   if (itemsEl) itemsEl.innerHTML = html;
+var subtotal = cart.reduce(function (sum, item) {
+  return sum + (item.price * item.quantity);
+}, 0);
 
-  var subtotal = cart.reduce(function (sum, item) { return sum + (item.price * item.quantity); }, 0);
-  var delivery = 3000;
-  var total = subtotal + delivery;
-
+// استخدم التسعير من الخريطة إذا موجود
+var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+var delivery = deliveryData ? deliveryData.total : 3000;
+var total = subtotal + delivery;
   document.getElementById('cartSubtotal').textContent = subtotal.toLocaleString() + ' دينار';
   document.getElementById('cartDelivery').textContent = delivery.toLocaleString() + ' دينار';
   document.getElementById('cartTotal').textContent = total.toLocaleString() + ' دينار';
