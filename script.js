@@ -1798,13 +1798,6 @@ async function submitPatient(event) {
     uid = 'local_' + phone + '_' + Date.now();
     console.warn('⚠️ Firebase Auth غير جاهز — استخدام UID محلي');
   }
-  var pharmacyLat = document.getElementById('pharmacyLat') ? parseFloat(document.getElementById('pharmacyLat').value) : null;
-var pharmacyLng = document.getElementById('pharmacyLng') ? parseFloat(document.getElementById('pharmacyLng').value) : null;
-
-if (!pharmacyLat || !pharmacyLng) {
-  showError('الرجاء تحديد موقع الصيدلية على الخريطة');
-  return;
-}
   var user = {
     uid: uid,
     type: 'patient',
