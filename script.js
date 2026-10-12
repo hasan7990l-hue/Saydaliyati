@@ -1282,12 +1282,11 @@ function renderAiSuggestion(orders) {
 
   // احسب score لكل طلب
   orders.forEach(function (o) {
-    var commission = o.commission || o.total || 3000;
-    var distance = parseFloat(o.distance) || 3;
-    var itemsCount = (o.items || []).length || 1;
-    o._score = ((commission / distance) * (1 + itemsCount * 0.1)) / 1000;
-  });
-
+      var commission = o.driverShare || o.commission || o.total || 3000;
+  var distance = parseFloat(o.distance) || 3;
+  var itemsCount = (o.items || []).length || 1;
+  o._score = ((commission / distance) * (1 + itemsCount * 0.1)) / 1000;
+});
   // رتب حسب الـ score (تنازلي)
   orders.sort(function (a, b) { return b._score - a._score; });
 
