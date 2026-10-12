@@ -4493,16 +4493,24 @@ function saveMedicine(event) {
 
   if (navigator.vibrate) navigator.vibrate([50]);
 }
+async function deleteMedicine(medId) {
+  var confirmed = await showConfirm({
+    title: 'حذف الدواء',
+    message: 'هل تريد حذف هذا الدواء؟',
+    confirmText: 'نعم، احذف',
+    cancelText: 'إلغاء',
+    confirmColor: 'danger',
+    icon: '🗑️'
+  });
 
-function deleteMedicine(medId) {
-  if (!confirm('هل تريد حذف هذا الدواء؟')) return;
+  if (!confirmed) return;
+
   var inventory = loadInventory();
   inventory = inventory.filter(function (m) { return m.id !== medId; });
   saveInventory(inventory);
   renderInventory();
   showToast('تم حذف الدواء');
 }
-
 // ============================================
 // 📱 منع التكبير
 // ============================================
