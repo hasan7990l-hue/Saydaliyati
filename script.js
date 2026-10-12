@@ -1822,6 +1822,94 @@ async function submitPatient(event) {
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
+// ============================================
+// 🗺️ خريطة تسجيل الصيدلية
+// ============================================
+var pharmacyMap = null;
+var pharmacyMarker = null;
+
+function initPharmacyMap() {
+  var mapEl = document.getElementById('pharmacyMap');
+  if (!mapEl) return;
+  if (pharmacyMap) return;
+
+  var center = [33.3152, 44.3661]; // بغداد
+
+  pharmacyMap = L.map('pharmacyMap', {
+    zoomControl: true,
+    attributionControl: false
+  }).setView(center, 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(pharmacyMap);
+
+  var icon = L.divIcon({
+    className: 'custom-map-marker marker-pharmacy',
+    html: '<div class="custom-marker-pin"><span>🏪</span></div>',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40]
+  });
+
+  pharmacyMarker = L.marker(center, {
+    icon: icon,
+    draggable: true
+  }).addTo(pharmacyMap);
+
+  pharmacyMarker.on('dragend', function (e) {
+    var pos = e.target.getLatLng();
+    setPharmacyLocation(pos.lat, pos.lng);
+  });
+
+  pharmacyMap.on('click', function (e) {
+    pharmacyMarker.setLatLng(e.latlng);
+    setPharmacyLocation(e.latlng.lat, e.latlng.lng);
+  });
+
+  setPharmacyLocation(center[0], center[1]);
+}
+
+function getPharmacyLocation() {
+  if (!navigator.geolocation) {
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
+
+  showToast('🔄 جاري تحديد موقعك...');
+
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      var loc = [position.coords.latitude, position.coords.longitude];
+
+      if (pharmacyMap && pharmacyMarker) {
+        pharmacyMap.setView(loc, 16);
+        pharmacyMarker.setLatLng(loc);
+      }
+
+      setPharmacyLocation(loc[0], loc[1]);
+      showToast('✅ تم تحديد موقع الصيدلية');
+    },
+    function (error) {
+      showToast('⚠️ تعذّر تحديد موقعك');
+      console.warn('GPS error:', error);
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+function setPharmacyLocation(lat, lng) {
+  var latEl = document.getElementById('pharmacyLat');
+  var lngEl = document.getElementById('pharmacyLng');
+  var statusEl = document.getElementById('pharmacyLocationStatus');
+
+  if (latEl) latEl.value = lat;
+  if (lngEl) lngEl.value = lng;
+
+  if (statusEl) {
+    statusEl.textContent = '✅ الموقع محدد: ' + lat.toFixed(4) + ' , ' + lng.toFixed(4);
+    statusEl.classList.add('ok');
+  }
+}
 async function submitPharmacy(event) {
   if (event) event.preventDefault();
 
