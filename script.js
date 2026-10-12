@@ -1488,7 +1488,16 @@ async function acceptPharmacyOrder(orderId) {
 }
 
 async function rejectPharmacyOrder(orderId) {
-  if (!confirm('هل تريد رفض الطلب #' + orderId + '؟')) return;
+  var confirmed = await showConfirm({
+    title: 'رفض الطلب',
+    message: 'هل تريد رفض الطلب #' + orderId + '؟',
+    confirmText: 'نعم، ارفض',
+    cancelText: 'إلغاء',
+    confirmColor: 'danger',
+    icon: '❌'
+  });
+
+  if (!confirmed) return;
 
   if (isFirebaseReady()) {
     await updateOrderInFirestore(String(orderId), {
@@ -1498,7 +1507,7 @@ async function rejectPharmacyOrder(orderId) {
   }
 
   showToast('تم رفض الطلب #' + orderId);
-}
+  }
 
 function switchPharmacyFilter(filter, btn) {
   document.querySelectorAll('#pharmacyOrdersContent .filter-tab').forEach(function (t) {
