@@ -4618,4 +4618,87 @@ document.addEventListener('DOMContentLoaded', function () {
 // ============================================
 // 🎉 نهاية script.js
 // ============================================
+// ============================================
+// 🎯 نافذة تأكيد مخصصة
+// ============================================
+function showConfirm(options) {
+  return new Promise(function (resolve) {
+    var title = options.title || 'هل أنت متأكد؟';
+    var message = options.message || '';
+    var confirmText = options.confirmText || 'نعم';
+    var cancelText = options.cancelText || 'إلغاء';
+    var confirmColor = options.confirmColor || 'danger';
+    var icon = options.icon || '⚠️';
+
+    var overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML =
+      '<div class="confirm-box">' +
+        '<div class="confirm-icon confirm-icon-' + confirmColor + '">' + icon + '</div>' +
+        '<h3 class="confirm-title">' + title + '</h3>' +
+        (message ? '<p class="confirm-message">' + message + '</p>' : '') +
+        '<div class="confirm-actions">' +
+          '<button type="button" class="confirm-btn confirm-cancel">' + cancelText + '</button>' +
+          '<button type="button" class="confirm-btn confirm-accept confirm-accept-' + confirmColor + '">' + confirmText + '</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    var cancelBtn = overlay.querySelector('.confirm-cancel');
+    var acceptBtn = overlay.querySelector('.confirm-accept');
+
+    function close(result) {
+      overlay.classList.remove('show');
+      setTimeout(function () {
+        overlay.remove();
+        resolve(result);
+      }, 300);
+    }
+
+    cancelBtn.onclick = function () { close(false); };
+    acceptBtn.onclick = function () { close(true); };
+    overlay.onclick = function (e) {
+      if (e.target === overlay) close(false);
+    };
+
+    setTimeout(function () { overlay.classList.add('show'); }, 50);
+  });
+}
+
+// ============================================
+// 🚪 logout محسّن مع showConfirm
+// ============================================
+async function logout() {
+  var confirmed = await showConfirm({
+    title: 'تسجيل الخروج',
+    message: 'هل أنت متأكد من تسجيل الخروج؟',
+    confirmText: 'نعم، سجل خروج',
+    cancelText: 'إلغاء',
+    confirmColor: 'danger',
+    icon: '🚪'
+  });
+
+  if (!confirmed) return;
+
+  localStorage.removeItem('saydaliyati_current_user');
+
+  if (typeof radarActive !== 'undefined' && radarActive) {
+    radarActive = false;
+    if (typeof radarInterval !== 'undefined' && radarInterval) clearInterval(radarInterval);
+    if (typeof orderSimulationInterval !== 'undefined' && orderSimulationInterval) clearInterval(orderSimulationInterval);
+  }
+
+  if (typeof stopRadarSystem === 'function') {
+    stopRadarSystem();
+  }
+
+  if (typeof signOutFromFirebase === 'function') {
+    try { await signOutFromFirebase(); } catch (e) {}
+  }
+
+  if (typeof closeSidebar === 'function') closeSidebar();
+  if (typeof goToSplash === 'function') goToSplash();
+  if (typeof showToast === 'function') showToast('تم تسجيل الخروج');
+}
 console.log('توصيل طبي v14 — script.js اكتمل');
