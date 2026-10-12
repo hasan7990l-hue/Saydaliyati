@@ -1322,7 +1322,7 @@ function renderAiSuggestion(orders) {
           '<div class="priority-pharmacy">' + (o.pharmacy || '-') + '</div>' +
           '<div class="priority-info">' +
             '<span>📍 ' + distance + ' كم</span>' +
-            '<span>💰 ' + commission.toLocaleString() + ' دينار</span>' +
+            '<span>💰 ' + (o.driverShare || o.commission || 0).toLocaleString() + ' دينار</span>' +
           '</div>' +
           '<div class="priority-footer">' +
             '<span class="priority-score">Score: ' + o._score.toFixed(1) + '/10</span>' +
