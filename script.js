@@ -1910,7 +1910,10 @@ function setPharmacyLocation(lat, lng) {
   }
 }
 async function submitPharmacy(event) {
-  if (event) event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   var name = document.getElementById('pharmacyName').value.trim();
   var owner = document.getElementById('ownerName').value.trim();
@@ -1934,7 +1937,40 @@ async function submitPharmacy(event) {
     return;
   }
 
+  // موقع الصيدلية
+  var pharmacyLat = document.getElementById('pharmacyLat').value;
+  var pharmacyLng = document.getElementById('pharmacyLng').value;
+
+  if (!pharmacyLat || !pharmacyLng) {
+    showError('الرجاء تحديد موقع الصيدلية على الخريطة');
+    return;
+  }
+
+  var authEmail = phone + '@pharmacy.saydaliyati.app';
+  var uid = null;
+
+  // Firebase Auth
+  if (window.firebaseAuth && window.firebaseCreateUser) {
+    try {
+      var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
+      uid = userCred.user.uid;
+      console.log('✅ تم إنشاء Firebase Auth (صيدلية):', uid);
+    } catch (authError) {
+      console.error('❌ خطأ Firebase Auth:', authError);
+      if (authError.code === 'auth/email-already-in-use') {
+        showError('رقم الهاتف مسجل مسبقاً');
+      } else {
+        showError('فشل التسجيل: ' + authError.message);
+      }
+      return;
+    }
+  } else {
+    uid = 'local_' + phone + '_' + Date.now();
+    console.warn('⚠️ Firebase Auth غير جاهز');
+  }
+
   var user = {
+    uid: uid,
     type: 'pharmacy',
     name: name,
     owner: owner,
@@ -1942,7 +1978,9 @@ async function submitPharmacy(event) {
     email: '',
     address: address,
     license: license,
-    password: password,
+    lat: parseFloat(pharmacyLat),
+    lng: parseFloat(pharmacyLng),
+    authEmail: authEmail,
     date: new Date().toISOString()
   };
 
@@ -1952,11 +1990,14 @@ async function submitPharmacy(event) {
   try {
     await saveUserToFirestore(user);
     await savePharmacyToFirestore({
+      uid: uid,
       name: name,
       owner: owner,
       phone: phone,
       address: address,
       license: license,
+      lat: parseFloat(pharmacyLat),
+      lng: parseFloat(pharmacyLng),
       rating: 5.0,
       logo: 'ص',
       color: 'green',
@@ -1970,7 +2011,6 @@ async function submitPharmacy(event) {
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
 }
-
 async function submitDelivery(event) {
   if (event) event.preventDefault();
 
