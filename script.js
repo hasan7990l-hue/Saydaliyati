@@ -6326,3 +6326,511 @@ function initMyOrdersScreen() {
   console.log('📋 تهيئة My Orders Screen...');
   // لا نحتاج نفعل شي — يشتغل عند الفتح
 }
+// ============================================
+// 💊 Product Details Screen v2 — DAWAK
+// Real product display + Alternatives + Add to cart
+// ============================================
+
+var currentProductDetails = null;
+var pdpQuantity = 1;
+
+// ============================================
+// 🚀 فتح Product Details
+// ============================================
+function openProductDetails(productData) {
+  if (!productData) {
+    showToast('⚠️ لا توجد بيانات للمنتج');
+    return;
+  }
+
+  console.log('💊 فتح Product Details:', productData.name);
+
+  currentProductDetails = Object.assign({}, productData);
+  pdpQuantity = 1;
+
+  // تحديث الصورة
+  var imgEl = document.getElementById('pdpImage');
+  var emojiEl = document.getElementById('pdpImageEmoji');
+  var imageSrc = productData.image || '';
+
+  if (imgEl && emojiEl) {
+    if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
+      imgEl.src = imageSrc;
+      imgEl.style.display = 'block';
+      emojiEl.style.display = 'none';
+    } else {
+      imgEl.style.display = 'none';
+      emojiEl.style.display = 'block';
+      emojiEl.textContent = productData.icon || '💊';
+    }
+  }
+
+  // الاسم
+  var titleEl = document.getElementById('pdpTitle');
+  if (titleEl) titleEl.textContent = productData.name || 'دواء';
+
+  // التصنيف
+  var catEl = document.getElementById('pdpCategory');
+  if (catEl) catEl.textContent = productData.category || 'أدوية';
+
+  // التقييم
+  var ratingValEl = document.getElementById('pdpRatingValue');
+  var ratingCntEl = document.getElementById('pdpRatingCount');
+  if (ratingValEl) ratingValEl.textContent = (productData.rating || 4.8).toFixed(1);
+  if (ratingCntEl) ratingCntEl.textContent = productData.ratingCount || 120;
+
+  // المخزون
+  var stockBadge = document.getElementById('pdpStockBadge');
+  var stockText = document.getElementById('pdpStockText');
+  var stock = productData.stock || 50;
+
+  if (stockBadge && stockText) {
+    stockBadge.classList.remove('low', 'out');
+    if (stock === 0) {
+      stockBadge.classList.add('out');
+      stockText.textContent = 'غير متوفر';
+    } else if (stock <= 10) {
+      stockBadge.classList.add('low');
+      stockText.textContent = 'كمية محدودة - ' + stock + ' متوفر';
+    } else {
+      stockText.textContent = 'متوفر - ' + stock + ' علبة';
+    }
+  }
+
+  // السعر
+  var priceCurEl = document.getElementById('pdpPriceCurrent');
+  var priceOldEl = document.getElementById('pdpPriceOld');
+
+  if (priceCurEl) priceCurEl.textContent = (productData.price || 0).toLocaleString();
+
+  if (priceOldEl && productData.priceOld && productData.priceOld > productData.price) {
+    priceOldEl.textContent = productData.priceOld.toLocaleString();
+    priceOldEl.style.display = 'inline';
+  } else if (priceOldEl) {
+    priceOldEl.style.display = 'none';
+  }
+
+  // الوصف
+  var descEl = document.getElementById('pdpDescription');
+  if (descEl) {
+    descEl.textContent = productData.desc || productData.description ||
+      (productData.name + ' هو دواء موثوق من صيدلية معتمدة. استشر الصيدلي قبل الاستخدام.');
+  }
+
+  // الجرعة
+  var dosageListEl = document.getElementById('pdpDosageList');
+  if (dosageListEl) {
+    var dosageItems = productData.dosage || [
+      'البالغون: قرص واحد كل 4-6 ساعات عند الحاجة',
+      'الحد الأقصى 4 جرعات خلال 24 ساعة',
+      'يُتناول مع أو بدون الطعام'
+    ];
+
+    dosageListEl.innerHTML = dosageItems.map(function (item) {
+      return '<li><span class="pdp-dosage-bullet"></span>' + item + '</li>';
+    }).join('');
+  }
+
+  // الكمية
+  var qtyEl = document.getElementById('pdpQuantity');
+  if (qtyEl) qtyEl.textContent = pdpQuantity;
+
+  // زر السلة
+  updatePdpAddButton();
+
+  // تحديث المفضلة
+  updatePdpFavoriteStatus();
+
+  // تحميل البدائل
+  loadAlternatives(productData.category, productData.id);
+
+  // عرض الشاشة
+  showScreen('productDetailsScreen');
+
+  if (navigator.vibrate) navigator.vibrate([30]);
+}
+
+// ============================================
+// ❌ إغلاق Product Details
+// ============================================
+function closeProductDetails() {
+  currentProductDetails = null;
+  pdpQuantity = 1;
+
+  // ارجع للشاشة السابقة
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+
+  if (user.type === 'patient') {
+    goToDashboardByType();
+  } else {
+    goToDashboardByType();
+  }
+}
+
+// ============================================
+// 🔢 تغيير الكمية
+// ============================================
+function pdpChangeQty(delta) {
+  if (!currentProductDetails) return;
+
+  var maxStock = currentProductDetails.stock || 50;
+  var newQty = pdpQuantity + delta;
+
+  if (newQty < 1) newQty = 1;
+  if (newQty > maxStock) {
+    showToast('⚠️ الكمية المتوفرة: ' + maxStock);
+    return;
+  }
+
+  pdpQuantity = newQty;
+
+  var qtyEl = document.getElementById('pdpQuantity');
+  if (qtyEl) qtyEl.textContent = pdpQuantity;
+
+  updatePdpAddButton();
+
+  if (navigator.vibrate) navigator.vibrate([15]);
+}
+
+// ============================================
+// 💰 تحديث زر "أضف للسلة"
+// ============================================
+function updatePdpAddButton() {
+  if (!currentProductDetails) return;
+
+  var total = (currentProductDetails.price || 0) * pdpQuantity;
+  var totalEl = document.getElementById('pdpAddTotal');
+  if (totalEl) totalEl.textContent = total.toLocaleString();
+
+  // تعطيل إذا نفد
+  var btn = document.querySelector('.pdp-add-to-cart-btn');
+  if (btn) {
+    if ((currentProductDetails.stock || 50) === 0) {
+      btn.classList.add('disabled');
+      btn.querySelector('span').textContent = 'نفد المخزون';
+    } else {
+      btn.classList.remove('disabled');
+    }
+  }
+}
+
+// ============================================
+// 🛒 إضافة للسلة
+// ============================================
+function pdpAddToCart() {
+  if (!currentProductDetails) return;
+
+  var stock = currentProductDetails.stock || 50;
+  if (stock === 0) {
+    showToast('⚠️ المنتج نفد من المخزون');
+    return;
+  }
+
+  // إذا السلة فيها منتجات من صيدلية أخرى
+  if (cart.length > 0 && cart[0].pharmacy !== currentProductDetails.pharmacy) {
+    showConfirm({
+      title: 'تغيير الصيدلية',
+      message: 'السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟',
+      confirmText: 'نعم، امسح',
+      cancelText: 'إلغاء',
+      confirmColor: 'warning',
+      icon: '⚠️'
+    }).then(function (confirmed) {
+      if (confirmed) {
+        cart = [];
+        saveCart();
+        doAddToCart();
+      }
+    });
+    return;
+  }
+
+  doAddToCart();
+}
+
+function doAddToCart() {
+  if (!currentProductDetails) return;
+
+  // البحث إذا المنتج موجود
+  var existingIdx = cart.findIndex(function (item) {
+    return item.id === currentProductDetails.id;
+  });
+
+  if (existingIdx !== -1) {
+    cart[existingIdx].quantity += pdpQuantity;
+  } else {
+    cart.push({
+      id: currentProductDetails.id,
+      name: currentProductDetails.name,
+      price: currentProductDetails.price,
+      icon: currentProductDetails.icon || '💊',
+      image: currentProductDetails.image,
+      category: currentProductDetails.category,
+      quantity: pdpQuantity,
+      pharmacy: currentProductDetails.pharmacy
+    });
+  }
+
+  saveCart();
+  updateCartBadge();
+
+  playSuccessSound();
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+  showToast('✅ تمت الإضافة إلى السلة');
+
+  // ارجع للسلة أو للسابق
+  setTimeout(function () {
+    closeProductDetails();
+  }, 800);
+}
+
+// ============================================
+// ✨ تحميل البدائل المقترحة
+// ============================================
+async function loadAlternatives(category, excludeId) {
+  var container = document.getElementById('pdpAlternativesScroll');
+  if (!container) return;
+
+  container.innerHTML =
+    '<div class="pdp-alt-loading">' +
+      '<div class="pdp-alt-spinner"></div>' +
+      '<span>جاري التحميل...</span>' +
+    '</div>';
+
+  try {
+    if (!isFirebaseReady()) {
+      container.innerHTML =
+        '<div class="pdp-alt-loading">لا توجد بدائل متاحة</div>';
+      return;
+    }
+
+    var posts = await loadPostsFromFirestore();
+
+    // فلترة — نفس التصنيف، مو نفس المنتج
+    var alternatives = posts.filter(function (p) {
+      return p.id !== excludeId;
+    });
+
+    // خذ أول 5 بدائل
+    alternatives = alternatives.slice(0, 5);
+
+    if (alternatives.length === 0) {
+      container.innerHTML =
+        '<div class="pdp-alt-loading">لا توجد بدائل متاحة حالياً</div>';
+      return;
+    }
+
+    var html = '';
+    alternatives.forEach(function (alt) {
+      var imageSrc = alt.image || '';
+      var imageHTML = '';
+
+      if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
+        imageHTML = '<img src="' + imageSrc + '" alt="' + alt.title + '">';
+      } else {
+        imageHTML = '💊';
+      }
+
+      html +=
+        '<div class="pdp-alt-card" onclick="openAlternativeProduct(\'' + alt.id + '\')">' +
+          '<div class="pdp-alt-image">' + imageHTML + '</div>' +
+          '<h4 class="pdp-alt-name">' + (alt.title || 'دواء') + '</h4>' +
+          '<span class="pdp-alt-price">' + (alt.price || 0).toLocaleString() + '<small>د.ع</small></span>' +
+        '</div>';
+    });
+
+    container.innerHTML = html;
+    console.log('✅ تم عرض', alternatives.length, 'بديل');
+
+  } catch (error) {
+    console.error('❌ خطأ تحميل البدائل:', error);
+    container.innerHTML =
+      '<div class="pdp-alt-loading">حدث خطأ في تحميل البدائل</div>';
+  }
+}
+
+// ============================================
+// 🔄 فتح بديل
+// ============================================
+async function openAlternativeProduct(postId) {
+  try {
+    var posts = await loadPostsFromFirestore();
+    var post = posts.find(function (p) { return String(p.id) === String(postId); });
+
+    if (!post) {
+      showToast('⚠️ المنتج غير موجود');
+      return;
+    }
+
+    // تحويل Post إلى Product
+    var productData = {
+      id: post.id,
+      name: post.title,
+      price: post.price,
+      image: post.image,
+      icon: '💊',
+      category: post.category,
+      desc: post.description,
+      pharmacy: post.pharmacyName,
+      pharmacyId: post.pharmacyId,
+      stock: 50,
+      rating: 4.8,
+      ratingCount: 120
+    };
+
+    openProductDetails(productData);
+
+  } catch (e) {
+    console.error('❌ خطأ فتح البديل:', e);
+    showToast('⚠️ فشل تحميل المنتج');
+  }
+}
+
+// ============================================
+// ❤️ تبديل المفضلة
+// ============================================
+function toggleFavoriteProduct() {
+  if (!currentProductDetails) return;
+
+  var productId = currentProductDetails.id;
+  var favorites = JSON.parse(localStorage.getItem('saydaliyati_favorites') || '[]');
+
+  var idx = favorites.findIndex(function (f) { return f.id === productId; });
+
+  if (idx !== -1) {
+    favorites.splice(idx, 1);
+    showToast('💔 تم إزالة من المفضلة');
+  } else {
+    favorites.push({
+      id: productId,
+      name: currentProductDetails.name,
+      price: currentProductDetails.price,
+      image: currentProductDetails.image,
+      icon: currentProductDetails.icon,
+      category: currentProductDetails.category,
+      pharmacy: currentProductDetails.pharmacy,
+      addedAt: new Date().toISOString()
+    });
+    showToast('❤️ تمت الإضافة للمفضلة');
+    playSuccessSound();
+  }
+
+  localStorage.setItem('saydaliyati_favorites', JSON.stringify(favorites));
+
+  updatePdpFavoriteStatus();
+
+  if (navigator.vibrate) navigator.vibrate([30]);
+}
+
+function updatePdpFavoriteStatus() {
+  if (!currentProductDetails) return;
+
+  var btn = document.getElementById('pdpFavBtn');
+  if (!btn) return;
+
+  var favorites = JSON.parse(localStorage.getItem('saydaliyati_favorites') || '[]');
+  var isFav = favorites.some(function (f) { return f.id === currentProductDetails.id; });
+
+  if (isFav) {
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+}
+
+// ============================================
+// 📤 مشاركة المنتج
+// ============================================
+function shareProduct() {
+  if (!currentProductDetails) return;
+
+  var productData = currentProductDetails;
+  var shareText = productData.name + ' - ' + (productData.price || 0).toLocaleString() + ' د.ع\n' +
+                  'من ' + (productData.pharmacy || 'DAWAK دواك') + '\n' +
+                  'اطلب من DAWAK دواك 🏥';
+
+  if (navigator.share) {
+    navigator.share({
+      title: productData.name,
+      text: shareText
+    }).catch(function (err) {
+      if (err.name !== 'AbortError') {
+        console.log('Share error:', err);
+      }
+    });
+  } else {
+    // Fallback — نسخ للحافظة
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText).then(function () {
+        showToast('📋 تم نسخ معلومات المنتج');
+      }).catch(function () {
+        showToast('⚠️ المتصفح لا يدعم المشاركة');
+      });
+    } else {
+      showToast('⚠️ المتصفح لا يدعم المشاركة');
+    }
+  }
+}
+
+// ============================================
+// 🔗 ربط Product Details بـ Posts + Cart
+// ============================================
+// نستبدل orderFromPost
+var _originalOrderFromPost = typeof orderFromPost === 'function' ? orderFromPost : null;
+
+function orderFromPostV2(postId) {
+  var post = postsCache.find(function (p) { return p.id === postId; });
+  if (!post) {
+    showToast('⚠️ العرض غير موجود');
+    return;
+  }
+
+  // تحويل Post → Product
+  var productData = {
+    id: post.id,
+    name: post.title,
+    price: post.price,
+    image: post.image,
+    icon: '💊',
+    category: post.category,
+    desc: post.description,
+    pharmacy: post.pharmacyName,
+    pharmacyId: post.pharmacyId,
+    stock: 50,
+    rating: 4.8,
+    ratingCount: 120
+  };
+
+  openProductDetails(productData);
+}
+
+// ============================================
+// 🔄 فتح Product من Cart
+// ============================================
+function openProductFromCart(item) {
+  if (!item) return;
+
+  var productData = {
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    image: item.image,
+    icon: item.icon,
+    category: item.category,
+    pharmacy: item.pharmacy,
+    stock: 50,
+    rating: 4.8,
+    ratingCount: 120
+  };
+
+  openProductDetails(productData);
+}
+
+// ============================================
+// 🚀 تشغيل
+// ============================================
+function initProductDetailsScreen() {
+  console.log('💊 تهيئة Product Details Screen...');
+}
