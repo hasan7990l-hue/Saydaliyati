@@ -517,27 +517,11 @@ function loadPostsFromLocal() {
 // 🔥 Firebase Storage — رفع الصور
 // ============================================
 async function uploadImageToStorage(base64Data, path) {
-  if (!window.firebaseStorage || !window.firebaseRef || !window.firebaseUploadBytes || !window.firebaseGetDownloadURL) {
-    console.log('⚠️ Firebase Storage غير جاهز — استخدام base64');
-    return base64Data;
-  }
-
-  try {
-    var storageRef = window.firebaseRef(window.firebaseStorage, path);
-    var response = await fetch(base64Data);
-    var blob = await response.blob();
-
-    await window.firebaseUploadBytes(storageRef, blob);
-    var url = await window.firebaseGetDownloadURL(storageRef);
-
-    console.log('✅ تم رفع الصورة:', url);
-    return url;
-  } catch (error) {
-    console.error('❌ خطأ رفع الصورة:', error);
-    return base64Data;
-  }
+  // Firebase Storage مو مفعّل — نستخدم base64 مباشرة
+  // الصورة تتحفظ في Firestore كـ base64
+  console.log('📦 استخدام base64 (Firebase Storage غير مفعّل)');
+  return base64Data;
 }
-
 // ============================================
 // 🌙 نظام الوضع الليلي (Theme)
 // ============================================
