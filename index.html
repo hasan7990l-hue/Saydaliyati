@@ -769,138 +769,92 @@
     </div>
   </div>
 </div>
-<!-- ============================================
-     📋 My Orders
+  <!-- ============================================
+     📋 My Orders Screen — DAWAK
      ============================================ -->
 <div class="screen" id="myOrdersScreen">
+
+  <!-- Top Bar -->
+  <div class="orders-top-bar">
+    <button class="orders-back-btn" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </button>
+    <h2 class="orders-screen-title" id="myOrdersTitle">طلباتي</h2>
+    <button class="orders-search-btn" onclick="showToast('🔍 قريباً')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="orders-filter-tabs" id="ordersFilterTabs">
+    <button class="orders-filter-tab active" data-filter="all" onclick="filterOrders('all', this)">الكل</button>
+    <button class="orders-filter-tab" data-filter="pending" onclick="filterOrders('pending', this)">قيد التوصيل</button>
+    <button class="orders-filter-tab" data-filter="completed" onclick="filterOrders('completed', this)">مكتمل</button>
+    <button class="orders-filter-tab" data-filter="cancelled" onclick="filterOrders('cancelled', this)">ملغي</button>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-list-container" id="ordersListContainer">
+
+    <div class="orders-loading" id="ordersLoading">
+      <div class="orders-spinner"></div>
+      <span>جاري تحميل الطلبات...</span>
+    </div>
+
+    <div class="orders-empty-state" id="ordersEmptyState" style="display:none;">
+      <div class="orders-empty-icon-wrapper">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <h3>لا توجد طلبات</h3>
+      <p>ستظهر هنا طلباتك السابقة والحالية</p>
+      <button class="orders-empty-cta" onclick="goToDashboardByType()">
+        <span>ابدأ طلبك الأول</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ============================================
+     📋 Orders History (Legacy)
+     ============================================ -->
+<div class="screen" id="ordersScreen">
   <div class="top-bar">
     <button class="back-btn" onclick="goToDashboardByType()">←</button>
   </div>
-  <h2 class="screen-title" id="myOrdersTitle">طلباتي</h2>
-  <p class="screen-subtitle" id="myOrdersSubtitle">ترتيب تلقائي حسب الأولوية</p>
+  <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
+  <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
 
-  <!-- 🚴 Delivery Section -->
-  <div id="deliveryOrdersContent" style="display:none;">
-    <div class="ai-suggestion-card" id="aiSuggestionCard" style="display:none;">
-      <div class="ai-header">
-        <span class="ai-label">NEURAL NETWORK AI SUGGESTION</span>
-      </div>
-      <div class="ai-network">
-        <div class="ai-brain">
-          <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
-            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
-          </svg>
-        </div>
-        <div class="ai-nodes">
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <div class="ai-content">
-        <h3>اقتراح ذكي</h3>
-        <p>ابدأ بطلب <span class="highlight" id="aiSuggestedOrderId">-</span></p>
-        <p class="ai-sub">الأقرب والأعلى عمولة</p>
-      </div>
-      <div class="ai-score">
-        <span id="aiSuggestedScore">0.0</span>
-        <small>/10</small>
-      </div>
-      <button class="ai-start-btn" onclick="startAiSuggestedOrder()">ابدأ الآن ←</button>
-    </div>
-
-    <div class="priority-list" id="deliveryPriorityList">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">📦</div>
-        <h3>لا توجد طلبات متاحة</h3>
-        <p>شغّل الرادار لاستقبال الطلبات</p>
-      </div>
-    </div>
-
-    <div class="summary-bar" id="deliverySummaryBar" style="display:none;">
-      <span id="deliverySummaryCount">0 طلبات</span>
-      <span id="deliverySummaryEarnings">0 دينار</span>
-    </div>
+  <div class="filter-tabs">
+    <button class="filter-tab active">الكل</button>
+    <button class="filter-tab">المكتملة</button>
   </div>
 
-  <!-- 🧑 Patient Section -->
-  <div id="patientOrdersContent" style="display:none;">
-    <div class="section-header">
-      <h3>الطلب الحالي</h3>
-    </div>
-
-    <div id="patientActiveOrder">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">📦</div>
-        <h3>لا يوجد طلب حالي</h3>
-        <p>اطلب من إحدى الصيدليات لتظهر طلباتك هنا</p>
-      </div>
-    </div>
-
-    <div class="section-header">
-      <h3>الطلبات السابقة</h3>
-    </div>
-
-    <div class="order-list" id="patientPastOrdersList">
-      <div class="cart-empty">
-        <div class="cart-empty-icon">📋</div>
-        <h3>لا توجد طلبات سابقة</h3>
-        <p>ستظهر هنا طلباتك السابقة</p>
-      </div>
-    </div>
-
-    <div class="summary-bar" id="patientSummaryBar">
-      <span>إجمالي طلباتك: <span id="patientTotalOrders">0</span></span>
-      <span>هذا الشهر: <span id="patientMonthOrders">0</span> طلبات</span>
-    </div>
-  </div>
-
-  <!-- 🏪 Pharmacy Section -->
-  <div id="pharmacyOrdersContent" style="display:none;">
-    <div class="filter-tabs">
-      <button class="filter-tab active" onclick="switchPharmacyFilter('new', this)">جديدة</button>
-      <button class="filter-tab" onclick="switchPharmacyFilter('accepted', this)">مقبولة</button>
-      <button class="filter-tab" onclick="switchPharmacyFilter('done', this)">مكتملة</button>
-    </div>
-
-    <div id="newPharmacyOrders">
-      <div class="order-list">
-        <div class="cart-empty">
-          <div class="cart-empty-icon">💊</div>
-          <h3>لا توجد طلبات جديدة</h3>
-          <p>ستظهر هنا الطلبات الجديدة الواردة</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="acceptedPharmacyOrders" style="display:none;">
-      <div class="order-list">
-        <div class="cart-empty">
-          <div class="cart-empty-icon">🚴</div>
-          <h3>لا توجد طلبات مقبولة</h3>
-          <p>ستظهر هنا الطلبات قيد التوصيل</p>
-        </div>
-      </div>
-    </div>
-
-    <div id="donePharmacyOrders" style="display:none;">
-      <div class="order-list">
-        <div class="cart-empty">
-          <div class="cart-empty-icon">✓</div>
-          <h3>لا توجد طلبات مكتملة</h3>
-          <p>ستظهر هنا الطلبات المكتملة</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="summary-bar">
-      <span>اليوم: <span id="pharmacyTodayOrders">0</span> طلب</span>
-      <span>الإيرادات: <span id="pharmacyTodayRevenue">0</span> دينار</span>
+  <div class="order-list" id="ordersHistoryList">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">📋</div>
+      <h3>لا توجد طلبات</h3>
+      <p>ستظهر هنا سجل طلباتك</p>
     </div>
   </div>
 </div>
-
 <!-- ============================================
      💊 Inventory
      ============================================ -->
