@@ -6834,3 +6834,260 @@ function openProductFromCart(item) {
 function initProductDetailsScreen() {
   console.log('💊 تهيئة Product Details Screen...');
 }
+// ============================================
+// 🎬 Onboarding Screen v2 — DAWAK
+// 3 slides with navigation
+// ============================================
+
+var currentOnboardingSlide = 0;
+var totalOnboardingSlides = 3;
+
+// ============================================
+// 🚀 تهيئة Onboarding
+// ============================================
+function initOnboarding() {
+  console.log('🎬 تهيئة Onboarding...');
+
+  // تحقق إذا شاف المستخدم Onboarding قبل
+  var hasSeenOnboarding = localStorage.getItem('saydaliyati_onboarding_done');
+
+  if (hasSeenOnboarding === 'true') {
+    console.log('✅ المستخدم شاف Onboarding — تخطي');
+    showScreen('splashScreen');
+    return;
+  }
+
+  // إعادة ضبط
+  currentOnboardingSlide = 0;
+  updateOnboardingUI();
+
+  console.log('✅ Onboarding جاهز');
+}
+
+// ============================================
+// ➡️ الانتقال للشاشة التالية
+// ============================================
+function nextSlide() {
+  if (currentOnboardingSlide < totalOnboardingSlides - 1) {
+    currentOnboardingSlide++;
+    updateOnboardingUI();
+
+    playSonarPing();
+    if (navigator.vibrate) navigator.vibrate([30]);
+  } else {
+    // آخر شاشة → إنهاء
+    finishOnboarding();
+  }
+}
+
+// ============================================
+// 🎯 الانتقال لشاشة محددة
+// ============================================
+function goToSlide(index) {
+  if (index < 0 || index >= totalOnboardingSlides) return;
+  if (index === currentOnboardingSlide) return;
+
+  currentOnboardingSlide = index;
+  updateOnboardingUI();
+
+  playSonarPing();
+  if (navigator.vibrate) navigator.vibrate([20]);
+}
+
+// ============================================
+// 🎨 تحديث واجهة Onboarding
+// ============================================
+function updateOnboardingUI() {
+  // إخفاء كل الشاشات
+  document.querySelectorAll('.ob-slide').forEach(function (slide) {
+    slide.classList.remove('active');
+  });
+
+  // إظهار الشاشة الحالية
+  var currentSlide = document.querySelector('.ob-slide[data-slide="' + currentOnboardingSlide + '"]');
+  if (currentSlide) {
+    currentSlide.classList.add('active');
+  }
+
+  // تحديث الـ dots
+  document.querySelectorAll('.ob-dot').forEach(function (dot, idx) {
+    if (idx === currentOnboardingSlide) {
+      dot.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+    }
+  });
+
+  // تحديث زر "التالي"
+  var nextBtn = document.getElementById('obNextBtn');
+  var nextText = document.getElementById('obNextText');
+
+  if (nextBtn && nextText) {
+    if (currentOnboardingSlide === totalOnboardingSlides - 1) {
+      // آخر شاشة
+      nextText.textContent = 'ابدأ الآن';
+      nextBtn.classList.add('finish');
+    } else {
+      nextText.textContent = 'التالي';
+      nextBtn.classList.remove('finish');
+    }
+  }
+
+  console.log('🎬 Slide:', currentOnboardingSlide + 1, '/', totalOnboardingSlides);
+}
+
+// ============================================
+// ✅ إنهاء Onboarding
+// ============================================
+function finishOnboarding() {
+  console.log('✅ إنهاء Onboarding');
+
+  // حفظ إن المستخدم شاف Onboarding
+  localStorage.setItem('saydaliyati_onboarding_done', 'true');
+
+  playSuccessSound();
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+  // الانتقال لـ Splash
+  setTimeout(function () {
+    showScreen('splashScreen');
+    // تشغيل particles الـ splash
+    if (typeof createSplashParticles === 'function') {
+      setTimeout(createSplashParticles, 100);
+    }
+  }, 200);
+}
+
+// ============================================
+// 🔄 إعادة تعيين Onboarding (للاختبار)
+// ============================================
+function resetOnboarding() {
+  localStorage.removeItem('saydaliyati_onboarding_done');
+  currentOnboardingSlide = 0;
+  updateOnboardingUI();
+  showScreen('onboardingScreen');
+  console.log('🔄 تم إعادة تعيين Onboarding');
+}
+
+// ============================================
+// 🎯 التعامل مع Swipe (لمسة)
+// ============================================
+(function initOnboardingSwipe() {
+  var touchStartX = 0;
+  var touchEndX = 0;
+  var touchStartY = 0;
+  var touchEndY = 0;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var onboarding = document.getElementById('onboardingScreen');
+    if (!onboarding) return;
+
+    onboarding.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    onboarding.addEventListener('touchend', function (e) {
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipe();
+    }, { passive: true });
+  });
+
+  function handleSwipe() {
+    var diffX = touchEndX - touchStartX;
+    var diffY = touchEndY - touchStartY;
+
+    // التحقق إنها حركة أفقية (مو رأسية)
+    if (Math.abs(diffX) < Math.abs(diffY)) return;
+    if (Math.abs(diffX) < 50) return;
+
+    // RTL — swipe من اليمين لليسار = التالي
+    // (لأن الصفحة RTL، السحب لليسار يعني "التالي")
+    if (diffX > 50) {
+      // سحب لليمين = السابق
+      if (currentOnboardingSlide > 0) {
+        currentOnboardingSlide--;
+        updateOnboardingUI();
+        playSonarPing();
+      }
+    } else if (diffX < -50) {
+      // سحب لليسار = التالي
+      if (currentOnboardingSlide < totalOnboardingSlides - 1) {
+        currentOnboardingSlide++;
+        updateOnboardingUI();
+        playSonarPing();
+      } else {
+        finishOnboarding();
+      }
+    }
+  }
+})();
+
+// ============================================
+// ⌨️ التعامل مع الأسهم (للكمبيوتر)
+// ============================================
+document.addEventListener('keydown', function (e) {
+  var onboarding = document.getElementById('onboardingScreen');
+  if (!onboarding || !onboarding.classList.contains('active')) return;
+
+  if (e.key === 'ArrowLeft') {
+    // في RTL — السهم لليسار = التالي
+    if (currentOnboardingSlide < totalOnboardingSlides - 1) {
+      currentOnboardingSlide++;
+      updateOnboardingUI();
+    } else {
+      finishOnboarding();
+    }
+  } else if (e.key === 'ArrowRight') {
+    // السهم لليمين = السابق
+    if (currentOnboardingSlide > 0) {
+      currentOnboardingSlide--;
+      updateOnboardingUI();
+    }
+  } else if (e.key === 'Escape') {
+    finishOnboarding();
+  }
+});
+
+// ============================================
+// 🚀 تشغيل تلقائي
+// ============================================
+// نحتاج نستدعي initOnboarding() عند تحميل الصفحة
+// نضيفها في DOMContentLoaded
+
+document.addEventListener('DOMContentLoaded', function () {
+  // انتظر شوي عشان العناصر تجهز
+  setTimeout(function () {
+    var onboarding = document.getElementById('onboardingScreen');
+    var splash = document.getElementById('splashScreen');
+
+    // إذا Onboarding موجود في الـ HTML
+    if (onboarding) {
+      // تحقق إذا المستخدم شاف Onboarding
+      var hasSeen = localStorage.getItem('saydaliyati_onboarding_done') === 'true';
+
+      if (hasSeen) {
+        // تخطي — روح للـ splash
+        onboarding.classList.remove('active');
+        onboarding.style.display = 'none';
+
+        if (splash) {
+          splash.classList.add('active');
+          splash.style.display = 'flex';
+        }
+      } else {
+        // أظهر Onboarding
+        onboarding.classList.add('active');
+        onboarding.style.display = 'flex';
+
+        if (splash) {
+          splash.classList.remove('active');
+          splash.style.display = 'none';
+        }
+
+        initOnboarding();
+      }
+    }
+  }, 100);
+});
