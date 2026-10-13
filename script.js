@@ -7,13 +7,17 @@
 console.log('توصيل طبي v14 - بدأ التحميل');
 
 // ============================================
+// 🎯 الدوال المساعدة الأساسية
+// ============================================
+function showError(message) {
+  showToast('⚠️ ' + message);
+}
+
+// ============================================
 // 🔥 Firebase — التهيئة والتصدير العالمي
 // ============================================
 (function initFirebase() {
   if (typeof window === 'undefined') return;
-
-  // Firebase SDK محمّلة عبر module في index.html
-  // هذا المكان فقط نتحقق من الجاهزية
 
   window.firebaseReady = false;
 
@@ -54,13 +58,70 @@ var COLLECTIONS = {
 };
 
 // ============================================
+// 💰 نظام تسعير التوصيل
+// ============================================
+var DELIVERY_PRICING = {
+  BASE_FEE: 1500,
+  PER_KM: 500,
+  MIN_FEE: 2000,
+  MAX_FEE: 8000,
+  DRIVER_SHARE: 0.85,
+  PLATFORM_SHARE: 0.15,
+  DEFAULT_DISTANCE: 3
+};
+
+function calculateDeliveryFee(distanceKm) {
+  distanceKm = parseFloat(distanceKm) || DELIVERY_PRICING.DEFAULT_DISTANCE;
+  if (distanceKm < 0.5) distanceKm = 0.5;
+
+  var base = DELIVERY_PRICING.BASE_FEE;
+  var kmCost = DELIVERY_PRICING.PER_KM * distanceKm;
+  var total = base + kmCost;
+
+  if (total < DELIVERY_PRICING.MIN_FEE) total = DELIVERY_PRICING.MIN_FEE;
+  if (total > DELIVERY_PRICING.MAX_FEE) total = DELIVERY_PRICING.MAX_FEE;
+
+  total = Math.round(total / 100) * 100;
+
+  var driverShare = Math.round(total * DELIVERY_PRICING.DRIVER_SHARE / 100) * 100;
+  var platformShare = total - driverShare;
+
+  return {
+    distance: distanceKm,
+    total: total,
+    driverShare: driverShare,
+    platformShare: platformShare,
+    baseFee: base,
+    kmCost: Math.round(kmCost),
+    breakdown: base + ' + (' + DELIVERY_PRICING.PER_KM + ' × ' + distanceKm + ')'
+  };
+}
+
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return DELIVERY_PRICING.DEFAULT_DISTANCE;
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLon = (lon2 - lon1) * Math.PI / 180;
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon/2) * Math.sin(dLon/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c * 10) / 10;
+}
+
+function calculateDeliveryFeeFromLocations(patientLat, patientLng, pharmacyLat, pharmacyLng) {
+  var distance = calculateDistanceKm(patientLat, patientLng, pharmacyLat, pharmacyLng);
+  return calculateDeliveryFee(distance);
+}
+
+// ============================================
 // 🔥 Firestore — Users
 // ============================================
 async function saveUserToFirestore(userData) {
   if (!isFirebaseReady()) return null;
 
   try {
-    var userId = userData.googleId || userData.phone || ('user_' + Date.now());
+    var userId = userData.uid || userData.googleId || userData.phone || ('user_' + Date.now());
     var userRef = window.firebaseDoc(window.firebaseDB, COLLECTIONS.USERS, userId);
 
     await window.firebaseSetDoc(userRef, Object.assign({}, userData, {
@@ -125,6 +186,7 @@ async function savePharmacyToFirestore(pharmacyData) {
     );
 
     await window.firebaseSetDoc(pharmacyRef, {
+      uid: pharmacyData.uid || '',
       name: pharmacyData.name,
       owner: pharmacyData.owner || '',
       phone: pharmacyData.phone,
@@ -175,6 +237,7 @@ async function loadPharmaciesFromFirestore() {
     return loadPharmaciesFromLocal();
   }
 }
+
 function loadPharmaciesFromLocal() {
   try {
     var local = JSON.parse(localStorage.getItem('saydaliyati_pharmacies_cache') || '[]');
@@ -182,6 +245,7 @@ function loadPharmaciesFromLocal() {
   } catch (e) {}
   return [];
 }
+
 async function loadPharmaciesForPatient() {
   console.log('🔄 loadPharmaciesForPatient...');
 
@@ -196,7 +260,6 @@ async function loadPharmaciesForPatient() {
   try {
     var pharmacies = await loadPharmaciesFromFirestore();
 
-    // cache
     try {
       localStorage.setItem('saydaliyati_pharmacies_cache', JSON.stringify(pharmacies));
     } catch (e) {}
@@ -393,7 +456,7 @@ async function getUserRatingsFromFirestore(userPhone) {
 }
 
 // ============================================
-// 🔥 Firestore — Posts (Offers Feed)
+// 🔥 Firestore — Posts
 // ============================================
 async function savePostToFirestore(postData) {
   if (!isFirebaseReady()) return null;
@@ -476,151 +539,6 @@ async function uploadImageToStorage(base64Data, path) {
 }
 
 // ============================================
-// 🔥 Firebase Auth — Google Sign-In
-// ============================================
-async function signInWithGoogleTest() {
-  showToast('🔄 جاري الاتصال بـ Google...');
-
-  if (!isFirebaseReady() || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
-    showError('Firebase غير جاهز. حاول لاحقاً.');
-    return;
-  }
-
-  try {
-    var result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseProvider);
-    var user = result.user;
-
-    console.log('✅ تم تسجيل الدخول:', user);
-
-    var userData = {
-      type: 'patient',
-      name: user.displayName || 'مستخدم Google',
-      phone: user.phoneNumber || '',
-      email: user.email || '',
-      address: '',
-      avatar: user.photoURL || '',
-      googleId: user.uid,
-      loginMethod: 'google',
-      date: new Date().toISOString()
-    };
-
-    // حاول جلب بيانات المستخدم من Firestore أولاً
-    var existing = await getUserFromFirestore(user.uid);
-    if (existing) {
-      userData = Object.assign({}, userData, existing);
-    } else {
-      await saveUserToFirestore(userData);
-    }
-
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
-
-    playSuccessSound();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-    showToast('✅ تم الدخول بنجاح');
-
-    setTimeout(function () {
-      goToDashboardByType();
-    }, 800);
-  } catch (error) {
-    console.error('❌ خطأ Google Sign-In:', error);
-
-    if (error.code === 'auth/popup-closed-by-user') {
-      showToast('⚠️ تم إغلاق نافذة Google');
-    } else if (error.code === 'auth/unauthorized-domain') {
-      showError('النطاق غير مصرح به. أضف النطاق في Firebase Console.');
-    } else {
-      showError('فشل الدخول: ' + error.message);
-    }
-  }
-}
-async function signUpWithGoogleTest() {
-  console.log('🔄 بدء التسجيل بـ Google...');
-
-  if (!window.firebaseAuth || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
-    console.error('❌ Firebase غير جاهز');
-    showError('Firebase غير جاهز. حاول لاحقاً.');
-    return;
-  }
-
-  try {
-    var result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseProvider);
-    var user = result.user;
-
-    console.log('✅ تم تسجيل الدخول:', user.uid);
-
-    var userData = {
-      uid: user.uid,
-      type: 'patient',
-      name: user.displayName || 'مستخدم Google',
-      phone: user.phoneNumber || '',
-      email: user.email || '',
-      address: '',
-      avatar: user.photoURL || '',
-      googleId: user.uid,
-      loginMethod: 'google',
-      date: new Date().toISOString()
-    };
-
-    // تحقق إذا المستخدم موجود مسبقاً
-    var existing = null;
-    try {
-      existing = await getUserFromFirestore(user.uid);
-    } catch (e) {
-      console.warn('⚠️ خطأ البحث:', e);
-    }
-
-    if (existing) {
-      userData = Object.assign({}, userData, existing);
-      console.log('✅ المستخدم موجود مسبقاً');
-    } else {
-      console.log('📝 إنشاء حساب جديد');
-      saveRegistration(userData);
-      try {
-        await saveUserToFirestore(userData);
-      } catch (e) {
-        console.warn('⚠️ خطأ حفظ المستخدم:', e);
-      }
-    }
-
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
-
-    playSuccessSound();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-    showToast('✅ تم التسجيل بنجاح');
-
-    setTimeout(function () {
-      goToDashboardByType();
-    }, 800);
-
-  } catch (error) {
-    console.error('❌ خطأ Google Sign-Up:', error);
-
-    if (error.code === 'auth/popup-closed-by-user') {
-      showToast('⚠️ تم إغلاق نافذة Google');
-    } else if (error.code === 'auth/popup-blocked') {
-      showError('المتصفح منع النافذة المنبثقة. اسمح بالنوافذ المنبثقة.');
-    } else if (error.code === 'auth/unauthorized-domain') {
-      showError('النطاق غير مصرح. أضف saydaliyati-beryl.vercel.app في Firebase Console.');
-    } else if (error.code === 'auth/operation-not-allowed') {
-      showError('Google Sign-In غير مفعّل في Firebase');
-    } else {
-      showError('فشل التسجيل: ' + (error.message || error.code));
-    }
-  }
-}
-async function signOutFromFirebase() {
-  if (!window.firebaseAuth || !window.firebaseSignOut) return;
-  try {
-    await window.firebaseSignOut(window.firebaseAuth);
-    console.log('✅ تم تسجيل الخروج من Firebase');
-  } catch (e) {
-    console.warn('⚠️ خطأ تسجيل الخروج من Firebase:', e);
-  }
-}
-
-// ============================================
 // 🌙 نظام الوضع الليلي (Theme)
 // ============================================
 function toggleTheme() {
@@ -643,20 +561,14 @@ function toggleTheme() {
     metaTheme.setAttribute('content', newTheme === 'dark' ? '#050810' : '#F8FAFC');
   }
 
-  // تحديث خلفية شاشات الـ Hero
   var bodyBg = newTheme === 'dark' ? '#050810' : '#F8FAFC';
   document.body.style.background = bodyBg;
 
-  // أحدّث خريطة Leaflet إن كانت مفتوحة
   if (typeof mainMap !== 'undefined' && mainMap) {
-    setTimeout(function () {
-      mainMap.invalidateSize();
-    }, 300);
+    setTimeout(function () { mainMap.invalidateSize(); }, 300);
   }
   if (typeof trackingMap !== 'undefined' && trackingMap) {
-    setTimeout(function () {
-      trackingMap.invalidateSize();
-    }, 300);
+    setTimeout(function () { trackingMap.invalidateSize(); }, 300);
   }
 }
 
@@ -866,10 +778,9 @@ function createRegParticles(containerId) {
 }
 
 // ============================================
-// 💬 Toast + Errors
+// 💬 Toast + Confirm
 // ============================================
 function showToast(message) {
-  // احذف أي toast قديم
   document.querySelectorAll('.toast-message').forEach(function (t) { t.remove(); });
 
   var toast = document.createElement('div');
@@ -881,18 +792,64 @@ function showToast(message) {
 
   setTimeout(function () {
     toast.classList.remove('show');
-    setTimeout(function () { 
-      if (toast.parentNode) toast.remove(); 
+    setTimeout(function () {
+      if (toast.parentNode) toast.remove();
     }, 300);
   }, 2500);
 }
+
+function showConfirm(options) {
+  return new Promise(function (resolve) {
+    var title = options.title || 'هل أنت متأكد؟';
+    var message = options.message || '';
+    var confirmText = options.confirmText || 'نعم';
+    var cancelText = options.cancelText || 'إلغاء';
+    var confirmColor = options.confirmColor || 'danger';
+    var icon = options.icon || '⚠️';
+
+    var overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    overlay.innerHTML =
+      '<div class="confirm-box">' +
+        '<div class="confirm-icon confirm-icon-' + confirmColor + '">' + icon + '</div>' +
+        '<h3 class="confirm-title">' + title + '</h3>' +
+        (message ? '<p class="confirm-message">' + message + '</p>' : '') +
+        '<div class="confirm-actions">' +
+          '<button type="button" class="confirm-btn confirm-cancel">' + cancelText + '</button>' +
+          '<button type="button" class="confirm-btn confirm-accept confirm-accept-' + confirmColor + '">' + confirmText + '</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    var cancelBtn = overlay.querySelector('.confirm-cancel');
+    var acceptBtn = overlay.querySelector('.confirm-accept');
+
+    function close(result) {
+      overlay.classList.remove('show');
+      setTimeout(function () {
+        overlay.remove();
+        resolve(result);
+      }, 300);
+    }
+
+    cancelBtn.onclick = function () { close(false); };
+    acceptBtn.onclick = function () { close(true); };
+    overlay.onclick = function (e) {
+      if (e.target === overlay) close(false);
+    };
+
+    setTimeout(function () { overlay.classList.add('show'); }, 50);
+  });
+}
+
 // ============================================
 // 🎉 نهاية الجزء 1 من script.js
 // ============================================
 console.log('توصيل طبي v14 — الجزء 1 اكتمل');
 // ============================================
 // توصيل طبي - v14
-// الجزء 2 من 4: Screens + Nav + Forms + Login + Registration
+// الجزء 2 من 4: Screens + Nav + Forms + Login + Registration + Pharmacy Map
 // ============================================
 
 // ============================================
@@ -985,12 +942,11 @@ function openMapDirect(lat, lng) {
 }
 
 // ============================================
-// 🚀 بدء الطلب (للمندوب) — نسخة Firestore
+// 🚀 بدء الطلب (للمندوب)
 // ============================================
 var orderLocationsCache = {};
 
 async function startOrder(orderId) {
-  // حاول جلب الطلب من Firestore أولاً
   var order = orderLocationsCache[orderId];
 
   if (!order && isFirebaseReady()) {
@@ -1006,31 +962,32 @@ async function startOrder(orderId) {
     }
   }
 
-  // Fallback — بيانات تجريبية
-  if (!order) {
-    var demo = {
-      1234: { pharmacy: { lat: 33.3000, lng: 44.4000, name: 'صيدلية النور' }, customer: { lat: 33.3152, lng: 44.3661, name: 'أحمد علي - الجادرية' } },
-      1235: { pharmacy: { lat: 33.2800, lng: 44.3800, name: 'صيدلية الحياة' }, customer: { lat: 33.3200, lng: 44.3700, name: 'سارة محمد - الكرادة' } },
-      1236: { pharmacy: { lat: 33.3300, lng: 44.3500, name: 'صيدلية الشفاء' }, customer: { lat: 33.3100, lng: 44.3900, name: 'علي حسن - الكاظمية' } }
-    };
-    order = demo[orderId];
-  }
-
   if (!order) {
     showToast('⚠️ الطلب غير موجود');
     return;
   }
 
+  var pharmacyLat = order.pharmacyLat || 33.3152;
+  var pharmacyLng = order.pharmacyLng || 44.3661;
+
   localStorage.setItem('saydaliyati_active_order', JSON.stringify({
     id: orderId,
-    pharmacy: order.pharmacy,
-    customer: order.customer,
+    pharmacy: {
+      lat: pharmacyLat,
+      lng: pharmacyLng,
+      name: order.pharmacy || 'صيدلية'
+    },
+    customer: {
+      lat: order.patientLat || 33.3152,
+      lng: order.patientLng || 44.3661,
+      name: order.patientName || 'مريض'
+    },
     stage: 'pickup'
   }));
 
   if (navigator.vibrate) navigator.vibrate([50]);
-  openNavSheet(order.pharmacy.lat, order.pharmacy.lng, order.pharmacy.name);
-  showToast('📍 الوجهة: ' + order.pharmacy.name);
+  openNavSheet(pharmacyLat, pharmacyLng, order.pharmacy || 'صيدلية');
+  showToast('📍 الوجهة: ' + (order.pharmacy || 'صيدلية'));
 }
 
 function goToPickup() {
@@ -1101,7 +1058,6 @@ async function acceptOrder(orderId) {
   playAlertDing();
   showToast('✅ تم قبول الطلب #' + orderId);
 
-  // حدّث Firestore إن أمكن
   if (isFirebaseReady()) {
     await updateOrderInFirestore(String(orderId), {
       status: 'accepted',
@@ -1110,7 +1066,6 @@ async function acceptOrder(orderId) {
     });
   }
 
-  // احفظ محلياً
   var accepted = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
   accepted.unshift({ id: orderId, acceptedAt: new Date().toISOString() });
   localStorage.setItem('saydaliyati_accepted_orders', JSON.stringify(accepted));
@@ -1139,7 +1094,12 @@ function showScreen(screenId) {
     if (screenId === 'loginScreen') setTimeout(createLoginParticles, 100);
     if (screenId === 'roleScreen') setTimeout(createRoleParticles, 100);
     if (screenId === 'patientScreen') setTimeout(function () { createRegParticles('patientParticles'); }, 100);
-    if (screenId === 'pharmacyScreen') setTimeout(function () { createRegParticles('pharmacyParticles'); }, 100);
+    if (screenId === 'pharmacyScreen') {
+      setTimeout(function () {
+        createRegParticles('pharmacyParticles');
+        if (typeof initPharmacyMap === 'function') initPharmacyMap();
+      }, 300);
+    }
     if (screenId === 'deliveryScreen') setTimeout(function () { createRegParticles('deliveryParticles'); }, 100);
 
     console.log('✅ showScreen:', screenId);
@@ -1206,7 +1166,6 @@ async function goToMyOrders() {
     if (subtitleEl) subtitleEl.textContent = 'ترتيب تلقائي حسب الأولوية';
     if (deliveryContent) deliveryContent.style.display = 'block';
 
-    // جلب الطلبات من Firestore + عرض النظام الذكي
     if (isFirebaseReady()) {
       var deliveryOrders = await loadDeliveryOrdersFromFirestore();
       renderAiSuggestion(deliveryOrders);
@@ -1233,6 +1192,7 @@ async function goToMyOrders() {
   var ordersBtn = document.querySelector('.nav-btn[data-tab="orders"]');
   if (ordersBtn) ordersBtn.classList.add('active');
 }
+
 // ============================================
 // 📦 دالة جلب طلبات المندوب من Firestore
 // ============================================
@@ -1258,6 +1218,7 @@ async function loadDeliveryOrdersFromFirestore() {
     return [];
   }
 }
+
 // ============================================
 // 🧠 عرض الاقتراح الذكي + قائمة الأولويات
 // ============================================
@@ -1280,19 +1241,17 @@ function renderAiSuggestion(orders) {
     return;
   }
 
-  // احسب score لكل طلب
   orders.forEach(function (o) {
-      var commission = o.driverShare || o.commission || o.total || 3000;
-  var distance = parseFloat(o.distance) || 3;
-  var itemsCount = (o.items || []).length || 1;
-  o._score = ((commission / distance) * (1 + itemsCount * 0.1)) / 1000;
-});
-  // رتب حسب الـ score (تنازلي)
+    var commission = o.driverShare || o.commission || o.total || 3000;
+    var distance = parseFloat(o.distance) || 3;
+    var itemsCount = (o.items || []).length || 1;
+    o._score = ((commission / distance) * (1 + itemsCount * 0.1)) / 1000;
+  });
+
   orders.sort(function (a, b) { return b._score - a._score; });
 
   var best = orders[0];
 
-  // عرض البطاقة الذكية
   if (card) {
     var idEl = document.getElementById('aiSuggestedOrderId');
     var scoreEl = document.getElementById('aiSuggestedScore');
@@ -1301,7 +1260,6 @@ function renderAiSuggestion(orders) {
     card.style.display = 'block';
   }
 
-  // عرض قائمة الأولويات
   if (priorityList) {
     var html = '';
     orders.forEach(function (o, i) {
@@ -1310,7 +1268,7 @@ function renderAiSuggestion(orders) {
                  '🥉 أولوية منخفضة';
       var priorityClass = i === 0 ? 'priority-1' :
                           i === 1 ? 'priority-2' : 'priority-3';
-      var commission = o.commission || o.total || 0;
+      var commission = o.driverShare || o.commission || o.total || 0;
       var distance = o.distance || '3';
 
       html +=
@@ -1322,7 +1280,7 @@ function renderAiSuggestion(orders) {
           '<div class="priority-pharmacy">' + (o.pharmacy || '-') + '</div>' +
           '<div class="priority-info">' +
             '<span>📍 ' + distance + ' كم</span>' +
-            '<span>💰 ' + (o.driverShare || o.commission || 0).toLocaleString() + ' دينار</span>' +
+            '<span>💰 ' + commission.toLocaleString() + ' دينار</span>' +
           '</div>' +
           '<div class="priority-footer">' +
             '<span class="priority-score">Score: ' + o._score.toFixed(1) + '/10</span>' +
@@ -1333,10 +1291,9 @@ function renderAiSuggestion(orders) {
     priorityList.innerHTML = html;
   }
 
-  // Summary Bar
   if (summaryBar) {
     var totalEarnings = orders.reduce(function (s, o) {
-      return s + (o.commission || o.total || 0);
+      return s + (o.driverShare || o.commission || o.total || 0);
     }, 0);
     var countEl = document.getElementById('deliverySummaryCount');
     var earnEl = document.getElementById('deliverySummaryEarnings');
@@ -1346,9 +1303,6 @@ function renderAiSuggestion(orders) {
   }
 }
 
-// ============================================
-// 🚀 بدء الطلب المقترح من البطاقة الذكية
-// ============================================
 function startAiSuggestedOrder() {
   var idEl = document.getElementById('aiSuggestedOrderId');
   if (!idEl) return;
@@ -1380,7 +1334,6 @@ async function loadPatientOrdersIntoDOM() {
   var container = document.getElementById('patientOrdersContent');
   if (!container) return;
 
-  // ابقِ على قسم "الطلب الحالي" إن موجود، وحدّث "السابقة"
   var pastSection = container.querySelector('.order-list');
   if (!pastSection) return;
 
@@ -1506,7 +1459,7 @@ async function rejectPharmacyOrder(orderId) {
   }
 
   showToast('تم رفض الطلب #' + orderId);
-  }
+}
 
 function switchPharmacyFilter(filter, btn) {
   document.querySelectorAll('#pharmacyOrdersContent .filter-tab').forEach(function (t) {
@@ -1534,15 +1487,16 @@ function goToDashboardByType() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = userStr ? JSON.parse(userStr) : {};
 
-  updateUserName();
-
   if (user.type === 'pharmacy') {
     showScreen('pharmacyDashboard');
+    setTimeout(function () { updateUserName(); }, 100);
   } else if (user.type === 'delivery') {
     showScreen('deliveryDashboard');
+    setTimeout(function () { updateUserName(); }, 100);
   } else {
     showScreen('homeScreen');
     setTimeout(function () {
+      updateUserName();
       loadOffers();
       loadPharmaciesForPatient();
       initPostsFeed();
@@ -1572,7 +1526,6 @@ function updateUserName() {
     var deliveryGreeting = document.getElementById('deliveryGreeting');
     if (deliveryGreeting) deliveryGreeting.textContent = userName;
 
-    // عرض صورة الملف الشخصي في الصفحة الرئيسية
     var homeAvatar = document.getElementById('homeAvatar');
     var homeAvatarLetter = document.getElementById('homeAvatarLetter');
 
@@ -1602,13 +1555,20 @@ function goToRoleSelection() { showScreen('roleScreen'); }
 function goToOrdersPage() { showScreen('ordersScreen'); }
 
 function selectRole(role) {
-  if (role === 'patient') showScreen('patientScreen');
-  else if (role === 'pharmacy') showScreen('pharmacyScreen');
-  else if (role === 'delivery') showScreen('deliveryScreen');
+  if (role === 'patient') {
+    showScreen('patientScreen');
+  } else if (role === 'pharmacy') {
+    showScreen('pharmacyScreen');
+    setTimeout(function () {
+      if (typeof initPharmacyMap === 'function') initPharmacyMap();
+    }, 300);
+  } else if (role === 'delivery') {
+    showScreen('deliveryScreen');
+  }
 }
 
 // ============================================
-// 🔐 تسجيل الدخول — Firestore First
+// 🔐 تسجيل الدخول — Firebase Auth + LocalStorage fallback
 // ============================================
 async function submitLogin(event) {
   if (event) {
@@ -1629,17 +1589,15 @@ async function submitLogin(event) {
     return;
   }
 
-  // جرّب كل الاحتمالات الممكنة للـ authEmail
   var authEmails = [
-    phone + '@saydaliyati.app',      // مريض
-    phone + '@pharmacy.saydaliyati.app', // صيدلية
-    phone + '@driver.saydaliyati.app'  // مندوب
+    phone + '@saydaliyati.app',
+    phone + '@pharmacy.saydaliyati.app',
+    phone + '@driver.saydaliyati.app'
   ];
 
   var user = null;
   var authError = null;
 
-  // 1) جرّب Firebase Auth
   if (window.firebaseAuth && window.firebaseSignIn) {
     for (var i = 0; i < authEmails.length; i++) {
       try {
@@ -1650,7 +1608,6 @@ async function submitLogin(event) {
         );
         console.log('✅ تم تسجيل الدخول بـ Firebase Auth:', userCred.user.uid);
 
-        // جلب بيانات المستخدم من Firestore
         if (isFirebaseReady()) {
           try {
             user = await getUserFromFirestore(userCred.user.uid);
@@ -1659,7 +1616,6 @@ async function submitLogin(event) {
           }
         }
 
-        // إذا مو موجود في Firestore — استخدم Firebase Auth data
         if (!user) {
           user = {
             uid: userCred.user.uid,
@@ -1673,15 +1629,13 @@ async function submitLogin(event) {
           };
         }
 
-        break; // نجح — اطلع من اللوب
+        break;
       } catch (err) {
         authError = err;
-        // جرّب الاحتمال التالي
       }
     }
   }
 
-  // 2) لو Firebase Auth فشل — دوّر في LocalStorage (fallback)
   if (!user) {
     var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
     var localUser = registrations.find(function (r) {
@@ -1694,7 +1648,6 @@ async function submitLogin(event) {
     }
   }
 
-  // 3) تحقق نهائي
   if (!user) {
     if (authError) {
       if (authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
@@ -1718,11 +1671,21 @@ async function submitLogin(event) {
     goToDashboardByType();
   }, 500);
 }
+
 // ============================================
 // 🚪 تسجيل الخروج
 // ============================================
 async function logout() {
-  if (!confirm('هل أنت متأكد من تسجيل الخروج؟')) return;
+  var confirmed = await showConfirm({
+    title: 'تسجيل الخروج',
+    message: 'هل أنت متأكد من تسجيل الخروج؟',
+    confirmText: 'نعم، سجل خروج',
+    cancelText: 'إلغاء',
+    confirmColor: 'danger',
+    icon: '🚪'
+  });
+
+  if (!confirmed) return;
 
   localStorage.removeItem('saydaliyati_current_user');
 
@@ -1736,7 +1699,9 @@ async function logout() {
     stopRadarSystem();
   }
 
-  await signOutFromFirebase();
+  if (typeof signOutFromFirebase === 'function') {
+    try { await signOutFromFirebase(); } catch (e) {}
+  }
 
   closeSidebar();
   goToSplash();
@@ -1744,7 +1709,7 @@ async function logout() {
 }
 
 // ============================================
-// 📝 إرسال النماذج — Registration Forms
+// 🧑 إرسال نموذج المريض
 // ============================================
 async function submitPatient(event) {
   if (event) {
@@ -1796,8 +1761,9 @@ async function submitPatient(event) {
     }
   } else {
     uid = 'local_' + phone + '_' + Date.now();
-    console.warn('⚠️ Firebase Auth غير جاهز — استخدام UID محلي');
+    console.warn('⚠️ Firebase Auth غير جاهز');
   }
+
   var user = {
     uid: uid,
     type: 'patient',
@@ -1821,6 +1787,7 @@ async function submitPatient(event) {
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
 }
+
 // ============================================
 // 🗺️ خريطة تسجيل الصيدلية
 // ============================================
@@ -1832,7 +1799,7 @@ function initPharmacyMap() {
   if (!mapEl) return;
   if (pharmacyMap) return;
 
-  var center = [33.3152, 44.3661]; // بغداد
+  var center = [33.3152, 44.3661];
 
   pharmacyMap = L.map('pharmacyMap', {
     zoomControl: true,
@@ -1909,6 +1876,10 @@ function setPharmacyLocation(lat, lng) {
     statusEl.classList.add('ok');
   }
 }
+
+// ============================================
+// 🏪 إرسال نموذج الصيدلية
+// ============================================
 async function submitPharmacy(event) {
   if (event) {
     event.preventDefault();
@@ -1937,7 +1908,6 @@ async function submitPharmacy(event) {
     return;
   }
 
-  // موقع الصيدلية
   var pharmacyLat = document.getElementById('pharmacyLat').value;
   var pharmacyLng = document.getElementById('pharmacyLng').value;
 
@@ -1949,7 +1919,6 @@ async function submitPharmacy(event) {
   var authEmail = phone + '@pharmacy.saydaliyati.app';
   var uid = null;
 
-  // Firebase Auth
   if (window.firebaseAuth && window.firebaseCreateUser) {
     try {
       var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
@@ -2011,8 +1980,15 @@ async function submitPharmacy(event) {
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
 }
+
+// ============================================
+// 🚴 إرسال نموذج المندوب
+// ============================================
 async function submitDelivery(event) {
-  if (event) event.preventDefault();
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   var name = document.getElementById('deliveryName').value.trim();
   var phone = document.getElementById('deliveryPhone').value.trim();
@@ -2036,14 +2012,37 @@ async function submitDelivery(event) {
     return;
   }
 
+  var authEmail = email || (phone + '@driver.saydaliyati.app');
+  var uid = null;
+
+  if (window.firebaseAuth && window.firebaseCreateUser) {
+    try {
+      var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
+      uid = userCred.user.uid;
+      console.log('✅ تم إنشاء Firebase Auth (مندوب):', uid);
+    } catch (authError) {
+      console.error('❌ خطأ Firebase Auth:', authError);
+      if (authError.code === 'auth/email-already-in-use') {
+        showError('رقم الهاتف أو البريد مسجل مسبقاً');
+      } else {
+        showError('فشل التسجيل: ' + authError.message);
+      }
+      return;
+    }
+  } else {
+    uid = 'local_' + phone + '_' + Date.now();
+    console.warn('⚠️ Firebase Auth غير جاهز');
+  }
+
   var user = {
+    uid: uid,
     type: 'delivery',
     name: name,
     phone: phone,
     email: email,
     area: area,
     vehicle: vehicle,
-    password: password,
+    authEmail: authEmail,
     date: new Date().toISOString()
   };
 
@@ -2067,7 +2066,6 @@ function saveRegistration(data) {
   data.date = data.date || new Date().toISOString();
   var registrations = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
 
-  // لا تكرر
   var existsIdx = registrations.findIndex(function (r) { return r.phone === data.phone; });
   if (existsIdx !== -1) {
     registrations[existsIdx] = data;
@@ -2139,6 +2137,8 @@ function checkPasswordStrength(inputId, strengthId) {
 // ✅ رسائل النجاح
 // ============================================
 function showSuccessMessage(title, message) {
+  document.querySelectorAll('.success-overlay').forEach(function (el) { el.remove(); });
+
   var overlay = document.createElement('div');
   overlay.className = 'success-overlay';
   overlay.innerHTML =
@@ -2167,12 +2167,176 @@ function closeSuccessAndGo() {
 }
 
 // ============================================
+// 🔥 Firebase Auth — Google Sign-In
+// ============================================
+async function signInWithGoogleTest() {
+  console.log('🔄 بدء الدخول بـ Google...');
+
+  if (!window.firebaseAuth || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
+    console.error('❌ Firebase غير جاهز');
+    showError('Firebase غير جاهز. حاول لاحقاً.');
+    return;
+  }
+
+  try {
+    var result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseProvider);
+    var user = result.user;
+
+    console.log('✅ تم تسجيل الدخول:', user.uid);
+
+    var userData = {
+      uid: user.uid,
+      type: 'patient',
+      name: user.displayName || 'مستخدم Google',
+      phone: user.phoneNumber || '',
+      email: user.email || '',
+      address: '',
+      avatar: user.photoURL || '',
+      googleId: user.uid,
+      loginMethod: 'google',
+      date: new Date().toISOString()
+    };
+
+    var existing = null;
+    try {
+      existing = await getUserFromFirestore(user.uid);
+    } catch (e) {
+      console.warn('⚠️ خطأ البحث:', e);
+    }
+
+    if (existing) {
+      userData = Object.assign({}, userData, existing);
+      console.log('✅ المستخدم موجود مسبقاً');
+    } else {
+      console.log('📝 إنشاء حساب جديد');
+      saveRegistration(userData);
+      try {
+        await saveUserToFirestore(userData);
+      } catch (e) {
+        console.warn('⚠️ خطأ حفظ المستخدم:', e);
+      }
+    }
+
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
+
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    showToast('✅ تم الدخول بنجاح');
+
+    setTimeout(function () {
+      goToDashboardByType();
+    }, 800);
+  } catch (error) {
+    console.error('❌ خطأ Google Sign-In:', error);
+
+    if (error.code === 'auth/popup-closed-by-user') {
+      showToast('⚠️ تم إغلاق نافذة Google');
+    } else if (error.code === 'auth/popup-blocked') {
+      showError('المتصفح منع النافذة المنبثقة.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      showError('النطاق غير مصرح. أضف النطاق في Firebase Console.');
+    } else if (error.code === 'auth/operation-not-allowed') {
+      showError('Google Sign-In غير مفعّل في Firebase');
+    } else {
+      showError('فشل الدخول: ' + (error.message || error.code));
+    }
+  }
+}
+
+async function signUpWithGoogleTest() {
+  console.log('🔄 بدء التسجيل بـ Google...');
+
+  if (!window.firebaseAuth || !window.firebaseProvider || !window.firebaseSignInWithPopup) {
+    console.error('❌ Firebase غير جاهز');
+    showError('Firebase غير جاهز. حاول لاحقاً.');
+    return;
+  }
+
+  try {
+    var result = await window.firebaseSignInWithPopup(window.firebaseAuth, window.firebaseProvider);
+    var user = result.user;
+
+    console.log('✅ تم تسجيل الدخول:', user.uid);
+
+    var userData = {
+      uid: user.uid,
+      type: 'patient',
+      name: user.displayName || 'مستخدم Google',
+      phone: user.phoneNumber || '',
+      email: user.email || '',
+      address: '',
+      avatar: user.photoURL || '',
+      googleId: user.uid,
+      loginMethod: 'google',
+      date: new Date().toISOString()
+    };
+
+    var existing = null;
+    try {
+      existing = await getUserFromFirestore(user.uid);
+    } catch (e) {
+      console.warn('⚠️ خطأ البحث:', e);
+    }
+
+    if (existing) {
+      userData = Object.assign({}, userData, existing);
+      console.log('✅ المستخدم موجود مسبقاً');
+    } else {
+      console.log('📝 إنشاء حساب جديد');
+      saveRegistration(userData);
+      try {
+        await saveUserToFirestore(userData);
+      } catch (e) {
+        console.warn('⚠️ خطأ حفظ المستخدم:', e);
+      }
+    }
+
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
+
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+    showToast('✅ تم التسجيل بنجاح');
+
+    setTimeout(function () {
+      goToDashboardByType();
+    }, 800);
+
+  } catch (error) {
+    console.error('❌ خطأ Google Sign-Up:', error);
+
+    if (error.code === 'auth/popup-closed-by-user') {
+      showToast('⚠️ تم إغلاق نافذة Google');
+    } else if (error.code === 'auth/popup-blocked') {
+      showError('المتصفح منع النافذة المنبثقة.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      showError('النطاق غير مصرح. أضف النطاق في Firebase Console.');
+    } else if (error.code === 'auth/operation-not-allowed') {
+      showError('Google Sign-In غير مفعّل في Firebase');
+    } else {
+      showError('فشل التسجيل: ' + (error.message || error.code));
+    }
+  }
+}
+
+async function signOutFromFirebase() {
+  if (!window.firebaseAuth || !window.firebaseSignOut) return;
+  try {
+    await window.firebaseSignOut(window.firebaseAuth);
+    console.log('✅ تم تسجيل الخروج من Firebase');
+  } catch (e) {
+    console.warn('⚠️ خطأ تسجيل الخروج من Firebase:', e);
+  }
+}
+
+// ============================================
 // 🎉 نهاية الجزء 2 من script.js
 // ============================================
 console.log('توصيل طبي v14 — الجزء 2 اكتمل');
 // ============================================
 // توصيل طبي - v14
-// الجزء 3 من 4: Profile + Ratings + Notifications + Offers + Prescription + Cart
+// الجزء 3 من 4: Profile + Ratings + Notifications + Offers + Prescription + Cart + Maps
 // ============================================
 
 // ============================================
@@ -2265,12 +2429,13 @@ function openProfile() {
 }
 
 // ============================================
-// 🖼️ تعديل صورة الملف الشخصي
+// 🖼️ رفع صورة الملف الشخصي
 // ============================================
 function openImagePicker() {
   var input = document.getElementById('avatarInput');
   if (input) input.click();
 }
+
 async function handleAvatarUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
@@ -2284,7 +2449,6 @@ async function handleAvatarUpload(event) {
   reader.onload = async function (e) {
     var imageData = e.target.result;
 
-    // اضغط الصورة وحوّلها لـ base64 صغير
     var compressedImage = await compressImage(imageData, 400, 0.8);
 
     var avatarEl = document.getElementById('profileAvatar');
@@ -2323,9 +2487,6 @@ async function handleAvatarUpload(event) {
   reader.readAsDataURL(file);
 }
 
-// ============================================
-// 🖼️ ضغط الصورة قبل الحفظ
-// ============================================
 function compressImage(base64, maxSize, quality) {
   return new Promise(function (resolve) {
     var img = new Image();
@@ -2356,6 +2517,7 @@ function compressImage(base64, maxSize, quality) {
     img.src = base64;
   });
 }
+
 // ============================================
 // ✏️ تعديل البيانات
 // ============================================
@@ -2617,9 +2779,11 @@ function getNotifIconHtml(type, read) {
     '<path d="M13.73 21a2 2 0 0 1-3.46 0"/>' +
   '</svg>';
 }
+
 function getDefaultNotifications(userType) {
   return [];
 }
+
 // ============================================
 // 🔔 التنبيهات الداخلية
 // ============================================
@@ -2830,6 +2994,7 @@ async function submitPrescription(event) {
     type: 'prescription',
     patientName: user.name,
     patientPhone: user.phone,
+    patientId: user.uid || user.phone,
     pharmacy: pharmacy || 'غير محدد',
     address: address,
     notes: notes,
@@ -2838,7 +3003,6 @@ async function submitPrescription(event) {
     createdAt: new Date().toISOString()
   };
 
-  // ارفع الصورة إلى Firebase Storage
   if (isFirebaseReady() && user.phone) {
     try {
       var path = 'prescriptions/' + user.phone + '_' + Date.now() + '.jpg';
@@ -2846,12 +3010,10 @@ async function submitPrescription(event) {
     } catch (e) { console.warn('⚠️ خطأ رفع الصورة:', e); }
   }
 
-  // احفظ محلياً
   var orders = JSON.parse(localStorage.getItem('saydaliyati_prescription_orders') || '[]');
   orders.unshift(order);
   localStorage.setItem('saydaliyati_prescription_orders', JSON.stringify(orders));
 
-  // احفظ في Firestore
   if (isFirebaseReady()) {
     try { await saveOrderToFirestore(order); } catch (e) { console.warn(e); }
   }
@@ -2872,6 +3034,7 @@ var PHARMACY_INVENTORY = {};
 var cart = [];
 var currentModalProduct = null;
 var modalQuantity = 1;
+
 // ============================================
 // 🗺️ خريطة السلة — تحديد موقع المريض
 // ============================================
@@ -2882,9 +3045,9 @@ var cartUserLocation = null;
 function initCartMap() {
   var mapEl = document.getElementById('cartMap');
   if (!mapEl) return;
-  if (cartMap) return; // منع التكرار
+  if (cartMap) return;
 
-  var center = [33.3152, 44.3661]; // بغداد
+  var center = [33.3152, 44.3661];
 
   cartMap = L.map('cartMap', {
     zoomControl: false,
@@ -2895,7 +3058,6 @@ function initCartMap() {
     maxZoom: 19
   }).addTo(cartMap);
 
-  // أيقونة المريض
   var userIcon = L.divIcon({
     className: 'custom-map-marker marker-me',
     html: '<div class="custom-marker-pin"><span>📍</span></div>',
@@ -2962,7 +3124,6 @@ async function updateCartDistance() {
     return;
   }
 
-  // جلب إحداثيات الصيدلية من Firestore
   var pharmacyLat = 33.3152;
   var pharmacyLng = 44.3661;
 
@@ -2982,7 +3143,6 @@ async function updateCartDistance() {
     }
   }
 
-  // احسب المسافة + الأجرة
   var fee = calculateDeliveryFeeFromLocations(
     cartUserLocation[0],
     cartUserLocation[1],
@@ -2990,7 +3150,6 @@ async function updateCartDistance() {
     pharmacyLng
   );
 
-  // عرض المعلومات
   var infoEl = document.getElementById('cartDistanceInfo');
   var distEl = document.getElementById('cartDistanceValue');
   var feeEl = document.getElementById('cartDeliveryFee');
@@ -2999,20 +3158,21 @@ async function updateCartDistance() {
   if (distEl) distEl.textContent = fee.distance;
   if (feeEl) feeEl.textContent = fee.total.toLocaleString();
 
-  // احفظ في localStorage للاستخدام في الطلب
   localStorage.setItem('saydaliyati_cart_delivery', JSON.stringify(fee));
 
-  // حدّث ملخص السلة
   var cartDeliveryEl = document.getElementById('cartDelivery');
   if (cartDeliveryEl) {
     cartDeliveryEl.textContent = fee.total.toLocaleString() + ' دينار';
   }
 
-  // أعد حساب الإجمالي
   if (typeof renderCart === 'function') {
     renderCart();
   }
 }
+
+// ============================================
+// 🛒 السلة — الشاشات والدوال
+// ============================================
 function openCartScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   if (!userStr) { showToast('سجّل دخول أولاً'); return; }
@@ -3028,12 +3188,12 @@ function openCartScreen() {
   renderCart();
   showScreen('cartScreen');
 
-  // هيّئ الخريطة بعد ما تظهر الشاشة
   setTimeout(function () {
     initCartMap();
   }, 300);
 }
- async function onPharmacyChange() {
+
+async function onPharmacyChange() {
   var pharmacy = document.getElementById('cartPharmacySelect').value;
 
   var infoBanner = document.getElementById('cartInfoBanner');
@@ -3046,22 +3206,22 @@ function openCartScreen() {
   }
 
   if (cart.length > 0 && cart[0].pharmacy !== pharmacy) {
-  var confirmed = await showConfirm({
-    title: 'تغيير الصيدلية',
-    message: 'السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟',
-    confirmText: 'نعم، امسح',
-    cancelText: 'إلغاء',
-    confirmColor: 'warning',
-    icon: '⚠️'
-  });
+    var confirmed = await showConfirm({
+      title: 'تغيير الصيدلية',
+      message: 'السلة تحتوي منتجات من صيدلية أخرى. هل تريد مسحها والبدء من جديد؟',
+      confirmText: 'نعم، امسح',
+      cancelText: 'إلغاء',
+      confirmColor: 'warning',
+      icon: '⚠️'
+    });
 
-  if (!confirmed) {
-    document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
-    return;
-  }
+    if (!confirmed) {
+      document.getElementById('cartPharmacySelect').value = cart[0].pharmacy;
+      return;
+    }
 
-  cart = [];
-  saveCart();
+    cart = [];
+    saveCart();
   }
 
   if (infoBanner) infoBanner.style.display = 'none';
@@ -3069,10 +3229,10 @@ function openCartScreen() {
 
   renderProducts(pharmacy);
   renderCart();
-// حدّث المسافة والأجرة
-if (cartUserLocation) {
-  updateCartDistance();
-}
+
+  if (cartUserLocation) {
+    updateCartDistance();
+  }
 }
 
 function renderProducts(pharmacy) {
@@ -3228,17 +3388,22 @@ function renderCart() {
   });
 
   if (itemsEl) itemsEl.innerHTML = html;
-var subtotal = cart.reduce(function (sum, item) {
-  return sum + (item.price * item.quantity);
-}, 0);
 
-// استخدم التسعير من الخريطة إذا موجود
-var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
-var delivery = deliveryData ? deliveryData.total : 3000;
-var total = subtotal + delivery;
-  document.getElementById('cartSubtotal').textContent = subtotal.toLocaleString() + ' دينار';
-  document.getElementById('cartDelivery').textContent = delivery.toLocaleString() + ' دينار';
-  document.getElementById('cartTotal').textContent = total.toLocaleString() + ' دينار';
+  var subtotal = cart.reduce(function (sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+
+  var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+  var delivery = deliveryData ? deliveryData.total : 3000;
+  var total = subtotal + delivery;
+
+  var subtotalEl = document.getElementById('cartSubtotal');
+  var deliveryEl = document.getElementById('cartDelivery');
+  var totalEl = document.getElementById('cartTotal');
+
+  if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString() + ' دينار';
+  if (deliveryEl) deliveryEl.textContent = delivery.toLocaleString() + ' دينار';
+  if (totalEl) totalEl.textContent = total.toLocaleString() + ' دينار';
 }
 
 function changeQuantity(index, delta) {
@@ -3258,6 +3423,7 @@ function removeFromCart(index) {
   updateCartBadge();
   showToast('تم الحذف من السلة');
 }
+
 async function clearCart() {
   if (cart.length === 0) return;
 
@@ -3278,6 +3444,7 @@ async function clearCart() {
   updateCartBadge();
   showToast('تم مسح السلة');
 }
+
 function saveCart() {
   localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
 }
@@ -3304,45 +3471,47 @@ async function submitCartOrder() {
 
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = JSON.parse(userStr);
-var subtotal = cart.reduce(function (sum, item) {
-  return sum + (item.price * item.quantity);
-}, 0);
 
-// استخدم التسعير من الخريطة
-var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
-var delivery = deliveryData ? deliveryData.total : 3000;
-var driverShare = deliveryData ? deliveryData.driverShare : Math.round(delivery * 0.85);
-var platformShare = deliveryData ? deliveryData.platformShare : delivery - driverShare;
-var distance = deliveryData ? deliveryData.distance : 3;
-var total = subtotal + delivery;
+  var subtotal = cart.reduce(function (sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+
+  var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+  var delivery = deliveryData ? deliveryData.total : 3000;
+  var driverShare = deliveryData ? deliveryData.driverShare : Math.round(delivery * 0.85);
+  var platformShare = deliveryData ? deliveryData.platformShare : delivery - driverShare;
+  var distance = deliveryData ? deliveryData.distance : 3;
+  var total = subtotal + delivery;
+
   var orderId = Math.floor(1000 + Math.random() * 9000);
   var order = {
-  id: orderId,
-  type: 'cart',
-  patientName: user.name,
-  patientPhone: user.phone,
-  patientId: user.uid || user.phone,
-  pharmacy: pharmacy,
-  address: address,
-  notes: notes,
-  payment: payment,
-  items: cart.slice(),
-  subtotal: subtotal,
-  delivery: delivery,
-  deliveryFee: delivery,
-  driverShare: driverShare,
-  platformShare: platformShare,
-  distance: distance,
-  total: total,
-  status: 'pending',
-  createdAt: new Date().toISOString()
-};
-  // محلياً
+    id: orderId,
+    type: 'cart',
+    patientName: user.name,
+    patientPhone: user.phone,
+    patientId: user.uid || user.phone,
+    patientLat: cartUserLocation ? cartUserLocation[0] : null,
+    patientLng: cartUserLocation ? cartUserLocation[1] : null,
+    pharmacy: pharmacy,
+    address: address,
+    notes: notes,
+    payment: payment,
+    items: cart.slice(),
+    subtotal: subtotal,
+    delivery: delivery,
+    deliveryFee: delivery,
+    driverShare: driverShare,
+    platformShare: platformShare,
+    distance: distance,
+    total: total,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+
   var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
   orders.unshift(order);
   localStorage.setItem('saydaliyati_cart_orders', JSON.stringify(orders));
 
-  // Firestore
   if (isFirebaseReady()) {
     try { await saveOrderToFirestore(order); } catch (e) { console.warn(e); }
   }
@@ -3352,6 +3521,7 @@ var total = subtotal + delivery;
   cart = [];
   saveCart();
   updateCartBadge();
+  localStorage.removeItem('saydaliyati_cart_delivery');
 
   playSuccessSound();
   showSuccessMessage('✅ تم إرسال طلبك', 'طلب #' + orderId + ' - ' + pharmacy);
@@ -3621,6 +3791,7 @@ async function publishPost(event) {
 
     var postData = {
       pharmacyId: user.phone,
+      pharmacyUid: user.uid || '',
       pharmacyName: user.name || 'صيدلية',
       title: title,
       description: description,
@@ -3827,17 +3998,6 @@ function toggleRadar() {
 
     if (radarInterval) clearInterval(radarInterval);
     radarInterval = setInterval(function () { playSonarPing(); }, 2000);
-
-    setTimeout(function () {
-      if (radarActive) {
-        playAlertDing();
-        vibrateDevice([200, 100, 200]);
-        openOrderSheet();
-        if (radarTitle) radarTitle.textContent = '📦 تم رصد طلب!';
-      }
-    }, 5000);
-
-    startOrderSimulation();
   } else {
     radarActive = false;
 
@@ -4038,10 +4198,11 @@ function stopRadarSystem() {
   if (radarCheckInterval) { clearInterval(radarCheckInterval); radarCheckInterval = null; }
   console.log('🛑 نظام الرادار متوقف');
 }
+
 function checkForNewOrders() {
-  // معطّل — الإشعارات الحقيقية تجي من Firestore
   return;
 }
+
 function requestNotificationPermission() {
   if (!('Notification' in window)) {
     showToast('المتصفح لا يدعم الإشعارات');
@@ -4061,7 +4222,7 @@ function requestNotificationPermission() {
 }
 
 // ============================================
-// 🗺️ الخريطة + GPS
+// 🗺️ الخريطة + GPS (للمندوب)
 // ============================================
 var mainMap = null;
 var trackingMap = null;
@@ -4069,12 +4230,6 @@ var myLocation = null;
 var myMarker = null;
 var routeLine = null;
 var BAGHDAD_CENTER = [33.3152, 44.3661];
-
-var PHARMACY_LOCATIONS = {
-  'صيدلية النور': [33.3000, 44.4000],
-  'صيدلية الحياة': [33.2800, 44.3800],
-  'صيدلية الشفاء': [33.3300, 44.3500]
-};
 
 function openMapScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
@@ -4187,13 +4342,19 @@ function addPharmacyMarkers() {
     iconAnchor: [20, 40]
   });
 
-  for (var name in PHARMACY_LOCATIONS) {
-    if (PHARMACY_LOCATIONS.hasOwnProperty(name)) {
-      var loc = PHARMACY_LOCATIONS[name];
-      L.marker(loc, { icon: icon }).addTo(mainMap).bindPopup('<strong>' + name + '</strong><br>صيدلية');
-    }
+  if (isFirebaseReady()) {
+    loadPharmaciesFromFirestore().then(function (pharmacies) {
+      pharmacies.forEach(function (p) {
+        if (p.lat && p.lng) {
+          L.marker([p.lat, p.lng], { icon: icon })
+            .addTo(mainMap)
+            .bindPopup('<strong>' + (p.name || 'صيدلية') + '</strong><br>' + (p.address || ''));
+        }
+      });
+    });
   }
 }
+
 function loadNearbyOrders() {
   var listEl = document.getElementById('nearbyOrdersList');
   var countEl = document.getElementById('nearbyCount');
@@ -4208,6 +4369,7 @@ function loadNearbyOrders() {
       '<p>ستظهر هنا الطلبات القريبة منك</p>' +
     '</div>';
 }
+
 function focusOnOrder(lat, lng, orderId) {
   if (!mainMap) return;
   mainMap.setView([lat, lng], 16);
@@ -4258,23 +4420,26 @@ function centerOnMe() {
 function showAllOrders() {
   if (!mainMap || !myLocation) return;
 
-  var orders = [
-    { lat: 33.3000, lng: 44.4000 },
-    { lat: 33.2800, lng: 44.3800 },
-    { lat: 33.3300, lng: 44.3500 }
-  ];
+  if (isFirebaseReady()) {
+    loadDeliveryOrdersFromFirestore().then(function (orders) {
+      if (orders.length === 0) {
+        showToast('⚠️ لا توجد طلبات');
+        return;
+      }
 
-  orders.forEach(function (order) { drawRoute(myLocation, [order.lat, order.lng]); });
+      var group = new L.featureGroup([L.marker(myLocation)]);
 
-  var group = new L.featureGroup([
-    L.marker(myLocation),
-    L.marker([33.3000, 44.4000]),
-    L.marker([33.2800, 44.3800]),
-    L.marker([33.3300, 44.3500])
-  ]);
+      orders.forEach(function (o) {
+        if (o.pharmacyLat && o.pharmacyLng) {
+          drawRoute(myLocation, [o.pharmacyLat, o.pharmacyLng]);
+          group.addLayer(L.marker([o.pharmacyLat, o.pharmacyLng]));
+        }
+      });
 
-  mainMap.fitBounds(group.getBounds().pad(0.2));
-  showToast('🗺️ عرض كل الطلبات');
+      mainMap.fitBounds(group.getBounds().pad(0.2));
+      showToast('🗺️ عرض ' + orders.length + ' طلب');
+    });
+  }
 }
 
 function refreshMyLocation() {
@@ -4340,35 +4505,6 @@ function initTrackingMap(pharmacyLat, pharmacyLng) {
 
   var group = new L.featureGroup([L.marker(patientLoc), L.marker(pharmacyLoc), L.marker([midLat, midLng])]);
   trackingMap.fitBounds(group.getBounds().pad(0.2));
-
-  simulateDeliveryMovement(deliveryMarker, [midLat, midLng], patientLoc);
-}
-
-function simulateDeliveryMovement(marker, start, end) {
-  var steps = 30;
-  var currentStep = 0;
-
-  var interval = setInterval(function () {
-    currentStep++;
-    if (currentStep > steps) { clearInterval(interval); return; }
-
-    var ratio = currentStep / steps;
-    var lat = start[0] + (end[0] - start[0]) * ratio;
-    var lng = start[1] + (end[1] - start[1]) * ratio;
-
-    marker.setLatLng([lat, lng]);
-
-    var distance = calculateDistance(lat, lng, end[0], end[1]);
-    var eta = Math.max(1, Math.round(distance * 3));
-
-    var etaEl = document.getElementById('trackingETA');
-    var distEl = document.getElementById('trackingDistance');
-    var progEl = document.getElementById('trackingProgressFill');
-
-    if (etaEl) etaEl.textContent = eta + ' دقيقة';
-    if (distEl) distEl.textContent = distance.toFixed(1) + ' كم';
-    if (progEl) progEl.style.width = (40 + (ratio * 55)) + '%';
-  }, 2000);
 }
 
 function refreshTracking() {
@@ -4419,6 +4555,7 @@ function getInventoryKey() {
   var user = JSON.parse(userStr);
   return 'saydaliyati_inventory_' + (user.phone || 'default');
 }
+
 function loadInventory() {
   var key = getInventoryKey();
   var inventory = JSON.parse(localStorage.getItem(key) || 'null');
@@ -4430,6 +4567,7 @@ function loadInventory() {
 
   return inventory;
 }
+
 function saveInventory(inventory) {
   var key = getInventoryKey();
   localStorage.setItem(key, JSON.stringify(inventory));
@@ -4688,6 +4826,7 @@ function saveMedicine(event) {
 
   if (navigator.vibrate) navigator.vibrate([50]);
 }
+
 async function deleteMedicine(medId) {
   var confirmed = await showConfirm({
     title: 'حذف الدواء',
@@ -4706,6 +4845,7 @@ async function deleteMedicine(medId) {
   renderInventory();
   showToast('تم حذف الدواء');
 }
+
 // ============================================
 // 📱 منع التكبير
 // ============================================
@@ -4717,7 +4857,6 @@ document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
 document.addEventListener('DOMContentLoaded', function () {
   console.log('توصيل طبي v14 جاهز');
 
-  // إظهار/إخفاء زر "إضافة عرض"
   var currentUserStr = localStorage.getItem('saydaliyati_current_user');
   var addPostBtn = document.querySelector('.posts-feed-add-btn');
 
@@ -4735,7 +4874,6 @@ document.addEventListener('DOMContentLoaded', function () {
   loadTheme();
   setTimeout(createSplashParticles, 100);
 
-  // إغلاق كل الـ Sheets عند البداية
   var orderSheet = document.getElementById('orderSheet');
   var orderSheetOverlay = document.getElementById('orderSheetOverlay');
   if (orderSheet) orderSheet.classList.remove('active');
@@ -4774,44 +4912,15 @@ document.addEventListener('DOMContentLoaded', function () {
   }, 3000);
 
   updateNotifBadge();
-});
 
-// ============================================
-// 🛑 Hooks: Radar + Logout
-// ============================================
-var originalToggleRadar = window.toggleRadar;
-window.toggleRadar = function () {
-  if (originalToggleRadar) originalToggleRadar.apply(this, arguments);
-
-  if (radarActive) {
-    if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
-      requestNotificationPermission();
-    }
-    startRadarSystem();
-  } else {
-    stopRadarSystem();
-  }
-};
-
-var originalLogout = window.logout;
-window.logout = async function () {
-  stopRadarSystem();
-  if (originalLogout) await originalLogout.apply(this, arguments);
-};
-// ============================================
-// 🛡️ منع تكرار الـ submit وإزالة overlays القديمة
-// ============================================
-document.addEventListener('DOMContentLoaded', function () {
-  // كل الفورمات في التطبيق
-  document.querySelectorAll('form').forEach(function (form) {
-    // احفظ الـ onsubmit القديم
+  var forms = document.querySelectorAll('form');
+  forms.forEach(function (form) {
     var oldOnsubmit = form.onsubmit;
 
     form.onsubmit = function (event) {
       event.preventDefault();
       event.stopPropagation();
 
-      // احذف أي overlay قديم قبل تنفيذ الـ handler
       document.querySelectorAll('.success-overlay').forEach(function (el) { el.remove(); });
 
       if (oldOnsubmit) {
@@ -4821,115 +4930,9 @@ document.addEventListener('DOMContentLoaded', function () {
       return false;
     };
   });
-
-  // امنع أي submit افتراضي
-  document.addEventListener('submit', function (e) {
-    e.preventDefault();
-  }, true);
 });
 
-// observer لإزالة أي success-overlay جديد يتراكم
-var successObserver = new MutationObserver(function (mutations) {
-  mutations.forEach(function (m) {
-    m.addedNodes.forEach(function (node) {
-      if (node.classList && node.classList.contains('success-overlay')) {
-        var all = document.querySelectorAll('.success-overlay');
-        // احتفظ بواحد فقط (الأخير)
-        for (var i = 0; i < all.length - 1; i++) {
-          all[i].remove();
-        }
-      }
-    });
-  });
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-  successObserver.observe(document.body, { childList: true, subtree: true });
-});
 // ============================================
 // 🎉 نهاية script.js
 // ============================================
-// ============================================
-// 🎯 نافذة تأكيد مخصصة
-// ============================================
-function showConfirm(options) {
-  return new Promise(function (resolve) {
-    var title = options.title || 'هل أنت متأكد؟';
-    var message = options.message || '';
-    var confirmText = options.confirmText || 'نعم';
-    var cancelText = options.cancelText || 'إلغاء';
-    var confirmColor = options.confirmColor || 'danger';
-    var icon = options.icon || '⚠️';
-
-    var overlay = document.createElement('div');
-    overlay.className = 'confirm-overlay';
-    overlay.innerHTML =
-      '<div class="confirm-box">' +
-        '<div class="confirm-icon confirm-icon-' + confirmColor + '">' + icon + '</div>' +
-        '<h3 class="confirm-title">' + title + '</h3>' +
-        (message ? '<p class="confirm-message">' + message + '</p>' : '') +
-        '<div class="confirm-actions">' +
-          '<button type="button" class="confirm-btn confirm-cancel">' + cancelText + '</button>' +
-          '<button type="button" class="confirm-btn confirm-accept confirm-accept-' + confirmColor + '">' + confirmText + '</button>' +
-        '</div>' +
-      '</div>';
-
-    document.body.appendChild(overlay);
-
-    var cancelBtn = overlay.querySelector('.confirm-cancel');
-    var acceptBtn = overlay.querySelector('.confirm-accept');
-
-    function close(result) {
-      overlay.classList.remove('show');
-      setTimeout(function () {
-        overlay.remove();
-        resolve(result);
-      }, 300);
-    }
-
-    cancelBtn.onclick = function () { close(false); };
-    acceptBtn.onclick = function () { close(true); };
-    overlay.onclick = function (e) {
-      if (e.target === overlay) close(false);
-    };
-
-    setTimeout(function () { overlay.classList.add('show'); }, 50);
-  });
-}
-
-// ============================================
-// 🚪 logout محسّن مع showConfirm
-// ============================================
-async function logout() {
-  var confirmed = await showConfirm({
-    title: 'تسجيل الخروج',
-    message: 'هل أنت متأكد من تسجيل الخروج؟',
-    confirmText: 'نعم، سجل خروج',
-    cancelText: 'إلغاء',
-    confirmColor: 'danger',
-    icon: '🚪'
-  });
-
-  if (!confirmed) return;
-
-  localStorage.removeItem('saydaliyati_current_user');
-
-  if (typeof radarActive !== 'undefined' && radarActive) {
-    radarActive = false;
-    if (typeof radarInterval !== 'undefined' && radarInterval) clearInterval(radarInterval);
-    if (typeof orderSimulationInterval !== 'undefined' && orderSimulationInterval) clearInterval(orderSimulationInterval);
-  }
-
-  if (typeof stopRadarSystem === 'function') {
-    stopRadarSystem();
-  }
-
-  if (typeof signOutFromFirebase === 'function') {
-    try { await signOutFromFirebase(); } catch (e) {}
-  }
-
-  if (typeof closeSidebar === 'function') closeSidebar();
-  if (typeof goToSplash === 'function') goToSplash();
-  if (typeof showToast === 'function') showToast('تم تسجيل الخروج');
-}
 console.log('توصيل طبي v14 — script.js اكتمل');
