@@ -5864,3 +5864,465 @@ function initCartScreen() {
   console.log('🛒 تهيئة Cart Screen...');
   renderCartV2();
   }
+// ============================================
+// 📋 My Orders Screen v2 — DAWAK
+// Real orders from Firestore
+// ============================================
+
+var ordersCache = [];
+var currentOrderFilter = 'all';
+
+// ============================================
+// 🎨 عرض الطلبات (Main Function)
+// ============================================
+async function renderOrdersV2() {
+  var container = document.getElementById('ordersListContainer');
+  var loadingEl = document.getElementById('ordersLoading');
+  var emptyEl = document.getElementById('ordersEmptyState');
+
+  if (!container) return;
+
+  // عرض loading
+  if (loadingEl) loadingEl.style.display = 'flex';
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  // إزالة البطاقات القديمة
+  container.querySelectorAll('.order-card-v2').forEach(function (card) {
+    card.remove();
+  });
+
+  try {
+    var userStr = localStorage.getItem('saydaliyati_current_user');
+    if (!userStr) {
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = 'flex';
+      return;
+    }
+
+    var user = JSON.parse(userStr);
+    var userType = user.type || 'patient';
+
+    // جلب الطلبات حسب نوع المستخدم
+    var orders = [];
+
+    if (isFirebaseReady()) {
+      if (userType === 'patient' && user.phone) {
+        orders = await getUserOrdersFromFirestore(user.phone);
+      } else if (userType === 'pharmacy' && user.name) {
+        orders = await getPharmacyOrdersFromFirestore(user.name);
+      } else if (userType === 'delivery') {
+        orders = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
+      }
+    } else {
+      // Fallback — LocalStorage
+      try {
+        orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+        if (userType === 'patient' && user.phone) {
+          orders = orders.filter(function (o) { return o.patientPhone === user.phone; });
+        }
+      } catch (e) {}
+    }
+
+    ordersCache = orders;
+
+    // إخفاء loading
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    // إذا فاضي
+    if (!orders || orders.length === 0) {
+      if (emptyEl) emptyEl.style.display = 'flex';
+      updateOrdersTabs(0);
+      return;
+    }
+
+    // تطبيق الفلتر
+    var filteredOrders = filterOrdersByStatus(orders, currentOrderFilter);
+
+    if (filteredOrders.length === 0) {
+      if (emptyEl) {
+        emptyEl.style.display = 'flex';
+        emptyEl.querySelector('h3').textContent = 'لا توجد طلبات في هذا التصنيف';
+        emptyEl.querySelector('p').textContent = 'جرب تصنيف آخر';
+      }
+      updateOrdersTabs(orders.length);
+      return;
+    }
+
+    // عرض الطلبات
+    renderOrdersCards(filteredOrders, container);
+
+    updateOrdersTabs(orders.length);
+
+    console.log('✅ تم عرض', filteredOrders.length, 'طلب');
+
+  } catch (error) {
+    console.error('❌ خطأ عرض الطلبات:', error);
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'flex';
+  }
+}
+
+// ============================================
+// 🎴 عرض البطاقات
+// ============================================
+function renderOrdersCards(orders, container) {
+  var html = '';
+
+  orders.forEach(function (order) {
+    var status = getOrderStatusInfo(order);
+    var itemsList = (order.items || []).map(function (i) {
+      return (i.name || 'دواء') + ' ×' + (i.quantity || 1);
+    }).join(' • ');
+
+    if (!itemsList && order.type === 'prescription') {
+      itemsList = '📸 طلب روشتة';
+    }
+
+    if (!itemsList) itemsList = 'طلب دواء';
+
+    var pharmacyName = order.pharmacy || 'صيدلية';
+    var orderId = order.id || '0';
+    var total = (order.total || 0).toLocaleString();
+    var dateStr = order.createdAt ? formatOrderDate(order.createdAt) : '—';
+
+    // الأزرار حسب الحالة
+    var actionsHTML = '';
+
+    if (status.key === 'pending') {
+      actionsHTML =
+        '<button class="order-action-btn primary" onclick="trackOrder(\'' + orderId + '\')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+          '<span class="action-label">تتبع</span>' +
+        '</button>' +
+        '<button class="order-action-btn outline" onclick="cancelOrder(\'' + orderId + '\')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+          '<span class="action-label">إلغاء</span>' +
+        '</button>';
+    } else if (status.key === 'completed') {
+      actionsHTML =
+        '<button class="order-action-btn outline" onclick="reorderOrder(\'' + orderId + '\')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>' +
+          '<span class="action-label">إعادة</span>' +
+        '</button>' +
+        '<button class="order-action-btn primary" onclick="rateOrder(\'' + orderId + '\')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+          '<span class="action-label">تقييم</span>' +
+        '</button>';
+    } else {
+      actionsHTML =
+        '<button class="order-action-btn outline" onclick="reorderOrder(\'' + orderId + '\')">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>' +
+          '<span class="action-label">إعادة</span>' +
+        '</button>';
+    }
+
+    html +=
+      '<div class="order-card-v2 status-' + status.key + '">' +
+        '<div class="order-card-header">' +
+          '<div class="order-card-pharmacy">' +
+            '<h3 class="order-pharmacy-name">' + pharmacyName + '</h3>' +
+            '<p class="order-date">📅 ' + dateStr + '</p>' +
+          '</div>' +
+          '<span class="order-status-badge ' + status.key + '">' +
+            '<span class="status-dot"></span>' +
+            status.label +
+          '</span>' +
+        '</div>' +
+
+        '<div class="order-id-row">' +
+          'رقم الطلب: <strong>#' + orderId + '</strong>' +
+        '</div>' +
+
+        '<div class="order-items-summary">' +
+          '📦 <span>' + itemsList + '</span>' +
+        '</div>' +
+
+        '<div class="order-card-footer">' +
+          '<div class="order-total-block">' +
+            '<span class="order-total-label">الإجمالي</span>' +
+            '<span class="order-total-value">' + total + '<small>د.ع</small></span>' +
+          '</div>' +
+          '<div class="order-actions-v2">' +
+            actionsHTML +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  // إضافة البطاقات قبل الـ empty state
+  var emptyEl = document.getElementById('ordersEmptyState');
+  if (emptyEl) {
+    emptyEl.insertAdjacentHTML('beforebegin', html);
+  } else {
+    container.innerHTML = html;
+  }
+}
+
+// ============================================
+// 🔍 حالة الطلب
+// ============================================
+function getOrderStatusInfo(order) {
+  var status = (order.status || 'pending').toLowerCase();
+
+  if (status === 'delivered' || status === 'completed' || status === 'done') {
+    return { key: 'completed', label: 'مكتمل', icon: '✓' };
+  }
+  if (status === 'cancelled' || status === 'rejected') {
+    return { key: 'cancelled', label: 'ملغي', icon: '✗' };
+  }
+  // pending, accepted, on_way, etc.
+  return { key: 'pending', label: 'قيد التوصيل', icon: '⏳' };
+}
+
+// ============================================
+// 🔽 فلترة حسب الحالة
+// ============================================
+function filterOrdersByStatus(orders, filter) {
+  if (filter === 'all') return orders;
+
+  return orders.filter(function (order) {
+    var statusKey = getOrderStatusInfo(order).key;
+    return statusKey === filter;
+  });
+}
+
+// ============================================
+// 🎯 فلترة الطلبات (من الأزرار)
+// ============================================
+function filterOrders(filter, btn) {
+  currentOrderFilter = filter;
+
+  // تحديث الأزرار
+  document.querySelectorAll('.orders-filter-tab').forEach(function (tab) {
+    tab.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+
+  if (navigator.vibrate) navigator.vibrate([20]);
+
+  // إعادة العرض
+  renderOrdersV2();
+
+  console.log('🔽 الفلتر:', filter);
+}
+
+// ============================================
+// 🔢 تحديث عدد الطلبات في التابس
+// ============================================
+function updateOrdersTabs(totalCount) {
+  var tabs = document.querySelectorAll('.orders-filter-tab');
+  if (!tabs || tabs.length < 4) return;
+
+  var allCount = ordersCache.length;
+  var pendingCount = ordersCache.filter(function (o) { return getOrderStatusInfo(o).key === 'pending'; }).length;
+  var completedCount = ordersCache.filter(function (o) { return getOrderStatusInfo(o).key === 'completed'; }).length;
+  var cancelledCount = ordersCache.filter(function (o) { return getOrderStatusInfo(o).key === 'cancelled'; }).length;
+
+  // إضافة العدد لكل tab (مع النص)
+  var tabData = [
+    { el: tabs[0], label: 'الكل', count: allCount },
+    { el: tabs[1], label: 'قيد التوصيل', count: pendingCount },
+    { el: tabs[2], label: 'مكتمل', count: completedCount },
+    { el: tabs[3], label: 'ملغي', count: cancelledCount }
+  ];
+
+  tabData.forEach(function (data) {
+    if (data.el) {
+      data.el.textContent = data.label + (data.count > 0 ? ' (' + data.count + ')' : '');
+    }
+  });
+}
+
+// ============================================
+// 📅 تنسيق التاريخ
+// ============================================
+function formatOrderDate(dateStr) {
+  try {
+    var date = new Date(dateStr);
+    var now = new Date();
+    var diffMs = now - date;
+    var diffMins = Math.floor(diffMs / 60000);
+    var diffHours = Math.floor(diffMs / 3600000);
+    var diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'الآن';
+    if (diffMins < 60) return 'منذ ' + diffMins + ' دقيقة';
+    if (diffHours < 24) return 'منذ ' + diffHours + ' ساعة';
+    if (diffDays < 7) return 'منذ ' + diffDays + ' يوم';
+
+    return date.toLocaleDateString('ar-IQ', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (e) {
+    return '—';
+  }
+}
+
+// ============================================
+// 📍 تتبع الطلب
+// ============================================
+function trackOrder(orderId) {
+  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+
+  if (navigator.vibrate) navigator.vibrate([30]);
+
+  // عرض خريطة التتبع
+  if (typeof trackDeliveryOnMap === 'function') {
+    trackDeliveryOnMap(
+      order.deliveryName || 'المندوب',
+      order.pharmacyLat || 33.3152,
+      order.pharmacyLng || 44.3661
+    );
+  } else {
+    showToast('📍 جاري فتح تتبع الطلب...');
+  }
+}
+
+// ============================================
+// ❌ إلغاء الطلب
+// ============================================
+async function cancelOrder(orderId) {
+  var confirmed = await showConfirm({
+    title: 'إلغاء الطلب',
+    message: 'هل أنت متأكد من إلغاء الطلب #' + orderId + '؟',
+    confirmText: 'نعم، إلغاء',
+    cancelText: 'رجوع',
+    confirmColor: 'danger',
+    icon: '❌'
+  });
+
+  if (!confirmed) return;
+
+  try {
+    if (isFirebaseReady()) {
+      await updateOrderInFirestore(String(orderId), {
+        status: 'cancelled',
+        cancelledAt: new Date().toISOString(),
+        cancelledBy: 'patient'
+      });
+    }
+
+    // تحديث في LocalStorage
+    var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+    var idx = orders.findIndex(function (o) { return String(o.id) === String(orderId); });
+    if (idx !== -1) {
+      orders[idx].status = 'cancelled';
+      localStorage.setItem('saydaliyati_cart_orders', JSON.stringify(orders));
+    }
+
+    showToast('✅ تم إلغاء الطلب #' + orderId);
+    playSuccessSound();
+
+    // إعادة عرض
+    setTimeout(renderOrdersV2, 500);
+
+  } catch (e) {
+    console.error('❌ خطأ إلغاء الطلب:', e);
+    showError('فشل إلغاء الطلب');
+  }
+}
+
+// ============================================
+// 🔄 إعادة الطلب
+// ============================================
+function reorderOrder(orderId) {
+  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+
+  // نسخ المنتجات للسلة
+  if (order.items && order.items.length > 0) {
+    cart = order.items.map(function (item) {
+      return {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        icon: item.icon || '💊',
+        image: item.image,
+        category: item.category,
+        quantity: item.quantity,
+        pharmacy: order.pharmacy || item.pharmacy
+      };
+    });
+
+    saveCart();
+    updateCartBadge();
+
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([50]);
+
+    showToast('🛒 تم نسخ المنتجات للسلة');
+
+    setTimeout(function () {
+      openCartScreen();
+    }, 800);
+  } else {
+    showToast('⚠️ لا توجد منتجات لإعادة الطلب');
+  }
+}
+
+// ============================================
+// ⭐ تقييم الطلب
+// ============================================
+function rateOrder(orderId) {
+  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+
+  var targetName = order.pharmacy || 'صيدلية';
+  var targetType = 'pharmacy';
+
+  if (typeof openRatingModal === 'function') {
+    openRatingModal(targetName, targetType, orderId);
+  } else {
+    showToast('⭐ شاشة التقييم قريباً');
+  }
+}
+
+// ============================================
+// 🔄 استبدال goToMyOrders القديمة
+// ============================================
+async function goToMyOrdersV2() {
+  // تحديث العنوان
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  var user = userStr ? JSON.parse(userStr) : {};
+
+  var titleEl = document.getElementById('myOrdersTitle');
+  if (titleEl) {
+    if (user.type === 'pharmacy') titleEl.textContent = 'الطلبات الواردة';
+    else if (user.type === 'delivery') titleEl.textContent = 'طلباتي';
+    else titleEl.textContent = 'طلباتي';
+  }
+
+  showScreen('myOrdersScreen');
+
+  // تحديث Bottom Nav
+  document.querySelectorAll('.nav-btn').forEach(function (btn) {
+    btn.classList.remove('active');
+  });
+  var ordersBtn = document.querySelector('.nav-btn[data-tab="orders"]');
+  if (ordersBtn) ordersBtn.classList.add('active');
+
+  // عرض الطلبات
+  await renderOrdersV2();
+
+  console.log('✅ goToMyOrdersV2 مكتمل');
+}
+
+// ============================================
+// 🚀 تشغيل عند التحميل
+// ============================================
+function initMyOrdersScreen() {
+  console.log('📋 تهيئة My Orders Screen...');
+  // لا نحتاج نفعل شي — يشتغل عند الفتح
+}
