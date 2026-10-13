@@ -1727,3 +1727,586 @@
     <p>© 2026 DAWAK دواك</p>
   </div>
   </div>
+   <!-- ============================================
+     🗺️ Map Screen
+     ============================================ -->
+<div class="screen" id="mapScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeMapScreen()">←</button>
+    <button class="refresh-location-btn" onclick="refreshMyLocation()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      تحديث
+    </button>
+  </div>
+  <h2 class="screen-title">الخريطة 🗺️</h2>
+  <p class="screen-subtitle" id="mapSubtitle">جارٍ تحديد موقعك...</p>
+  <div class="gps-info-card" id="gpsInfoCard">
+    <div class="gps-info-row">
+      <span class="gps-info-icon">📍</span>
+      <div>
+        <h4>موقعك الحالي</h4>
+        <p id="gpsAddress">جارٍ التحديد...</p>
+      </div>
+    </div>
+    <div class="gps-coords">
+      <span id="gpsLat">--</span>
+      <span id="gpsLng">--</span>
+    </div>
+  </div>
+  <div class="map-container" id="mapContainer">
+    <div id="leafletMap"></div>
+    <div class="map-loading" id="mapLoading">
+      <div class="map-spinner"></div>
+      <p>جارٍ تحميل الخريطة...</p>
+    </div>
+  </div>
+  <div class="map-controls">
+    <button class="map-control-btn" onclick="centerOnMe()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      موقعي
+    </button>
+    <button class="map-control-btn" onclick="showAllOrders()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      الطلبات
+    </button>
+  </div>
+</div>
+
+<!-- ============================================
+     🚴 Tracking Screen
+     ============================================ -->
+<div class="screen" id="trackingScreen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="closeTrackingScreen()">←</button>
+    <button class="refresh-location-btn" onclick="refreshTracking()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+    </button>
+  </div>
+  <h2 class="screen-title">تتبع الطلب 🚴</h2>
+  <p class="screen-subtitle" id="trackingSubtitle">جارٍ تحديد موقع المندوب...</p>
+  <div class="tracking-delivery-card">
+    <div class="tracking-delivery-avatar">🚴</div>
+    <div class="tracking-delivery-info">
+      <h4 id="trackingDeliveryName">المندوب</h4>
+      <p>⭐ 5.0 • في الطريق</p>
+    </div>
+    <button class="tracking-call-btn" onclick="showToast('جارٍ الاتصال...')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+    </button>
+  </div>
+  <div class="map-container tracking-map-container">
+    <div id="trackingMap"></div>
+  </div>
+  <div class="tracking-status">
+    <div class="tracking-status-row"><span>⏱️ الوقت المتوقع</span><strong id="trackingETA">--</strong></div>
+    <div class="tracking-status-row"><span>📍 المسافة المتبقية</span><strong id="trackingDistance">--</strong></div>
+  </div>
+</div>
+
+<!-- ============================================
+     🧭 Nav Sheet
+     ============================================ -->
+<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="closeNavSheet()"></div>
+<div class="nav-sheet" id="navSheet">
+  <div class="nav-sheet-handle"></div>
+  <h3 class="nav-sheet-title"><span>🧭</span> اختر كيف تريد الانتقال</h3>
+  <p class="nav-sheet-destination" id="navDestination">📍 الوجهة</p>
+  <div class="nav-sheet-options">
+    <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
+      <div class="nav-sheet-btn-text">
+        <h4>Waze</h4>
+        <p>الأفضل للملاحة والزحام</p>
+      </div>
+      <div class="nav-sheet-btn-icon">🚗</div>
+    </button>
+    <button class="nav-sheet-btn google-btn" onclick="chooseNavigation('google')">
+      <div class="nav-sheet-btn-text">
+        <h4>Google Maps</h4>
+        <p>الخريطة الأشهر عالمياً</p>
+      </div>
+      <div class="nav-sheet-btn-icon">🗺️</div>
+    </button>
+    <button class="nav-sheet-btn map-btn" onclick="chooseNavigation('map')">
+      <div class="nav-sheet-btn-text">
+        <h4>عرض على الخريطة هنا</h4>
+        <p>داخل التطبيق</p>
+      </div>
+      <div class="nav-sheet-btn-icon">📍</div>
+    </button>
+  </div>
+  <button class="nav-sheet-cancel" onclick="closeNavSheet()">إلغاء</button>
+</div>
+
+<!-- ============================================
+     📦 Order Sheet
+     ============================================ -->
+<div class="nav-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
+<div class="bottom-sheet" id="orderSheet">
+  <div class="nav-sheet-handle"></div>
+  <h3 class="nav-sheet-title"><span>📦</span> طلب جديد!</h3>
+  <div class="order-card" style="margin-bottom: 16px; background: var(--primary-soft); border-color: var(--border);">
+    <div class="order-top">
+      <span class="order-id" id="orderSheetId">طلب جديد</span>
+      <span class="order-status new">جديد</span>
+    </div>
+    <div class="order-info" id="orderSheetInfo">
+      <p><strong>من:</strong> -</p>
+      <p><strong>إلى:</strong> -</p>
+      <p><strong>العمولة:</strong> <span class="price">-</span></p>
+    </div>
+  </div>
+  <div style="display: flex; gap: 12px;">
+    <button class="btn-accept" style="flex: 1; padding: 16px; font-weight: 800;" onclick="acceptFromSheet()">✅ قبول</button>
+    <button class="btn-reject" style="flex: 1; padding: 16px; font-weight: 800;" onclick="closeOrderSheet()">❌ رفض</button>
+  </div>
+</div>
+
+<!-- ============================================
+     🪟 Edit Profile Modal
+     ============================================ -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>تعديل البيانات</h3>
+      <button class="modal-close" onclick="closeEditProfile()">×</button>
+    </div>
+    <form class="modal-body" onsubmit="saveProfile(event); return false;">
+      <div class="input-group">
+        <label>الاسم الكامل</label>
+        <input type="text" id="editName" placeholder="الاسم الكامل">
+      </div>
+      <div class="input-group">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="editEmail" placeholder="example@email.com">
+      </div>
+      <div class="input-group" id="editAddressGroup">
+        <label id="editAddressLabel">العنوان</label>
+        <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
+      </div>
+      <button type="submit" class="btn-primary">حفظ التعديلات</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================
+     🪟 Product Modal
+     ============================================ -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="productModalName">اسم الدواء</h3>
+      <button class="modal-close" onclick="closeProductModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="product-modal-image">
+        <span id="productModalIcon">💊</span>
+      </div>
+      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
+      <div class="product-modal-info">
+        <div class="product-modal-row">
+          <span>السعر</span>
+          <strong id="productModalPrice">0 دينار</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>التصنيف</span>
+          <strong id="productModalCategory">—</strong>
+        </div>
+        <div class="product-modal-row">
+          <span>متوفر</span>
+          <strong id="productModalStock" class="stock-available">متوفر</strong>
+        </div>
+      </div>
+      <div class="quantity-selector">
+        <label>الكمية</label>
+        <div class="quantity-controls">
+          <button type="button" onclick="decreaseModalQuantity()">−</button>
+          <span id="modalQuantity">1</span>
+          <button type="button" onclick="increaseModalQuantity()">+</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">🛒 أضف إلى السلة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     🪟 Medicine Modal (legacy)
+     ============================================ -->
+<div class="modal-overlay" id="medicineModal">
+  <div class="modal-content medicine-modal-content">
+    <div class="medicine-header">
+      <button class="medicine-close-btn" onclick="closeMedicineModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <h3 class="medicine-title" id="medicineModalTitle">إضافة دواء جديد</h3>
+      <button class="medicine-check-btn" onclick="saveMedicineFromHeader()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </button>
+    </div>
+    <form class="medicine-body" onsubmit="saveMedicine(event); return false;">
+      <input type="hidden" id="editMedicineId">
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>
+            <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
+          </svg>
+        </div>
+        <input type="text" id="medicineName" class="medicine-input" placeholder="اسم الدواء" required>
+      </div>
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+          </svg>
+        </div>
+        <select id="medicineCategory" class="medicine-input medicine-select" required>
+          <option value="">التصنيف</option>
+          <option value="مسكنات">مسكنات</option>
+          <option value="فيتامينات">فيتامينات</option>
+          <option value="مضاد حيوي">مضاد حيوي</option>
+          <option value="أطفال">أطفال</option>
+          <option value="ضغط">ضغط</option>
+          <option value="سكري">سكري</option>
+          <option value="جهاز هضمي">جهاز هضمي</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+        <div class="medicine-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <input type="number" id="medicinePrice" class="medicine-input" placeholder="السعر" min="0" required>
+      </div>
+      <input type="number" id="medicineStock" value="50" min="0" style="display:none;">
+      <input type="text" id="medicineDesc" style="display:none;">
+      <div class="medicine-icon-section">
+        <label class="medicine-icon-label">الأيقونة</label>
+        <div class="medicine-icon-grid">
+          <button type="button" class="medicine-icon-option active" data-icon="💊" onclick="selectIconNew('💊', this)"><span class="icon-emoji">💊</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="💉" onclick="selectIconNew('💉', this)"><span class="icon-emoji">💉</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="🌿" onclick="selectIconNew('🌿', this)"><span class="icon-emoji">🌿</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="🧴" onclick="selectIconNew('🧴', this)"><span class="icon-emoji">🧴</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="💧" onclick="selectIconNew('💧', this)"><span class="icon-emoji">💧</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="❤️" onclick="selectIconNew('❤️', this)"><span class="icon-emoji">❤️</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="🩹" onclick="selectIconNew('🩹', this)"><span class="icon-emoji">🩹</span></button>
+          <button type="button" class="medicine-icon-option" data-icon="📦" onclick="selectIconNew('📦', this)"><span class="icon-emoji">📦</span></button>
+        </div>
+        <input type="hidden" id="medicineIcon" value="💊">
+      </div>
+      <button type="submit" class="medicine-submit-btn" id="medicineSubmitBtn">إضافة إلى المخزون</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================
+     🪟 Add Post Modal
+     ============================================ -->
+<div class="modal-overlay" id="addPostModal">
+  <div class="modal-content medicine-modal-content">
+    <div class="medicine-header">
+      <button class="medicine-close-btn" onclick="closeAddPostModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <h3 class="medicine-title">نشر عرض جديد</h3>
+      <button class="medicine-check-btn" onclick="savePostFromHeader()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </button>
+    </div>
+    <form class="medicine-body" onsubmit="publishPost(event); return false;">
+      <div class="post-upload-section">
+        <label class="medicine-icon-label">صورة الدواء *</label>
+        <div class="post-upload-zone" id="postUploadZone" onclick="openPostImagePicker()">
+          <div class="post-upload-placeholder" id="postUploadPlaceholder">
+            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>اضغط لرفع صورة الدواء</p>
+            <small>JPG, PNG - الحد الأقصى 5MB</small>
+          </div>
+          <div class="post-upload-preview" id="postUploadPreview" style="display:none;">
+            <img id="postImagePreview" src="" alt="معاينة">
+            <button type="button" class="prescription-remove-btn" onclick="removePostImage(event)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <input type="file" id="postImageInput" accept="image/*" style="display:none;" onchange="handlePostImageUpload(event)">
+      </div>
+
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>
+            <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
+          </svg>
+        </div>
+        <input type="text" id="postTitle" class="medicine-input" placeholder="اسم الدواء" required>
+      </div>
+
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="17" y1="10" x2="3" y2="10"/>
+            <line x1="21" y1="6" x2="3" y2="6"/>
+            <line x1="21" y1="14" x2="3" y2="14"/>
+            <line x1="17" y1="18" x2="3" y2="18"/>
+          </svg>
+        </div>
+        <input type="text" id="postDescription" class="medicine-input" placeholder="وصف الدواء (مضاد حيوي...)" required>
+      </div>
+
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <input type="number" id="postPrice" class="medicine-input" placeholder="السعر (دينار)" min="0" required>
+      </div>
+
+      <div class="medicine-input-wrap">
+        <div class="medicine-input-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+          </svg>
+        </div>
+        <select id="postCategory" class="medicine-input medicine-select" required>
+          <option value="">التصنيف</option>
+          <option value="medicine">عقاقير طبية</option>
+          <option value="vitamins">فيتامينات ومكملات</option>
+          <option value="equipment">معدات طبية</option>
+        </select>
+        <div class="medicine-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+      </div>
+
+      <button type="submit" class="medicine-submit-btn" id="postSubmitBtn">نشر العرض الآن</button>
+    </form>
+  </div>
+  </div>
+    <!-- ============================================
+       ⭐ Rating Modal
+       ============================================ -->
+  <div class="modal-overlay" id="ratingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="ratingModalTitle">قيّم تجربتك</h3>
+        <button class="modal-close" onclick="closeRatingModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="rating-target-info" id="ratingTargetInfo">
+          <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
+          <div>
+            <h4 id="ratingTargetName">صيدلية</h4>
+            <p id="ratingTargetType">صيدلية</p>
+          </div>
+        </div>
+        <div class="rating-stars-section">
+          <label>تقييمك *</label>
+          <div class="rating-stars" id="ratingStars">
+            <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
+            <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
+            <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
+            <button type="button" class="rating-star" data-value="4" onclick="selectRating(4)">★</button>
+            <button type="button" class="rating-star" data-value="5" onclick="selectRating(5)">★</button>
+          </div>
+          <p class="rating-text" id="ratingText">اضغط على النجوم للتقييم</p>
+        </div>
+        <div class="input-group">
+          <label>تعليق (اختياري)</label>
+          <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
+        </div>
+        <input type="hidden" id="ratingTargetId">
+        <input type="hidden" id="ratingTargetType">
+        <button class="btn-primary" onclick="submitRating()">إرسال التقييم</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       📦 Order Details Modal
+       ============================================ -->
+  <div class="modal-overlay" id="orderDetailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="orderDetailsTitle">تفاصيل الطلب</h3>
+        <button class="modal-close" onclick="closeOrderDetailsModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="rating-target-info">
+          <div class="rating-target-icon">📦</div>
+          <div>
+            <h4 id="orderDetailsPharmacy">-</h4>
+            <p>صيدلية</p>
+          </div>
+        </div>
+        <div class="product-modal-info">
+          <div class="product-modal-row"><span>📍 المسافة</span><strong id="orderDetailsDistance">-</strong></div>
+          <div class="product-modal-row"><span>💰 العمولة</span><strong class="price" id="orderDetailsCommission">-</strong></div>
+          <div class="product-modal-row"><span>⏱️ الوقت المقدر</span><strong>15 دقيقة</strong></div>
+          <div class="product-modal-row"><span>💵 طريقة الدفع</span><strong>كاش</strong></div>
+          <div class="product-modal-row"><span>🏠 عنوان التسليم</span><strong id="orderDetailsAddress">-</strong></div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-accept" style="flex: 1; padding: 14px; font-size: 15px; font-weight: 800;" onclick="acceptOrderFromDetails()">✅ قبول الطلب</button>
+          <button class="btn-reject" style="flex: 1; padding: 14px; font-size: 15px; font-weight: 800;" onclick="closeOrderDetailsModal()">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       📱 Bottom Navigation
+       ============================================ -->
+  <div class="bottom-nav" id="mainBottomNav" style="display: none;">
+    <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <small>الطلبات</small>
+    </button>
+
+    <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
+      <div class="nav-center-icon">
+        <span class="nav-cross">✚</span>
+      </div>
+      <small>الرئيسية</small>
+    </button>
+
+    <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+      <small>المزيد</small>
+    </button>
+  </div>
+
+  <!-- ============================================
+       🔥 Firebase SDK
+       ============================================ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDo_IU84fPcBf8fUloq6CWHcWMjWIo08kc",
+      authDomain: "saydaliyati-6d68e.firebaseapp.com",
+      projectId: "saydaliyati-6d68e",
+      storageBucket: "saydaliyati-6d68e.firebasestorage.app",
+      messagingSenderId: "476716520164",
+      appId: "1:476716520164:web:057c87b0ecaa187fa852f1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    window.firebaseApp = app;
+    window.firebaseAuth = auth;
+    window.firebaseDB = db;
+    window.firebaseStorage = storage;
+    window.firebaseProvider = provider;
+
+    window.firebaseSignInWithPopup = signInWithPopup;
+    window.firebaseSignOut = signOut;
+    window.firebaseOnAuthStateChanged = onAuthStateChanged;
+    window.firebaseCreateUser = createUserWithEmailAndPassword;
+    window.firebaseSignIn = signInWithEmailAndPassword;
+
+    window.firebaseDoc = doc;
+    window.firebaseSetDoc = setDoc;
+    window.firebaseGetDoc = getDoc;
+    window.firebaseCollection = collection;
+    window.firebaseAddDoc = addDoc;
+    window.firebaseGetDocs = getDocs;
+    window.firebaseQuery = query;
+    window.firebaseWhere = where;
+    window.firebaseUpdateDoc = updateDoc;
+    window.firebaseDeleteDoc = deleteDoc;
+    window.firebaseOnSnapshot = onSnapshot;
+    window.firebaseServerTimestamp = serverTimestamp;
+
+    window.firebaseRef = ref;
+    window.firebaseUploadBytes = uploadBytes;
+    window.firebaseGetDownloadURL = getDownloadURL;
+    window.firebaseDeleteObject = deleteObject;
+
+    console.log('✅ Firebase تم تهيئته بنجاح');
+  </script>
+
+  <script src="script.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function (r) { console.log('✅ Service Worker مسجل:', r.scope); })
+          .catch(function (e) { console.log('❌ فشل SW:', e); });
+      });
+
+      navigator.serviceWorker.addEventListener('message', function (event) {
+        if (event.data && event.data.type === 'NOTIFICATION_CLICKED') {
+          handleNotificationClick(event.data);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
