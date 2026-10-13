@@ -5041,3 +5041,455 @@ document.addEventListener('DOMContentLoaded', function () {
 // 🎉 نهاية script.js
 // ============================================
 console.log('DAWAK v15 — script.js اكتمل ✅');
+// ============================================
+// 🏠 Home Screen v2 — DAWAK
+// Real data from Firestore + GPS
+// ============================================
+
+// ============================================
+// 🚀 تهيئة Home عند التحميل
+// ============================================
+function initHomeScreen() {
+  console.log('🏠 تهيئة Home Screen...');
+
+  updateHomeUserInfo();
+  loadHomePharmacies();
+  loadHomeOffers();
+  updateHomeNotifDot();
+}
+
+// ============================================
+// 👤 تحديث معلومات المستخدم (اسم + أفاتار)
+// ============================================
+function updateHomeUserInfo() {
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) return;
+
+  try {
+    var user = JSON.parse(userStr);
+
+    // الاسم
+    var nameEl = document.getElementById('homeUserName');
+    if (nameEl) nameEl.textContent = user.name || 'مستخدم';
+
+    // حرف الأفاتار
+    var avatarEl = document.getElementById('homeAvatarLetter');
+    var avatarBtn = document.getElementById('homeAvatarBtn');
+
+    if (avatarEl && avatarBtn) {
+      if (user.avatar) {
+        avatarEl.textContent = '';
+        avatarBtn.style.backgroundImage = 'url(' + user.avatar + ')';
+        avatarBtn.style.backgroundSize = 'cover';
+        avatarBtn.style.backgroundPosition = 'center';
+      } else {
+        var letter = user.name ? user.name.charAt(0).toUpperCase() : 'م';
+        avatarEl.textContent = letter;
+        avatarBtn.style.backgroundImage = '';
+      }
+    }
+
+    // الموقع (من الملف الشخصي إذا موجود)
+    if (user.address) {
+      var locEl = document.getElementById('homeUserLocation');
+      if (locEl) locEl.textContent = user.address;
+    }
+
+    console.log('✅ تم تحديث معلومات المستخدم');
+  } catch (e) {
+    console.error('❌ خطأ تحديث معلومات المستخدم:', e);
+  }
+}
+
+// ============================================
+// 📍 تحديد موقع المستخدم (GPS حقيقي)
+// ============================================
+function detectUserLocation() {
+  var locEl = document.getElementById('homeUserLocation');
+  if (!locEl) return;
+
+  if (!navigator.geolocation) {
+    locEl.textContent = 'بغداد، العراق';
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
+
+  locEl.textContent = '🔄 جاري تحديد موقعك...';
+  showToast('🔄 جاري تحديد موقعك...');
+
+  navigator.geolocation.getCurrentPosition(
+    async function (position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+
+      // Reverse Geocoding (من إحداثيات → اسم مكان)
+      try {
+        var response = await fetch(
+          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=ar'
+        );
+        var data = await response.json();
+
+        if (data && data.address) {
+          var city = data.address.city || data.address.town || data.address.state || 'بغداد';
+          var suburb = data.address.suburb || data.address.neighbourhood || data.address.village || '';
+
+          var locationText = suburb ? (suburb + '، ' + city) : city;
+          locEl.textContent = locationText;
+
+          // حفظ الموقع في localStorage
+          var userStr = localStorage.getItem('saydaliyati_current_user');
+          if (userStr) {
+            var user = JSON.parse(userStr);
+            user.lat = lat;
+            user.lng = lng;
+            user.locationText = locationText;
+            localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+          }
+
+          console.log('✅ تم تحديد الموقع:', locationText);
+        } else {
+          locEl.textContent = 'بغداد، العراق';
+        }
+      } catch (e) {
+        console.warn('⚠️ فشل Reverse Geocoding:', e);
+        locEl.textContent = 'بغداد، العراق';
+      }
+
+      // حفظ الإحداثيات
+      localStorage.setItem('saydaliyati_user_location', JSON.stringify({ lat: lat, lng: lng }));
+    },
+    function (error) {
+      console.warn('⚠️ خطأ GPS:', error);
+      locEl.textContent = '📍 اضغط لتحديد موقعك';
+      showToast('⚠️ تعذّر تحديد موقعك');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+// ============================================
+// 🏪 تحميل صيدليات قريبة (من Firestore)
+// ============================================
+async function loadHomePharmacies() {
+  var container = document.getElementById('homePharmaciesList');
+  if (!container) return;
+
+  container.innerHTML =
+    '<div class="home-loading">' +
+      '<div class="home-spinner"></div>' +
+      '<span>جاري تحميل الصيدليات...</span>' +
+    '</div>';
+
+  try {
+    if (!isFirebaseReady()) {
+      container.innerHTML =
+        '<div class="home-empty-state">' +
+          '<span class="empty-icon">🏪</span>' +
+          'لا توجد صيدليات متاحة حالياً' +
+        '</div>';
+      return;
+    }
+
+    var pharmacies = await loadPharmaciesFromFirestore();
+
+    // ترتيب حسب التقييم
+    pharmacies.sort(function (a, b) {
+      return (b.rating || 0) - (a.rating || 0);
+    });
+
+    // خذ أول 3
+    var topPharmacies = pharmacies.slice(0, 3);
+
+    if (topPharmacies.length === 0) {
+      container.innerHTML =
+        '<div class="home-empty-state">' +
+          '<span class="empty-icon">🏪</span>' +
+          'لا توجد صيدليات مسجلة بعد' +
+        '</div>';
+      return;
+    }
+
+    var html = '';
+
+    // الموقع الحالي (للحساب المسافة)
+    var userLoc = null;
+    try {
+      var locStr = localStorage.getItem('saydaliyati_user_location');
+      if (locStr) userLoc = JSON.parse(locStr);
+    } catch (e) {}
+
+    topPharmacies.forEach(function (p) {
+      var rating = p.rating || 5.0;
+      var address = p.address || 'بغداد';
+      var deliveryTime = p.deliveryTime || '30 دقيقة';
+      var logo = p.logo || 'ص';
+
+      // حساب المسافة (إذا عندنا إحداثيات)
+      var distanceText = '—';
+      if (userLoc && p.lat && p.lng) {
+        var dist = calculateDistanceKm(userLoc.lat, userLoc.lng, p.lat, p.lng);
+        distanceText = dist.toFixed(1) + ' كم';
+      }
+
+      var isOpen = p.active !== false;
+
+      html +=
+        '<div class="home-pharmacy-card" onclick="orderFromPharmacy(\'' + p.id + '\', \'' + (p.name || 'صيدلية').replace(/'/g, "\\'") + '\')">' +
+          '<div class="home-pharmacy-logo">' + logo + '</div>' +
+          '<div class="home-pharmacy-info">' +
+            '<h4 class="home-pharmacy-name">' + (p.name || 'صيدلية') + '</h4>' +
+            '<div class="home-pharmacy-meta">' +
+              '<span class="home-pharmacy-rating">★ ' + rating.toFixed(1) + '</span>' +
+              '<span>📍 ' + distanceText + '</span>' +
+            '</div>' +
+            '<span class="home-pharmacy-status' + (isOpen ? '' : ' closed') + '">' +
+              '<span class="status-dot"></span>' +
+              (isOpen ? 'مفتوح الآن' : 'مغلق') +
+            '</span>' +
+          '</div>' +
+        '</div>';
+    });
+
+    container.innerHTML = html;
+    console.log('✅ تم عرض', topPharmacies.length, 'صيدلية');
+
+  } catch (error) {
+    console.error('❌ خطأ تحميل الصيدليات:', error);
+    container.innerHTML =
+      '<div class="home-empty-state">' +
+        '<span class="empty-icon">⚠️</span>' +
+        'حدث خطأ في تحميل الصيدليات' +
+      '</div>';
+  }
+}
+
+// ============================================
+// 💊 تحميل عروض اليوم (من Firestore)
+// ============================================
+async function loadHomeOffers() {
+  var container = document.getElementById('homeOffersScroll');
+  if (!container) return;
+
+  container.innerHTML =
+    '<div class="home-loading">' +
+      '<div class="home-spinner"></div>' +
+      '<span>جاري تحميل العروض...</span>' +
+    '</div>';
+
+  try {
+    if (!isFirebaseReady()) {
+      container.innerHTML =
+        '<div class="home-empty-state">' +
+          '<span class="empty-icon">📢</span>' +
+          'لا توجد عروض حالياً' +
+        '</div>';
+      return;
+    }
+
+    var posts = await loadPostsFromFirestore();
+
+    if (!posts || posts.length === 0) {
+      container.innerHTML =
+        '<div class="home-empty-state">' +
+          '<span class="empty-icon">📢</span>' +
+          'لا توجد عروض حالياً - تابعنا قريباً' +
+        '</div>';
+      return;
+    }
+
+    // خذ أول 6 عروض
+    var topPosts = posts.slice(0, 6);
+
+    var html = '';
+
+    topPosts.forEach(function (post) {
+      var imageSrc = post.image || '';
+      var price = (post.price || 0).toLocaleString();
+      var title = post.title || 'دواء';
+
+      var imageHTML = '';
+      if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
+        imageHTML = '<img src="' + imageSrc + '" alt="' + title + '" onerror="this.parentNode.innerHTML=\'<span class=&quot;offer-emoji&quot;>💊</span>\';">';
+      } else {
+        imageHTML = '<span class="offer-emoji">💊</span>';
+      }
+
+      html +=
+        '<div class="home-offer-card" onclick="orderFromPost(\'' + post.id + '\')">' +
+          '<div class="home-offer-image">' + imageHTML + '</div>' +
+          '<h4 class="home-offer-title">' + title + '</h4>' +
+          '<div class="home-offer-price-row">' +
+            '<span class="home-offer-price">' + price + '<small>د.ع</small></span>' +
+            '<span class="home-offer-plus">+</span>' +
+          '</div>' +
+        '</div>';
+    });
+
+    container.innerHTML = html;
+    console.log('✅ تم عرض', topPosts.length, 'عرض');
+
+  } catch (error) {
+    console.error('❌ خطأ تحميل العروض:', error);
+    container.innerHTML =
+      '<div class="home-empty-state">' +
+        '<span class="empty-icon">⚠️</span>' +
+        'حدث خطأ في تحميل العروض' +
+      '</div>';
+  }
+}
+
+// ============================================
+// 🏷️ فلترة التصنيفات
+// ============================================
+var currentHomeCategory = 'all';
+
+function filterHomeCategory(category, btn) {
+  currentHomeCategory = category;
+
+  // تحديث الـ chips
+  document.querySelectorAll('.home-cat-chip').forEach(function (chip) {
+    chip.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+
+  if (navigator.vibrate) navigator.vibrate([20]);
+
+  // إعادة تحميل العروض حسب التصنيف
+  loadHomeOffersByCategory(category);
+
+  console.log('🏷️ التصنيف المحدد:', category);
+}
+
+async function loadHomeOffersByCategory(category) {
+  var container = document.getElementById('homeOffersScroll');
+  if (!container) return;
+
+  container.innerHTML =
+    '<div class="home-loading">' +
+      '<div class="home-spinner"></div>' +
+      '<span>جاري التحميل...</span>' +
+    '</div>';
+
+  try {
+    if (!isFirebaseReady()) {
+      container.innerHTML =
+        '<div class="home-empty-state"><span class="empty-icon">📢</span>لا توجد عروض</div>';
+      return;
+    }
+
+    var posts = await loadPostsFromFirestore();
+
+    // فلترة
+    if (category !== 'all') {
+      var categoryMap = {
+        'care': 'medicine',
+        'antibiotics': 'medicine',
+        'vitamins': 'vitamins',
+        'painkillers': 'medicine'
+      };
+      var firestoreCat = categoryMap[category] || category;
+      posts = posts.filter(function (p) { return p.category === firestoreCat; });
+    }
+
+    if (posts.length === 0) {
+      container.innerHTML =
+        '<div class="home-empty-state">' +
+          '<span class="empty-icon">🔍</span>' +
+          'لا توجد عروض في هذا التصنيف' +
+        '</div>';
+      return;
+    }
+
+    var topPosts = posts.slice(0, 6);
+    var html = '';
+
+    topPosts.forEach(function (post) {
+      var imageSrc = post.image || '';
+      var price = (post.price || 0).toLocaleString();
+      var title = post.title || 'دواء';
+
+      var imageHTML = '';
+      if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
+        imageHTML = '<img src="' + imageSrc + '" alt="' + title + '">';
+      } else {
+        imageHTML = '<span class="offer-emoji">💊</span>';
+      }
+
+      html +=
+        '<div class="home-offer-card" onclick="orderFromPost(\'' + post.id + '\')">' +
+          '<div class="home-offer-image">' + imageHTML + '</div>' +
+          '<h4 class="home-offer-title">' + title + '</h4>' +
+          '<div class="home-offer-price-row">' +
+            '<span class="home-offer-price">' + price + '<small>د.ع</small></span>' +
+            '<span class="home-offer-plus">+</span>' +
+          '</div>' +
+        '</div>';
+    });
+
+    container.innerHTML = html;
+
+  } catch (e) {
+    console.error('❌ خطأ:', e);
+  }
+}
+
+// ============================================
+// 🔍 فتح شاشة البحث
+// ============================================
+function openSearchScreen() {
+  showToast('🔍 شاشة البحث قريباً...');
+  // TODO: بناء شاشة بحث كاملة
+}
+
+// ============================================
+// 🏪 فتح قائمة كل الصيدليات
+// ============================================
+function openPharmaciesList() {
+  showToast('🏪 قائمة الصيدليات قريباً...');
+  // TODO: بناء شاشة قائمة كاملة
+}
+
+// ============================================
+// 📢 فتح كل العروض
+// ============================================
+function openAllPosts() {
+  var postsSection = document.getElementById('postsList');
+  if (postsSection) {
+    postsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else {
+    showToast('📢 قائمة العروض قريباً...');
+  }
+}
+
+// ============================================
+// 🔔 تحديث نقطة الإشعارات
+// ============================================
+function updateHomeNotifDot() {
+  var dotEl = document.getElementById('homeNotifDot');
+  if (!dotEl) return;
+
+  var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  var unreadCount = notifs.filter(function (n) { return !n.read; }).length;
+
+  if (unreadCount > 0) {
+    dotEl.style.display = 'block';
+  } else {
+    dotEl.style.display = 'none';
+  }
+}
+
+// ============================================
+// 🔄 تحديث Home عند التنقل
+// ============================================
+function refreshHomeScreen() {
+  updateHomeUserInfo();
+  loadHomePharmacies();
+  loadHomeOffers();
+  updateHomeNotifDot();
+}
+
+// ============================================
+// 🎯 تشغيل تلقائي عند فتح Home
+// ============================================
+// نحتاج نضيف استدعاء initHomeScreen() في goToDashboardByType()
+// راح نعدل الدالة الأصلية (في الجزء التالي)
