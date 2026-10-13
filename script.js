@@ -1484,7 +1484,7 @@ function goToDashboardByType() {
       loadOffers();
       loadPharmaciesForPatient();
       initPostsFeed();
-
+      initHomeScreen();
       var addBtn = document.querySelector('.posts-feed-add-btn');
       if (addBtn) {
         addBtn.style.display = (user.type === 'pharmacy') ? 'flex' : 'none';
