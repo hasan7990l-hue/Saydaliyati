@@ -8204,3 +8204,572 @@ a {
   .cart-checkout-icon { font-size: 20px; }
   .cart-checkout-total { font-size: 15px; }
    }
+/* ============================================
+   📋 My Orders Screen v2 — DAWAK
+   ============================================ */
+
+/* Top Bar */
+.orders-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 4px 0;
+}
+
+.orders-back-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t-base);
+  flex-shrink: 0;
+}
+
+.orders-back-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: translateX(4px);
+}
+
+.orders-back-btn svg {
+  stroke: var(--text);
+  transition: stroke var(--t-base);
+}
+
+.orders-back-btn:hover svg {
+  stroke: var(--primary);
+}
+
+.orders-screen-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  text-align: center;
+}
+
+.orders-search-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t-base);
+  flex-shrink: 0;
+}
+
+.orders-search-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.orders-search-btn svg {
+  stroke: var(--text);
+  transition: stroke var(--t-base);
+}
+
+.orders-search-btn:hover svg {
+  stroke: var(--primary);
+}
+
+/* Filter Tabs */
+.orders-filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border-radius: var(--r-md);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.orders-filter-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.orders-filter-tab {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--t-base);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.orders-filter-tab:hover {
+  color: var(--primary);
+}
+
+.orders-filter-tab.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Orders List Container */
+.orders-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Loading State */
+.orders-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.orders-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: ordersSpin 0.8s linear infinite;
+}
+
+@keyframes ordersSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Order Card */
+.order-card-v2 {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  transition: all var(--t-base);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.order-card-v2:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px var(--shadow-primary);
+  transform: translateY(-2px);
+}
+
+.order-card-v2.status-pending {
+  border-right: 4px solid #F59E0B;
+}
+
+.order-card-v2.status-completed {
+  border-right: 4px solid #10B981;
+}
+
+.order-card-v2.status-cancelled {
+  border-right: 4px solid #EF4444;
+}
+
+/* Order Card Header */
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.order-card-pharmacy {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-pharmacy-name {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.order-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Status Badge */
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.order-status-badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.order-status-badge.completed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.order-status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.order-status-badge .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: orderStatusPulse 2s ease-in-out infinite;
+}
+
+@keyframes orderStatusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Order ID */
+.order-id-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 10px;
+  direction: ltr;
+  text-align: right;
+}
+
+.order-id-row strong {
+  color: var(--text-secondary);
+}
+
+/* Order Items Summary */
+.order-items-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--r-sm);
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.order-items-summary strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* Order Footer */
+.order-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.order-total-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-total-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.order-total-value {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.3px;
+}
+
+.order-total-value small {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+/* Order Actions */
+.order-actions-v2 {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.order-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--t-base);
+  font-family: inherit;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+}
+
+.order-action-btn.primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px var(--shadow-primary);
+}
+
+.order-action-btn.primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow-primary);
+}
+
+.order-action-btn.outline {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.order-action-btn.outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.order-action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.order-action-btn.primary svg {
+  stroke: #FFFFFF;
+}
+
+.order-action-btn.outline svg {
+  stroke: currentColor;
+}
+
+/* Empty State */
+.orders-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.orders-empty-icon-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  border: 2px dashed var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.orders-empty-icon-wrapper svg {
+  stroke: var(--primary);
+  opacity: 0.7;
+}
+
+.orders-empty-state h3 {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+}
+
+.orders-empty-state p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+.orders-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--hero-btn-primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--r-lg);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--t-base);
+  box-shadow: 0 8px 24px var(--shadow-primary);
+  margin-top: 12px;
+  font-family: inherit;
+}
+
+.orders-empty-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px var(--shadow-primary);
+}
+
+.orders-empty-cta svg {
+  stroke: var(--text-on-primary);
+}
+
+/* Order Timeline (Optional — للتفاصيل) */
+.order-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 12px 0;
+  margin-bottom: 12px;
+}
+
+.order-timeline-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.order-timeline-step::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.order-timeline-step:first-child::before {
+  display: none;
+}
+
+.order-timeline-step.done::before,
+.order-timeline-step.active::before {
+  background: var(--primary);
+}
+
+.order-timeline-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.order-timeline-step.done .order-timeline-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #FFFFFF;
+}
+
+.order-timeline-step.active .order-timeline-dot {
+  background: var(--bg-card);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+.order-timeline-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.order-timeline-step.done .order-timeline-label,
+.order-timeline-step.active .order-timeline-label {
+  color: var(--primary);
+}
+
+/* Responsive — Mobile */
+@media (max-width: 480px) {
+  .orders-screen-title { font-size: 20px; }
+  .orders-back-btn,
+  .orders-search-btn { width: 40px; height: 40px; }
+  
+  .orders-filter-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .order-card-v2 { padding: 14px; }
+  .order-pharmacy-name { font-size: 15px; }
+  .order-total-value { font-size: 16px; }
+  
+  .order-action-btn {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+  
+  .order-action-btn .action-label {
+    display: none;
+  }
+  
+  .order-action-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
