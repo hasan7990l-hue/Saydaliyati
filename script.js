@@ -3172,8 +3172,8 @@ async function openCartScreen() {
 
   await populatePharmacySelect();
 
-  renderCart();
-  showScreen('cartScreen');
+  renderCartV2();
+showScreen('cartScreen');
 
   setTimeout(function () {
     initCartMap();
