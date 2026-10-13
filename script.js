@@ -3157,7 +3157,7 @@ async function updateCartDistance() {
 // ============================================
 // 🛒 السلة — الشاشات والدوال
 // ============================================
-function openCartScreen() {
+async function openCartScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   if (!userStr) { showToast('سجّل دخول أولاً'); return; }
 
@@ -3169,12 +3169,47 @@ function openCartScreen() {
   var addressInput = document.getElementById('cartAddress');
   if (addressInput && user.address) addressInput.value = user.address;
 
+  // ✅ حمّل الصيدليات من Firestore
+  await populatePharmacySelect();
+
   renderCart();
   showScreen('cartScreen');
 
   setTimeout(function () {
     initCartMap();
   }, 300);
+}
+
+// ✅ دالة جديدة — تعبئة قائمة الصيدليات
+async function populatePharmacySelect() {
+  var select = document.getElementById('cartPharmacySelect');
+  if (!select) return;
+
+  var currentValue = select.value;
+  select.innerHTML = '<option value="">— اختر صيدلية —</option>';
+
+  var pharmacies = [];
+  if (isFirebaseReady()) {
+    try {
+      pharmacies = await loadPharmaciesFromFirestore();
+    } catch (e) {
+      console.warn('⚠️ خطأ جلب الصيدليات:', e);
+    }
+  }
+
+  if (pharmacies.length === 0) {
+    select.innerHTML = '<option value="">لا توجد صيدليات مسجلة</option>';
+    return;
+  }
+
+  pharmacies.forEach(function (p) {
+    var option = document.createElement('option');
+    option.value = p.name || p.id;
+    option.textContent = p.name + ' - ' + (p.address || 'بغداد');
+    select.appendChild(option);
+  });
+
+  if (currentValue) select.value = currentValue;
 }
 
 async function onPharmacyChange() {
