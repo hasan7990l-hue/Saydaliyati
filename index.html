@@ -26,11 +26,149 @@
   <link rel="icon" type="image/png" href="/icon-192.png">
 </head>
 <body>
+<!-- ============================================
+     🎬 Onboarding Screen — DAWAK
+     ============================================ -->
+<div class="screen active" id="onboardingScreen">
 
+  <!-- Background Elements -->
+  <div class="ob-bg">
+    <div class="ob-particle"></div>
+    <div class="ob-particle"></div>
+    <div class="ob-particle"></div>
+    <div class="ob-particle"></div>
+    <div class="ob-particle"></div>
+    <div class="ob-particle"></div>
+  </div>
+
+  <!-- Skip Button -->
+  <button class="ob-skip-btn" onclick="finishOnboarding()">تخطي</button>
+
+  <!-- Container -->
+  <div class="ob-container">
+
+    <!-- Slide 1: ابحث عن دواءك -->
+    <div class="ob-slide active" data-slide="0">
+      <div class="ob-illustration">
+        <div class="ob-illustration-bg"></div>
+        <div class="ob-illustration-content">
+          <svg viewBox="0 0 200 200" class="ob-svg">
+            <!-- Patient with phone -->
+            <circle cx="100" cy="80" r="35" fill="#10B981" opacity="0.2"/>
+            <circle cx="100" cy="80" r="28" fill="#10B981"/>
+            <circle cx="92" cy="75" r="3" fill="#FFFFFF"/>
+            <circle cx="108" cy="75" r="3" fill="#FFFFFF"/>
+            <path d="M92 88 Q100 95 108 88" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Phone -->
+            <rect x="75" y="115" width="50" height="75" rx="8" fill="#0F172A" stroke="#10B981" stroke-width="2"/>
+            <rect x="80" y="122" width="40" height="55" rx="4" fill="#10B981" opacity="0.3"/>
+            <circle cx="100" cy="184" r="3" fill="#10B981"/>
+            <!-- Medicine floating -->
+            <rect x="130" y="60" width="25" height="25" rx="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+            <rect x="138" y="68" width="9" height="3" fill="#10B981"/>
+            <rect x="141" y="65" width="3" height="9" fill="#10B981"/>
+            <rect x="40" y="90" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+            <circle cx="50" cy="100" r="4" fill="#10B981"/>
+          </svg>
+        </div>
+      </div>
+      <h2 class="ob-title">ابحث عن دواءك</h2>
+      <p class="ob-subtitle">أكثر من 5000 دواء متوفر من أقرب صيدلية إليك</p>
+    </div>
+
+    <!-- Slide 2: توصيل سريع -->
+    <div class="ob-slide" data-slide="1">
+      <div class="ob-illustration">
+        <div class="ob-illustration-bg"></div>
+        <div class="ob-illustration-content">
+          <svg viewBox="0 0 200 200" class="ob-svg">
+            <!-- Delivery motorcycle -->
+            <circle cx="60" cy="140" r="18" fill="none" stroke="#10B981" stroke-width="3"/>
+            <circle cx="60" cy="140" r="6" fill="#10B981"/>
+            <circle cx="140" cy="140" r="18" fill="none" stroke="#10B981" stroke-width="3"/>
+            <circle cx="140" cy="140" r="6" fill="#10B981"/>
+            <!-- Body -->
+            <path d="M60 140 L80 110 L120 110 L140 140" stroke="#10B981" stroke-width="3" fill="rgba(16,185,129,0.1)"/>
+            <path d="M80 110 L90 85 L130 85 L120 110" stroke="#10B981" stroke-width="3" fill="rgba(16,185,129,0.2)"/>
+            <!-- Delivery box -->
+            <rect x="125" y="70" width="35" height="35" rx="4" fill="#10B981"/>
+            <rect x="137" y="80" width="11" height="4" fill="#FFFFFF"/>
+            <rect x="140" y="77" width="4" height="11" fill="#FFFFFF"/>
+            <!-- Driver -->
+            <circle cx="100" cy="70" r="10" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+            <!-- Speed lines -->
+            <line x1="30" y1="130" x2="15" y2="130" stroke="#10B981" stroke-width="2" opacity="0.5"/>
+            <line x1="30" y1="145" x2="10" y2="145" stroke="#10B981" stroke-width="2" opacity="0.3"/>
+          </svg>
+        </div>
+      </div>
+      <h2 class="ob-title">توصيل سريع لباب بيتك</h2>
+      <p class="ob-subtitle">مندوبينا يوصلوا دواك خلال 30 دقيقة بأسرع وقت</p>
+    </div>
+
+    <!-- Slide 3: صحتك بأمان -->
+    <div class="ob-slide" data-slide="2">
+      <div class="ob-illustration">
+        <div class="ob-illustration-bg"></div>
+        <div class="ob-illustration-content">
+          <svg viewBox="0 0 200 200" class="ob-svg">
+            <!-- Family -->
+            <!-- Mom -->
+            <circle cx="70" cy="80" r="18" fill="#10B981" opacity="0.2"/>
+            <circle cx="70" cy="80" r="14" fill="#10B981"/>
+            <circle cx="65" cy="76" r="2" fill="#FFFFFF"/>
+            <circle cx="75" cy="76" r="2" fill="#FFFFFF"/>
+            <path d="M65 86 Q70 90 75 86" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M55 110 Q70 95 85 110 L85 130 L55 130 Z" fill="#10B981"/>
+            <!-- Dad -->
+            <circle cx="130" cy="75" r="20" fill="#10B981" opacity="0.2"/>
+            <circle cx="130" cy="75" r="16" fill="#10B981"/>
+            <circle cx="124" cy="71" r="2" fill="#FFFFFF"/>
+            <circle cx="136" cy="71" r="2" fill="#FFFFFF"/>
+            <path d="M124 82 Q130 87 136 82" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M115 105 Q130 92 145 105 L145 130 L115 130 Z" fill="#10B981"/>
+            <!-- Child -->
+            <circle cx="100" cy="95" r="12" fill="#10B981" opacity="0.3"/>
+            <circle cx="100" cy="95" r="9" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+            <circle cx="97" cy="93" r="1.5" fill="#10B981"/>
+            <circle cx="103" cy="93" r="1.5" fill="#10B981"/>
+            <path d="M97 98 Q100 100 103 98" stroke="#10B981" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <!-- Medicine box -->
+            <rect x="85" y="110" width="30" height="25" rx="3" fill="#10B981"/>
+            <rect x="95" y="118" width="10" height="3" fill="#FFFFFF"/>
+            <rect x="98.5" y="114.5" width="3" height="10" fill="#FFFFFF"/>
+          </svg>
+        </div>
+      </div>
+      <h2 class="ob-title">صحتك بأمان</h2>
+      <p class="ob-subtitle">صيدليات مرخصة وأدوية أصلية 100%</p>
+    </div>
+
+  </div>
+
+  <!-- Dots -->
+  <div class="ob-dots">
+    <span class="ob-dot active" data-dot="0" onclick="goToSlide(0)"></span>
+    <span class="ob-dot" data-dot="1" onclick="goToSlide(1)"></span>
+    <span class="ob-dot" data-dot="2" onclick="goToSlide(2)"></span>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="ob-bottom-actions">
+    <button class="ob-next-btn" id="obNextBtn" onclick="nextSlide()">
+      <span id="obNextText">التالي</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </button>
+  </div>
+
+</div>
   <!-- ============================================
        🎬 Splash Screen
        ============================================ -->
-  <div class="screen active" id="splashScreen">
+  <div class="screen" id="splashScreen">
     <div class="splash-bg">
       <div class="splash-hex-grid"></div>
       <div class="splash-particles" id="splashParticles"></div>
