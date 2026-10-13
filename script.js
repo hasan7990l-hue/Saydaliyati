@@ -5315,7 +5315,7 @@ async function loadHomeOffers() {
       }
 
       html +=
-        '<div class="home-offer-card" onclick="orderFromPost(\'' + post.id + '\')">' +
+        '<div class="home-offer-card" onclick="orderFromPostV2(\'' + post.id + '\')">' +
           '<div class="home-offer-image">' + imageHTML + '</div>' +
           '<h4 class="home-offer-title">' + title + '</h4>' +
           '<div class="home-offer-price-row">' +
