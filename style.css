@@ -1,11 +1,11 @@
 /* ============================================
-   توصيل طبي - v14
-   Dual Theme System (Light / Dark) — Real Contrast
-   الجزء 1 من 4: Variables + Base + Splash + Login
+   DAWAK - v15
+   Dual Theme System (Light / Dark) — Green Theme
+   الجزء 1 من 5: Variables + Base
    ============================================ */
 
 /* ============================================
-   🎨 نظام الألوان — الوضع النهاري
+   🎨 نظام الألوان — الوضع النهاري (أخضر)
    ============================================ */
 :root,
 [data-theme="light"] {
@@ -18,14 +18,14 @@
   --bg-overlay: rgba(15, 23, 42, 0.5);
   --bg-glass: rgba(255, 255, 255, 0.7);
 
-  /* Brand */
-  --primary: #2563EB;
-  --primary-hover: #1D4ED8;
-  --primary-light: #DBEAFE;
-  --primary-soft: rgba(37, 99, 235, 0.08);
-  --cyan: #0891B2;
-  --cyan-glow: rgba(8, 145, 178, 0.35);
-  --cyan-light: #CFFAFE;
+  /* Brand - Green */
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --primary-light: #D1FAE5;
+  --primary-soft: rgba(16, 185, 129, 0.08);
+  --cyan: #059669;
+  --cyan-glow: rgba(5, 150, 105, 0.35);
+  --cyan-light: #D1FAE5;
 
   /* Semantic */
   --success: #10B981;
@@ -49,33 +49,33 @@
   /* Borders */
   --border: #E2E8F0;
   --border-strong: #CBD5E1;
-  --border-focus: #2563EB;
+  --border-focus: #10B981;
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
-  --shadow-primary: 0 8px 24px rgba(37, 99, 235, 0.25);
-  --shadow-cyan: 0 8px 24px rgba(8, 145, 178, 0.25);
+  --shadow-primary: 0 8px 24px rgba(16, 185, 129, 0.25);
+  --shadow-cyan: 0 8px 24px rgba(5, 150, 105, 0.25);
   --shadow-success: 0 8px 24px rgba(16, 185, 129, 0.25);
 
-  /* Hero/Cyberpunk screens — in light mode, keep them bright */
-  --hero-bg: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
-  --hero-bg-solid: #EFF6FF;
-  --hero-grid: rgba(37, 99, 235, 0.06);
-  --hero-glow: rgba(37, 99, 235, 0.15);
+  /* Hero screens */
+  --hero-bg: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
+  --hero-bg-solid: #ECFDF5;
+  --hero-grid: rgba(16, 185, 129, 0.06);
+  --hero-glow: rgba(16, 185, 129, 0.15);
   --hero-text: #0F172A;
   --hero-subtext: #475569;
-  --hero-logo-stroke: #2563EB;
-  --hero-logo-fill: #2563EB;
-  --hero-btn-primary: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-  --hero-btn-outline-bg: rgba(37, 99, 235, 0.06);
-  --hero-btn-outline-border: rgba(37, 99, 235, 0.4);
-  --hero-btn-outline-text: #2563EB;
+  --hero-logo-stroke: #10B981;
+  --hero-logo-fill: #10B981;
+  --hero-btn-primary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --hero-btn-outline-bg: rgba(16, 185, 129, 0.06);
+  --hero-btn-outline-border: rgba(16, 185, 129, 0.4);
+  --hero-btn-outline-text: #10B981;
 
-  /* Card glass on hero */
+  /* Glass */
   --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(37, 99, 235, 0.2);
+  --glass-border: rgba(16, 185, 129, 0.2);
   --glass-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
 
   /* Modal */
@@ -85,43 +85,43 @@
 
   /* Profile hero */
   --profile-hero-bg: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
-  --profile-hero-border: #2563EB;
+  --profile-hero-border: #10B981;
 
   /* Nav */
   --nav-bg: #FFFFFF;
   --nav-border: #E2E8F0;
   --nav-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
 
-  /* Notifications screen */
+  /* Notifications */
   --notif-bg: #F8FAFC;
   --notif-card-bg: #FFFFFF;
   --notif-card-border: #E2E8F0;
-  --notif-unread-border: #2563EB;
-  --notif-unread-glow: rgba(37, 99, 235, 0.15);
+  --notif-unread-border: #10B981;
+  --notif-unread-glow: rgba(16, 185, 129, 0.15);
 
-  /* Inventory modal (Cyberpunk dark by design in dark, elegant in light) */
+  /* Medicine modal (legacy) */
   --med-modal-bg: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
-  --med-modal-border: #2563EB;
+  --med-modal-border: #10B981;
   --med-input-bg: #FFFFFF;
   --med-input-border: #E2E8F0;
   --med-input-text: #0F172A;
 
   /* Radar */
-  --radar-bg: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.03) 40%, transparent 70%);
-  --radar-ring: rgba(37, 99, 235, 0.5);
-  --radar-ring-strong: rgba(37, 99, 235, 0.8);
+  --radar-bg: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.03) 40%, transparent 70%);
+  --radar-ring: rgba(16, 185, 129, 0.5);
+  --radar-ring-strong: rgba(16, 185, 129, 0.8);
   --radar-core-bg: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #E2E8F0 100%);
-  --radar-core-border: #2563EB;
-  --radar-core-glow: rgba(37, 99, 235, 0.4);
+  --radar-core-border: #10B981;
+  --radar-core-glow: rgba(16, 185, 129, 0.4);
   --radar-title: #0F172A;
 
   /* Map markers */
-  --map-me: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  --map-me: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --map-pharmacy: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --map-patient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   --map-delivery: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
 
-  /* Radius tokens */
+  /* Radius */
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
@@ -136,7 +136,7 @@
 }
 
 /* ============================================
-   🌙 نظام الألوان — الوضع الليلي (Cyberpunk)
+   🌙 نظام الألوان — الوضع الليلي (أخضر مضيء)
    ============================================ */
 [data-theme="dark"] {
   /* Backgrounds */
@@ -148,14 +148,14 @@
   --bg-overlay: rgba(0, 0, 0, 0.75);
   --bg-glass: rgba(15, 23, 42, 0.6);
 
-  /* Brand */
-  --primary: #22D3EE;
-  --primary-hover: #06B6D4;
-  --primary-light: rgba(34, 211, 238, 0.15);
-  --primary-soft: rgba(34, 211, 238, 0.08);
-  --cyan: #22D3EE;
-  --cyan-glow: rgba(34, 211, 238, 0.5);
-  --cyan-light: rgba(34, 211, 238, 0.15);
+  /* Brand - Green Glow */
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --primary-light: rgba(16, 185, 129, 0.15);
+  --primary-soft: rgba(16, 185, 129, 0.08);
+  --cyan: #34D399;
+  --cyan-glow: rgba(52, 211, 153, 0.5);
+  --cyan-light: rgba(52, 211, 153, 0.15);
 
   /* Semantic */
   --success: #10B981;
@@ -179,43 +179,43 @@
   /* Borders */
   --border: rgba(148, 163, 184, 0.15);
   --border-strong: rgba(148, 163, 184, 0.3);
-  --border-focus: #22D3EE;
+  --border-focus: #10B981;
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
-  --shadow-primary: 0 8px 24px rgba(34, 211, 238, 0.4);
-  --shadow-cyan: 0 8px 24px rgba(34, 211, 238, 0.5);
+  --shadow-primary: 0 8px 24px rgba(16, 185, 129, 0.4);
+  --shadow-cyan: 0 8px 24px rgba(52, 211, 153, 0.5);
   --shadow-success: 0 8px 24px rgba(16, 185, 129, 0.4);
 
-  /* Hero/Cyberpunk */
+  /* Hero */
   --hero-bg: #050810;
   --hero-bg-solid: #050810;
-  --hero-grid: rgba(34, 211, 238, 0.06);
-  --hero-glow: rgba(34, 211, 238, 0.15);
+  --hero-grid: rgba(16, 185, 129, 0.06);
+  --hero-glow: rgba(16, 185, 129, 0.15);
   --hero-text: #FFFFFF;
   --hero-subtext: #94A3B8;
-  --hero-logo-stroke: #22D3EE;
-  --hero-logo-fill: #22D3EE;
-  --hero-btn-primary: linear-gradient(135deg, #22D3EE 0%, #0EA5E9 100%);
-  --hero-btn-outline-bg: rgba(34, 211, 238, 0.08);
-  --hero-btn-outline-border: rgba(34, 211, 238, 0.5);
-  --hero-btn-outline-text: #22D3EE;
+  --hero-logo-stroke: #10B981;
+  --hero-logo-fill: #10B981;
+  --hero-btn-primary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --hero-btn-outline-bg: rgba(16, 185, 129, 0.08);
+  --hero-btn-outline-border: rgba(16, 185, 129, 0.5);
+  --hero-btn-outline-text: #10B981;
 
   /* Glass */
   --glass-bg: rgba(30, 41, 59, 0.4);
-  --glass-border: rgba(34, 211, 238, 0.3);
-  --glass-shadow: 0 0 40px rgba(34, 211, 238, 0.15), 0 20px 60px rgba(0, 0, 0, 0.5);
+  --glass-border: rgba(16, 185, 129, 0.3);
+  --glass-shadow: 0 0 40px rgba(16, 185, 129, 0.15), 0 20px 60px rgba(0, 0, 0, 0.5);
 
   /* Modal */
   --modal-bg: #0F172A;
-  --modal-border: rgba(34, 211, 238, 0.3);
+  --modal-border: rgba(16, 185, 129, 0.3);
   --modal-header-bg: #0A1428;
 
   /* Profile hero */
   --profile-hero-bg: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-  --profile-hero-border: #22D3EE;
+  --profile-hero-border: #10B981;
 
   /* Nav */
   --nav-bg: #0F172A;
@@ -226,32 +226,31 @@
   --notif-bg: #050810;
   --notif-card-bg: rgba(30, 41, 59, 0.4);
   --notif-card-border: rgba(148, 163, 184, 0.2);
-  --notif-unread-border: rgba(34, 211, 238, 0.5);
-  --notif-unread-glow: rgba(34, 211, 238, 0.2);
+  --notif-unread-border: rgba(16, 185, 129, 0.5);
+  --notif-unread-glow: rgba(16, 185, 129, 0.2);
 
-  /* Inventory modal */
+  /* Medicine modal (legacy) */
   --med-modal-bg: linear-gradient(135deg, #0A1428 0%, #0F172A 100%);
-  --med-modal-border: rgba(34, 211, 238, 0.3);
+  --med-modal-border: rgba(16, 185, 129, 0.3);
   --med-input-bg: rgba(15, 23, 42, 0.6);
-  --med-input-border: rgba(34, 211, 238, 0.2);
+  --med-input-border: rgba(16, 185, 129, 0.2);
   --med-input-text: #FFFFFF;
 
   /* Radar */
-  --radar-bg: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, rgba(34, 211, 238, 0.03) 40%, transparent 70%);
-  --radar-ring: rgba(34, 211, 238, 0.5);
-  --radar-ring-strong: rgba(34, 211, 238, 0.8);
+  --radar-bg: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.03) 40%, transparent 70%);
+  --radar-ring: rgba(16, 185, 129, 0.5);
+  --radar-ring-strong: rgba(16, 185, 129, 0.8);
   --radar-core-bg: radial-gradient(circle at 35% 30%, #1E293B 0%, #0A0F1A 100%);
-  --radar-core-border: rgba(34, 211, 238, 0.7);
-  --radar-core-glow: rgba(34, 211, 238, 0.6);
+  --radar-core-border: rgba(16, 185, 129, 0.7);
+  --radar-core-glow: rgba(16, 185, 129, 0.6);
   --radar-title: #FFFFFF;
 
   /* Map markers */
-  --map-me: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  --map-me: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --map-pharmacy: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --map-patient: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
   --map-delivery: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
 }
-
 /* ============================================
    🔄 Reset & Base
    ============================================ */
@@ -299,21 +298,13 @@ a {
   text-decoration: none;
 }
 
-/* Custom scrollbar (dark theme friendly) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 /* ============================================
    📱 إدارة الشاشات
@@ -340,7 +331,6 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Hero screens — use CSS variables, no !important */
 #splashScreen,
 #loginScreen,
 #roleScreen,
@@ -352,7 +342,7 @@ a {
 }
 
 /* ============================================
-   🎬 شاشة البداية (Splash)
+   🎬 Splash Screen
    ============================================ */
 #splashScreen {
   position: relative;
@@ -383,10 +373,8 @@ a {
 
 .splash-glow-blob {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 500px;
-  height: 500px;
+  top: 50%; left: 50%;
+  width: 500px; height: 500px;
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, var(--hero-glow) 0%, transparent 60%);
   filter: blur(80px);
@@ -436,8 +424,7 @@ a {
 
 .splash-logo-wrap {
   position: relative;
-  width: 130px;
-  height: 130px;
+  width: 130px; height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,18 +445,14 @@ a {
 }
 
 .splash-logo-svg {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 0 20px var(--cyan-glow));
   animation: splashLogoFloat 4s ease-in-out infinite;
 }
 
-.splash-logo-svg path {
-  stroke: var(--hero-logo-stroke);
-}
-
+.splash-logo-svg path { stroke: var(--hero-logo-stroke); }
 .splash-logo-svg circle {
   fill: var(--hero-logo-fill);
   stroke: var(--hero-logo-stroke);
@@ -561,16 +544,14 @@ a {
 
 .splash-theme-toggle {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 20px; left: 20px;
   background: var(--bg-glass);
   backdrop-filter: blur(10px);
   border: 1.5px solid var(--glass-border);
   color: var(--primary);
   z-index: 10;
   transition: all var(--t-base);
-  width: 48px;
-  height: 48px;
+  width: 48px; height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -585,7 +566,6 @@ a {
   box-shadow: 0 0 20px var(--hero-glow);
 }
 
-/* Legal text */
 .splash-legal,
 .login-legal {
   margin-top: 24px;
@@ -613,7 +593,7 @@ a {
 }
 
 /* ============================================
-   🔐 شاشة تسجيل الدخول
+   🔐 Login Screen
    ============================================ */
 #loginScreen {
   position: relative;
@@ -642,10 +622,8 @@ a {
 
 .login-glow-blob {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px;
-  height: 400px;
+  top: 50%; left: 50%;
+  width: 400px; height: 400px;
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, var(--hero-glow) 0%, transparent 60%);
   filter: blur(60px);
@@ -694,8 +672,7 @@ a {
 
 .login-logo-wrap {
   position: relative;
-  width: 110px;
-  height: 110px;
+  width: 110px; height: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -716,21 +693,15 @@ a {
 }
 
 .login-logo-svg {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   position: relative;
   z-index: 1;
   filter: drop-shadow(0 0 15px var(--cyan-glow));
   animation: logoFloat 4s ease-in-out infinite;
 }
 
-.login-logo-svg path {
-  stroke: var(--hero-logo-stroke);
-}
-
-.login-logo-svg circle {
-  fill: var(--hero-logo-fill);
-}
+.login-logo-svg path { stroke: var(--hero-logo-stroke); }
+.login-logo-svg circle { fill: var(--hero-logo-fill); }
 
 @keyframes logoFloat {
   0%, 100% { transform: translateY(0); }
@@ -834,9 +805,7 @@ a {
   pointer-events: none;
 }
 
-.login-input-icon svg {
-  stroke: var(--primary);
-}
+.login-input-icon svg { stroke: var(--primary); }
 
 .login-eye-btn {
   position: absolute;
@@ -904,10 +873,8 @@ a {
 
 .login-back-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 44px;
-  height: 44px;
+  top: 20px; right: 20px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   background: var(--bg-glass);
   backdrop-filter: blur(10px);
@@ -929,7 +896,6 @@ a {
   transform: scale(1.05);
 }
 
-/* Google buttons + Divider */
 .login-divider,
 .reg-divider {
   display: flex;
@@ -1000,12 +966,10 @@ a {
 }
 
 .login-google-btn .google-icon,
-.reg-google-btn .google-icon {
-  flex-shrink: 0;
-}
+.reg-google-btn .google-icon { flex-shrink: 0; }
 
 /* ============================================
-   🎯 شاشة اختيار نوع الحساب
+   🎯 Role Selection Screen
    ============================================ */
 #roleScreen {
   position: relative;
@@ -1143,8 +1107,8 @@ a {
 }
 
 .role-card-patient {
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.05) 100%);
-  border: 1.5px solid rgba(34, 211, 238, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
 }
 
 .role-card-pharmacy {
@@ -1158,8 +1122,8 @@ a {
 }
 
 [data-theme="light"] .role-card-patient {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.04) 100%);
-  border-color: rgba(37, 99, 235, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 [data-theme="light"] .role-card-pharmacy {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%);
@@ -1193,7 +1157,7 @@ a {
 }
 
 .role-card-patient .role-card-icon {
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(16, 185, 129, 0.15);
   color: var(--primary);
 }
 .role-card-pharmacy .role-card-icon {
@@ -1206,8 +1170,8 @@ a {
 }
 
 [data-theme="dark"] .role-card-patient .role-card-icon {
-  background: rgba(34, 211, 238, 0.2);
-  color: #22D3EE;
+  background: rgba(16, 185, 129, 0.2);
+  color: #10B981;
 }
 [data-theme="dark"] .role-card-pharmacy .role-card-icon {
   background: rgba(16, 185, 129, 0.2);
@@ -1251,7 +1215,7 @@ a {
 
 .role-card-new:hover .role-card-arrow { transform: translateX(-6px); }
 /* ============================================
-   🎨 شاشات التسجيل (Patient / Pharmacy / Delivery)
+   🎨 Registration Screens (Patient / Pharmacy / Delivery)
    ============================================ */
 #patientScreen,
 #pharmacyScreen,
@@ -1294,9 +1258,7 @@ a {
   animation: regParticleFloat 6s ease-in-out infinite;
 }
 
-.reg-particle.white {
-  background: var(--hero-text);
-}
+.reg-particle.white { background: var(--hero-text); }
 
 @keyframes regParticleFloat {
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
@@ -1312,11 +1274,11 @@ a {
   animation: regBlobPulse 4s ease-in-out infinite;
 }
 
-.reg-glow-blue   { background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 60%); }
+.reg-glow-blue   { background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 60%); }
 .reg-glow-green  { background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 60%); }
 .reg-glow-orange { background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 60%); }
 
-[data-theme="dark"] .reg-glow-blue   { background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 60%); }
+[data-theme="dark"] .reg-glow-blue   { background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%); }
 [data-theme="dark"] .reg-glow-green  { background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%); }
 [data-theme="dark"] .reg-glow-orange { background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 60%); }
 
@@ -1390,11 +1352,11 @@ a {
   animation: regLogoGlow 3s ease-in-out infinite;
 }
 
-.reg-logo-glow.reg-glow-blue   { background: radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 70%); }
+.reg-logo-glow.reg-glow-blue   { background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%); }
 .reg-logo-glow.reg-glow-green  { background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%); }
 .reg-logo-glow.reg-glow-orange { background: radial-gradient(circle, rgba(245, 158, 11, 0.4) 0%, transparent 70%); }
 
-[data-theme="dark"] .reg-logo-glow.reg-glow-blue   { background: radial-gradient(circle, rgba(34, 211, 238, 0.4) 0%, transparent 70%); }
+[data-theme="dark"] .reg-logo-glow.reg-glow-blue { background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%); }
 
 @keyframes regLogoGlow {
   0%, 100% { transform: scale(1); opacity: 0.6; }
@@ -1592,13 +1554,13 @@ a {
 .reg-btn-orange:hover { box-shadow: 0 12px 32px rgba(245, 158, 11, 0.5); }
 
 /* ============================================
-   🏠 الصفحة الرئيسية (Home Header)
+   🏠 Home Header
    ============================================ */
 .home-header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 20px;
   padding: 4px 0;
 }
@@ -1623,7 +1585,7 @@ a {
 }
 
 /* ============================================
-   🎯 الشعار المصغّر
+   🎯 Mini Logo
    ============================================ */
 .mini-logo {
   position: relative;
@@ -1694,7 +1656,7 @@ a {
 }
 
 /* ============================================
-   🔘 الأزرار الأساسية
+   🔘 Buttons
    ============================================ */
 .btn-primary {
   width: 100%;
@@ -1728,7 +1690,7 @@ a {
 }
 
 /* ============================================
-   📱 الشريط العلوي
+   📱 Top Bar
    ============================================ */
 .top-bar {
   display: flex;
@@ -1776,7 +1738,7 @@ a {
 }
 
 /* ============================================
-   📝 عناوين الشاشات
+   📝 Screen Titles
    ============================================ */
 .screen-title {
   font-size: 26px;
@@ -1792,8 +1754,9 @@ a {
   text-align: center;
   margin-bottom: 32px;
 }
+
 /* ============================================
-   📝 Forms (input-group + blue-form)
+   📝 Forms
    ============================================ */
 .blue-form {
   display: flex;
@@ -1851,7 +1814,7 @@ a {
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322D3EE' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: left 14px center;
   background-size: 16px;
@@ -1865,20 +1828,10 @@ a {
 }
 
 /* ============================================
-   👤 صورة الملف الشخصي في الرئيسية
+   👤 Home Avatar
    ============================================ */
-.home-header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding: 4px 0;
-}
-
 .home-avatar {
-  width: 50px;
-  height: 50px;
+  width: 50px; height: 50px;
   border-radius: 50%;
   background: var(--hero-btn-primary);
   display: flex;
@@ -1906,9 +1859,10 @@ a {
 [dir="rtl"] .home-avatar {
   margin-right: 0;
   margin-left: 12px;
-   }
+}
+
 /* ============================================
-   🔍 شريط البحث
+   🔍 Search Bar
    ============================================ */
 .search-wrapper { margin-bottom: 16px; }
 
@@ -1942,7 +1896,7 @@ a {
 .search-bar input::placeholder { color: var(--text-muted); }
 
 /* ============================================
-   🏷️ التصنيفات (Chips)
+   🏷️ Categories Chips
    ============================================ */
 .categories-scroll {
   display: flex;
@@ -1975,7 +1929,7 @@ a {
 }
 
 /* ============================================
-   📢 عناوين الأقسام
+   📢 Section Headers
    ============================================ */
 .section-header {
   display: flex;
@@ -1997,7 +1951,7 @@ a {
 }
 
 /* ============================================
-   🏪 بطاقات الصيدليات
+   🏪 Pharmacy Cards
    ============================================ */
 .pharmacy-list {
   display: flex;
@@ -2071,7 +2025,7 @@ a {
 }
 
 /* ============================================
-   📢 شريط العروض
+   📢 Offers Bar
    ============================================ */
 .offers-section { margin-bottom: 20px; }
 
@@ -2119,7 +2073,7 @@ a {
 }
 
 /* ============================================
-   📊 الإحصائيات
+   📊 Stats Grid
    ============================================ */
 .stats-grid {
   display: grid;
@@ -2169,7 +2123,7 @@ a {
 .stat-label { font-size: 12px; color: var(--text-secondary); }
 
 /* ============================================
-   📋 بطاقات الطلبات
+   📋 Order Cards
    ============================================ */
 .order-list {
   display: flex;
@@ -2250,9 +2204,8 @@ a {
   border-color: var(--danger);
   color: var(--danger);
 }
-
 /* ============================================
-   ⚠️ رسالة مهمة (Alert Banner)
+   ⚠️ Alert Banner
    ============================================ */
 .alert-banner {
   display: flex;
@@ -2305,7 +2258,7 @@ a {
 .alert-action:hover { transform: translateY(-1px); }
 
 /* ============================================
-   🔄 Switch (Toggle)
+   🔄 Switch
    ============================================ */
 .switch {
   position: relative;
@@ -2338,7 +2291,7 @@ a {
 .switch input:checked + .slider::before { transform: translateX(24px); }
 
 /* ============================================
-   📑 Tabs الفلترة
+   📑 Filter Tabs
    ============================================ */
 .filter-tabs {
   display: flex;
@@ -2369,7 +2322,7 @@ a {
 }
 
 /* ============================================
-   🏪 أزرار سريعة للصيدلية
+   🏪 Pharmacy Actions
    ============================================ */
 .pharmacy-actions {
   display: grid;
@@ -2401,8 +2354,9 @@ a {
 }
 
 .pharmacy-action-btn svg { stroke: var(--primary); }
+
 /* ============================================
-   💊 صفحة المخزون
+   💊 Inventory (legacy — للحذف لاحقاً)
    ============================================ */
 .add-med-btn {
   background: var(--primary);
@@ -2494,9 +2448,6 @@ a {
   border-color: var(--primary);
 }
 
-/* ============================================
-   💊 قائمة الأدوية
-   ============================================ */
 .inventory-list {
   display: flex;
   flex-direction: column;
@@ -2583,7 +2534,7 @@ a {
 .medicine-action-btn svg { stroke: currentColor; }
 
 /* ============================================
-   🎨 اختيار الأيقونة
+   🎨 Icon Picker
    ============================================ */
 .icon-picker {
   display: grid;
@@ -2616,13 +2567,13 @@ a {
 }
 
 /* ============================================
-   📸 منطقة رفع الروشتة
+   📸 Prescription Upload
    ============================================ */
 .prescription-cta {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   border-radius: var(--r-xl);
   padding: 18px;
   margin-bottom: 12px;
@@ -2632,8 +2583,8 @@ a {
 }
 
 [data-theme="dark"] .prescription-cta {
-  background: linear-gradient(135deg, #0891B2 0%, #0E7490 100%);
-  box-shadow: 0 8px 24px rgba(34, 211, 238, 0.35);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
 }
 
 .prescription-cta:hover {
@@ -2757,7 +2708,7 @@ a {
 .prescription-remove-btn svg { stroke: #FFFFFF; }
 
 /* ============================================
-   🚚 خيارات التوصيل
+   🚚 Delivery Options
    ============================================ */
 .delivery-options {
   display: grid;
@@ -2811,7 +2762,7 @@ a {
 }
 
 /* ============================================
-   🛒 زر السلة
+   🛒 Cart CTA
    ============================================ */
 .cart-cta {
   display: flex;
@@ -2874,7 +2825,7 @@ a {
 .cart-cta-badge[data-count="0"] { display: none; }
 
 /* ============================================
-   🛒 صفحة السلة
+   🛒 Cart Page
    ============================================ */
 .clear-cart-btn {
   background: transparent;
@@ -2970,7 +2921,7 @@ a {
 .product-price    { font-size: 15px; font-weight: 900; color: var(--success); margin: 0; }
 
 /* ============================================
-   🛒 عناصر السلة
+   🛒 Cart Items
    ============================================ */
 .cart-items {
   display: flex;
@@ -3067,8 +3018,9 @@ a {
 }
 
 .cart-empty p { font-size: 14px; margin: 0; }
+
 /* ============================================
-   🗺️ خريطة السلة
+   🗺️ Cart Map
    ============================================ */
 .cart-map-container {
   position: relative;
@@ -3112,9 +3064,7 @@ a {
   box-shadow: 0 6px 16px var(--shadow-primary);
 }
 
-.cart-map-btn svg {
-  stroke: var(--text-on-primary);
-}
+.cart-map-btn svg { stroke: var(--text-on-primary); }
 
 .cart-distance-info {
   display: flex;
@@ -3167,7 +3117,7 @@ a {
 .cart-submit-btn { margin-top: 16px; }
 
 /* ============================================
-   💳 طرق الدفع
+   💳 Payment Options
    ============================================ */
 .payment-options {
   display: grid;
@@ -3215,7 +3165,7 @@ a {
 }
 
 /* ============================================
-   💊 نافذة تفاصيل المنتج
+   💊 Product Modal
    ============================================ */
 .product-modal-image {
   width: 100%;
@@ -3307,7 +3257,7 @@ a {
 }
 
 /* ============================================
-   ⭐ نافذة التقييم
+   ⭐ Rating Modal
    ============================================ */
 .rating-target-info {
   display: flex;
@@ -3398,7 +3348,7 @@ a {
 .rating-text.medium { color: var(--warning); }
 
 /* ============================================
-   ⭐ قسم تقييماتي
+   ⭐ My Ratings
    ============================================ */
 .my-ratings-section { margin-bottom: 20px; }
 
@@ -3489,7 +3439,7 @@ a {
 }
 
 /* ============================================
-   🎯 طلباتي الذكية
+   🎯 Active Order
    ============================================ */
 .active-order {
   border: 2px solid var(--primary);
@@ -3507,7 +3457,7 @@ a {
 }
 
 /* ============================================
-   📡 الرادار
+   📡 Radar
    ============================================ */
 .radar-section {
   margin: 20px 0 30px;
@@ -3680,7 +3630,7 @@ a {
 }
 
 /* ============================================
-   🚴 واجهة المندوب - الرأس
+   🚴 Delivery Header
    ============================================ */
 .delivery-header {
   display: flex;
@@ -3700,7 +3650,7 @@ a {
   line-height: 1.3;
 }
 
-.delivery-title span { color: var(--cyan); }
+.delivery-title span { color: var(--primary); }
 
 .delivery-sub {
   font-size: 14px;
@@ -3729,7 +3679,7 @@ a {
 }
 
 .delivery-notif-btn:hover {
-  border-color: var(--cyan);
+  border-color: var(--primary);
   background: var(--primary-soft);
 }
 
@@ -3756,7 +3706,7 @@ a {
   width: 42px; height: 42px;
   border-radius: 50%;
   background: var(--hero-btn-primary);
-  border: 2px solid var(--cyan);
+  border: 2px solid var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3774,7 +3724,7 @@ a {
 }
 
 /* ============================================
-   📋 بطاقات الطلبات للمندوب
+   📋 Delivery Order Cards
    ============================================ */
 .delivery-orders-list {
   display: flex;
@@ -3793,7 +3743,7 @@ a {
 }
 
 .delivery-order-card:hover {
-  border-color: var(--cyan);
+  border-color: var(--primary);
   box-shadow: 0 0 20px var(--cyan-glow);
   transform: translateY(-2px);
 }
@@ -3858,23 +3808,23 @@ a {
 }
 
 /* ============================================
-   🧠 بطاقة AI Suggestion
+   🧠 AI Suggestion
    ============================================ */
 .ai-suggestion-card {
   position: relative;
-  background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%);
+  background: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
   border: 2px solid transparent;
   background-clip: padding-box;
   border-radius: var(--r-2xl);
   padding: 20px;
   margin-bottom: 20px;
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), 0 0 60px rgba(5, 150, 105, 0.2);
 }
 
 [data-theme="light"] .ai-suggestion-card {
-  background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
 }
 
 .ai-suggestion-card::before {
@@ -3883,7 +3833,7 @@ a {
   inset: -2px;
   border-radius: var(--r-2xl);
   padding: 2px;
-  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 50%, #06B6D4 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 50%, #6EE7B7 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -3896,7 +3846,7 @@ a {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: #00FFFF;
+  color: #34D399;
   text-transform: uppercase;
   opacity: 0.8;
 }
@@ -3914,11 +3864,11 @@ a {
 .ai-brain {
   width: 60px; height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
   animation: brainPulse 2s ease-in-out infinite;
   position: relative;
   z-index: 2;
@@ -3943,8 +3893,8 @@ a {
   position: absolute;
   width: 8px; height: 8px;
   border-radius: 50%;
-  background: #00FFFF;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+  background: #34D399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
   animation: nodeGlow 1.5s ease-in-out infinite;
 }
 
@@ -3972,51 +3922,51 @@ a {
   margin-bottom: 6px;
 }
 
-[data-theme="light"] .ai-content h3 { color: #1E1B4B; }
+[data-theme="light"] .ai-content h3 { color: #064E3B; }
 
 .ai-content p {
   font-size: 13px;
-  color: #CBD5E1;
+  color: #A7F3D0;
   margin-bottom: 4px;
   font-weight: 600;
 }
 
-[data-theme="light"] .ai-content p { color: #4C1D95; }
+[data-theme="light"] .ai-content p { color: #065F46; }
 
-.ai-content .highlight { color: #00FFFF; font-weight: 900; font-size: 15px; }
-.ai-content .ai-sub { font-size: 12px; color: #A855F7; font-weight: 700; }
+.ai-content .highlight { color: #34D399; font-weight: 900; font-size: 15px; }
+.ai-content .ai-sub { font-size: 12px; color: #6EE7B7; font-weight: 700; }
 
-[data-theme="light"] .ai-content .highlight { color: #7C3AED; }
+[data-theme="light"] .ai-content .highlight { color: #059669; }
 
 .ai-score {
   position: absolute;
   top: 20px; left: 20px;
   width: 60px; height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
-  border: 2px solid #00FFFF;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  border: 2px solid #34D399;
   z-index: 3;
 }
 
 .ai-score span { font-size: 20px; font-weight: 900; color: #FFFFFF; line-height: 1; }
-.ai-score small { font-size: 10px; color: #00FFFF; font-weight: 700; }
+.ai-score small { font-size: 10px; color: #34D399; font-weight: 700; }
 
 .ai-start-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
   color: #FFFFFF;
   border: none;
   border-radius: var(--r-md);
   font-size: 15px;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
   transition: all var(--t-base);
   position: relative;
   z-index: 2;
@@ -4024,11 +3974,11 @@ a {
 
 .ai-start-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.6);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
 }
 
 /* ============================================
-   🥇🥈🥉 بطاقات الأولويات
+   🥇🥈🥉 Priority Cards
    ============================================ */
 .priority-list {
   display: flex;
@@ -4123,7 +4073,7 @@ a {
   color: var(--text);
    }
 /* ============================================
-   🧭 Bottom Sheet (القديم)
+   🧭 Bottom Sheet (legacy)
    ============================================ */
 .bottom-sheet {
   position: fixed;
@@ -4150,7 +4100,7 @@ a {
 }
 
 /* ============================================
-   🧭 Bottom Sheet (Waze/Google)
+   🧭 Nav Sheet (Waze/Google)
    ============================================ */
 .nav-sheet-overlay {
   position: fixed;
@@ -4317,7 +4267,7 @@ a {
 }
 
 /* ============================================
-   💊 نافذة إضافة دواء
+   💊 Medicine Modal
    ============================================ */
 .medicine-modal-content {
   background: var(--med-modal-bg) !important;
@@ -4533,7 +4483,7 @@ a {
 }
 
 /* ============================================
-   🔔 صفحة التنبيهات
+   🔔 Notifications Screen
    ============================================ */
 #notificationsScreen {
   background: var(--notif-bg);
@@ -4650,7 +4600,7 @@ a {
 }
 
 /* ============================================
-   🗺️ الخريطة + GPS
+   🗺️ Maps + GPS
    ============================================ */
 .refresh-location-btn {
   display: flex;
@@ -4851,7 +4801,7 @@ a {
 }
 
 /* ============================================
-   🚴 تتبع المندوب
+   🚴 Tracking
    ============================================ */
 .tracking-delivery-card {
   display: flex;
@@ -4947,7 +4897,7 @@ a {
 
 .tracking-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #10B981 0%, #22C55E 100%);
+  background: linear-gradient(90deg, #10B981 0%, #34D399 100%);
   border-radius: 4px;
   transition: width var(--t-slow);
 }
@@ -4964,7 +4914,7 @@ a {
 .tracking-step.active { color: var(--primary); font-weight: 900; }
 
 /* ============================================
-   📍 أيقونات الخريطة
+   📍 Map Markers
    ============================================ */
 .custom-map-marker { background: transparent; border: none; }
 
@@ -4987,7 +4937,7 @@ a {
 .marker-delivery .custom-marker-pin { background: var(--map-delivery); }
 
 /* ============================================
-   👤 الملف الشخصي
+   👤 Profile
    ============================================ */
 .profile-hero-card {
   background: var(--profile-hero-bg);
@@ -5052,7 +5002,7 @@ a {
   font-size: 40px;
   color: #FFFFFF;
   font-weight: 900;
-  border: 3px solid var(--cyan);
+  border: 3px solid var(--primary);
   box-shadow: 0 0 0 4px var(--primary-soft), 0 0 30px var(--cyan-glow);
   overflow: hidden;
   background-size: cover;
@@ -5135,7 +5085,7 @@ a {
 }
 
 /* ============================================
-   📋 قائمة المعلومات
+   📋 Profile Info List
    ============================================ */
 .profile-info-list {
   display: flex;
@@ -5193,7 +5143,7 @@ a {
 .profile-info-value:not([dir="ltr"]) { direction: rtl; }
 
 /* ============================================
-   🔘 أزرار الإجراءات
+   🔘 Profile Actions
    ============================================ */
 .profile-actions {
   display: flex;
@@ -5246,7 +5196,7 @@ a {
 }
 
 /* ============================================
-   ℹ️ من نحن
+   ℹ️ About
    ============================================ */
 .about-hero {
   display: flex;
@@ -5384,7 +5334,7 @@ a {
 }
 
 /* ============================================
-   📄 الصفحات التفصيلية
+   📄 Detail Pages
    ============================================ */
 .detail-hero {
   display: flex;
@@ -5400,8 +5350,8 @@ a {
 }
 
 .detail-hero.blue {
-  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
 }
 
 .detail-hero.green {
@@ -5592,7 +5542,7 @@ a {
 }
 
 /* ============================================
-   📞 تواصل معنا
+   📞 Contact
    ============================================ */
 .contact-cards {
   display: flex;
@@ -5625,7 +5575,7 @@ a {
 }
 
 .contact-card.whatsapp::before         { background: #25D366; }
-.contact-card.phone::before            { background: #2563EB; }
+.contact-card.phone::before            { background: #10B981; }
 .contact-card.telegram::before         { background: #229ED9; }
 .contact-card.telegram-channel::before { background: #0088CC; }
 
@@ -5729,7 +5679,7 @@ a {
 }
 
 /* ============================================
-   ⚙️ الإعدادات
+   ⚙️ Settings
    ============================================ */
 .setting-item {
   display: flex;
@@ -5775,7 +5725,7 @@ a {
 .btn-logout:hover { background: var(--danger-light); }
 
 /* ============================================
-   📂 القائمة الجانبية
+   📂 Sidebar
    ============================================ */
 .sidebar-overlay {
   position: fixed;
@@ -5978,7 +5928,7 @@ a {
 }
 
 /* ============================================
-   📱 الشريط السفلي
+   📱 Bottom Nav
    ============================================ */
 .bottom-nav {
   position: fixed;
@@ -6067,7 +6017,7 @@ a {
 }
 
 /* ============================================
-   🎯 تمييز الطلب
+   🎯 Highlight
    ============================================ */
 .priority-card.highlighted,
 .order-card.highlighted,
@@ -6083,7 +6033,7 @@ a {
 }
 
 /* ============================================
-   🔔 شارة الإشعارات
+   🔔 Notif Badge
    ============================================ */
 .notif-badge {
   position: absolute;
@@ -6112,7 +6062,7 @@ a {
 }
 
 /* ============================================
-   📢 Posts Feed (Cyberpunk)
+   📢 Posts Feed
    ============================================ */
 .posts-feed-header {
   display: flex;
@@ -6153,14 +6103,14 @@ a {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: linear-gradient(135deg, #EC4899 0%, #A855F7 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
   color: #FFFFFF;
   border: none;
   border-radius: var(--r-md);
   font-size: 13px;
   font-weight: 900;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
   transition: all var(--t-base);
   white-space: nowrap;
   flex-shrink: 0;
@@ -6168,7 +6118,7 @@ a {
 
 .posts-feed-add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(236, 72, 153, 0.6);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.6);
 }
 
 .posts-feed-add-btn .add-icon {
@@ -6424,7 +6374,7 @@ a {
   gap: 10px;
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
   color: #FFFFFF;
   border: none;
   border-radius: var(--r-lg);
@@ -6432,7 +6382,7 @@ a {
   font-weight: 900;
   cursor: pointer;
   transition: all var(--t-base);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
   position: relative;
   overflow: hidden;
 }
@@ -6450,7 +6400,7 @@ a {
 
 .post-order-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.7);
 }
 
 .post-order-btn:active { transform: scale(0.98); }
@@ -6522,7 +6472,7 @@ a {
 }
 
 /* ============================================
-   📱 الموبايل
+   📱 Mobile
    ============================================ */
 @media (max-width: 480px) {
   .screen-title { font-size: 22px; }
@@ -6606,8 +6556,9 @@ a {
   .post-price-value { font-size: 20px; }
   .post-order-btn { padding: 12px; font-size: 14px; }
 }
+
 /* ============================================
-   ✅ Success Message Overlay
+   ✅ Success Overlay
    ============================================ */
 .success-overlay {
   position: fixed;
@@ -6692,8 +6643,9 @@ a {
   background: var(--primary-hover);
   transform: translateY(-2px);
 }
+
 /* ============================================
-   🎯 نافذة التأكيد المخصصة
+   🎯 Confirm Overlay
    ============================================ */
 .confirm-overlay {
   position: fixed;
@@ -6839,8 +6791,9 @@ a {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px var(--shadow-primary);
 }
+
 /* ============================================
-   🗺️ خريطة تسجيل الصيدلية
+   🗺️ Pharmacy Map (Registration)
    ============================================ */
 .reg-map-wrap {
   display: flex;
@@ -6910,6 +6863,7 @@ a {
 .reg-map-status.ok {
   color: var(--success);
 }
+
 /* ============================================
-   🎉 نهاية style.css
+   🎉 نهاية style.css — Green Theme
    ============================================ */
