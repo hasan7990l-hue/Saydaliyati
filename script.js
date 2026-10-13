@@ -1,10 +1,10 @@
 // ============================================
-// توصيل طبي - v14
+// DAWAK دواك - v15
 // Firebase-First Architecture + Real-Time
-// الجزء 1 من 4: Config + Firestore + Auth + Storage + Theme + Audio + Particles
+// الجزء 1 من 5: Config + Firestore + Auth + Storage + Theme + Audio + Particles
 // ============================================
 
-console.log('توصيل طبي v14 - بدأ التحميل');
+console.log('DAWAK v15 - بدأ التحميل');
 
 // ============================================
 // 🎯 الدوال المساعدة الأساسية
@@ -271,7 +271,7 @@ async function loadPharmaciesForPatient() {
 
     var html = '';
     pharmacies.forEach(function (p) {
-      var color = p.color === 'blue' ? '#2563EB' :
+      var color = p.color === 'blue' ? '#10B981' :
                   p.color === 'orange' ? '#F59E0B' :
                   p.color === 'purple' ? '#8B5CF6' : '#10B981';
       var logo = p.logo || 'ص';
@@ -518,12 +518,12 @@ function loadPostsFromLocal() {
 // ============================================
 async function uploadImageToStorage(base64Data, path) {
   // Firebase Storage مو مفعّل — نستخدم base64 مباشرة
-  // الصورة تتحفظ في Firestore كـ base64
   console.log('📦 استخدام base64 (Firebase Storage غير مفعّل)');
   return base64Data;
 }
+
 // ============================================
-// 🌙 نظام الوضع الليلي (Theme)
+// 🌙 نظام الوضع الليلي (Theme) — Green
 // ============================================
 function toggleTheme() {
   var current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -830,10 +830,10 @@ function showConfirm(options) {
 // ============================================
 // 🎉 نهاية الجزء 1 من script.js
 // ============================================
-console.log('توصيل طبي v14 — الجزء 1 اكتمل');
+console.log('DAWAK v15 — الجزء 1 اكتمل 🟢');
 // ============================================
-// توصيل طبي - v14
-// الجزء 2 من 4: Screens + Nav + Forms + Login + Registration + Pharmacy Map
+// DAWAK دواك - v15
+// الجزء 2 من 5: Screens + Nav + Forms + Login + Registration + Pharmacy Map
 // ============================================
 
 // ============================================
@@ -1649,7 +1649,7 @@ async function submitLogin(event) {
 
   localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
   playSuccessSound();
-  showToast('أهلاً بك ' + (user.name || ''));
+  showToast('أهلاً بك في DAWAK، ' + (user.name || ''));
 
   setTimeout(function () {
     goToDashboardByType();
@@ -1769,7 +1769,7 @@ async function submitPatient(event) {
   }
 
   playSuccessSound();
-  showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في توصيل طبي، ' + name);
+  showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في DAWAK، ' + name);
 }
 
 // ============================================
@@ -2317,10 +2317,10 @@ async function signOutFromFirebase() {
 // ============================================
 // 🎉 نهاية الجزء 2 من script.js
 // ============================================
-console.log('توصيل طبي v14 — الجزء 2 اكتمل');
+console.log('DAWAK v15 — الجزء 2 اكتمل 🟢');
 // ============================================
-// توصيل طبي - v14
-// الجزء 3 من 4: Profile + Ratings + Notifications + Offers + Prescription + Cart + Maps
+// DAWAK دواك - v15
+// الجزء 3 من 5: Profile + Ratings + Notifications + Prescription + Cart + Maps
 // ============================================
 
 // ============================================
@@ -2733,9 +2733,10 @@ function renderNotifications() {
   listEl.innerHTML = html;
 }
 
+// ✅ الألوان الجديدة: أخضر #10B981
 function getNotifIconHtml(type, read) {
-  var color = read ? '#94A3B8' : '#22D3EE';
-  var glow = read ? 'rgba(148, 163, 184, 0.3)' : 'rgba(34, 211, 238, 0.6)';
+  var color = read ? '#94A3B8' : '#10B981';
+  var glow = read ? 'rgba(148, 163, 184, 0.3)' : 'rgba(16, 185, 129, 0.6)';
 
   if (type === 'order' || type === 'order_new') {
     return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 6px ' + glow + ');">' +
@@ -3169,7 +3170,6 @@ async function openCartScreen() {
   var addressInput = document.getElementById('cartAddress');
   if (addressInput && user.address) addressInput.value = user.address;
 
-  // ✅ حمّل الصيدليات من Firestore
   await populatePharmacySelect();
 
   renderCart();
@@ -3180,7 +3180,6 @@ async function openCartScreen() {
   }, 300);
 }
 
-// ✅ دالة جديدة — تعبئة قائمة الصيدليات
 async function populatePharmacySelect() {
   var select = document.getElementById('cartPharmacySelect');
   if (!select) return;
@@ -3212,6 +3211,7 @@ async function populatePharmacySelect() {
   if (currentValue) select.value = currentValue;
 }
 
+// ✅ تعديل: إضافة loadPharmacyInventory
 async function onPharmacyChange() {
   var pharmacy = document.getElementById('cartPharmacySelect').value;
 
@@ -3246,11 +3246,58 @@ async function onPharmacyChange() {
   if (infoBanner) infoBanner.style.display = 'none';
   if (productsSection) productsSection.style.display = 'block';
 
+  // ✅ جلب المخزون من Firestore أولاً
+  await loadPharmacyInventory(pharmacy);
+
   renderProducts(pharmacy);
   renderCart();
 
   if (cartUserLocation) {
     updateCartDistance();
+  }
+}
+
+// ✅ دالة جديدة — تجلب مخزون الصيدلية من Firestore
+async function loadPharmacyInventory(pharmacyName) {
+  var grid = document.getElementById('productsGrid');
+  if (grid) {
+    grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">⏳ جاري تحميل الأدوية...</p>';
+  }
+
+  if (!isFirebaseReady()) {
+    console.warn('⚠️ Firestore غير جاهز');
+    return;
+  }
+
+  try {
+    var pharmacies = await loadPharmaciesFromFirestore();
+    var pharmacy = pharmacies.find(function (p) {
+      return p.name === pharmacyName || p.id === pharmacyName;
+    });
+
+    if (!pharmacy) {
+      console.warn('⚠️ الصيدلية غير موجودة:', pharmacyName);
+      PHARMACY_INVENTORY[pharmacyName] = [];
+      return;
+    }
+
+    var pharmacyPhone = pharmacy.phone || pharmacy.id;
+
+    var inventoryRef = window.firebaseDoc(window.firebaseDB, 'inventory', pharmacyPhone);
+    var snap = await window.firebaseGetDoc(inventoryRef);
+
+    if (snap.exists()) {
+      var data = snap.data();
+      var items = data.items || [];
+      PHARMACY_INVENTORY[pharmacyName] = items;
+      console.log('✅ تم جلب ' + items.length + ' دواء من Firestore');
+    } else {
+      PHARMACY_INVENTORY[pharmacyName] = [];
+      console.log('⚠️ لا يوجد مخزون لهذه الصيدلية');
+    }
+  } catch (error) {
+    console.error('❌ خطأ جلب المخزون:', error);
+    PHARMACY_INVENTORY[pharmacyName] = [];
   }
 }
 
@@ -3261,7 +3308,12 @@ function renderProducts(pharmacy) {
   var products = PHARMACY_INVENTORY[pharmacy] || [];
 
   if (products.length === 0) {
-    grid.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;">لا توجد أدوية متوفرة</p>';
+    grid.innerHTML =
+      '<div style="text-align:center;padding:30px 20px;color:var(--text-muted);">' +
+        '<div style="font-size:48px;margin-bottom:12px;">💊</div>' +
+        '<p style="font-weight:700;">لا توجد أدوية متوفرة حالياً</p>' +
+        '<p style="font-size:12px;margin-top:6px;">هذه الصيدلية لم تُضف مخزوناً بعد</p>' +
+      '</div>';
     return;
   }
 
@@ -3269,9 +3321,9 @@ function renderProducts(pharmacy) {
   products.forEach(function (p) {
     html +=
       '<div class="product-card" onclick="openProductModal(\'' + p.id + '\', \'' + pharmacy + '\')">' +
-        '<div class="product-icon">' + p.icon + '</div>' +
+        '<div class="product-icon">' + (p.icon || '💊') + '</div>' +
         '<h4 class="product-name">' + p.name + '</h4>' +
-        '<p class="product-category">' + p.category + '</p>' +
+        '<p class="product-category">' + (p.category || '') + '</p>' +
         '<p class="product-price">' + p.price.toLocaleString() + ' دينار</p>' +
       '</div>';
   });
@@ -3549,10 +3601,10 @@ async function submitCartOrder() {
 // ============================================
 // 🎉 نهاية الجزء 3 من script.js
 // ============================================
-console.log('توصيل طبي v14 — الجزء 3 اكتمل');
+console.log('DAWAK v15 — الجزء 3 اكتمل 🟢');
 // ============================================
-// توصيل طبي - v14
-// الجزء 4 من 4: Rating Submit + Posts Feed + Radar + Map + Tracking + Settings + Inventory + Init
+// DAWAK دواك - v15
+// الجزء 4 من 5: Rating + Posts Feed + Radar + Map + Tracking + Settings + Sidebar
 // ============================================
 
 // ============================================
@@ -3674,7 +3726,7 @@ async function submitRating() {
 }
 
 // ============================================
-// 📢 Posts Feed (Cyberpunk)
+// 📢 Posts Feed
 // ============================================
 var postsCache = [];
 var currentPostFilter = 'all';
@@ -4409,11 +4461,12 @@ function focusOnOrder(lat, lng, orderId) {
   showToast('📍 تم تحديد موقع الطلب #' + orderId);
 }
 
+// ✅ اللون الجديد: أخضر #10B981
 function drawRoute(from, to) {
   if (!mainMap || !from || !to) return;
   if (routeLine) mainMap.removeLayer(routeLine);
   routeLine = L.polyline([from, to], {
-    color: '#2563EB', weight: 4, opacity: 0.7,
+    color: '#10B981', weight: 4, opacity: 0.7,
     dashArray: '10, 10', lineCap: 'round'
   }).addTo(mainMap);
 }
@@ -4563,6 +4616,15 @@ function closeSidebar() {
 }
 
 // ============================================
+// 🎉 نهاية الجزء 4 من script.js
+// ============================================
+console.log('DAWAK v15 — الجزء 4 اكتمل 🟢');
+// ============================================
+// DAWAK دواك - v15
+// الجزء 5 من 5: Settings + Inventory + Init
+// ============================================
+
+// ============================================
 // 💊 نظام المخزون
 // ============================================
 var currentInventoryFilter = 'all';
@@ -4607,7 +4669,7 @@ async function saveInventory(inventory) {
       });
     }
 
-    // ✅ احفظ في Firestore
+    // ✅ حفظ في Firestore
     if (isFirebaseReady() && user.phone) {
       var inventoryRef = window.firebaseDoc(
         window.firebaseDB,
@@ -4628,6 +4690,7 @@ async function saveInventory(inventory) {
     console.warn('⚠️ خطأ حفظ المخزون:', e);
   }
 }
+
 function openInventoryScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   if (!userStr) { showToast('سجّل دخول أولاً'); return; }
@@ -4896,7 +4959,8 @@ document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
 // 🚀 عند التحميل
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('توصيل طبي v14 جاهز');
+  console.log('DAWAK v15 جاهز 🟢');
+  document.title = 'DAWAK دواك - صحتك أولويتنا';
 
   var currentUserStr = localStorage.getItem('saydaliyati_current_user');
   var addPostBtn = document.querySelector('.posts-feed-add-btn');
@@ -4976,4 +5040,4 @@ document.addEventListener('DOMContentLoaded', function () {
 // ============================================
 // 🎉 نهاية script.js
 // ============================================
-console.log('توصيل طبي v14 — script.js اكتمل');
+console.log('DAWAK v15 — script.js اكتمل ✅');
