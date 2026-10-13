@@ -5493,3 +5493,374 @@ function refreshHomeScreen() {
 // ============================================
 // نحتاج نضيف استدعاء initHomeScreen() في goToDashboardByType()
 // راح نعدل الدالة الأصلية (في الجزء التالي)
+// ============================================
+// 🛒 Cart Screen v2 — DAWAK
+// Real cart + Coupon + Checkout
+// ============================================
+
+// ============================================
+// 🎨 عرض Cart الجديد
+// ============================================
+function renderCartV2() {
+  var container = document.getElementById('cartItemsList');
+  var emptyState = document.getElementById('cartEmptyState');
+  var summaryCard = document.getElementById('cartSummaryCard');
+  var addressSection = document.getElementById('cartAddressSection');
+  var paymentSection = document.getElementById('cartPaymentSection');
+  var checkoutBtn = document.getElementById('cartCheckoutBtn');
+  var couponWrapper = document.getElementById('cartCouponWrapper');
+  var clearBtn = document.getElementById('cartClearBtn');
+  var countBadge = document.getElementById('cartCountBadge');
+
+  if (!container) return;
+
+  // عدد المنتجات
+  var totalItems = cart.reduce(function (sum, item) { return sum + item.quantity; }, 0);
+
+  if (countBadge) {
+    countBadge.textContent = totalItems + ' ' + (totalItems === 1 ? 'منتج' : 'منتجات');
+  }
+
+  // إذا فاضي
+  if (cart.length === 0) {
+    container.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'flex';
+    if (summaryCard) summaryCard.style.display = 'none';
+    if (addressSection) addressSection.style.display = 'none';
+    if (paymentSection) paymentSection.style.display = 'none';
+    if (checkoutBtn) checkoutBtn.style.display = 'none';
+    if (couponWrapper) couponWrapper.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = 'none';
+    return;
+  }
+
+  // إذا فيه منتجات
+  if (emptyState) emptyState.style.display = 'none';
+  if (summaryCard) summaryCard.style.display = 'block';
+  if (addressSection) addressSection.style.display = 'block';
+  if (paymentSection) paymentSection.style.display = 'block';
+  if (checkoutBtn) checkoutBtn.style.display = 'flex';
+  if (couponWrapper) couponWrapper.style.display = 'block';
+  if (clearBtn) clearBtn.style.display = 'flex';
+
+  // عرض المنتجات
+  var html = '';
+  cart.forEach(function (item, index) {
+    var imageHTML = '';
+    if (item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))) {
+      imageHTML = '<img src="' + item.image + '" alt="' + item.name + '">';
+    } else {
+      imageHTML = item.icon || '💊';
+    }
+
+    html +=
+      '<div class="cart-item-card">' +
+        '<div class="cart-item-image">' + imageHTML + '</div>' +
+        '<div class="cart-item-details">' +
+          '<h4 class="cart-item-name">' + item.name + '</h4>' +
+          '<p class="cart-item-pharmacy">' +
+            '<span class="cart-item-pharmacy-icon">🏪</span>' +
+            (item.pharmacy || 'صيدلية') +
+          '</p>' +
+          '<div class="cart-item-price-row">' +
+            '<span class="cart-item-price">' + item.price.toLocaleString() + '<small>د.ع</small></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cart-item-controls">' +
+          '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', -1)">−</button>' +
+          '<span class="cart-qty-value">' + item.quantity + '</span>' +
+          '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', 1)">+</button>' +
+          '<button class="cart-item-remove" onclick="removeFromCart(' + index + ')">🗑️</button>' +
+        '</div>' +
+      '</div>';
+  });
+
+  container.innerHTML = html;
+
+  // تحديث الأسعار
+  updateCartSummary();
+
+  // تحديث عنوان التوصيل
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (userStr) {
+    try {
+      var user = JSON.parse(userStr);
+      var addressInput = document.getElementById('cartAddressInput');
+      if (addressInput && user.address && !addressInput.value) {
+        addressInput.value = user.address;
+      }
+    } catch (e) {}
+  }
+
+  // تحديث Badge
+  updateCartBadge();
+}
+
+// ============================================
+// 💰 تحديث ملخص الطلب
+// ============================================
+function updateCartSummary() {
+  var subtotal = cart.reduce(function (sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+
+  // التوصيل (من localStorage أو افتراضي 3000)
+  var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+  var delivery = deliveryData ? deliveryData.total : 3000;
+
+  // الخصم (من Coupon)
+  var discount = 0;
+  var couponData = JSON.parse(localStorage.getItem('saydaliyati_cart_coupon') || 'null');
+  if (couponData) {
+    if (couponData.type === 'percentage') {
+      discount = Math.round(subtotal * (couponData.value / 100));
+    } else if (couponData.type === 'fixed') {
+      discount = Math.min(couponData.value, subtotal);
+    }
+  }
+
+  var total = subtotal + delivery - discount;
+
+  // تحديث الـ UI
+  var subtotalEl = document.getElementById('cartSubtotalValue');
+  var deliveryEl = document.getElementById('cartDeliveryValue');
+  var discountEl = document.getElementById('cartDiscountValue');
+  var discountRow = document.getElementById('cartDiscountRow');
+  var totalEl = document.getElementById('cartTotalValue');
+  var checkoutTotal = document.getElementById('cartCheckoutTotal');
+
+  if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString() + ' د.ع';
+  if (deliveryEl) deliveryEl.textContent = delivery.toLocaleString() + ' د.ع';
+
+  if (discount > 0 && discountRow) {
+    discountRow.style.display = 'flex';
+    if (discountEl) discountEl.textContent = '- ' + discount.toLocaleString() + ' د.ع';
+  } else if (discountRow) {
+    discountRow.style.display = 'none';
+  }
+
+  if (totalEl) totalEl.textContent = total.toLocaleString() + ' د.ع';
+  if (checkoutTotal) checkoutTotal.textContent = total.toLocaleString() + ' د.ع';
+}
+
+// ============================================
+// 🎟️ تطبيق كود الخصم
+// ============================================
+var COUPONS = {
+  'DAWAK10': { type: 'percentage', value: 10, label: 'خصم 10%' },
+  'DAWAK20': { type: 'percentage', value: 20, label: 'خصم 20%' },
+  'WELCOME': { type: 'percentage', value: 15, label: 'خصم ترحيبي 15%' },
+  'SAVE2000': { type: 'fixed', value: 2000, label: 'خصم 2,000 د.ع' },
+  'FIRST': { type: 'percentage', value: 25, label: 'خصم أول طلب 25%' }
+};
+
+function applyCoupon() {
+  var input = document.getElementById('cartCouponInput');
+  var message = document.getElementById('cartCouponMessage');
+  if (!input || !message) return;
+
+  var code = input.value.trim().toUpperCase();
+
+  if (!code) {
+    message.textContent = '⚠️ أدخل كود الخصم';
+    message.className = 'cart-coupon-message error';
+    return;
+  }
+
+  if (COUPONS[code]) {
+    var coupon = COUPONS[code];
+    localStorage.setItem('saydaliyati_cart_coupon', JSON.stringify({
+      code: code,
+      type: coupon.type,
+      value: coupon.value,
+      label: coupon.label
+    }));
+
+    message.textContent = '✅ تم تطبيق ' + coupon.label;
+    message.className = 'cart-coupon-message success';
+
+    playSuccessSound();
+    if (navigator.vibrate) navigator.vibrate([50]);
+
+    updateCartSummary();
+    showToast('🎉 ' + coupon.label);
+  } else {
+    message.textContent = '❌ كود الخصم غير صحيح';
+    message.className = 'cart-coupon-message error';
+    localStorage.removeItem('saydaliyati_cart_coupon');
+    updateCartSummary();
+  }
+}
+
+// ============================================
+// 📍 فتح الخريطة للعنوان
+// ============================================
+function openMapForAddress() {
+  showToast('📍 حدد موقعك على الخريطة...');
+
+  if (!navigator.geolocation) {
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async function (position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+
+      try {
+        var response = await fetch(
+          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=ar'
+        );
+        var data = await response.json();
+
+        if (data && data.address) {
+          var city = data.address.city || data.address.town || 'بغداد';
+          var suburb = data.address.suburb || data.address.neighbourhood || '';
+          var street = data.address.road || '';
+
+          var parts = [street, suburb, city].filter(function (p) { return p; });
+          var locationText = parts.join('، ');
+
+          var addressInput = document.getElementById('cartAddressInput');
+          if (addressInput) addressInput.value = locationText;
+
+          // حفظ في user
+          var userStr = localStorage.getItem('saydaliyati_current_user');
+          if (userStr) {
+            var user = JSON.parse(userStr);
+            user.address = locationText;
+            user.lat = lat;
+            user.lng = lng;
+            localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+          }
+
+          // حفظ للـ delivery fee
+          localStorage.setItem('saydaliyati_user_location', JSON.stringify({ lat: lat, lng: lng }));
+
+          showToast('✅ تم تحديد العنوان');
+          updateCartDistance();
+        }
+      } catch (e) {
+        console.warn('⚠️ فشل Reverse Geocoding:', e);
+        showToast('⚠️ تعذّر تحديد العنوان');
+      }
+    },
+    function (error) {
+      showToast('⚠️ تعذر تحديد موقعك');
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+// ============================================
+// 🛒 تأكيد الطلب (V2)
+// ============================================
+async function submitCartOrderV2() {
+  if (cart.length === 0) {
+    showError('السلة فارغة');
+    return;
+  }
+
+  var addressInput = document.getElementById('cartAddressInput');
+  var address = addressInput ? addressInput.value.trim() : '';
+
+  var paymentEl = document.querySelector('input[name="cartPayment"]:checked');
+  var payment = paymentEl ? paymentEl.value : 'cash';
+
+  if (!address) {
+    showError('أدخل عنوان التوصيل');
+    return;
+  }
+
+  var userStr = localStorage.getItem('saydaliyati_current_user');
+  if (!userStr) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  var user = JSON.parse(userStr);
+
+  var subtotal = cart.reduce(function (sum, item) {
+    return sum + (item.price * item.quantity);
+  }, 0);
+
+  var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
+  var delivery = deliveryData ? deliveryData.total : 3000;
+  var driverShare = deliveryData ? deliveryData.driverShare : Math.round(delivery * 0.85);
+  var platformShare = deliveryData ? deliveryData.platformShare : delivery - driverShare;
+  var distance = deliveryData ? deliveryData.distance : 3;
+
+  var discount = 0;
+  var couponData = JSON.parse(localStorage.getItem('saydaliyati_cart_coupon') || 'null');
+  if (couponData) {
+    if (couponData.type === 'percentage') {
+      discount = Math.round(subtotal * (couponData.value / 100));
+    } else if (couponData.type === 'fixed') {
+      discount = Math.min(couponData.value, subtotal);
+    }
+  }
+
+  var total = subtotal + delivery - discount;
+
+  var orderId = Math.floor(1000 + Math.random() * 9000);
+  var order = {
+    id: orderId,
+    type: 'cart',
+    patientName: user.name,
+    patientPhone: user.phone,
+    patientId: user.uid || user.phone,
+    patientLat: user.lat || null,
+    patientLng: user.lng || null,
+    pharmacy: cart[0].pharmacy,
+    address: address,
+    payment: payment,
+    items: cart.slice(),
+    subtotal: subtotal,
+    delivery: delivery,
+    deliveryFee: delivery,
+    discount: discount,
+    couponCode: couponData ? couponData.code : null,
+    driverShare: driverShare,
+    platformShare: platformShare,
+    distance: distance,
+    total: total,
+    status: 'pending',
+    createdAt: new Date().toISOString()
+  };
+
+  var orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+  orders.unshift(order);
+  localStorage.setItem('saydaliyati_cart_orders', JSON.stringify(orders));
+
+  if (isFirebaseReady()) {
+    try { await saveOrderToFirestore(order); } catch (e) { console.warn(e); }
+  }
+
+  addInternalNotification('order', '🛒 طلبك #' + orderId, 'في انتظار قبول الصيدلية');
+
+  // تنظيف
+  cart = [];
+  saveCart();
+  updateCartBadge();
+  localStorage.removeItem('saydaliyati_cart_delivery');
+  localStorage.removeItem('saydaliyati_cart_coupon');
+
+  playSuccessSound();
+  showSuccessMessage('✅ تم إرسال طلبك', 'طلب #' + orderId + ' - ' + (cart[0] ? cart[0].pharmacy : ''));
+
+  renderCartV2();
+}
+
+// ============================================
+// 🔄 استبدال دوال Cart القديمة
+// ============================================
+// نستخدم renderCartV2 بدل renderCart
+// و submitCartOrderV2 بدل submitCartOrder
+
+// ============================================
+// 🚀 تشغيل Cart عند الفتح
+// ============================================
+function initCartScreen() {
+  console.log('🛒 تهيئة Cart Screen...');
+  renderCartV2();
+  }
