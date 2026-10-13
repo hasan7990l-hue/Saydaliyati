@@ -4587,25 +4587,47 @@ function loadInventory() {
   return inventory;
 }
 
-function saveInventory(inventory) {
+async function saveInventory(inventory) {
   var key = getInventoryKey();
   localStorage.setItem(key, JSON.stringify(inventory));
 
   var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (userStr && typeof PHARMACY_INVENTORY !== 'undefined') {
-    try {
-      var user = JSON.parse(userStr);
-      var pharmacyName = user.name || 'صيدلية';
+  if (!userStr) return;
+
+  try {
+    var user = JSON.parse(userStr);
+    var pharmacyName = user.name || 'صيدلية';
+
+    if (typeof PHARMACY_INVENTORY !== 'undefined') {
       PHARMACY_INVENTORY[pharmacyName] = inventory.map(function (med) {
         return {
           id: med.id, name: med.name, category: med.category,
           price: med.price, icon: med.icon, stock: med.stock, desc: med.desc
         };
       });
-    } catch (e) {}
+    }
+
+    // ✅ احفظ في Firestore
+    if (isFirebaseReady() && user.phone) {
+      var inventoryRef = window.firebaseDoc(
+        window.firebaseDB,
+        'inventory',
+        user.phone
+      );
+
+      await window.firebaseSetDoc(inventoryRef, {
+        pharmacyName: pharmacyName,
+        pharmacyPhone: user.phone,
+        items: inventory,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+
+      console.log('✅ تم حفظ المخزون في Firestore');
+    }
+  } catch (e) {
+    console.warn('⚠️ خطأ حفظ المخزون:', e);
   }
 }
-
 function openInventoryScreen() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   if (!userStr) { showToast('سجّل دخول أولاً'); return; }
