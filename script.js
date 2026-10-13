@@ -7091,3 +7091,359 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, 100);
 });
+// ============================================
+// 🔐 Login Screen v2 — DAWAK
+// Enhanced login + Forgot password
+// ============================================
+
+// ============================================
+// 🔑 نسيت كلمة المرور
+// ============================================
+async function forgotPassword() {
+  var phoneInput = document.getElementById('loginPhone');
+  var phone = phoneInput ? phoneInput.value.trim() : '';
+
+  // إذا ما كتب رقم — نطلب منه
+  if (!phone) {
+    var userPhone = prompt('📱 أدخل رقم هاتفك المسجل لاستعادة كلمة المرور:');
+    if (!userPhone) return;
+
+    phone = userPhone.trim();
+
+    if (!validatePhone(phone)) {
+      showError('رقم الهاتف غير صحيح (07XXXXXXXXX)');
+      return;
+    }
+  }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح');
+    return;
+  }
+
+  // تأكيد
+  var confirmed = await showConfirm({
+    title: 'استعادة كلمة المرور',
+    message: 'سنتواصل معك على الرقم ' + phone + ' لإعادة تعيين كلمة المرور. هل تريد المتابعة؟',
+    confirmText: 'نعم، أرسل',
+    cancelText: 'إلغاء',
+    confirmColor: 'info',
+    icon: '🔑'
+  });
+
+  if (!confirmed) return;
+
+  // محاولة إرسال طلب استعادة (Firebase)
+  try {
+    if (window.firebaseAuth && window.firebaseSendPasswordResetEmail) {
+      // نحتاج نجرب الإيميلات المحتملة
+      var possibleEmails = [
+        phone + '@saydaliyati.app',
+        phone + '@pharmacy.saydaliyati.app',
+        phone + '@driver.saydaliyati.app'
+      ];
+
+      var sent = false;
+
+      for (var i = 0; i < possibleEmails.length; i++) {
+        try {
+          await window.firebaseSendPasswordResetEmail(window.firebaseAuth, possibleEmails[i]);
+          sent = true;
+          break;
+        } catch (e) {
+          // كمل للـ email التالي
+        }
+      }
+
+      if (sent) {
+        playSuccessSound();
+        showToast('✅ تم إرسال رابط الاستعادة');
+        showSuccessMessage(
+          'تم إرسال الطلب',
+          'تحقق من بريدك الإلكتروني لإعادة تعيين كلمة المرور'
+        );
+      } else {
+        // ما لقى الإيميل — نسجل الطلب في Firestore
+        await savePasswordResetRequest(phone);
+      }
+    } else {
+      // Firebase غير جاهز — نسجل الطلب في Firestore
+      await savePasswordResetRequest(phone);
+    }
+  } catch (error) {
+    console.error('❌ خطأ استعادة كلمة المرور:', error);
+    // نسجل الطلب في Firestore
+    await savePasswordResetRequest(phone);
+  }
+}
+
+// ============================================
+// 📝 حفظ طلب استعادة كلمة المرور
+// ============================================
+async function savePasswordResetRequest(phone) {
+  try {
+    if (isFirebaseReady()) {
+      await window.firebaseAddDoc(
+        window.firebaseCollection(window.firebaseDB, 'password_reset_requests'),
+        {
+          phone: phone,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+          userAgent: navigator.userAgent
+        }
+      );
+
+      console.log('✅ تم حفظ طلب الاستعادة في Firestore');
+    }
+
+    // حفظ محلي (احتياطي)
+    var requests = JSON.parse(localStorage.getItem('saydaliyati_password_resets') || '[]');
+    requests.unshift({
+      phone: phone,
+      date: new Date().toISOString(),
+      status: 'pending'
+    });
+    localStorage.setItem('saydaliyati_password_resets', JSON.stringify(requests));
+
+    playSuccessSound();
+    showToast('✅ تم إرسال طلبك');
+    showSuccessMessage(
+      'تم استلام طلبك',
+      'سنتواصل معك خلال 24 ساعة على الرقم ' + phone + ' لإعادة تعيين كلمة المرور'
+    );
+
+  } catch (e) {
+    console.error('❌ خطأ حفظ الطلب:', e);
+    showError('فشل إرسال الطلب. حاول لاحقاً.');
+  }
+}
+
+// ============================================
+// 🔐 تحسين تسجيل الدخول (Wrapper)
+// ============================================
+var _originalSubmitLogin = typeof submitLogin === 'function' ? submitLogin : null;
+
+async function submitLoginV2(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  var phoneInput = document.getElementById('loginPhone');
+  var passwordInput = document.getElementById('loginPassword');
+
+  if (!phoneInput || !passwordInput) return;
+
+  var phone = phoneInput.value.trim();
+  var password = passwordInput.value.trim();
+
+  // Validation
+  if (!phone || !password) {
+    showError('املأ جميع الحقول');
+    shakeElement(phoneInput);
+    shakeElement(passwordInput);
+    return;
+  }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح (07XXXXXXXXX)');
+    shakeElement(phoneInput);
+    phoneInput.focus();
+    return;
+  }
+
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    shakeElement(passwordInput);
+    passwordInput.focus();
+    return;
+  }
+
+  // Loading state على الزر
+  var submitBtn = document.querySelector('.login-submit-btn-v2');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.dataset.originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;">جاري الدخول... ⏳</span>';
+  }
+
+  // استدعاء الدالة الأصلية
+  try {
+    if (_originalSubmitLogin) {
+      await _originalSubmitLogin(event);
+    } else {
+      // Fallback — الدالة القديمة مباشرة
+      await submitLogin(event);
+    }
+  } catch (e) {
+    console.error('❌ خطأ تسجيل الدخول:', e);
+  } finally {
+    // استرجاع الزر
+    if (submitBtn) {
+      setTimeout(function () {
+        submitBtn.disabled = false;
+        if (submitBtn.dataset.originalText) {
+          submitBtn.innerHTML = submitBtn.dataset.originalText;
+        }
+      }, 1000);
+    }
+  }
+}
+
+// ============================================
+// 🎬 تأثير الاهتزاز (Shake) للحقول الخطأ
+// ============================================
+function shakeElement(el) {
+  if (!el) return;
+
+  el.style.animation = 'shake 0.4s ease';
+  el.style.borderColor = 'var(--danger)';
+
+  setTimeout(function () {
+    el.style.animation = '';
+    el.style.borderColor = '';
+  }, 500);
+
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+}
+
+// CSS animation for shake
+(function addShakeAnimation() {
+  if (document.getElementById('shake-animation-style')) return;
+
+  var style = document.createElement('style');
+  style.id = 'shake-animation-style';
+  style.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// ============================================
+// 🔐 تحسين Google Sign-In
+// ============================================
+var _originalGoogleSignIn = typeof signInWithGoogleTest === 'function' ? signInWithGoogleTest : null;
+
+async function signInWithGoogleV2() {
+  var googleBtn = document.querySelector('.login-google-btn-v2');
+  if (googleBtn) {
+    googleBtn.disabled = true;
+    googleBtn.dataset.originalText = googleBtn.innerHTML;
+    googleBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;">جاري الدخول... ⏳</span>';
+  }
+
+  try {
+    if (_originalGoogleSignIn) {
+      await _originalGoogleSignIn();
+    } else {
+      await signInWithGoogleTest();
+    }
+  } catch (e) {
+    console.error('❌ خطأ Google Sign-In:', e);
+  } finally {
+    if (googleBtn) {
+      setTimeout(function () {
+        googleBtn.disabled = false;
+        if (googleBtn.dataset.originalText) {
+          googleBtn.innerHTML = googleBtn.dataset.originalText;
+        }
+      }, 1000);
+    }
+  }
+}
+
+// ============================================
+// 📱 Auto-format رقم الهاتف (تحسين UX)
+// ============================================
+(function initPhoneInputFormat() {
+  document.addEventListener('DOMContentLoaded', function () {
+    var phoneInput = document.getElementById('loginPhone');
+    if (!phoneInput) return;
+
+    phoneInput.addEventListener('input', function (e) {
+      // إزالة كل شي غير الأرقام
+      var value = e.target.value.replace(/\D/g, '');
+
+      // حد أقصى 11 رقم
+      if (value.length > 11) value = value.slice(0, 11);
+
+      e.target.value = value;
+    });
+
+    phoneInput.addEventListener('paste', function (e) {
+      e.preventDefault();
+      var pasted = (e.clipboardData || window.clipboardData).getData('text');
+      var cleaned = pasted.replace(/\D/g, '').slice(0, 11);
+      e.target.value = cleaned;
+    });
+  });
+})();
+
+// ============================================
+// 🔍 تحسين تجربة تسجيل الدخول
+// ============================================
+(function enhanceLoginUX() {
+  document.addEventListener('DOMContentLoaded', function () {
+    var phoneInput = document.getElementById('loginPhone');
+    var passwordInput = document.getElementById('loginPassword');
+
+    if (!phoneInput || !passwordInput) return;
+
+    // عند Enter في حقل الهاتف → انتقل لكلمة المرور
+    phoneInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        passwordInput.focus();
+      }
+    });
+
+    // عند Enter في كلمة المرور → سجل دخول
+    passwordInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitLoginV2();
+      }
+    });
+
+    console.log('✅ تم تفعيل تحسينات Login UX');
+  });
+})();
+
+// ============================================
+// 🎯 تشغيل عند فتح الشاشة
+// ============================================
+function initLoginScreen() {
+  console.log('🔐 تهيئة Login Screen...');
+
+  // مسح الحقول
+  var phoneInput = document.getElementById('loginPhone');
+  var passwordInput = document.getElementById('loginPassword');
+
+  if (phoneInput) phoneInput.value = '';
+  if (passwordInput) passwordInput.value = '';
+
+  // إنشاء الجزيئات
+  if (typeof createLoginParticles === 'function') {
+    setTimeout(createLoginParticles, 100);
+  }
+
+  // تركيز على حقل الهاتف
+  setTimeout(function () {
+    if (phoneInput && window.innerWidth > 768) {
+      phoneInput.focus();
+    }
+  }, 500);
+}
+
+// ============================================
+// 🚀 استبدال submitLogin بالنسخة المحسنة
+// ============================================
+// ملاحظة: إذا تبي تستخدم submitLoginV2 في HTML،
+// غير onclick="submitLogin()" إلى onclick="submitLoginV2()"
+// أو نخليه تلقائياً
