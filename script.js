@@ -3100,30 +3100,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (currentUserStr) {
     goToDashboardByType();
-  } else if (!hasSeenOnboarding) {
-    showScreen('onboardingScreen');
-    initOnboarding();
-  } else {
-    showScreen('splashScreen');
-    setTimeout(createSplashParticles, 100);
+    return;
   }
 
-  document.body.addEventListener('click', function () { initAudio(); }, { once: true });
+  showScreen('splashScreen');
+  setTimeout(createSplashParticles, 100);
 
   setTimeout(function () {
-    var splash = document.getElementById('splashScreen');
-    if (splash && splash.classList.contains('active') && !currentUserStr) {
-      setTimeout(function () {
-        if (!localStorage.getItem('saydaliyati_current_user')) {
-          showScreen('loginScreen');
-        }
-      }, 2500);
+    var currentUser = localStorage.getItem('saydaliyati_current_user');
+    if (currentUser) return;
+
+    if (!hasSeenOnboarding) {
+      console.log('🎬 الانتقال إلى Onboarding');
+      showScreen('onboardingScreen');
+      initOnboarding();
+    } else {
+      console.log('🔐 الانتقال إلى Login');
+      showScreen('loginScreen');
     }
-  }, 100);
+  }, 2500);
+
+  document.body.addEventListener('click', function () { initAudio(); }, { once: true });
 });
-
-document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
-
 // ============================================
 // 🎉 نهاية script.js — DAWAK v15 كامل
 // ============================================
