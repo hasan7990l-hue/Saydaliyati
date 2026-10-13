@@ -1047,115 +1047,152 @@
     <button type="submit" class="btn-primary">إرسال الطلب للصيدلية</button>
   </form>
 </div>
-
-<!-- ============================================
-     🛒 Cart
+ <!-- ============================================
+     🛒 Cart Screen — DAWAK
      ============================================ -->
 <div class="screen" id="cartScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="goToDashboardByType()">←</button>
-    <button class="clear-cart-btn" onclick="clearCart()">مسح الكل</button>
-  </div>
-  <h2 class="screen-title">سلة الأدوية 🛒</h2>
-  <p class="screen-subtitle" id="cartSubtitle">0 منتج</p>
-
-  <div class="cart-info-banner" id="cartInfoBanner">
-    <span class="cart-info-icon">ℹ️</span>
-    <p>اختر صيدلية أولاً لعرض أدويتها المتوفرة</p>
-  </div>
-
-  <div class="input-group">
-    <label>اختر الصيدلية *</label>
-    <select id="cartPharmacySelect" onchange="onPharmacyChange()">
-      <option value="">— اختر صيدلية —</option>
-    </select>
-  </div>
-
-  <div id="cartProducts" style="display:none;">
-    <div class="section-header">
-      <h3>الأدوية المتوفرة</h3>
+  
+  <!-- Top Bar -->
+  <div class="cart-top-bar">
+    <button class="cart-back-btn" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+    </button>
+    <div class="cart-title-block">
+      <h2 class="cart-screen-title">سلة التسوق</h2>
+      <span class="cart-count-badge" id="cartCountBadge">0 منتجات</span>
     </div>
-    <div class="products-grid" id="productsGrid"></div>
+    <button class="cart-clear-btn" id="cartClearBtn" onclick="clearCart()" style="display:none;">
+      🗑️
+    </button>
   </div>
 
-  <div id="cartItemsSection" style="display:none;">
-    <div class="section-header">
-      <h3>سلة المشتريات</h3>
-      <span class="cart-count" id="cartItemsCount">0</span>
+  <!-- Cart Items List -->
+  <div class="cart-items-container" id="cartItemsContainer">
+    
+    <!-- Item 1 (Example Structure) -->
+    <div class="cart-item-card" id="cartItemsList">
+      <!-- DYNAMIC -->
     </div>
-    <div class="cart-items" id="cartItems"></div>
+
+    <!-- Empty State -->
+    <div class="cart-empty-state" id="cartEmptyState">
+      <div class="cart-empty-icon-wrapper">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="21" r="1"/>
+          <circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </div>
+      <h3>سلتك فارغة</h3>
+      <p>أضف أدوية من الصيدليات للبدء</p>
+      <button class="cart-empty-cta" onclick="goToDashboardByType()">
+        <span>تصفح الصيدليات</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+    </div>
+
   </div>
 
-  <div class="cart-empty" id="cartEmpty">
-    <div class="cart-empty-icon">🛒</div>
-    <h3>سلتك فارغة</h3>
-    <p>أضف أدوية من القائمة أعلاه للبدء</p>
+  <!-- Coupon Code Section -->
+  <div class="cart-coupon-wrapper" id="cartCouponWrapper" style="display:none;">
+    <div class="cart-coupon-input-wrap">
+      <input type="text" id="cartCouponInput" class="cart-coupon-input" placeholder="كود الخصم">
+      <button class="cart-coupon-apply-btn" onclick="applyCoupon()">تطبيق</button>
+    </div>
+    <div class="cart-coupon-message" id="cartCouponMessage"></div>
   </div>
 
-  <div class="cart-summary" id="cartSummary" style="display:none;">
+  <!-- Order Summary -->
+  <div class="cart-summary-card" id="cartSummaryCard" style="display:none;">
+    <h3 class="cart-summary-title">ملخص الطلب</h3>
+
     <div class="cart-summary-row">
-      <span>المجموع الفرعي</span>
-      <span id="cartSubtotal">0 دينار</span>
+      <span class="cart-summary-label">المجموع</span>
+      <span class="cart-summary-value" id="cartSubtotalValue">0 د.ع</span>
     </div>
+
     <div class="cart-summary-row">
-      <span>رسوم التوصيل</span>
-      <span id="cartDelivery">3,000 دينار</span>
-    </div>
-    <div class="cart-summary-row cart-summary-total">
-      <span>الإجمالي</span>
-      <span id="cartTotal">0 دينار</span>
+      <span class="cart-summary-label">التوصيل</span>
+      <span class="cart-summary-value" id="cartDeliveryValue">3,000 د.ع</span>
     </div>
 
-    <div class="input-group">
-      <label>عنوان التوصيل *</label>
-      <input type="text" id="cartAddress" placeholder="بغداد - الكرادة - شارع 62">
+    <div class="cart-summary-row cart-discount-row" id="cartDiscountRow" style="display:none;">
+      <span class="cart-summary-label">الخصم</span>
+      <span class="cart-summary-value cart-discount-value" id="cartDiscountValue">0 د.ع</span>
     </div>
 
-    <div class="input-group">
-      <label>📍 موقعك على الخريطة (اختياري)</label>
-      <div class="cart-map-container">
-        <div id="cartMap"></div>
-        <button type="button" class="cart-map-btn" onclick="getCartLocation()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-          <span>تحديد موقعي</span>
-        </button>
-      </div>
-      <div id="cartDistanceInfo" class="cart-distance-info" style="display:none;">
-        <span>📏 المسافة: <strong id="cartDistanceValue">-</strong> كم</span>
-        <span>💰 رسوم التوصيل: <strong id="cartDeliveryFee">-</strong> دينار</span>
-      </div>
-    </div>
+    <div class="cart-summary-divider"></div>
 
-    <div class="input-group">
-      <label>ملاحظات (اختياري)</label>
-      <textarea id="cartNotes" rows="2" placeholder="مثال: أدوية للاستخدام مرة واحدة بعد الأكل"></textarea>
+    <div class="cart-summary-row cart-summary-total-row">
+      <span class="cart-summary-total-label">الإجمالي</span>
+      <span class="cart-summary-total-value" id="cartTotalValue">0 د.ع</span>
     </div>
-
-    <div class="input-group">
-      <label>طريقة الدفع *</label>
-      <div class="payment-options">
-        <label class="payment-option active">
-          <input type="radio" name="paymentMethod" value="cash" checked>
-          <div class="payment-option-content">
-            <span>💵</span>
-            <div><h4>كاش عند التسليم</h4></div>
-          </div>
-        </label>
-        <label class="payment-option">
-          <input type="radio" name="paymentMethod" value="online">
-          <div class="payment-option-content">
-            <span>💳</span>
-            <div><h4>دفع إلكتروني</h4></div>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <button class="btn-primary cart-submit-btn" onclick="submitCartOrder()">تأكيد الطلب</button>
   </div>
+
+  <!-- Delivery Address -->
+  <div class="cart-address-section" id="cartAddressSection" style="display:none;">
+    <div class="cart-section-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      <h4>عنوان التوصيل</h4>
+    </div>
+    <div class="cart-address-input-wrap">
+      <input type="text" id="cartAddressInput" class="cart-address-input" placeholder="بغداد - الكرادة - شارع 62">
+      <button class="cart-address-edit-btn" onclick="openMapForAddress()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="cart-payment-section" id="cartPaymentSection" style="display:none;">
+    <div class="cart-section-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      <h4>طريقة الدفع</h4>
+    </div>
+    <div class="cart-payment-options">
+      <label class="cart-payment-option active">
+        <input type="radio" name="cartPayment" value="cash" checked>
+        <span class="cart-payment-icon">💵</span>
+        <span class="cart-payment-label">نقداً</span>
+        <span class="cart-payment-check">✓</span>
+      </label>
+      <label class="cart-payment-option">
+        <input type="radio" name="cartPayment" value="zain">
+        <span class="cart-payment-icon">💳</span>
+        <span class="cart-payment-label">زين كاش</span>
+        <span class="cart-payment-check">✓</span>
+      </label>
+      <label class="cart-payment-option">
+        <input type="radio" name="cartPayment" value="asia">
+        <span class="cart-payment-icon">🏦</span>
+        <span class="cart-payment-label">آسيا حوالة</span>
+        <span class="cart-payment-check">✓</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Checkout Button -->
+  <button class="cart-checkout-btn" id="cartCheckoutBtn" onclick="submitCartOrder()" style="display:none;">
+    <span class="cart-checkout-icon">🛒</span>
+    <span class="cart-checkout-text">تأكيد الطلب</span>
+    <span class="cart-checkout-total" id="cartCheckoutTotal">0 د.ع</span>
+  </button>
+
 </div>
 <!-- ============================================
      📋 Orders History
