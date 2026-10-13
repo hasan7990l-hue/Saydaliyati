@@ -1129,7 +1129,7 @@ function switchTab(tab) {
 // ============================================
 // 📋 طلباتي الديناميكية — Firestore First
 // ============================================
-async function goToMyOrders() {
+async function goToMyOrdersOld() {
   var userStr = localStorage.getItem('saydaliyati_current_user');
   var user = userStr ? JSON.parse(userStr) : {};
   var userType = user.type || 'patient';
