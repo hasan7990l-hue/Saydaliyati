@@ -1,488 +1,306 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="light">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#F8FAFC">
-  <meta name="description" content="DAWAK دواك - منصة عراقية لتوصيل الأدوية من الصيدليات إلى بابك">
+  <meta name="theme-color" content="#050810">
+  <meta name="description" content="DAWAK دواك - منصة عراقية لتوصيل الأدوية">
   <title>DAWAK دواك - صحتك أولويتنا</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="manifest" href="/manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DAWAK دواك">
   <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="icon" type="image/png" href="/icon-192.png">
 </head>
 <body>
-<!-- ============================================
-     🎬 Onboarding Screen — DAWAK
-     ============================================ -->
-<div class="screen active" id="onboardingScreen">
 
-  <!-- Background Elements -->
-  <div class="ob-bg">
-    <div class="ob-particle"></div>
-    <div class="ob-particle"></div>
-    <div class="ob-particle"></div>
-    <div class="ob-particle"></div>
-    <div class="ob-particle"></div>
-    <div class="ob-particle"></div>
-  </div>
-
-  <!-- Skip Button -->
-  <button class="ob-skip-btn" onclick="finishOnboarding()">تخطي</button>
-
-  <!-- Container -->
-  <div class="ob-container">
-
-    <!-- Slide 1: ابحث عن دواءك -->
-    <div class="ob-slide active" data-slide="0">
-      <div class="ob-illustration">
-        <div class="ob-illustration-bg"></div>
-        <div class="ob-illustration-content">
-          <svg viewBox="0 0 200 200" class="ob-svg">
-            <!-- Patient with phone -->
-            <circle cx="100" cy="80" r="35" fill="#10B981" opacity="0.2"/>
-            <circle cx="100" cy="80" r="28" fill="#10B981"/>
-            <circle cx="92" cy="75" r="3" fill="#FFFFFF"/>
-            <circle cx="108" cy="75" r="3" fill="#FFFFFF"/>
-            <path d="M92 88 Q100 95 108 88" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <!-- Phone -->
-            <rect x="75" y="115" width="50" height="75" rx="8" fill="#0F172A" stroke="#10B981" stroke-width="2"/>
-            <rect x="80" y="122" width="40" height="55" rx="4" fill="#10B981" opacity="0.3"/>
-            <circle cx="100" cy="184" r="3" fill="#10B981"/>
-            <!-- Medicine floating -->
-            <rect x="130" y="60" width="25" height="25" rx="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
-            <rect x="138" y="68" width="9" height="3" fill="#10B981"/>
-            <rect x="141" y="65" width="3" height="9" fill="#10B981"/>
-            <rect x="40" y="90" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
-            <circle cx="50" cy="100" r="4" fill="#10B981"/>
-          </svg>
-        </div>
-      </div>
-      <h2 class="ob-title">ابحث عن دواءك</h2>
-      <p class="ob-subtitle">أكثر من 5000 دواء متوفر من أقرب صيدلية إليك</p>
+  <!-- Splash Screen -->
+  <div class="screen active" id="splashScreen">
+    <div class="splash-v2-bg">
+      <div class="splash-v2-rays"></div>
+      <div class="splash-v2-glow"></div>
+      <div class="splash-v2-particles" id="splashParticles"></div>
     </div>
-
-    <!-- Slide 2: توصيل سريع -->
-    <div class="ob-slide" data-slide="1">
-      <div class="ob-illustration">
-        <div class="ob-illustration-bg"></div>
-        <div class="ob-illustration-content">
-          <svg viewBox="0 0 200 200" class="ob-svg">
-            <!-- Delivery motorcycle -->
-            <circle cx="60" cy="140" r="18" fill="none" stroke="#10B981" stroke-width="3"/>
-            <circle cx="60" cy="140" r="6" fill="#10B981"/>
-            <circle cx="140" cy="140" r="18" fill="none" stroke="#10B981" stroke-width="3"/>
-            <circle cx="140" cy="140" r="6" fill="#10B981"/>
-            <!-- Body -->
-            <path d="M60 140 L80 110 L120 110 L140 140" stroke="#10B981" stroke-width="3" fill="rgba(16,185,129,0.1)"/>
-            <path d="M80 110 L90 85 L130 85 L120 110" stroke="#10B981" stroke-width="3" fill="rgba(16,185,129,0.2)"/>
-            <!-- Delivery box -->
-            <rect x="125" y="70" width="35" height="35" rx="4" fill="#10B981"/>
-            <rect x="137" y="80" width="11" height="4" fill="#FFFFFF"/>
-            <rect x="140" y="77" width="4" height="11" fill="#FFFFFF"/>
-            <!-- Driver -->
-            <circle cx="100" cy="70" r="10" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
-            <!-- Speed lines -->
-            <line x1="30" y1="130" x2="15" y2="130" stroke="#10B981" stroke-width="2" opacity="0.5"/>
-            <line x1="30" y1="145" x2="10" y2="145" stroke="#10B981" stroke-width="2" opacity="0.3"/>
-          </svg>
-        </div>
-      </div>
-      <h2 class="ob-title">توصيل سريع لباب بيتك</h2>
-      <p class="ob-subtitle">مندوبينا يوصلوا دواك خلال 30 دقيقة بأسرع وقت</p>
-    </div>
-
-    <!-- Slide 3: صحتك بأمان -->
-    <div class="ob-slide" data-slide="2">
-      <div class="ob-illustration">
-        <div class="ob-illustration-bg"></div>
-        <div class="ob-illustration-content">
-          <svg viewBox="0 0 200 200" class="ob-svg">
-            <!-- Family -->
-            <!-- Mom -->
-            <circle cx="70" cy="80" r="18" fill="#10B981" opacity="0.2"/>
-            <circle cx="70" cy="80" r="14" fill="#10B981"/>
-            <circle cx="65" cy="76" r="2" fill="#FFFFFF"/>
-            <circle cx="75" cy="76" r="2" fill="#FFFFFF"/>
-            <path d="M65 86 Q70 90 75 86" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M55 110 Q70 95 85 110 L85 130 L55 130 Z" fill="#10B981"/>
-            <!-- Dad -->
-            <circle cx="130" cy="75" r="20" fill="#10B981" opacity="0.2"/>
-            <circle cx="130" cy="75" r="16" fill="#10B981"/>
-            <circle cx="124" cy="71" r="2" fill="#FFFFFF"/>
-            <circle cx="136" cy="71" r="2" fill="#FFFFFF"/>
-            <path d="M124 82 Q130 87 136 82" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M115 105 Q130 92 145 105 L145 130 L115 130 Z" fill="#10B981"/>
-            <!-- Child -->
-            <circle cx="100" cy="95" r="12" fill="#10B981" opacity="0.3"/>
-            <circle cx="100" cy="95" r="9" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
-            <circle cx="97" cy="93" r="1.5" fill="#10B981"/>
-            <circle cx="103" cy="93" r="1.5" fill="#10B981"/>
-            <path d="M97 98 Q100 100 103 98" stroke="#10B981" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <!-- Medicine box -->
-            <rect x="85" y="110" width="30" height="25" rx="3" fill="#10B981"/>
-            <rect x="95" y="118" width="10" height="3" fill="#FFFFFF"/>
-            <rect x="98.5" y="114.5" width="3" height="10" fill="#FFFFFF"/>
-          </svg>
-        </div>
-      </div>
-      <h2 class="ob-title">صحتك بأمان</h2>
-      <p class="ob-subtitle">صيدليات مرخصة وأدوية أصلية 100%</p>
-    </div>
-
-  </div>
-
-  <!-- Dots -->
-  <div class="ob-dots">
-    <span class="ob-dot active" data-dot="0" onclick="goToSlide(0)"></span>
-    <span class="ob-dot" data-dot="1" onclick="goToSlide(1)"></span>
-    <span class="ob-dot" data-dot="2" onclick="goToSlide(2)"></span>
-  </div>
-
-  <!-- Bottom Actions -->
-  <div class="ob-bottom-actions">
-    <button class="ob-next-btn" id="obNextBtn" onclick="nextSlide()">
-      <span id="obNextText">التالي</span>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
-    </button>
-  </div>
-
-</div>
-  <!-- ============================================
-       🎬 Splash Screen
-       ============================================ -->
-  <div class="screen" id="splashScreen">
-    <div class="splash-bg">
-      <div class="splash-hex-grid"></div>
-      <div class="splash-particles" id="splashParticles"></div>
-      <div class="splash-glow-blob"></div>
-    </div>
-    <div class="splash-content">
-      <div class="splash-logo-wrap">
-        <div class="splash-logo-glow"></div>
-        <svg class="splash-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
-          <circle cx="50" cy="50" r="10" stroke="currentColor" stroke-width="1" fill="none" opacity="0.6"/>
-          <circle cx="50" cy="50" r="4" fill="currentColor" opacity="0.9"/>
+    <div class="splash-v2-content">
+      <div class="splash-v2-logo-wrap">
+        <div class="splash-v2-logo-glow"></div>
+        <svg class="splash-v2-logo" viewBox="0 0 200 200" fill="none">
+          <path d="M40 100 Q40 150 100 150 Q160 150 160 100 Z" fill="#10B981" stroke="#34D399" stroke-width="3"/>
+          <ellipse cx="100" cy="100" rx="60" ry="8" fill="#059669" stroke="#34D399" stroke-width="3"/>
+          <path d="M110 95 L140 45 Q145 40 150 42 Q155 44 152 50 L125 95 Z" fill="#34D399" stroke="#10B981" stroke-width="3"/>
+          <rect x="70" y="150" width="60" height="12" rx="4" fill="#10B981" stroke="#34D399" stroke-width="3"/>
         </svg>
       </div>
-      <h1 class="splash-app-name">DAWAK دواك</h1>
-      <div class="splash-buttons">
-        <button class="splash-btn-primary" onclick="goToLogin()">
-          <span>تسجيل الدخول</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
-        </button>
-        <button class="splash-btn-outline" onclick="goToRoleSelection()">
-          <span>إنشاء حساب</span>
-        </button>
+      <h1 class="splash-v2-title">DAWAK</h1>
+      <h2 class="splash-v2-title-ar">دواك</h2>
+      <div class="splash-v2-divider"></div>
+      <p class="splash-v2-tagline">تحت: صحتك توصل لباب بيتك</p>
+      <div class="splash-v2-dots">
+        <span class="splash-v2-dot"></span>
+        <span class="splash-v2-dot"></span>
+        <span class="splash-v2-dot"></span>
       </div>
-      <p class="splash-legal">
-        بالدخول أنت توافق على
-        <a href="#" onclick="openTerms(); return false;">الشروط والأحكام</a>
-        و
-        <a href="#" onclick="openPrivacy(); return false;">سياسة الخصوصية</a>
-      </p>
     </div>
-    <button class="theme-toggle splash-theme-toggle" onclick="toggleTheme()" aria-label="تبديل الوضع">
-      <span class="theme-icon">🌙</span>
-    </button>
   </div>
-  <!-- ============================================
-     🔐 Login Screen — DAWAK
-     ============================================ -->
+
+  <!-- Onboarding Screen -->
+  <div class="screen" id="onboardingScreen">
+    <div class="ob-v2-bg"></div>
+    <div class="ob-v2-container">
+      <div class="ob-v2-slide active" data-slide="0">
+        <div class="ob-v2-logo-top">DAWAK</div>
+        <div class="ob-v2-illustration">
+          <svg viewBox="0 0 300 300" fill="none" class="ob-v2-svg">
+            <ellipse cx="150" cy="170" rx="100" ry="80" fill="#10B981" opacity="0.15"/>
+            <ellipse cx="150" cy="170" rx="80" ry="65" fill="#10B981" opacity="0.25"/>
+            <rect x="50" y="60" width="40" height="18" rx="9" fill="#34D399" transform="rotate(-30 70 69)"/>
+            <rect x="220" y="80" width="40" height="18" rx="9" fill="#059669" transform="rotate(25 240 89)"/>
+            <rect x="200" y="50" width="30" height="14" rx="7" fill="#34D399" transform="rotate(15 215 57)"/>
+            <circle cx="150" cy="130" r="35" fill="#FCD34D"/>
+            <circle cx="140" cy="125" r="3" fill="#0F172A"/>
+            <circle cx="160" cy="125" r="3" fill="#0F172A"/>
+            <circle cx="140" cy="125" r="8" fill="none" stroke="#0F172A" stroke-width="1.5"/>
+            <circle cx="160" cy="125" r="8" fill="none" stroke="#0F172A" stroke-width="1.5"/>
+            <path d="M140 138 Q150 145 160 138" stroke="#0F172A" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M110 165 Q110 200 150 220 Q190 200 190 165 Q190 155 180 155 L120 155 Q110 155 110 165 Z" fill="#10B981"/>
+            <rect x="180" y="180" width="50" height="80" rx="8" fill="#0F172A" stroke="#34D399" stroke-width="2"/>
+            <rect x="185" y="188" width="40" height="55" rx="4" fill="#10B981" opacity="0.5"/>
+            <circle cx="205" cy="252" r="3" fill="#34D399"/>
+            <circle cx="205" cy="205" r="12" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+            <line x1="215" y1="215" x2="222" y2="222" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2 class="ob-v2-title">ابحث عن دواك</h2>
+        <p class="ob-v2-subtitle">أكثر من 5000 دواء متوفر من أقرب صيدلية</p>
+      </div>
+      <div class="ob-v2-slide" data-slide="1">
+        <div class="ob-v2-logo-top">DAWAK</div>
+        <div class="ob-v2-illustration">
+          <svg viewBox="0 0 300 300" fill="none" class="ob-v2-svg">
+            <line x1="20" y1="140" x2="60" y2="140" stroke="#34D399" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+            <line x1="15" y1="165" x2="55" y2="165" stroke="#34D399" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+            <line x1="25" y1="190" x2="55" y2="190" stroke="#34D399" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            <ellipse cx="200" cy="220" rx="30" ry="30" fill="none" stroke="#10B981" stroke-width="4"/>
+            <ellipse cx="200" cy="220" rx="12" ry="12" fill="#10B981"/>
+            <ellipse cx="110" cy="220" rx="30" ry="30" fill="none" stroke="#10B981" stroke-width="4"/>
+            <ellipse cx="110" cy="220" rx="12" ry="12" fill="#10B981"/>
+            <path d="M110 220 L130 170 L200 170 L200 220" stroke="#10B981" stroke-width="5" fill="rgba(16,185,129,0.2)"/>
+            <path d="M130 170 L145 130 L195 130 L200 170" stroke="#10B981" stroke-width="5" fill="#10B981"/>
+            <rect x="160" y="80" width="60" height="60" rx="6" fill="#10B981"/>
+            <rect x="180" y="100" width="20" height="6" fill="#FFFFFF"/>
+            <rect x="187" y="93" width="6" height="20" fill="#FFFFFF"/>
+            <circle cx="170" cy="75" r="18" fill="#34D399" stroke="#10B981" stroke-width="3"/>
+            <ellipse cx="170" cy="75" rx="20" ry="8" fill="#059669"/>
+            <path d="M160 70 L180 70" stroke="#34D399" stroke-width="3"/>
+          </svg>
+        </div>
+        <h2 class="ob-v2-title">توصيل خلال 30 دقيقة</h2>
+        <p class="ob-v2-subtitle">مندوبينا يوصلوا دواك لباب بيتك بأسرع وقت</p>
+      </div>
+      <div class="ob-v2-slide" data-slide="2">
+        <div class="ob-v2-logo-top">DAWAK</div>
+        <div class="ob-v2-illustration">
+          <svg viewBox="0 0 300 300" fill="none" class="ob-v2-svg">
+            <circle cx="150" cy="160" r="100" fill="#10B981" opacity="0.1"/>
+            <circle cx="150" cy="160" r="80" fill="#10B981" opacity="0.15"/>
+            <circle cx="100" cy="130" r="22" fill="#D97706"/>
+            <path d="M80 125 Q100 110 120 125 Q115 145 100 148 Q85 145 80 125 Z" fill="#92400E"/>
+            <circle cx="94" cy="128" r="2.5" fill="#0F172A"/>
+            <circle cx="106" cy="128" r="2.5" fill="#0F172A"/>
+            <path d="M96 137 Q100 140 104 137" stroke="#0F172A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M75 165 Q75 195 100 210 Q125 195 125 165 Q125 155 115 155 L85 155 Q75 155 75 165 Z" fill="#F59E0B"/>
+            <circle cx="200" cy="120" r="25" fill="#D97706"/>
+            <path d="M175 115 Q200 95 225 115 Q220 140 200 145 Q180 140 175 115 Z" fill="#0F172A"/>
+            <circle cx="192" cy="118" r="2.5" fill="#0F172A"/>
+            <circle cx="208" cy="118" r="2.5" fill="#0F172A"/>
+            <path d="M194 130 Q200 134 206 130" stroke="#0F172A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M170 160 Q170 195 200 210 Q230 195 230 160 Q230 150 218 150 L182 150 Q170 150 170 160 Z" fill="#0EA5E9"/>
+            <circle cx="150" cy="165" r="18" fill="#FCD34D"/>
+            <circle cx="144" cy="162" r="2" fill="#0F172A"/>
+            <circle cx="156" cy="162" r="2" fill="#0F172A"/>
+            <path d="M146 171 Q150 174 154 171" stroke="#0F172A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            <path d="M132 190 Q132 210 150 220 Q168 210 168 190 Q168 182 160 182 L140 182 Q132 182 132 190 Z" fill="#FBBF24"/>
+            <rect x="125" y="215" width="50" height="40" rx="5" fill="#10B981" stroke="#34D399" stroke-width="2"/>
+            <rect x="143" y="230" width="14" height="4" fill="#FFFFFF"/>
+            <rect x="148" y="225" width="4" height="14" fill="#FFFFFF"/>
+          </svg>
+        </div>
+        <h2 class="ob-v2-title">صحتك بأمان</h2>
+        <p class="ob-v2-subtitle">صيدليات مرخصة وأدوية أصلية 100%</p>
+      </div>
+    </div>
+    <div class="ob-v2-bottom">
+      <button class="ob-v2-skip-btn" onclick="finishOnboarding()">تخطي</button>
+      <div class="ob-v2-dots" id="obDots">
+        <span class="ob-v2-dot active" data-dot="0" onclick="goToSlide(0)"></span>
+        <span class="ob-v2-dot" data-dot="1" onclick="goToSlide(1)"></span>
+        <span class="ob-v2-dot" data-dot="2" onclick="goToSlide(2)"></span>
+      </div>
+      <button class="ob-v2-next-btn" id="obNextBtn" onclick="nextSlide()">
+        <span id="obNextText">التالي</span>
+      </button>
+    </div>
+  </div>
+  <!-- Login Screen -->
 <div class="screen" id="loginScreen">
-  
-  <!-- Background -->
-  <div class="login-bg">
-    <div class="login-hex-grid"></div>
-    <div class="login-particles" id="loginParticles"></div>
-    <div class="login-glow-blob"></div>
+  <div class="login-v2-bg">
+    <div class="login-v2-glow"></div>
+    <div class="login-v2-particles" id="loginParticles"></div>
   </div>
-
-  <!-- Content -->
-  <div class="login-content-v2">
-
-    <!-- Top: Back Button -->
-    <button class="login-back-btn-v2" onclick="goToSplash()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
+  <div class="login-v2-content">
+    <button class="login-v2-back" onclick="goToSplash()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     </button>
-
-    <!-- Logo -->
-    <div class="login-logo-wrap-v2">
-      <div class="login-logo-glow-v2"></div>
-      <svg class="login-logo-svg-v2" viewBox="0 0 100 100" fill="none">
-        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="currentColor" stroke-width="2.5" fill="none"/>
-        <circle cx="50" cy="50" r="4" fill="currentColor"/>
+    <div class="login-v2-logo-wrap">
+      <div class="login-v2-logo-glow"></div>
+      <svg class="login-v2-logo" viewBox="0 0 200 200" fill="none">
+        <path d="M40 100 Q40 150 100 150 Q160 150 160 100 Z" fill="#10B981" stroke="#34D399" stroke-width="3"/>
+        <ellipse cx="100" cy="100" rx="60" ry="8" fill="#059669" stroke="#34D399" stroke-width="3"/>
+        <path d="M110 95 L140 45 Q145 40 150 42 Q155 44 152 50 L125 95 Z" fill="#34D399" stroke="#10B981" stroke-width="3"/>
+        <rect x="70" y="150" width="60" height="12" rx="4" fill="#10B981" stroke="#34D399" stroke-width="3"/>
       </svg>
     </div>
-
-    <!-- App Name -->
-    <h1 class="login-app-name-v2">DAWAK دواك</h1>
-    <p class="login-app-subtitle-v2">أهلاً بعودتك! سجل دخولك للمتابعة</p>
-
-    <!-- Glass Card -->
-    <div class="login-glass-card-v2">
-      <h2 class="login-title-v2">تسجيل الدخول</h2>
-      <form class="login-form-v2" onsubmit="submitLoginV2(event); return false;">
-        <!-- Phone -->
-        <div class="login-input-wrap-v2">
-          <input type="tel" id="loginPhone" class="login-input-v2" placeholder="رقم الهاتف" required autocomplete="tel" maxlength="11" inputmode="numeric">
-          <div class="login-input-icon-v2">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
+    <h1 class="login-v2-title">DAWAK</h1>
+    <h2 class="login-v2-title-ar">دواك</h2>
+    <div class="login-v2-card">
+      <h3 class="login-v2-card-title">تسجيل الدخول</h3>
+      <form class="login-v2-form" onsubmit="submitLogin(event); return false;">
+        <div class="login-v2-input-wrap">
+          <input type="tel" id="loginPhone" class="login-v2-input" placeholder="رقم الهاتف" required autocomplete="tel" maxlength="11" inputmode="numeric">
+          <div class="login-v2-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           </div>
         </div>
-
-        <!-- Password -->
-        <div class="login-input-wrap-v2">
-          <input type="password" id="loginPassword" class="login-input-v2" placeholder="كلمة المرور" required autocomplete="current-password">
-          <div class="login-input-icon-v2">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+        <div class="login-v2-input-wrap">
+          <input type="password" id="loginPassword" class="login-v2-input" placeholder="كلمة المرور" required autocomplete="current-password">
+          <div class="login-v2-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <button type="button" class="login-eye-btn-v2" onclick="togglePasswordVisibility('loginPassword', this)">
-            <span>👁️</span>
-          </button>
+          <button type="button" class="login-v2-eye" onclick="togglePasswordVisibility('loginPassword', this)"><span>👁️</span></button>
         </div>
-
-        <!-- Forgot Password -->
-        <div class="login-forgot-row">
-          <a href="#" class="login-forgot-link" onclick="forgotPassword(); return false;">
-            نسيت كلمة المرور؟
-          </a>
+        <div class="login-v2-forgot">
+          <a href="#" onclick="forgotPassword(); return false;">نسيت كلمة المرور؟</a>
         </div>
-
-        <!-- Submit -->
-        <button type="submit" class="login-submit-btn-v2">
+        <button type="submit" class="login-v2-submit">
           <span>تسجيل الدخول</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="19" y1="12" x2="5" y2="12"/>
-            <polyline points="12 19 5 12 12 5"/>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         </button>
-
       </form>
-
-      <!-- Divider -->
-      <div class="login-divider-v2">
-        <span>أو</span>
-      </div>
-
-      <!-- Google Sign-In -->
-      <button type="button" class="login-google-btn-v2" onclick="signInWithGoogleV2()">
-        <svg class="google-icon" viewBox="0 0 24 24" width="22" height="22">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
+      <div class="login-v2-divider"><span>أو</span></div>
+      <button type="button" class="login-v2-google" onclick="signInWithGoogleTest()">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         <span>الدخول بـ Google</span>
       </button>
-
     </div>
-
-    <!-- Create Account Link -->
-    <p class="login-create-text-v2">
-      ليس لديك حساب؟
-      <a href="#" onclick="goToRoleSelection(); return false;">أنشئ حساباً جديداً</a>
-    </p>
-
-    <!-- Legal -->
-    <p class="login-legal-v2">
-      بالدخول أنت توافق على
-      <a href="#" onclick="openTerms(); return false;">الشروط والأحكام</a>
-      و
-      <a href="#" onclick="openPrivacy(); return false;">سياسة الخصوصية</a>
-    </p>
-
+    <p class="login-v2-create">ليس لديك حساب؟ <a href="#" onclick="goToRoleSelection(); return false;">أنشئ حساباً</a></p>
+    <p class="login-v2-legal">بالدخول أنت توافق على <a href="#" onclick="openTerms(); return false;">الشروط</a> و <a href="#" onclick="openPrivacy(); return false;">الخصوصية</a></p>
   </div>
+</div>
 
+<!-- Role Selection Screen -->
+<div class="screen" id="roleScreen">
+  <div class="role-v2-bg">
+    <div class="role-v2-glow"></div>
+    <div class="role-v2-particles" id="roleParticles"></div>
   </div>
-  <!-- ============================================
-       🎯 Role Selection Screen
-       ============================================ -->
-  <div class="screen" id="roleScreen">
-    <div class="role-bg">
-      <div class="role-hex-grid"></div>
-      <div class="role-particles" id="roleParticles"></div>
-      <div class="role-glow-blob"></div>
-    </div>
-    <div class="role-content">
-      <button class="role-back-btn" onclick="goToSplash()">←</button>
-      <h2 class="role-title">اختر نوع الحساب</h2>
-      <p class="role-subtitle">كيف تريد استخدام دواك؟</p>
-      <div class="role-cards-new">
-        <div class="role-card-new role-card-patient" onclick="selectRole('patient')">
-          <div class="role-card-glow"></div>
-          <div class="role-card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
-          <div class="role-card-text">
-            <h3>عميل</h3>
-            <p>شخص يشتري دواء - اطلب دواك من أقرب صيدلية</p>
-          </div>
-          <div class="role-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
-          </div>
+  <div class="role-v2-content">
+    <button class="role-v2-back" onclick="goToSplash()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h2 class="role-v2-title">اختر نوع حسابك</h2>
+    <p class="role-v2-subtitle">كيف تريد استخدام دواك؟</p>
+    <div class="role-v2-cards">
+      <div class="role-v2-card role-v2-patient" onclick="selectRole('patient')">
+        <div class="role-v2-card-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
-        <div class="role-card-new role-card-pharmacy" onclick="selectRole('pharmacy')">
-          <div class="role-card-glow"></div>
-          <div class="role-card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M3 21h18"/>
-              <path d="M5 21V7l8-4v18"/>
-              <path d="M19 21V11l-6-4"/>
-            </svg>
-          </div>
-          <div class="role-card-text">
-            <h3>صيدلية</h3>
-            <p>استقبل الطلبات واعرض أدويتك</p>
-          </div>
-          <div class="role-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
-          </div>
+        <div class="role-v2-card-content">
+          <h3>عميل</h3>
+          <p>اطلب دواءك من أقرب صيدلية</p>
         </div>
-        <div class="role-card-new role-card-delivery" onclick="selectRole('delivery')">
-          <div class="role-card-glow"></div>
-          <div class="role-card-icon">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="5.5" cy="17.5" r="3.5"/>
-              <circle cx="18.5" cy="17.5" r="3.5"/>
-              <path d="M15 6h-4l-2 6h8l-2-6z"/>
-            </svg>
-          </div>
-          <div class="role-card-text">
-            <h3>مندوب توصيل</h3>
-            <p>وصل الطلبات واكسب دخل</p>
-          </div>
-          <div class="role-card-arrow">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <line x1="19" y1="12" x2="5" y2="12"/>
-              <polyline points="12 19 5 12 12 5"/>
-            </svg>
-          </div>
+        <div class="role-v2-card-check"></div>
+      </div>
+      <div class="role-v2-card role-v2-pharmacy" onclick="selectRole('pharmacy')">
+        <div class="role-v2-card-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
         </div>
+        <div class="role-v2-card-content">
+          <h3>صيدلية</h3>
+          <p>استقبل الطلبات واعرض أدويتك</p>
+        </div>
+        <div class="role-v2-card-check"></div>
+      </div>
+      <div class="role-v2-card role-v2-delivery" onclick="selectRole('delivery')">
+        <div class="role-v2-card-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4l-2 6h8l-2-6z"/></svg>
+        </div>
+        <div class="role-v2-card-content">
+          <h3>مندوب توصيل</h3>
+          <p>وصل الطلبات واكسب دخل</p>
+        </div>
+        <div class="role-v2-card-check"></div>
       </div>
     </div>
+    <p class="role-v2-legal">متاح الآن في جميع محافظات العراق • دعم 24/7</p>
   </div>
-  <!-- ============================================
-     🧑 Patient Registration
-     ============================================ -->
+</div>
+
+<!-- Patient Registration -->
 <div class="screen" id="patientScreen">
-  <div class="reg-bg">
-    <div class="reg-hex-grid"></div>
-    <div class="reg-particles" id="patientParticles"></div>
-    <div class="reg-glow-blob reg-glow-blue"></div>
+  <div class="reg-v2-bg">
+    <div class="reg-v2-glow reg-v2-glow-green"></div>
+    <div class="reg-v2-particles" id="patientParticles"></div>
   </div>
-  <div class="reg-content">
-    <button class="reg-back-btn" onclick="goToRoleSelection()">←</button>
-    <div class="reg-logo-wrap">
-      <div class="reg-logo-glow reg-glow-blue"></div>
-      <svg class="reg-logo-svg" viewBox="0 0 100 100" fill="none">
-        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="var(--primary)" stroke-width="2.5" fill="none"/>
-        <circle cx="50" cy="50" r="4" fill="var(--primary)"/>
+  <div class="reg-v2-content">
+    <button class="reg-v2-back" onclick="goToRoleSelection()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <span class="reg-v2-badge">1/3</span>
+    <div class="reg-v2-logo-wrap">
+      <div class="reg-v2-logo-glow"></div>
+      <svg class="reg-v2-logo" viewBox="0 0 100 100" fill="none">
+        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="#10B981" stroke-width="2.5" fill="none"/>
+        <circle cx="50" cy="50" r="4" fill="#10B981"/>
       </svg>
     </div>
-    <h2 class="reg-title">تسجيل عميل</h2>
-    <p class="reg-subtitle">أكمل بياناتك للبدء</p>
-    <div class="reg-glass-card">
-      <form class="reg-form" onsubmit="submitPatient(event); return false;">
-        <div class="reg-input-wrap">
-          <input type="text" id="patientName" class="reg-input" placeholder="الاسم الكامل" required autocomplete="name">
-          <div class="reg-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
+    <h2 class="reg-v2-title">تسجيل عميل</h2>
+    <p class="reg-v2-subtitle">أكمل بياناتك للبدء</p>
+    <div class="reg-v2-card">
+      <form class="reg-v2-form" onsubmit="submitPatient(event); return false;">
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="patientName" class="reg-v2-input" placeholder="الاسم الكامل" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="tel" id="patientPhone" class="reg-input" placeholder="رقم الهاتف" required autocomplete="tel">
-          <div class="reg-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="tel" id="patientPhone" class="reg-v2-input" placeholder="رقم الهاتف" required maxlength="11" inputmode="numeric">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="email" id="patientEmail" class="reg-input" placeholder="البريد الإلكتروني (اختياري)" autocomplete="email">
-          <div class="reg-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="email" id="patientEmail" class="reg-v2-input" placeholder="البريد الإلكتروني (اختياري)">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="text" id="patientAddress" class="reg-input" placeholder="العنوان" required autocomplete="street-address">
-          <div class="reg-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="patientAddress" class="reg-v2-input" placeholder="العنوان" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="password" id="patientPassword" class="reg-input" placeholder="كلمة المرور" required autocomplete="new-password" oninput="checkPasswordStrength('patientPassword', 'patientStrength')">
-          <div class="reg-input-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
-          <button type="button" class="reg-eye-btn" onclick="togglePasswordVisibility('patientPassword', this)">
-            <span>👁️</span>
-          </button>
+        <div class="reg-v2-input-wrap">
+          <input type="password" id="patientPassword" class="reg-v2-input" placeholder="كلمة المرور" required oninput="checkPasswordStrength('patientPassword', 'patientStrength')">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <button type="button" class="reg-v2-eye" onclick="togglePasswordVisibility('patientPassword', this)"><span>👁️</span></button>
         </div>
-        <div class="reg-strength" id="patientStrength"></div>
-        <label class="reg-terms">
-          <input type="checkbox" required>
-          <span>أوافق على <a href="#" onclick="openTerms(); return false;">الشروط والأحكام</a></span>
-        </label>
-        <button type="submit" class="reg-submit-btn reg-btn-blue">إنشاء الحساب</button>
-        <div class="reg-divider"><span>أو</span></div>
-        <button type="button" class="reg-google-btn" onclick="signUpWithGoogleTest()">
-          <svg class="google-icon" viewBox="0 0 24 24" width="22" height="22">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
+        <div class="reg-v2-strength" id="patientStrength"></div>
+        <label class="reg-v2-terms"><input type="checkbox" required><span>أوافق على <a href="#">الشروط والأحكام</a></span></label>
+        <button type="submit" class="reg-v2-submit reg-v2-submit-green">إنشاء الحساب</button>
+        <div class="reg-v2-divider"><span>أو</span></div>
+        <button type="button" class="reg-v2-google" onclick="signUpWithGoogleTest()">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           <span>التسجيل بـ Google</span>
         </button>
       </form>
@@ -490,1951 +308,960 @@
   </div>
 </div>
 
-<!-- ============================================
-     🏪 Pharmacy Registration
-     ============================================ -->
+<!-- Pharmacy Registration -->
 <div class="screen" id="pharmacyScreen">
-  <div class="reg-bg">
-    <div class="reg-hex-grid"></div>
-    <div class="reg-particles" id="pharmacyParticles"></div>
-    <div class="reg-glow-blob reg-glow-green"></div>
+  <div class="reg-v2-bg">
+    <div class="reg-v2-glow reg-v2-glow-green"></div>
+    <div class="reg-v2-particles" id="pharmacyParticles"></div>
   </div>
-  <div class="reg-content">
-    <button class="reg-back-btn" onclick="goToRoleSelection()">←</button>
-    <span class="reg-progress-badge">1/3</span>
-    <div class="reg-logo-wrap">
-      <div class="reg-logo-glow reg-glow-green"></div>
-      <svg class="reg-logo-svg" viewBox="0 0 100 100" fill="none">
-        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="var(--success)" stroke-width="2.5" fill="none"/>
-        <circle cx="50" cy="50" r="4" fill="var(--success)"/>
+  <div class="reg-v2-content">
+    <button class="reg-v2-back" onclick="goToRoleSelection()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <span class="reg-v2-badge">1/3</span>
+    <div class="reg-v2-logo-wrap">
+      <div class="reg-v2-logo-glow"></div>
+      <svg class="reg-v2-logo" viewBox="0 0 100 100" fill="none">
+        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="#10B981" stroke-width="2.5" fill="none"/>
+        <circle cx="50" cy="50" r="4" fill="#10B981"/>
       </svg>
     </div>
-    <h2 class="reg-title">تسجيل الصيدلية</h2>
-    <p class="reg-subtitle">سجل صيدليتك كشريك</p>
-    <div class="reg-glass-card reg-glass-green">
-      <form class="reg-form" onsubmit="submitPharmacy(event); return false;">
-        <div class="reg-input-wrap">
-          <input type="text" id="pharmacyName" class="reg-input" placeholder="اسم الصيدلية" required>
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 21h18"/>
-              <path d="M5 21V7l8-4v18"/>
-            </svg>
-          </div>
+    <h2 class="reg-v2-title">تسجيل الصيدلية</h2>
+    <p class="reg-v2-subtitle">سجل صيدليتك كشريك</p>
+    <div class="reg-v2-card">
+      <form class="reg-v2-form" onsubmit="submitPharmacy(event); return false;">
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="pharmacyName" class="reg-v2-input" placeholder="اسم الصيدلية" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="text" id="ownerName" class="reg-input" placeholder="اسم المالك" required>
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="ownerName" class="reg-v2-input" placeholder="اسم المالك" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="tel" id="pharmacyPhone" class="reg-input" placeholder="رقم الهاتف" required>
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="tel" id="pharmacyPhone" class="reg-v2-input" placeholder="رقم الهاتف" required maxlength="11" inputmode="numeric">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="text" id="pharmacyAddress" class="reg-input" placeholder="الموقع" required>
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="pharmacyAddress" class="reg-v2-input" placeholder="الموقع" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="text" id="licenseNumber" class="reg-input" placeholder="رقم الترخيص" required>
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="16" rx="2"/>
-              <line x1="8" y1="10" x2="16" y2="10"/>
-              <line x1="8" y1="14" x2="16" y2="14"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="licenseNumber" class="reg-v2-input" placeholder="رقم الترخيص" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg></div>
         </div>
-        <div class="reg-input-wrap reg-map-wrap">
-          <label class="reg-map-label">📍 حدد موقع الصيدلية على الخريطة</label>
-          <div class="reg-map-container">
+        <div class="reg-v2-map-wrap">
+          <label class="reg-v2-map-label">📍 حدد موقع الصيدلية على الخريطة</label>
+          <div class="reg-v2-map-container">
             <div id="pharmacyMap"></div>
-            <button type="button" class="reg-map-btn" onclick="getPharmacyLocation()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
+            <button type="button" class="reg-v2-map-btn" onclick="getPharmacyLocation()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
               <span>موقعي الحالي</span>
             </button>
           </div>
           <input type="hidden" id="pharmacyLat" value="">
           <input type="hidden" id="pharmacyLng" value="">
-          <div id="pharmacyLocationStatus" class="reg-map-status">لم يتم تحديد الموقع بعد</div>
+          <div id="pharmacyLocationStatus" class="reg-v2-map-status">لم يتم تحديد الموقع بعد</div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="password" id="pharmacyPassword" class="reg-input" placeholder="كلمة المرور" required oninput="checkPasswordStrength('pharmacyPassword', 'pharmacyStrength')">
-          <div class="reg-input-icon reg-icon-green">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
-          <button type="button" class="reg-eye-btn" onclick="togglePasswordVisibility('pharmacyPassword', this)">
-            <span>👁️</span>
-          </button>
+        <div class="reg-v2-input-wrap">
+          <input type="password" id="pharmacyPassword" class="reg-v2-input" placeholder="كلمة المرور" required oninput="checkPasswordStrength('pharmacyPassword', 'pharmacyStrength')">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <button type="button" class="reg-v2-eye" onclick="togglePasswordVisibility('pharmacyPassword', this)"><span>👁️</span></button>
         </div>
-        <div class="reg-strength" id="pharmacyStrength"></div>
-        <label class="reg-terms">
-          <input type="checkbox" required>
-          <span>أوافق على <a href="#" onclick="openTerms(); return false;">الشروط والأحكام</a></span>
-        </label>
-        <button type="submit" class="reg-submit-btn reg-btn-green">تسجيل الصيدلية</button>
+        <div class="reg-v2-strength" id="pharmacyStrength"></div>
+        <label class="reg-v2-terms"><input type="checkbox" required><span>أوافق على <a href="#">الشروط والأحكام</a></span></label>
+        <button type="submit" class="reg-v2-submit reg-v2-submit-green">تسجيل الصيدلية</button>
       </form>
     </div>
   </div>
 </div>
 
-<!-- ============================================
-     🚴 Delivery Registration
-     ============================================ -->
+<!-- Delivery Registration -->
 <div class="screen" id="deliveryScreen">
-  <div class="reg-bg">
-    <div class="reg-hex-grid"></div>
-    <div class="reg-particles" id="deliveryParticles"></div>
-    <div class="reg-glow-blob reg-glow-orange"></div>
+  <div class="reg-v2-bg">
+    <div class="reg-v2-glow reg-v2-glow-green"></div>
+    <div class="reg-v2-particles" id="deliveryParticles"></div>
   </div>
-  <div class="reg-content">
-    <button class="reg-back-btn" onclick="goToRoleSelection()">←</button>
-    <div class="reg-logo-wrap">
-      <div class="reg-logo-glow reg-glow-orange"></div>
-      <svg class="reg-logo-svg" viewBox="0 0 100 100" fill="none">
-        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="var(--warning)" stroke-width="2.5" fill="none"/>
-        <circle cx="50" cy="50" r="4" fill="var(--warning)"/>
+  <div class="reg-v2-content">
+    <button class="reg-v2-back" onclick="goToRoleSelection()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="reg-v2-logo-wrap">
+      <div class="reg-v2-logo-glow"></div>
+      <svg class="reg-v2-logo" viewBox="0 0 100 100" fill="none">
+        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="#10B981" stroke-width="2.5" fill="none"/>
+        <circle cx="50" cy="50" r="4" fill="#10B981"/>
       </svg>
     </div>
-    <h2 class="reg-title">تسجيل مندوب التوصيل</h2>
-    <p class="reg-subtitle">انضم لفريق التوصيل</p>
-    <div class="reg-glass-card reg-glass-orange">
-      <form class="reg-form" onsubmit="submitDelivery(event); return false;">
-        <div class="reg-input-wrap">
-          <input type="text" id="deliveryName" class="reg-input" placeholder="الاسم الكامل" required>
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
+    <h2 class="reg-v2-title">تسجيل المندوب</h2>
+    <p class="reg-v2-subtitle">انضم لفريق التوصيل</p>
+    <div class="reg-v2-card">
+      <form class="reg-v2-form" onsubmit="submitDelivery(event); return false;">
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="deliveryName" class="reg-v2-input" placeholder="الاسم الكامل" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="tel" id="deliveryPhone" class="reg-input" placeholder="رقم الهاتف" required>
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="tel" id="deliveryPhone" class="reg-v2-input" placeholder="رقم الهاتف" required maxlength="11" inputmode="numeric">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="email" id="deliveryEmail" class="reg-input" placeholder="البريد الإلكتروني (اختياري)">
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
+        <div class="reg-v2-input-wrap">
+          <input type="text" id="deliveryArea" class="reg-v2-input" placeholder="المنطقة" required>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="text" id="deliveryArea" class="reg-input" placeholder="المنطقة" required>
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-          </div>
-        </div>
-        <div class="reg-input-wrap">
-          <select id="vehicleType" class="reg-input reg-select" required>
+        <div class="reg-v2-input-wrap">
+          <select id="vehicleType" class="reg-v2-input" required>
             <option value="">نوع المركبة...</option>
             <option value="دراجة نارية">🛵 دراجة نارية</option>
             <option value="سيارة">🚗 سيارة</option>
             <option value="دراجة هوائية">🚲 دراجة هوائية</option>
           </select>
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="5.5" cy="17.5" r="3.5"/>
-              <circle cx="18.5" cy="17.5" r="3.5"/>
-              <path d="M15 6h-4l-2 6h8l-2-6z"/>
-            </svg>
-          </div>
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4l-2 6h8l-2-6z"/></svg></div>
         </div>
-        <div class="reg-input-wrap">
-          <input type="password" id="deliveryPassword" class="reg-input" placeholder="كلمة المرور" required oninput="checkPasswordStrength('deliveryPassword', 'deliveryStrength')">
-          <div class="reg-input-icon reg-icon-orange">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
-          <button type="button" class="reg-eye-btn" onclick="togglePasswordVisibility('deliveryPassword', this)">
-            <span>👁️</span>
-          </button>
+        <div class="reg-v2-input-wrap">
+          <input type="password" id="deliveryPassword" class="reg-v2-input" placeholder="كلمة المرور" required oninput="checkPasswordStrength('deliveryPassword', 'deliveryStrength')">
+          <div class="reg-v2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <button type="button" class="reg-v2-eye" onclick="togglePasswordVisibility('deliveryPassword', this)"><span>👁️</span></button>
         </div>
-        <div class="reg-strength" id="deliveryStrength"></div>
-        <label class="reg-terms">
-          <input type="checkbox" required>
-          <span>أوافق على <a href="#" onclick="openTerms(); return false;">الشروط والأحكام</a></span>
-        </label>
-        <button type="submit" class="reg-submit-btn reg-btn-orange">انضم لفريقنا</button>
+        <div class="reg-v2-strength" id="deliveryStrength"></div>
+        <label class="reg-v2-terms"><input type="checkbox" required><span>أوافق على <a href="#">الشروط والأحكام</a></span></label>
+        <button type="submit" class="reg-v2-submit reg-v2-submit-green">انضم لفريقنا</button>
       </form>
     </div>
   </div>
-  </div>
-  <!-- ============================================
-     🏠 Home Screen — DAWAK
-     ============================================ -->
+</div>
+ <!-- Home Screen -->
 <div class="screen" id="homeScreen">
-  
-  <!-- Header -->
-  <div class="home-top-header">
-    <div class="home-greeting-block">
-      <h1 class="home-greeting-text">
-        أهلاً <span id="homeUserName">مستخدم</span> 👋
-      </h1>
-      <div class="home-location-row" onclick="detectUserLocation()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        <span id="homeUserLocation">جاري تحديد موقعك...</span>
+  <div class="home-v3-header">
+    <div class="home-v3-greeting">
+      <h1>أهلاً <span id="homeUserName">أحمد</span> 👋</h1>
+      <div class="home-v3-location" onclick="detectUserLocation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span id="homeUserLocation">بغداد، المنصور</span>
       </div>
     </div>
-    <div class="home-header-icons">
-      <button class="home-icon-btn" onclick="openNotifications()" aria-label="الإشعارات">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <span class="home-notif-dot" id="homeNotifDot" style="display:none;"></span>
+    <div class="home-v3-icons">
+      <button class="home-v3-icon-btn" onclick="openNotifications()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="home-v3-notif-dot" id="homeNotifDot" style="display:none;"></span>
       </button>
-      <button class="home-avatar-btn" onclick="openProfile()" id="homeAvatarBtn">
-        <span id="homeAvatarLetter">م</span>
+      <button class="home-v3-avatar" onclick="openProfile()" id="homeAvatarBtn">
+        <span id="homeAvatarLetter">أ</span>
       </button>
     </div>
   </div>
 
-  <!-- Search Bar -->
-  <div class="home-search-wrapper">
-    <div class="home-search-bar" onclick="openSearchScreen()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" placeholder="ابحث عن دواء، صيدلية..." readonly>
-    </div>
+  <div class="home-v3-search" onclick="openSearchScreen()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="ابحث عن دواء، صيدلية..." readonly>
   </div>
 
-  <!-- Prescription CTA -->
-  <div class="home-rx-cta" onclick="openPrescriptionScreen()">
-    <div class="home-rx-cta-content">
+  <div class="home-v3-rx-cta" onclick="openPrescriptionScreen()">
+    <div class="home-v3-rx-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    </div>
+    <div class="home-v3-rx-content">
       <h3>ارفع روشتك الآن 📸</h3>
       <p>ارفع صورة الروشتة ويصلك الدواء خلال 30 دقيقة</p>
     </div>
-    <div class="home-rx-cta-icon">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-    </div>
   </div>
 
-  <!-- Categories -->
-  <div class="home-section-header">
+  <div class="home-v3-section-header">
     <h3>التصنيفات</h3>
   </div>
-  <div class="home-categories-scroll" id="homeCategoriesScroll">
-    <button class="home-cat-chip active" data-cat="all" onclick="filterHomeCategory('all', this)">💊 الكل</button>
-    <button class="home-cat-chip" data-cat="care" onclick="filterHomeCategory('care', this)">🧴 عناية</button>
-    <button class="home-cat-chip" data-cat="antibiotics" onclick="filterHomeCategory('antibiotics', this)">💉 مضادات</button>
-    <button class="home-cat-chip" data-cat="vitamins" onclick="filterHomeCategory('vitamins', this)">🍊 فيتامينات</button>
-    <button class="home-cat-chip" data-cat="painkillers" onclick="filterHomeCategory('painkillers', this)">🩹 مسكنات</button>
+  <div class="home-v3-categories">
+    <button class="home-v3-cat active" onclick="filterHomeCategory('all', this)">💊 الكل</button>
+    <button class="home-v3-cat" onclick="filterHomeCategory('care', this)">🧴 عناية</button>
+    <button class="home-v3-cat" onclick="filterHomeCategory('antibiotics', this)">💉 مضادات</button>
+    <button class="home-v3-cat" onclick="filterHomeCategory('vitamins', this)">🍊 فيتامينات</button>
+    <button class="home-v3-cat" onclick="filterHomeCategory('painkillers', this)">🩹 مسكنات</button>
   </div>
 
-  <!-- Nearby Pharmacies -->
-  <div class="home-section-header">
+  <div class="home-v3-section-header">
     <h3>صيدليات قريبة منك</h3>
-    <a href="#" onclick="openPharmaciesList(); return false;" class="home-see-all">
-      عرض الكل ←
-    </a>
+    <a href="#" onclick="openPharmaciesList(); return false;" class="home-v3-see-all">عرض الكل ←</a>
   </div>
-  <div class="home-pharmacies-list" id="homePharmaciesList">
-    <div class="home-loading">
-      <div class="home-spinner"></div>
-      <span>جاري تحميل الصيدليات...</span>
-    </div>
+  <div class="home-v3-pharmacies" id="homePharmaciesList">
+    <div class="home-v3-loading"><div class="home-v3-spinner"></div><span>جاري التحميل...</span></div>
   </div>
 
-  <!-- Today's Offers -->
-  <div class="home-section-header">
+  <div class="home-v3-section-header">
     <h3>عروض اليوم 🔥</h3>
-    <a href="#" onclick="openAllPosts(); return false;" class="home-see-all">
-      عرض الكل ←
-    </a>
+    <a href="#" onclick="openAllPosts(); return false;" class="home-v3-see-all">عرض الكل ←</a>
   </div>
-  <div class="home-offers-scroll" id="homeOffersScroll">
-    <div class="home-loading">
-      <div class="home-spinner"></div>
-      <span>جاري تحميل العروض...</span>
-    </div>
-  </div>
-</div>
-<!-- ============================================
-     💊 Product Details Screen — DAWAK
-     ============================================ -->
-<div class="screen" id="productDetailsScreen">
-
-  <!-- Top Bar -->
-  <div class="pdp-top-bar">
-    <button class="pdp-back-btn" onclick="closeProductDetails()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
-    </button>
-    <div class="pdp-top-actions">
-      <button class="pdp-icon-btn" onclick="shareProduct()" aria-label="مشاركة">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="18" cy="5" r="3"/>
-          <circle cx="6" cy="12" r="3"/>
-          <circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-        </svg>
-      </button>
-      <button class="pdp-icon-btn" id="pdpFavBtn" onclick="toggleFavoriteProduct()" aria-label="مفضلة">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Product Image -->
-  <div class="pdp-image-wrapper">
-    <div class="pdp-image-glow"></div>
-    <div class="pdp-image-box" id="pdpImageBox">
-      <img id="pdpImage" src="" alt="صورة الدواء" style="display:none;">
-      <span class="pdp-image-emoji" id="pdpImageEmoji">💊</span>
-    </div>
-  </div>
-
-  <!-- Product Info -->
-  <div class="pdp-info-section">
-
-    <!-- Title -->
-    <h1 class="pdp-title" id="pdpTitle">اسم الدواء</h1>
-
-    <!-- Category + Rating -->
-    <div class="pdp-meta-row">
-      <span class="pdp-category-badge" id="pdpCategory">مسكنات</span>
-      <span class="pdp-rating-inline">
-        <span class="pdp-star">⭐</span>
-        <span id="pdpRatingValue">4.8</span>
-        <span class="pdp-rating-count">(<span id="pdpRatingCount">120</span> تقييم)</span>
-      </span>
-    </div>
-
-    <!-- Stock + Price Row -->
-    <div class="pdp-price-stock-row">
-      <div class="pdp-stock-badge" id="pdpStockBadge">
-        <span class="pdp-stock-dot"></span>
-        <span id="pdpStockText">متوفر - 45 علبة</span>
-      </div>
-      <div class="pdp-price-block">
-        <span class="pdp-price-old" id="pdpPriceOld" style="display:none;">6,000</span>
-        <span class="pdp-price-current" id="pdpPriceCurrent">5,000</span>
-        <span class="pdp-price-currency">د.ع</span>
-      </div>
-    </div>
-
-    <!-- Description Card -->
-    <div class="pdp-card">
-      <div class="pdp-card-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="8" y1="6" x2="21" y2="6"/>
-          <line x1="8" y1="12" x2="21" y2="12"/>
-          <line x1="8" y1="18" x2="21" y2="18"/>
-        </svg>
-        <h3>الوصف</h3>
-      </div>
-      <p class="pdp-description-text" id="pdpDescription">
-        باندول 500mg هو مسكن وخافض للحرارة فعال لتخفيف الصداع، ألم الأسنان، ألم الدورة الشهرية، وآلام العضلات.
-      </p>
-    </div>
-
-    <!-- Dosage Card -->
-    <div class="pdp-card">
-      <div class="pdp-card-header">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>
-          <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
-        </svg>
-        <h3>معلومات الجرعة</h3>
-      </div>
-      <ul class="pdp-dosage-list" id="pdpDosageList">
-        <li>
-          <span class="pdp-dosage-bullet"></span>
-          البالغون: قرص واحد كل 4-6 ساعات عند الحاجة
-        </li>
-        <li>
-          <span class="pdp-dosage-bullet"></span>
-          الحد الأقصى 4 جرعات خلال 24 ساعة
-        </li>
-      </ul>
-    </div>
-
-    <!-- Alternatives Section -->
-    <div class="pdp-section-header">
-      <h3>✨ بدائل مقترحة</h3>
-    </div>
-    <div class="pdp-alternatives-scroll" id="pdpAlternativesScroll">
-      <!-- DYNAMIC -->
-      <div class="pdp-alt-loading">
-        <div class="pdp-alt-spinner"></div>
-        <span>جاري التحميل...</span>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Bottom Bar: Quantity + Add to Cart -->
-  <div class="pdp-bottom-bar" id="pdpBottomBar">
-    <div class="pdp-quantity-control">
-      <button class="pdp-qty-btn" onclick="pdpChangeQty(-1)">−</button>
-      <span class="pdp-qty-value" id="pdpQuantity">1</span>
-      <button class="pdp-qty-btn" onclick="pdpChangeQty(1)">+</button>
-    </div>
-    <button class="pdp-add-to-cart-btn" onclick="pdpAddToCart()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <circle cx="9" cy="21" r="1"/>
-        <circle cx="20" cy="21" r="1"/>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-      </svg>
-      <span>أضف للسلة - <span id="pdpAddTotal">5,000</span> د.ع</span>
-    </button>
-  </div>
-
-</div>
-  <!-- ============================================
-     🏪 Pharmacy Dashboard
-     ============================================ -->
-<div class="screen" id="pharmacyDashboard">
-  <div class="home-header">
-    <div class="greeting-section">
-      <h1 class="greeting-title">أهلاً <span id="pharmacyGreeting">صيدلية</span> 🏪</h1>
-      <p class="greeting-sub">إدارة صيدليتك اليوم</p>
-    </div>
-  </div>
-
-  <div class="alert-banner" id="pharmacyAlertBanner" style="display:none;">
-    <div class="alert-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-        <line x1="12" y1="9" x2="12" y2="13"/>
-        <line x1="12" y1="17" x2="12.01" y2="17"/>
-      </svg>
-    </div>
-    <div class="alert-content">
-      <h4>تنبيه المخزون</h4>
-      <p id="pharmacyAlertText">يوجد أدوية قاربت على الانتهاء</p>
-    </div>
-    <button class="alert-action" onclick="openInventoryScreen()">عرض</button>
-  </div>
-
-  <div class="pharmacy-actions">
-    <button class="pharmacy-action-btn" onclick="openInventoryScreen()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-      </svg>
-      <span>المخزون</span>
-    </button>
-    <button class="pharmacy-action-btn" onclick="openAddPostModal()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 12v10H4V12"/>
-        <path d="M2 7h20v5H2z"/>
-        <line x1="12" y1="22" x2="12" y2="7"/>
-        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-      </svg>
-      <span>نشر عرض</span>
-    </button>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon-wrap blue">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-        </svg>
-      </div>
-      <span class="stat-num" id="pharmacyNewOrdersCount">0</span>
-      <span class="stat-label">طلبات جديدة</span>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon-wrap green">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </div>
-      <span class="stat-num" id="pharmacyDoneTodayCount">0</span>
-      <span class="stat-label">مكتملة اليوم</span>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon-wrap orange">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="1" x2="12" y2="23"/>
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-        </svg>
-      </div>
-      <span class="stat-num" id="pharmacyTodayRevenueStat">0</span>
-      <span class="stat-label">دينار اليوم</span>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon-wrap yellow">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <span class="stat-num" id="pharmacyRatingStat">0.0</span>
-      <span class="stat-label">تقييم</span>
-    </div>
-  </div>
-
-  <div class="section-header">
-    <h3>الطلبات الجديدة</h3>
-    <a href="#" onclick="goToMyOrdersV2(); return false;">عرض الكل</a>
-  </div>
-
-  <div class="order-list" id="pharmacyDashboardOrdersList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">💊</div>
-      <h3>لا توجد طلبات جديدة</h3>
-      <p>ستظهر هنا الطلبات الواردة</p>
-    </div>
+  <div class="home-v3-offers" id="homeOffersScroll">
+    <div class="home-v3-loading"><div class="home-v3-spinner"></div><span>جاري التحميل...</span></div>
   </div>
 </div>
 
-<!-- ============================================
-     🚴 Delivery Dashboard
-     ============================================ -->
-<div class="screen" id="deliveryDashboard">
-  <div class="delivery-header">
-    <div class="delivery-greeting">
-      <h1 class="delivery-title">أهلاً <span id="deliveryGreeting">مندوب</span> 🚴</h1>
-      <p class="delivery-sub">جاهز للعمل اليوم؟</p>
-    </div>
-    <div class="delivery-header-actions">
-      <button class="delivery-notif-btn" onclick="openNotifications()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-        <span class="delivery-notif-badge" id="deliveryNotifBadge" style="display:none;">0</span>
-      </button>
-      <div class="delivery-avatar" onclick="openProfile()">
-        <span id="deliveryAvatarLetter">م</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="radar-section">
-    <div class="radar-simple" id="radarSimple">
-      <div class="radar-dot" style="top: 8%; left: 20%;"></div>
-      <div class="radar-dot" style="top: 18%; left: 78%;"></div>
-      <div class="radar-dot" style="top: 32%; left: 90%;"></div>
-      <div class="radar-dot" style="top: 55%; left: 92%;"></div>
-      <div class="radar-dot" style="top: 78%; left: 82%;"></div>
-      <div class="radar-dot" style="top: 88%; left: 60%;"></div>
-      <div class="radar-dot" style="top: 85%; left: 25%;"></div>
-      <div class="radar-dot" style="top: 62%; left: 8%;"></div>
-      <div class="radar-dot" style="top: 35%; left: 6%;"></div>
-      <div class="radar-dot" style="top: 15%; left: 45%;"></div>
-      <div class="radar-ring radar-ring-1"></div>
-      <div class="radar-ring radar-ring-2"></div>
-      <div class="radar-ring radar-ring-3"></div>
-      <div class="radar-ring radar-ring-4"></div>
-      <div class="radar-core">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
-          <path d="M7.76 7.76a6 6 0 0 0 0 8.48"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-          <path d="M16.24 7.76a6 6 0 0 1 0 8.48"/>
-          <circle cx="12" cy="12" r="2" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="radar-text">
-        <span class="radar-title" id="radarTitle">ابدأ البحث</span>
-      </div>
-    </div>
-    <button class="radar-start-btn" onclick="toggleRadar()" id="radarBtn">
-      <span id="radarBtnText">ابدأ البحث</span>
-    </button>
-  </div>
-
-  <div class="section-header">
-    <h3>الطلبات</h3>
-    <a href="#" onclick="goToMyOrdersV2(); return false;">عرض الكل</a>
-  </div>
-
-  <div class="delivery-orders-list" id="deliveryDashboardOrdersList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📦</div>
-      <h3>لا توجد طلبات</h3>
-      <p>شغّل الرادار لاستقبال الطلبات</p>
-    </div>
-  </div>
-</div>
-  <!-- ============================================
-     📋 My Orders Screen — DAWAK
-     ============================================ -->
+<!-- My Orders Screen -->
 <div class="screen" id="myOrdersScreen">
-
-  <!-- Top Bar -->
-  <div class="orders-top-bar">
-    <button class="orders-back-btn" onclick="goToDashboardByType()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
+  <div class="orders-v3-top">
+    <button class="orders-v3-back" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     </button>
-    <h2 class="orders-screen-title" id="myOrdersTitle">طلباتي</h2>
-    <button class="orders-search-btn" onclick="showToast('🔍 قريباً')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
+    <h2 class="orders-v3-title" id="myOrdersTitle">طلباتي</h2>
+    <button class="orders-v3-search-btn" onclick="showToast('قريباً')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
   </div>
 
-  <!-- Filter Tabs -->
-  <div class="orders-filter-tabs" id="ordersFilterTabs">
-    <button class="orders-filter-tab active" data-filter="all" onclick="filterOrders('all', this)">الكل</button>
-    <button class="orders-filter-tab" data-filter="pending" onclick="filterOrders('pending', this)">قيد التوصيل</button>
-    <button class="orders-filter-tab" data-filter="completed" onclick="filterOrders('completed', this)">مكتمل</button>
-    <button class="orders-filter-tab" data-filter="cancelled" onclick="filterOrders('cancelled', this)">ملغي</button>
+  <div class="orders-v3-tabs" id="ordersFilterTabs">
+    <button class="orders-v3-tab active" onclick="filterOrders('all', this)">الكل</button>
+    <button class="orders-v3-tab" onclick="filterOrders('pending', this)">قيد التوصيل</button>
+    <button class="orders-v3-tab" onclick="filterOrders('completed', this)">مكتمل</button>
+    <button class="orders-v3-tab" onclick="filterOrders('cancelled', this)">ملغي</button>
   </div>
 
-  <!-- Orders List -->
-  <div class="orders-list-container" id="ordersListContainer">
-
-    <div class="orders-loading" id="ordersLoading">
-      <div class="orders-spinner"></div>
+  <div class="orders-v3-list" id="ordersListContainer">
+    <div class="orders-v3-loading" id="ordersLoading">
+      <div class="orders-v3-spinner"></div>
       <span>جاري تحميل الطلبات...</span>
     </div>
-
-    <div class="orders-empty-state" id="ordersEmptyState" style="display:none;">
-      <div class="orders-empty-icon-wrapper">
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
-        </svg>
-      </div>
+    <div class="orders-v3-empty" id="ordersEmptyState" style="display:none;">
+      <div class="orders-v3-empty-icon">📋</div>
       <h3>لا توجد طلبات</h3>
       <p>ستظهر هنا طلباتك السابقة والحالية</p>
-      <button class="orders-empty-cta" onclick="goToDashboardByType()">
-        <span>ابدأ طلبك الأول</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </button>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- ============================================
-     📋 Orders History (Legacy)
-     ============================================ -->
-<div class="screen" id="ordersScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="goToDashboardByType()">←</button>
-  </div>
-  <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
-  <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
-
-  <div class="filter-tabs">
-    <button class="filter-tab active">الكل</button>
-    <button class="filter-tab">المكتملة</button>
-  </div>
-
-  <div class="order-list" id="ordersHistoryList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📋</div>
-      <h3>لا توجد طلبات</h3>
-      <p>ستظهر هنا سجل طلباتك</p>
-    </div>
-  </div>
-</div>
-<!-- ============================================
-     💊 Inventory
-     ============================================ -->
-<div class="screen" id="inventoryScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeInventoryScreen()">←</button>
-    <button class="add-med-btn" onclick="openAddMedicineModal()">+ إضافة دواء</button>
-  </div>
-  <h2 class="screen-title">إدارة المخزون 💊</h2>
-  <p class="screen-subtitle" id="inventorySubtitle">0 دواء</p>
-
-  <div class="inventory-stats">
-    <div class="inventory-stat">
-      <span class="inventory-stat-num" id="invTotalMeds">0</span>
-      <span class="inventory-stat-label">دواء</span>
-    </div>
-    <div class="inventory-stat">
-      <span class="inventory-stat-num" id="invLowStock">0</span>
-      <span class="inventory-stat-label">قارب على النفاد</span>
-    </div>
-    <div class="inventory-stat">
-      <span class="inventory-stat-num" id="invOutOfStock">0</span>
-      <span class="inventory-stat-label">نفد</span>
-    </div>
-    <div class="inventory-stat">
-      <span class="inventory-stat-num" id="invValue">0</span>
-      <span class="inventory-stat-label">دينار</span>
-    </div>
-  </div>
-
-  <div class="inventory-alert" id="inventoryAlert" style="display:none;">
-    <span class="inventory-alert-icon">⚠️</span>
-    <div>
-      <h4>تنبيه المخزون</h4>
-      <p id="inventoryAlertText">0 دواء يحتاج إعادة تعبئة</p>
-    </div>
-  </div>
-
-  <div class="search-wrapper">
-    <div class="search-bar">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="inventorySearch" placeholder="ابحث عن دواء..." oninput="filterInventory()">
-    </div>
-  </div>
-
-  <div class="inventory-filters">
-    <button class="inv-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
-    <button class="inv-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
-    <button class="inv-filter" onclick="filterInventoryBy('low', this)">قارب على النفاد</button>
-    <button class="inv-filter" onclick="filterInventoryBy('out', this)">نفد</button>
-  </div>
-
-  <div class="inventory-list" id="inventoryList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">💊</div>
-      <h3>لا توجد أدوية</h3>
-      <p>اضغط "+ إضافة دواء" للبدء</p>
+      <button class="orders-v3-empty-cta" onclick="goToDashboardByType()">ابدأ طلبك الأول</button>
     </div>
   </div>
 </div>
 
-<!-- ============================================
-     📸 Prescription
-     ============================================ -->
-<div class="screen" id="prescriptionScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closePrescriptionScreen()">←</button>
-  </div>
-  <h2 class="screen-title">طلب بالروشتة 📸</h2>
-  <p class="screen-subtitle">ارفع صورة وصفة الطبيب وسنجهز طلبك</p>
-
-  <form class="blue-form" onsubmit="submitPrescription(event); return false;">
-    <div class="input-group">
-      <label>صورة الوصفة *</label>
-      <div class="prescription-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
-        <div class="prescription-upload-placeholder" id="prescriptionPlaceholder">
-          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <p class="prescription-upload-title">اضغط لرفع الصورة</p>
-          <p class="prescription-upload-sub">JPG, PNG - الحد الأقصى 5MB</p>
-        </div>
-        <div class="prescription-preview" id="prescriptionPreview" style="display:none;">
-          <img id="prescriptionImage" src="" alt="الروشتة">
-          <button type="button" class="prescription-remove-btn" onclick="removePrescriptionImage(event)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
-    </div>
-
-    <div class="input-group">
-      <label>عنوان التوصيل *</label>
-      <input type="text" id="prescriptionAddress" placeholder="بغداد - الكرادة - شارع 62" required>
-    </div>
-
-    <div class="input-group">
-      <label>ملاحظات (اختياري)</label>
-      <textarea id="prescriptionNotes" rows="3" placeholder="مثال: أحتاج الدواء اليوم قبل الساعة 8 مساءً"></textarea>
-    </div>
-
-    <div class="input-group">
-      <label>صيدلية مفضلة (اختياري)</label>
-      <select id="prescriptionPharmacy">
-        <option value="">— دع النظام يختار الأقرب —</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label>نوع التوصيل *</label>
-      <div class="delivery-options">
-        <label class="delivery-option active">
-          <input type="radio" name="deliveryType" value="fast" checked>
-          <div class="delivery-option-content">
-            <span class="delivery-option-icon">⚡</span>
-            <div>
-              <h4>توصيل فوري</h4>
-              <p>خلال 30 دقيقة</p>
-            </div>
-          </div>
-        </label>
-        <label class="delivery-option">
-          <input type="radio" name="deliveryType" value="scheduled">
-          <div class="delivery-option-content">
-            <span class="delivery-option-icon">🕐</span>
-            <div>
-              <h4>توصيل مجدول</h4>
-              <p>حدد الوقت</p>
-            </div>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <button type="submit" class="btn-primary">إرسال الطلب للصيدلية</button>
-  </form>
-</div>
- <!-- ============================================
-     🛒 Cart Screen — DAWAK
-     ============================================ -->
+<!-- Cart Screen -->
 <div class="screen" id="cartScreen">
-  
-  <!-- Top Bar -->
-  <div class="cart-top-bar">
-    <button class="cart-back-btn" onclick="goToDashboardByType()">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
+  <div class="cart-v3-top">
+    <button class="cart-v3-back" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     </button>
-    <div class="cart-title-block">
-      <h2 class="cart-screen-title">سلة التسوق</h2>
-      <span class="cart-count-badge" id="cartCountBadge">0 منتجات</span>
+    <div class="cart-v3-title-block">
+      <h2>سلة التسوق</h2>
+      <span id="cartCountBadge">0 منتجات</span>
     </div>
-    <button class="cart-clear-btn" id="cartClearBtn" onclick="clearCart()" style="display:none;">
-      🗑️
-    </button>
+    <button class="cart-v3-clear" id="cartClearBtn" onclick="clearCart()" style="display:none;">🗑️</button>
   </div>
 
-  <!-- Cart Items List -->
-  <div class="cart-items-container" id="cartItemsContainer">
-    
-    <!-- Item 1 (Example Structure) -->
-    <div class="cart-item-card" id="cartItemsList">
-      <!-- DYNAMIC -->
-    </div>
-
-    <!-- Empty State -->
-    <div class="cart-empty-state" id="cartEmptyState">
-      <div class="cart-empty-icon-wrapper">
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="9" cy="21" r="1"/>
-          <circle cx="20" cy="21" r="1"/>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-        </svg>
-      </div>
+  <div class="cart-v3-items" id="cartItemsContainer">
+    <div id="cartItemsList"></div>
+    <div class="cart-v3-empty" id="cartEmptyState">
+      <div class="cart-v3-empty-icon">🛒</div>
       <h3>سلتك فارغة</h3>
       <p>أضف أدوية من الصيدليات للبدء</p>
-      <button class="cart-empty-cta" onclick="goToDashboardByType()">
-        <span>تصفح الصيدليات</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="19" y1="12" x2="5" y2="12"/>
-          <polyline points="12 19 5 12 12 5"/>
-        </svg>
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Coupon Code Section -->
-  <div class="cart-coupon-wrapper" id="cartCouponWrapper" style="display:none;">
-    <div class="cart-coupon-input-wrap">
-      <input type="text" id="cartCouponInput" class="cart-coupon-input" placeholder="كود الخصم">
-      <button class="cart-coupon-apply-btn" onclick="applyCoupon()">تطبيق</button>
-    </div>
-    <div class="cart-coupon-message" id="cartCouponMessage"></div>
-  </div>
-
-  <!-- Order Summary -->
-  <div class="cart-summary-card" id="cartSummaryCard" style="display:none;">
-    <h3 class="cart-summary-title">ملخص الطلب</h3>
-
-    <div class="cart-summary-row">
-      <span class="cart-summary-label">المجموع</span>
-      <span class="cart-summary-value" id="cartSubtotalValue">0 د.ع</span>
-    </div>
-
-    <div class="cart-summary-row">
-      <span class="cart-summary-label">التوصيل</span>
-      <span class="cart-summary-value" id="cartDeliveryValue">3,000 د.ع</span>
-    </div>
-
-    <div class="cart-summary-row cart-discount-row" id="cartDiscountRow" style="display:none;">
-      <span class="cart-summary-label">الخصم</span>
-      <span class="cart-summary-value cart-discount-value" id="cartDiscountValue">0 د.ع</span>
-    </div>
-
-    <div class="cart-summary-divider"></div>
-
-    <div class="cart-summary-row cart-summary-total-row">
-      <span class="cart-summary-total-label">الإجمالي</span>
-      <span class="cart-summary-total-value" id="cartTotalValue">0 د.ع</span>
+      <button class="cart-v3-empty-cta" onclick="goToDashboardByType()">تصفح الصيدليات</button>
     </div>
   </div>
 
-  <!-- Delivery Address -->
-  <div class="cart-address-section" id="cartAddressSection" style="display:none;">
-    <div class="cart-section-header">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-        <circle cx="12" cy="10" r="3"/>
-      </svg>
+  <div class="cart-v3-coupon" id="cartCouponWrapper" style="display:none;">
+    <div class="cart-v3-coupon-wrap">
+      <input type="text" id="cartCouponInput" placeholder="كود الخصم">
+      <button onclick="applyCoupon()">تطبيق</button>
+    </div>
+    <div class="cart-v3-coupon-msg" id="cartCouponMessage"></div>
+  </div>
+
+  <div class="cart-v3-summary" id="cartSummaryCard" style="display:none;">
+    <h3>ملخص الطلب</h3>
+    <div class="cart-v3-summary-row"><span>المجموع</span><span id="cartSubtotalValue">0 د.ع</span></div>
+    <div class="cart-v3-summary-row"><span>التوصيل</span><span id="cartDeliveryValue">3,000 د.ع</span></div>
+    <div class="cart-v3-summary-row cart-v3-discount" id="cartDiscountRow" style="display:none;"><span>الخصم</span><span id="cartDiscountValue">0 د.ع</span></div>
+    <div class="cart-v3-summary-divider"></div>
+    <div class="cart-v3-summary-total"><span>الإجمالي</span><span id="cartTotalValue">0 د.ع</span></div>
+  </div>
+
+  <div class="cart-v3-address" id="cartAddressSection" style="display:none;">
+    <div class="cart-v3-section-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       <h4>عنوان التوصيل</h4>
     </div>
-    <div class="cart-address-input-wrap">
-      <input type="text" id="cartAddressInput" class="cart-address-input" placeholder="بغداد - الكرادة - شارع 62">
-      <button class="cart-address-edit-btn" onclick="openMapForAddress()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg>
+    <div class="cart-v3-address-wrap">
+      <input type="text" id="cartAddressInput" placeholder="بغداد - الكرادة - شارع 62">
+      <button onclick="openMapForAddress()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Payment Methods -->
-  <div class="cart-payment-section" id="cartPaymentSection" style="display:none;">
-    <div class="cart-section-header">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-        <line x1="1" y1="10" x2="23" y2="10"/>
-      </svg>
+  <div class="cart-v3-payment" id="cartPaymentSection" style="display:none;">
+    <div class="cart-v3-section-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       <h4>طريقة الدفع</h4>
     </div>
-    <div class="cart-payment-options">
-      <label class="cart-payment-option active">
+    <div class="cart-v3-payment-options">
+      <label class="cart-v3-pay active">
         <input type="radio" name="cartPayment" value="cash" checked>
-        <span class="cart-payment-icon">💵</span>
-        <span class="cart-payment-label">نقداً</span>
-        <span class="cart-payment-check">✓</span>
+        <span class="cart-v3-pay-icon">💵</span>
+        <span class="cart-v3-pay-label">نقداً</span>
       </label>
-      <label class="cart-payment-option">
+      <label class="cart-v3-pay">
         <input type="radio" name="cartPayment" value="zain">
-        <span class="cart-payment-icon">💳</span>
-        <span class="cart-payment-label">زين كاش</span>
-        <span class="cart-payment-check">✓</span>
+        <span class="cart-v3-pay-icon">💳</span>
+        <span class="cart-v3-pay-label">زين كاش</span>
       </label>
-      <label class="cart-payment-option">
+      <label class="cart-v3-pay">
         <input type="radio" name="cartPayment" value="asia">
-        <span class="cart-payment-icon">🏦</span>
-        <span class="cart-payment-label">آسيا حوالة</span>
-        <span class="cart-payment-check">✓</span>
+        <span class="cart-v3-pay-icon">🏦</span>
+        <span class="cart-v3-pay-label">آسيا حوالة</span>
       </label>
     </div>
   </div>
 
-  <!-- Checkout Button -->
-   <button class="cart-checkout-btn" id="cartCheckoutBtn" onclick="submitCartOrderV2()" style="display:none;">
-    <span class="cart-checkout-icon">🛒</span>
-    <span class="cart-checkout-text">تأكيد الطلب</span>
-    <span class="cart-checkout-total" id="cartCheckoutTotal">0 د.ع</span>
+  <button class="cart-v3-checkout" id="cartCheckoutBtn" onclick="submitCartOrderV2()" style="display:none;">
+    <span>🛒 تأكيد الطلب</span>
+    <span id="cartCheckoutTotal">0 د.ع</span>
   </button>
-
 </div>
-<!-- ============================================
-     📋 Orders History
-     ============================================ -->
-<div class="screen" id="ordersScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="goToDashboardByType()">←</button>
-  </div>
-  <h2 class="screen-title" id="ordersTitle">الطلبات</h2>
-  <p class="screen-subtitle" id="ordersSubtitle">الطلبات الخاصة بك</p>
 
-  <div class="filter-tabs">
-    <button class="filter-tab active">الكل</button>
-    <button class="filter-tab">المكتملة</button>
-  </div>
-
-  <div class="order-list" id="ordersHistoryList">
-    <div class="cart-empty">
-      <div class="cart-empty-icon">📋</div>
-      <h3>لا توجد طلبات</h3>
-      <p>ستظهر هنا سجل طلباتك</p>
+<!-- Product Details Screen -->
+<div class="screen" id="productDetailsScreen">
+  <div class="pdp-v2-top">
+    <button class="pdp-v2-back" onclick="closeProductDetails()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="pdp-v2-actions">
+      <button class="pdp-v2-icon-btn" onclick="shareProduct()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <button class="pdp-v2-icon-btn" id="pdpFavBtn" onclick="toggleFavoriteProduct()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
     </div>
   </div>
-</div>
 
-<!-- ============================================
-     🔔 Notifications
-     ============================================ -->
-<div class="screen" id="notificationsScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="goToDashboardByType()">←</button>
+  <div class="pdp-v2-image-wrap">
+    <div class="pdp-v2-image-glow"></div>
+    <div class="pdp-v2-image-box">
+      <img id="pdpImage" src="" alt="صورة" style="display:none;">
+      <span class="pdp-v2-image-emoji" id="pdpImageEmoji">💊</span>
+    </div>
   </div>
-  <h2 class="screen-title">التنبيهات</h2>
-  <p class="screen-subtitle" id="notificationsSubtitle">آخر الإشعارات</p>
-  <div id="notificationsList"></div>
-</div>
 
-<!-- ============================================
-     👤 Profile
-     ============================================ -->
-<div class="screen" id="profileScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-    <button class="top-bar-settings" onclick="openSettings()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
+  <h1 class="pdp-v2-title" id="pdpTitle">اسم الدواء</h1>
+  <div class="pdp-v2-meta">
+    <span class="pdp-v2-category" id="pdpCategory">مسكنات</span>
+    <span class="pdp-v2-rating">⭐ <span id="pdpRatingValue">4.8</span> (<span id="pdpRatingCount">120</span>)</span>
+  </div>
+
+  <div class="pdp-v2-stock-price">
+    <div class="pdp-v2-stock" id="pdpStockBadge">
+      <span class="pdp-v2-stock-dot"></span>
+      <span id="pdpStockText">متوفر - 45 علبة</span>
+    </div>
+    <div class="pdp-v2-price-block">
+      <span class="pdp-v2-price-old" id="pdpPriceOld" style="display:none;"></span>
+      <span class="pdp-v2-price-current" id="pdpPriceCurrent">5,000</span>
+      <span class="pdp-v2-price-currency">د.ع</span>
+    </div>
+  </div>
+
+  <div class="pdp-v2-card">
+    <div class="pdp-v2-card-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+      <h3>الوصف</h3>
+    </div>
+    <p id="pdpDescription">باندول 500mg هو مسكن وخافض للحرارة فعال.</p>
+  </div>
+
+  <div class="pdp-v2-card">
+    <div class="pdp-v2-card-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+      <h3>معلومات الجرعة</h3>
+    </div>
+    <ul class="pdp-v2-dosage" id="pdpDosageList">
+      <li>البالغون: قرص واحد كل 4-6 ساعات</li>
+      <li>الحد الأقصى 4 جرعات خلال 24 ساعة</li>
+    </ul>
+  </div>
+
+  <div class="pdp-v2-section-header">
+    <h3>✨ بدائل مقترحة</h3>
+  </div>
+  <div class="pdp-v2-alternatives" id="pdpAlternativesScroll">
+    <div class="pdp-v2-alt-loading"><div class="pdp-v2-alt-spinner"></div><span>جاري التحميل...</span></div>
+  </div>
+
+  <div class="pdp-v2-bottom" id="pdpBottomBar">
+    <div class="pdp-v2-qty">
+      <button onclick="pdpChangeQty(-1)">−</button>
+      <span id="pdpQuantity">1</span>
+      <button onclick="pdpChangeQty(1)">+</button>
+    </div>
+    <button class="pdp-v2-add-to-cart" onclick="pdpAddToCart()">
+      🛒 أضف للسلة - <span id="pdpAddTotal">5,000</span> د.ع
+    </button>
+  </div>
+</div>
+  <!-- Order Tracking Screen -->
+<div class="screen" id="trackingScreen">
+  <div class="track-v2-top">
+    <button class="track-v2-back" onclick="closeTrackingScreen()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h2 class="track-v2-title">تتبع طلبك</h2>
+    <button class="track-v2-refresh" onclick="refreshTracking()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
     </button>
   </div>
 
-  <div class="profile-hero-card">
-    <div class="profile-avatar-wrapper" onclick="openImagePicker()">
-      <div class="profile-avatar-glow"></div>
-      <div class="profile-avatar" id="profileAvatar">م</div>
-      <div class="avatar-edit-badge">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg>
+  <div class="track-v2-eta-badge">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>يصل خلال 12 دقيقة</span>
+  </div>
+
+  <div class="track-v2-map-container">
+    <div id="trackingMap"></div>
+    <div class="track-v2-map-overlay-pin track-v2-pin-pharmacy">
+      <div class="track-v2-pin-icon track-v2-pin-green">+</div>
+      <span>صيدلية النور</span>
+    </div>
+    <div class="track-v2-map-overlay-pin track-v2-pin-you">
+      <div class="track-v2-pin-icon track-v2-pin-blue">📍</div>
+      <span>موقعك الآن</span>
+    </div>
+  </div>
+
+  <div class="track-v2-delivery-card">
+    <div class="track-v2-delivery-header">
+      <div class="track-v2-delivery-avatar">👤</div>
+      <div class="track-v2-delivery-info">
+        <h4>أحمد - مندوب التوصيل</h4>
+        <p>⭐ 4.9 • على بعد 1.2 كم • دراجة نارية</p>
+      </div>
+      <button class="track-v2-call-btn" onclick="showToast('جارٍ الاتصال...')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </button>
+    </div>
+
+    <div class="track-v2-timeline">
+      <div class="track-v2-step track-v2-done">
+        <div class="track-v2-step-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="track-v2-step-content">
+          <h5>تم التأكيد</h5>
+          <p>تم تأكيد الطلب - 09:22</p>
+        </div>
+      </div>
+      <div class="track-v2-step track-v2-done">
+        <div class="track-v2-step-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="track-v2-step-content">
+          <h5>تم التحضير من الصيدلية</h5>
+          <p>جاهز للاستلام - 09:35</p>
+        </div>
+      </div>
+      <div class="track-v2-step track-v2-active">
+        <div class="track-v2-step-icon">🚴</div>
+        <div class="track-v2-step-content">
+          <h5>في الطريق</h5>
+          <p>المندوب في الطريق إليك - 09:41</p>
+        </div>
+      </div>
+      <div class="track-v2-step">
+        <div class="track-v2-step-icon"></div>
+        <div class="track-v2-step-content">
+          <h5>تم التوصيل</h5>
+          <p>بانتظار التوصيل</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="track-v2-order-info">
+      <span>TRK-2024-7845 • صيدلية النور</span>
+    </div>
+  </div>
+
+  <div class="track-v2-actions">
+    <button class="track-v2-action-btn track-v2-action-outline" onclick="showToast('مشاركة الموقع')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      مشاركة الموقع
+    </button>
+    <button class="track-v2-action-btn track-v2-action-green" onclick="showToast('جارٍ الاتصال...')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      اتصل بالمندوب
+    </button>
+  </div>
+</div>
+
+<!-- Notifications Screen -->
+<div class="screen" id="notificationsScreen">
+  <div class="notif-v2-top">
+    <button class="notif-v2-back" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h2 class="notif-v2-title">الإشعارات</h2>
+  </div>
+
+  <div class="notif-v2-tabs">
+    <button class="notif-v2-tab active" onclick="filterNotifications('all', this)">الكل</button>
+    <button class="notif-v2-tab" onclick="filterNotifications('orders', this)">الطلبات</button>
+    <button class="notif-v2-tab" onclick="filterNotifications('offers', this)">العروض</button>
+    <button class="notif-v2-tab" onclick="filterNotifications('system', this)">النظام</button>
+  </div>
+
+  <div class="notif-v2-list" id="notificationsList">
+    <div class="notif-v2-card notif-v2-unread">
+      <div class="notif-v2-icon notif-v2-icon-green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="notif-v2-content">
+        <h4>طلبك جاهز للاستلام #10234</h4>
+        <p>قبل 5 دقائق</p>
+      </div>
+      <span class="notif-v2-dot"></span>
+    </div>
+
+    <div class="notif-v2-card notif-v2-unread">
+      <div class="notif-v2-icon notif-v2-icon-orange">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      </div>
+      <div class="notif-v2-content">
+        <h4>عرض جديد من صيدلية النور</h4>
+        <p>خصم 20% على فيتامين C - 12,000 د.ع</p>
+        <p>قبل ساعة</p>
+      </div>
+      <span class="notif-v2-dot"></span>
+    </div>
+
+    <div class="notif-v2-card notif-v2-unread">
+      <div class="notif-v2-icon notif-v2-icon-blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4l-2 6h8l-2-6z"/></svg>
+      </div>
+      <div class="notif-v2-content">
+        <h4>المندوب في الطريق إليك</h4>
+        <p>قبل ساعتين</p>
+      </div>
+      <span class="notif-v2-dot"></span>
+    </div>
+
+    <div class="notif-v2-card">
+      <div class="notif-v2-icon notif-v2-icon-green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="notif-v2-content">
+        <h4>تم تأكيد طلبك #10233</h4>
+        <p>قبل 3 ساعات</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Screen -->
+<div class="screen" id="settingsScreen">
+  <div class="settings-v2-top">
+    <button class="settings-v2-back" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <div class="settings-v2-logo">
+      <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
+        <path d="M42 8 H58 V30 H80 V46 H58 V72 H42 V46 H20 V30 H42 Z" stroke="#10B981" stroke-width="3" fill="none"/>
+        <circle cx="50" cy="50" r="5" fill="#10B981"/>
+      </svg>
+      <span>DAWAK دواك</span>
+    </div>
+    <button class="settings-v2-icon-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <h2 class="settings-v2-title">الإعدادات</h2>
+
+  <div class="settings-v2-card">
+    <div class="settings-v2-card-header">
+      <h3>المظهر</h3>
+      <p>اختر سمة التطبيق</p>
+    </div>
+    <div class="settings-v2-theme-options">
+      <button class="settings-v2-theme-btn" onclick="setTheme('auto')">
+        <span class="settings-v2-theme-icon">🌗</span>
+        <span>تلقائي</span>
+        <span class="settings-v2-theme-lang">Auto</span>
+      </button>
+      <button class="settings-v2-theme-btn active" onclick="setTheme('dark')">
+        <span class="settings-v2-theme-check">✓</span>
+        <span class="settings-v2-theme-icon">🌙</span>
+        <span>داكن</span>
+        <span class="settings-v2-theme-lang">Dark</span>
+      </button>
+      <button class="settings-v2-theme-btn" onclick="setTheme('light')">
+        <span class="settings-v2-theme-icon">☀️</span>
+        <span>فاتح</span>
+        <span class="settings-v2-theme-lang">Light</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-v2-toggle-card">
+    <div class="settings-v2-toggle-info">
+      <h4>المظهر الداكن</h4>
+      <p>تفعيل الوضع الداكن الآن</p>
+    </div>
+    <label class="settings-v2-switch">
+      <input type="checkbox" id="darkModeToggle" checked onchange="toggleTheme()">
+      <span class="settings-v2-slider"></span>
+    </label>
+  </div>
+
+  <div class="settings-v2-list">
+    <div class="settings-v2-row">
+      <h4>الإشعارات</h4>
+      <label class="settings-v2-switch">
+        <input type="checkbox">
+        <span class="settings-v2-slider"></span>
+      </label>
+    </div>
+    <div class="settings-v2-row settings-v2-row-link" onclick="showToast('قريباً')">
+      <div>
+        <h4>اللغة العربية</h4>
+        <p>العربية</p>
+      </div>
+      <span>←</span>
+    </div>
+    <div class="settings-v2-row settings-v2-row-link" onclick="showToast('قريباً')">
+      <div>
+        <h4>العملة</h4>
+        <p>دينار عراقي د.ع</p>
+      </div>
+      <span>←</span>
+    </div>
+    <div class="settings-v2-row settings-v2-row-link" onclick="showToast('v2.1.0')">
+      <div>
+        <h4>عن التطبيق</h4>
+        <p>v2.1.0</p>
+      </div>
+      <span>ⓘ</span>
+    </div>
+  </div>
+
+  <p class="settings-v2-footer">DAWAK Pharmacy • بغداد، العراق • الإصدار 2.1.0</p>
+</div>
+
+<!-- Profile Screen -->
+<div class="screen" id="profileScreen">
+  <div class="profile-v2-top">
+    <button class="profile-v2-back" onclick="goToDashboardByType()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h2 class="profile-v2-title">الملف الشخصي</h2>
+    <button class="profile-v2-settings-btn" onclick="openSettings()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <div class="profile-v2-hero">
+    <div class="profile-v2-avatar-wrap" onclick="openImagePicker()">
+      <div class="profile-v2-avatar" id="profileAvatar">أ</div>
+      <div class="profile-v2-avatar-edit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </div>
     </div>
     <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-    <h3 class="profile-name" id="profileName">مستخدم</h3>
-    <p class="profile-role" id="profileType">مريض</p>
-    <div class="profile-status-badge" id="profileStatus">
-      <span class="status-dot"></span>
-      <span>متصل</span>
+    <h3 class="profile-v2-name" id="profileName">أحمد محمد</h3>
+    <p class="profile-v2-phone" id="infoPhone">0770xxxxxxx</p>
+    <div class="profile-v2-location">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <span id="infoAddress">بغداد، العراق</span>
     </div>
   </div>
 
-  <div class="profile-info-list">
-    <div class="profile-info-row">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
-      </div>
-      <span class="profile-info-label">رقم الهاتف</span>
-      <span class="profile-info-value" id="infoPhone">-</span>
+  <div class="profile-v2-stats">
+    <div class="profile-v2-stat">
+      <div class="profile-v2-stat-icon">❤️</div>
+      <span class="profile-v2-stat-num" id="profileFavCount">5</span>
+      <span class="profile-v2-stat-label">مفضلة</span>
     </div>
-
-    <div class="profile-info-row" id="emailRow">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-          <polyline points="22,6 12,13 2,6"/>
-        </svg>
-      </div>
-      <span class="profile-info-label">البريد</span>
-      <span class="profile-info-value" id="infoEmail">-</span>
+    <div class="profile-v2-stat">
+      <div class="profile-v2-stat-icon">📍</div>
+      <span class="profile-v2-stat-num">3</span>
+      <span class="profile-v2-stat-label">عناوين</span>
     </div>
-
-    <div class="profile-info-row" id="addressRow">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-      </div>
-      <span class="profile-info-label" id="addressLabel">العنوان</span>
-      <span class="profile-info-value" id="infoAddress">-</span>
-    </div>
-
-    <div class="profile-info-row" id="vehicleRow">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="5.5" cy="17.5" r="3.5"/>
-          <circle cx="18.5" cy="17.5" r="3.5"/>
-          <path d="M15 6h-4l-2 6h8l-2-6z"/>
-        </svg>
-      </div>
-      <span class="profile-info-label">المركبة</span>
-      <span class="profile-info-value" id="infoVehicle">-</span>
-    </div>
-
-    <div class="profile-info-row" id="licenseRow">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="16" rx="2"/>
-          <line x1="8" y1="10" x2="16" y2="10"/>
-          <line x1="8" y1="14" x2="16" y2="14"/>
-        </svg>
-      </div>
-      <span class="profile-info-label">الترخيص</span>
-      <span class="profile-info-value" id="infoLicense">-</span>
-    </div>
-
-    <div class="profile-info-row">
-      <div class="profile-info-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-      </div>
-      <span class="profile-info-label">التسجيل</span>
-      <span class="profile-info-value" id="infoDate">-</span>
+    <div class="profile-v2-stat">
+      <div class="profile-v2-stat-icon">🛍️</div>
+      <span class="profile-v2-stat-num" id="profileOrderCount">12</span>
+      <span class="profile-v2-stat-label">طلب</span>
     </div>
   </div>
 
-  <div class="profile-actions">
-    <button class="profile-edit-btn" onclick="openEditProfile()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-      </svg>
-      تعديل البيانات
-    </button>
-    <button class="profile-logout-btn" onclick="logout()">تسجيل الخروج</button>
-  </div>
-
-  <div class="my-ratings-section">
-    <div class="section-header">
-      <h3>تقييماتي</h3>
-      <span class="my-ratings-count" id="myRatingsCount">0</span>
+  <div class="profile-v2-balance">
+    <div class="profile-v2-balance-icon">💰</div>
+    <div class="profile-v2-balance-content">
+      <span class="profile-v2-balance-label">الرصيد الحالي</span>
+      <span class="profile-v2-balance-value">25,000 د.ع</span>
     </div>
-    <div class="my-ratings-list" id="myRatingsList">
-      <div class="my-ratings-empty">
-        <div class="my-ratings-empty-icon">★</div>
-        <p>لا توجد تقييمات بعد</p>
-      </div>
+    <span class="profile-v2-balance-arrow">←</span>
+  </div>
+
+  <div class="profile-v2-menu">
+    <h3 class="profile-v2-menu-title">القائمة</h3>
+    <div class="profile-v2-menu-item" onclick="openOrders()">
+      <div class="profile-v2-menu-icon">📋</div>
+      <span>عناويني</span>
+      <span class="profile-v2-menu-arrow">←</span>
     </div>
-  </div>
-</div>
-
-<!-- ============================================
-     ℹ️ About
-     ============================================ -->
-<div class="screen" id="aboutScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-  </div>
-  <h2 class="screen-title">من نحن</h2>
-  <p class="screen-subtitle">تعرّف على دواك عن قرب</p>
-
-  <div class="about-hero">
-    <div class="about-logo">
-      <div class="about-logo-glow"></div>
-      <span class="about-cross">✚</span>
+    <div class="profile-v2-menu-item" onclick="showToast('قريباً')">
+      <div class="profile-v2-menu-icon">💳</div>
+      <span>طرق الدفع</span>
+      <span class="profile-v2-menu-arrow">←</span>
     </div>
-    <h3>DAWAK دواك</h3>
-    <p>منصة عراقية 100% - صحتك أولويتنا</p>
-  </div>
-
-  <div class="about-cards">
-    <div class="about-card" onclick="openAboutUs()">
-      <div class="about-card-icon blue">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      </div>
-      <div class="about-card-content">
-        <h4>عن دواك</h4>
-        <p>تعرّف على تطبيقنا وأرقامنا</p>
-      </div>
-      <div class="about-card-arrow">←</div>
-    </div>
-
-    <div class="about-card" onclick="openVision()">
-      <div class="about-card-icon green">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/>
-          <circle cx="12" cy="12" r="6"/>
-          <circle cx="12" cy="12" r="2"/>
-        </svg>
-      </div>
-      <div class="about-card-content">
-        <h4>رؤيتنا</h4>
-        <p>أهدافنا للمستقبل</p>
-      </div>
-      <div class="about-card-arrow">←</div>
-    </div>
-
-    <div class="about-card" onclick="openValues()">
-      <div class="about-card-icon orange">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-        </svg>
-      </div>
-      <div class="about-card-content">
-        <h4>قيمنا</h4>
-        <p>المبادئ التي نعمل بها</p>
-      </div>
-      <div class="about-card-arrow">←</div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================
-     📄 App Details
-     ============================================ -->
-<div class="screen" id="aboutUsScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">عن دواك</h2>
-  <p class="screen-subtitle">تعرّف على تطبيقنا</p>
-
-  <div class="detail-hero blue">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-      </svg>
-    </div>
-    <h3>منصة عراقية حديثة</h3>
-    <p>نربط المرضى بأقرب الصيدليات</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>عن التطبيق</h4>
-    <p>دواك هي منصة عراقية حديثة تهدف إلى ربط الباحثين عن الدواء بأقرب الصيدليات المتوفرة في جميع محافظات العراق.</p>
-  </div>
-
-  <div class="detail-section">
-    <h4>مميزاتنا</h4>
-    <ul class="detail-list">
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>توصيل سريع خلال 30 دقيقة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>صيدليات معتمدة ومرخّصة</span>
-      </li>
-      <li>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>دفع كاش عند التسليم</span>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- ============================================
-     🎯 Vision
-     ============================================ -->
-<div class="screen" id="visionScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">رؤيتنا</h2>
-  <p class="screen-subtitle">أهدافنا للمستقبل</p>
-  <div class="detail-hero green">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10"/>
-        <circle cx="12" cy="12" r="6"/>
-        <circle cx="12" cy="12" r="2"/>
-      </svg>
-    </div>
-    <h3>أن نكون الأول</h3>
-    <p>المنصة الأولى لتوصيل الأدوية في العراق</p>
-  </div>
-  <div class="detail-section">
-    <h4>رؤيتنا</h4>
-    <p>نطمح أن نكون المنصة الأولى لتوصيل الأدوية في جميع محافظات العراق، مع توفير تجربة سريعة وآمنة لكل مواطن.</p>
-  </div>
-</div>
-
-<!-- ============================================
-     💎 Values
-     ============================================ -->
-<div class="screen" id="valuesScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="openAbout()">←</button>
-  </div>
-  <h2 class="screen-title">قيمنا</h2>
-  <p class="screen-subtitle">المبادئ التي نعمل بها</p>
-  <div class="detail-hero orange">
-    <div class="detail-icon-big">
-      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-    </div>
-    <h3>مبادئنا الأساسية</h3>
-  </div>
-  <div class="value-cards">
-    <div class="value-card">
-      <div class="value-icon blue">🛡️</div>
-      <div class="value-content">
-        <h4>الموثوقية</h4>
-        <p>نعمل بمعايير عالمية، وكل صيدلية مرخّصة من وزارة الصحة</p>
-      </div>
-    </div>
-    <div class="value-card">
-      <div class="value-icon green">⚡</div>
-      <div class="value-content">
-        <h4>السرعة</h4>
-        <p>توصيل خلال 30 دقيقة فقط</p>
-      </div>
-    </div>
-    <div class="value-card">
-      <div class="value-icon orange">🤝</div>
-      <div class="value-content">
-        <h4>الثقة</h4>
-        <p>أسعار واضحة بدون رسوم خفية</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================
-     📞 Contact
-     ============================================ -->
-<div class="screen" id="contactScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-  </div>
-  <h2 class="screen-title">تواصل معنا</h2>
-  <p class="screen-subtitle">نحن هنا لخدمتك على مدار الساعة</p>
-
-  <div class="contact-cards">
-    <a href="https://wa.me/9647751459130" target="_blank" class="contact-card whatsapp">
-      <div class="contact-icon-circle">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-        </svg>
-      </div>
-      <div class="contact-info">
-        <h4>واتساب</h4>
-        <p>+964 775 145 9130</p>
-      </div>
-      <div class="contact-arrow">←</div>
-    </a>
-
-    <a href="tel:+9647761090465" class="contact-card phone">
-      <div class="contact-icon-circle">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
-      </div>
-      <div class="contact-info">
-        <h4>اتصال هاتفي</h4>
-        <p>0776 109 0465</p>
-      </div>
-      <div class="contact-arrow">←</div>
-    </a>
-
-    <a href="https://t.me/Eror_7" target="_blank" class="contact-card telegram">
-      <div class="contact-icon-circle">✈️</div>
-      <div class="contact-info">
-        <h4>تليكرام شخصي</h4>
-        <p>@Eror_7</p>
-      </div>
-      <div class="contact-arrow">←</div>
-    </a>
-
-    <a href="https://t.me/lb2_c" target="_blank" class="contact-card telegram-channel">
-      <div class="contact-icon-circle">📢</div>
-      <div class="contact-info">
-        <h4>قناة التطبيق</h4>
-        <p>@lb2_c</p>
-      </div>
-      <div class="contact-arrow">←</div>
-    </a>
-  </div>
-
-  <div class="working-hours-card">
-    <div class="working-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <polyline points="12 6 12 12 16 14"/>
-      </svg>
-    </div>
-    <div>
-      <h4>أوقات العمل</h4>
-      <p>السبت - الخميس | 9 صباحاً - 5 مساءً</p>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================
-     ⚙️ Settings
-     ============================================ -->
-<div class="screen" id="settingsScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeAllScreens()">←</button>
-  </div>
-  <h2 class="screen-title">الإعدادات</h2>
-
-  <div class="setting-item">
-    <div class="setting-info">
-      <h4>الوضع الليلي</h4>
-      <p>تفعيل الوضع الداكن</p>
-    </div>
-    <label class="switch">
-      <input type="checkbox" id="darkModeToggle" onchange="toggleTheme()">
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <div class="setting-item">
-    <div class="setting-info">
-      <h4>الإشعارات</h4>
-      <p>تفعيل التنبيهات</p>
-    </div>
-    <label class="switch">
-      <input type="checkbox" checked>
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <div class="setting-item">
-    <div class="setting-info">
-      <h4>اللغة</h4>
-      <p>العربية</p>
-    </div>
-    <span class="arrow">←</span>
-  </div>
-
-  <div class="setting-item">
-    <div class="setting-info">
-      <h4>العملة</h4>
-      <p>دينار عراقي د.ع</p>
-    </div>
-    <span class="arrow">←</span>
-  </div>
-
-  <div class="setting-item clickable" onclick="showToast('قريباً')">
-    <div class="setting-info">
-      <h4>تغيير كلمة المرور</h4>
-    </div>
-    <span class="arrow">←</span>
-  </div>
-
-  <div class="setting-item">
-    <div class="setting-info">
-      <h4>عن التطبيق</h4>
-      <p>v2.1.0</p>
-    </div>
-  </div>
-
-  <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
-</div>
-
-<!-- ============================================
-     📂 Sidebar
-     ============================================ -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="mini-logo">
-      <div class="mini-pulse"></div>
-      <div class="mini-cross">✚</div>
-    </div>
-    <h3>DAWAK دواك</h3>
-    <button class="sidebar-close" onclick="closeSidebar()">×</button>
-  </div>
-  <ul class="sidebar-menu">
-    <li onclick="openNotifications()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-      </svg>
-      <span>التنبيهات</span>
-    </li>
-    <li onclick="openProfile()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      <span>الملف الشخصي</span>
-    </li>
-    <li onclick="openOrders()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
+    <div class="profile-v2-menu-item" onclick="openOrders()">
+      <div class="profile-v2-menu-icon">📊</div>
       <span>سجل الطلبات</span>
-    </li>
-    <li onclick="openSettings()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
+      <span class="profile-v2-menu-arrow">←</span>
+    </div>
+    <div class="profile-v2-menu-item" onclick="showToast('قريباً')">
+      <div class="profile-v2-menu-icon">🏷️</div>
+      <span>العروض المحفوظة</span>
+      <span class="profile-v2-menu-arrow">←</span>
+    </div>
+    <div class="profile-v2-menu-item" onclick="openSettings()">
+      <div class="profile-v2-menu-icon">⚙️</div>
       <span>الإعدادات</span>
-    </li>
-    <li onclick="openAbout()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="16" x2="12" y2="12"/>
-        <line x1="12" y1="8" x2="12.01" y2="8"/>
-      </svg>
-      <span>من نحن</span>
-    </li>
-    <li onclick="openAppDetails()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-        <line x1="12" y1="18" x2="12.01" y2="18"/>
-      </svg>
-      <span>تفاصيل التطبيق</span>
-    </li>
-    <li onclick="openContact()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-      </svg>
-      <span>تواصل معنا</span>
-    </li>
-    <li class="logout-item" onclick="logout()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-      </svg>
-      <span>تسجيل الخروج</span>
-    </li>
-  </ul>
-  <div class="sidebar-footer">
-    <p>الإصدار 2.1.0</p>
-    <p>© 2026 DAWAK دواك</p>
+      <span class="profile-v2-menu-arrow">←</span>
+    </div>
+    <div class="profile-v2-menu-item" onclick="showToast('قريباً')">
+      <div class="profile-v2-menu-icon">❓</div>
+      <span>مساعدة ودعم</span>
+      <span class="profile-v2-menu-arrow">←</span>
+    </div>
+    <div class="profile-v2-menu-item profile-v2-menu-logout" onclick="logout()">
+      <div class="profile-v2-menu-icon">🚪</div>
+      <span>تسجيل خروج</span>
+      <span class="profile-v2-menu-arrow">←</span>
+    </div>
   </div>
-  </div>
-   <!-- ============================================
-     🗺️ Map Screen
-     ============================================ -->
-<div class="screen" id="mapScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeMapScreen()">←</button>
-    <button class="refresh-location-btn" onclick="refreshMyLocation()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="23 4 23 10 17 10"/>
-        <polyline points="1 20 1 14 7 14"/>
-        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-      </svg>
-      تحديث
-    </button>
-  </div>
-  <h2 class="screen-title">الخريطة 🗺️</h2>
-  <p class="screen-subtitle" id="mapSubtitle">جارٍ تحديد موقعك...</p>
-  <div class="gps-info-card" id="gpsInfoCard">
-    <div class="gps-info-row">
-      <span class="gps-info-icon">📍</span>
+ </div>
+    <!-- Pharmacy Dashboard -->
+  <div class="screen" id="pharmacyDashboard">
+    <div class="phdash-v2-header">
       <div>
-        <h4>موقعك الحالي</h4>
-        <p id="gpsAddress">جارٍ التحديد...</p>
+        <h1>أهلاً <span id="pharmacyGreeting">صيدلية</span> 🏪</h1>
+        <p>إدارة صيدليتك اليوم</p>
       </div>
-    </div>
-    <div class="gps-coords">
-      <span id="gpsLat">--</span>
-      <span id="gpsLng">--</span>
-    </div>
-  </div>
-  <div class="map-container" id="mapContainer">
-    <div id="leafletMap"></div>
-    <div class="map-loading" id="mapLoading">
-      <div class="map-spinner"></div>
-      <p>جارٍ تحميل الخريطة...</p>
-    </div>
-  </div>
-  <div class="map-controls">
-    <button class="map-control-btn" onclick="centerOnMe()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>
-      موقعي
-    </button>
-    <button class="map-control-btn" onclick="showAllOrders()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-        <circle cx="12" cy="10" r="3"/>
-      </svg>
-      الطلبات
-    </button>
-  </div>
-</div>
-
-<!-- ============================================
-     🚴 Tracking Screen
-     ============================================ -->
-<div class="screen" id="trackingScreen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="closeTrackingScreen()">←</button>
-    <button class="refresh-location-btn" onclick="refreshTracking()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="23 4 23 10 17 10"/>
-        <polyline points="1 20 1 14 7 14"/>
-        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-      </svg>
-    </button>
-  </div>
-  <h2 class="screen-title">تتبع الطلب 🚴</h2>
-  <p class="screen-subtitle" id="trackingSubtitle">جارٍ تحديد موقع المندوب...</p>
-  <div class="tracking-delivery-card">
-    <div class="tracking-delivery-avatar">🚴</div>
-    <div class="tracking-delivery-info">
-      <h4 id="trackingDeliveryName">المندوب</h4>
-      <p>⭐ 5.0 • في الطريق</p>
-    </div>
-    <button class="tracking-call-btn" onclick="showToast('جارٍ الاتصال...')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-      </svg>
-    </button>
-  </div>
-  <div class="map-container tracking-map-container">
-    <div id="trackingMap"></div>
-  </div>
-  <div class="tracking-status">
-    <div class="tracking-status-row"><span>⏱️ الوقت المتوقع</span><strong id="trackingETA">--</strong></div>
-    <div class="tracking-status-row"><span>📍 المسافة المتبقية</span><strong id="trackingDistance">--</strong></div>
-  </div>
-</div>
-
-<!-- ============================================
-     🧭 Nav Sheet
-     ============================================ -->
-<div class="nav-sheet-overlay" id="navSheetOverlay" onclick="closeNavSheet()"></div>
-<div class="nav-sheet" id="navSheet">
-  <div class="nav-sheet-handle"></div>
-  <h3 class="nav-sheet-title"><span>🧭</span> اختر كيف تريد الانتقال</h3>
-  <p class="nav-sheet-destination" id="navDestination">📍 الوجهة</p>
-  <div class="nav-sheet-options">
-    <button class="nav-sheet-btn waze-btn" onclick="chooseNavigation('waze')">
-      <div class="nav-sheet-btn-text">
-        <h4>Waze</h4>
-        <p>الأفضل للملاحة والزحام</p>
-      </div>
-      <div class="nav-sheet-btn-icon">🚗</div>
-    </button>
-    <button class="nav-sheet-btn google-btn" onclick="chooseNavigation('google')">
-      <div class="nav-sheet-btn-text">
-        <h4>Google Maps</h4>
-        <p>الخريطة الأشهر عالمياً</p>
-      </div>
-      <div class="nav-sheet-btn-icon">🗺️</div>
-    </button>
-    <button class="nav-sheet-btn map-btn" onclick="chooseNavigation('map')">
-      <div class="nav-sheet-btn-text">
-        <h4>عرض على الخريطة هنا</h4>
-        <p>داخل التطبيق</p>
-      </div>
-      <div class="nav-sheet-btn-icon">📍</div>
-    </button>
-  </div>
-  <button class="nav-sheet-cancel" onclick="closeNavSheet()">إلغاء</button>
-</div>
-
-<!-- ============================================
-     📦 Order Sheet
-     ============================================ -->
-<div class="nav-sheet-overlay" id="orderSheetOverlay" onclick="closeOrderSheet()"></div>
-<div class="bottom-sheet" id="orderSheet">
-  <div class="nav-sheet-handle"></div>
-  <h3 class="nav-sheet-title"><span>📦</span> طلب جديد!</h3>
-  <div class="order-card" style="margin-bottom: 16px; background: var(--primary-soft); border-color: var(--border);">
-    <div class="order-top">
-      <span class="order-id" id="orderSheetId">طلب جديد</span>
-      <span class="order-status new">جديد</span>
-    </div>
-    <div class="order-info" id="orderSheetInfo">
-      <p><strong>من:</strong> -</p>
-      <p><strong>إلى:</strong> -</p>
-      <p><strong>العمولة:</strong> <span class="price">-</span></p>
-    </div>
-  </div>
-  <div style="display: flex; gap: 12px;">
-    <button class="btn-accept" style="flex: 1; padding: 16px; font-weight: 800;" onclick="acceptFromSheet()">✅ قبول</button>
-    <button class="btn-reject" style="flex: 1; padding: 16px; font-weight: 800;" onclick="closeOrderSheet()">❌ رفض</button>
-  </div>
-</div>
-
-<!-- ============================================
-     🪟 Edit Profile Modal
-     ============================================ -->
-<div class="modal-overlay" id="editProfileModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>تعديل البيانات</h3>
-      <button class="modal-close" onclick="closeEditProfile()">×</button>
-    </div>
-    <form class="modal-body" onsubmit="saveProfile(event); return false;">
-      <div class="input-group">
-        <label>الاسم الكامل</label>
-        <input type="text" id="editName" placeholder="الاسم الكامل">
-      </div>
-      <div class="input-group">
-        <label>البريد الإلكتروني</label>
-        <input type="email" id="editEmail" placeholder="example@email.com">
-      </div>
-      <div class="input-group" id="editAddressGroup">
-        <label id="editAddressLabel">العنوان</label>
-        <input type="text" id="editAddress" placeholder="بغداد - الكرادة">
-      </div>
-      <button type="submit" class="btn-primary">حفظ التعديلات</button>
-    </form>
-  </div>
-</div>
-
-<!-- ============================================
-     🪟 Product Modal
-     ============================================ -->
-<div class="modal-overlay" id="productModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 id="productModalName">اسم الدواء</h3>
-      <button class="modal-close" onclick="closeProductModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="product-modal-image">
-        <span id="productModalIcon">💊</span>
-      </div>
-      <p class="product-modal-desc" id="productModalDesc">وصف الدواء</p>
-      <div class="product-modal-info">
-        <div class="product-modal-row">
-          <span>السعر</span>
-          <strong id="productModalPrice">0 دينار</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>التصنيف</span>
-          <strong id="productModalCategory">—</strong>
-        </div>
-        <div class="product-modal-row">
-          <span>متوفر</span>
-          <strong id="productModalStock" class="stock-available">متوفر</strong>
-        </div>
-      </div>
-      <div class="quantity-selector">
-        <label>الكمية</label>
-        <div class="quantity-controls">
-          <button type="button" onclick="decreaseModalQuantity()">−</button>
-          <span id="modalQuantity">1</span>
-          <button type="button" onclick="increaseModalQuantity()">+</button>
-        </div>
-      </div>
-      <button class="btn-primary" id="addToCartBtn" onclick="addToCartFromModal()">🛒 أضف إلى السلة</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================
-     🪟 Medicine Modal (legacy)
-     ============================================ -->
-<div class="modal-overlay" id="medicineModal">
-  <div class="modal-content medicine-modal-content">
-    <div class="medicine-header">
-      <button class="medicine-close-btn" onclick="closeMedicineModal()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-      <h3 class="medicine-title" id="medicineModalTitle">إضافة دواء جديد</h3>
-      <button class="medicine-check-btn" onclick="saveMedicineFromHeader()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+      <button class="phdash-v2-avatar" onclick="openProfile()">
+        <span id="pharmacyAvatarLetter">ص</span>
       </button>
     </div>
-    <form class="medicine-body" onsubmit="saveMedicine(event); return false;">
-      <input type="hidden" id="editMedicineId">
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>
-            <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
-          </svg>
-        </div>
-        <input type="text" id="medicineName" class="medicine-input" placeholder="اسم الدواء" required>
-      </div>
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-          </svg>
-        </div>
-        <select id="medicineCategory" class="medicine-input medicine-select" required>
-          <option value="">التصنيف</option>
-          <option value="مسكنات">مسكنات</option>
-          <option value="فيتامينات">فيتامينات</option>
-          <option value="مضاد حيوي">مضاد حيوي</option>
-          <option value="أطفال">أطفال</option>
-          <option value="ضغط">ضغط</option>
-          <option value="سكري">سكري</option>
-          <option value="جهاز هضمي">جهاز هضمي</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-        <div class="medicine-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </div>
-      </div>
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="1" x2="12" y2="23"/>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-        </div>
-        <input type="number" id="medicinePrice" class="medicine-input" placeholder="السعر" min="0" required>
-      </div>
-      <input type="number" id="medicineStock" value="50" min="0" style="display:none;">
-      <input type="text" id="medicineDesc" style="display:none;">
-      <div class="medicine-icon-section">
-        <label class="medicine-icon-label">الأيقونة</label>
-        <div class="medicine-icon-grid">
-          <button type="button" class="medicine-icon-option active" data-icon="💊" onclick="selectIconNew('💊', this)"><span class="icon-emoji">💊</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="💉" onclick="selectIconNew('💉', this)"><span class="icon-emoji">💉</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="🌿" onclick="selectIconNew('🌿', this)"><span class="icon-emoji">🌿</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="🧴" onclick="selectIconNew('🧴', this)"><span class="icon-emoji">🧴</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="💧" onclick="selectIconNew('💧', this)"><span class="icon-emoji">💧</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="❤️" onclick="selectIconNew('❤️', this)"><span class="icon-emoji">❤️</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="🩹" onclick="selectIconNew('🩹', this)"><span class="icon-emoji">🩹</span></button>
-          <button type="button" class="medicine-icon-option" data-icon="📦" onclick="selectIconNew('📦', this)"><span class="icon-emoji">📦</span></button>
-        </div>
-        <input type="hidden" id="medicineIcon" value="💊">
-      </div>
-      <button type="submit" class="medicine-submit-btn" id="medicineSubmitBtn">إضافة إلى المخزون</button>
-    </form>
-  </div>
-</div>
 
-<!-- ============================================
-     🪟 Add Post Modal
-     ============================================ -->
-<div class="modal-overlay" id="addPostModal">
-  <div class="modal-content medicine-modal-content">
-    <div class="medicine-header">
-      <button class="medicine-close-btn" onclick="closeAddPostModal()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
+    <div class="phdash-v2-stats">
+      <div class="phdash-v2-stat">
+        <div class="phdash-v2-stat-icon phdash-v2-stat-green">📦</div>
+        <span class="phdash-v2-stat-num" id="pharmacyNewOrdersCount">0</span>
+        <span class="phdash-v2-stat-label">طلبات جديدة</span>
+      </div>
+      <div class="phdash-v2-stat">
+        <div class="phdash-v2-stat-icon phdash-v2-stat-blue">✓</div>
+        <span class="phdash-v2-stat-num" id="pharmacyDoneTodayCount">0</span>
+        <span class="phdash-v2-stat-label">مكتملة اليوم</span>
+      </div>
+      <div class="phdash-v2-stat">
+        <div class="phdash-v2-stat-icon phdash-v2-stat-orange">💰</div>
+        <span class="phdash-v2-stat-num" id="pharmacyTodayRevenueStat">0</span>
+        <span class="phdash-v2-stat-label">دينار اليوم</span>
+      </div>
+      <div class="phdash-v2-stat">
+        <div class="phdash-v2-stat-icon phdash-v2-stat-yellow">⭐</div>
+        <span class="phdash-v2-stat-num" id="pharmacyRatingStat">4.8</span>
+        <span class="phdash-v2-stat-label">تقييم</span>
+      </div>
+    </div>
+
+    <div class="phdash-v2-actions">
+      <button class="phdash-v2-action-btn" onclick="openAddPostModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        <span>نشر عرض</span>
       </button>
-      <h3 class="medicine-title">نشر عرض جديد</h3>
-      <button class="medicine-check-btn" onclick="savePostFromHeader()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+      <button class="phdash-v2-action-btn" onclick="openInventoryScreen()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>المخزون</span>
       </button>
     </div>
-    <form class="medicine-body" onsubmit="publishPost(event); return false;">
-      <div class="post-upload-section">
-        <label class="medicine-icon-label">صورة الدواء *</label>
-        <div class="post-upload-zone" id="postUploadZone" onclick="openPostImagePicker()">
-          <div class="post-upload-placeholder" id="postUploadPlaceholder">
-            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            <p>اضغط لرفع صورة الدواء</p>
-            <small>JPG, PNG - الحد الأقصى 5MB</small>
-          </div>
-          <div class="post-upload-preview" id="postUploadPreview" style="display:none;">
-            <img id="postImagePreview" src="" alt="معاينة">
-            <button type="button" class="prescription-remove-btn" onclick="removePostImage(event)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <input type="file" id="postImageInput" accept="image/*" style="display:none;" onchange="handlePostImageUpload(event)">
-      </div>
 
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10.5 20.5a7 7 0 0 1-9.9-9.9l10-10a7 7 0 0 1 9.9 9.9l-10 10z"/>
-            <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
-          </svg>
-        </div>
-        <input type="text" id="postTitle" class="medicine-input" placeholder="اسم الدواء" required>
-      </div>
+    <div class="phdash-v2-section">
+      <h3>الطلبات الجديدة</h3>
+      <a href="#" onclick="goToMyOrdersV2(); return false;">عرض الكل</a>
+    </div>
 
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="17" y1="10" x2="3" y2="10"/>
-            <line x1="21" y1="6" x2="3" y2="6"/>
-            <line x1="21" y1="14" x2="3" y2="14"/>
-            <line x1="17" y1="18" x2="3" y2="18"/>
-          </svg>
-        </div>
-        <input type="text" id="postDescription" class="medicine-input" placeholder="وصف الدواء (مضاد حيوي...)" required>
+    <div class="phdash-v2-orders" id="pharmacyDashboardOrdersList">
+      <div class="phdash-v2-empty">
+        <div class="phdash-v2-empty-icon">💊</div>
+        <h4>لا توجد طلبات جديدة</h4>
+        <p>ستظهر هنا الطلبات الواردة</p>
       </div>
-
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="1" x2="12" y2="23"/>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-        </div>
-        <input type="number" id="postPrice" class="medicine-input" placeholder="السعر (دينار)" min="0" required>
-      </div>
-
-      <div class="medicine-input-wrap">
-        <div class="medicine-input-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-          </svg>
-        </div>
-        <select id="postCategory" class="medicine-input medicine-select" required>
-          <option value="">التصنيف</option>
-          <option value="medicine">عقاقير طبية</option>
-          <option value="vitamins">فيتامينات ومكملات</option>
-          <option value="equipment">معدات طبية</option>
-        </select>
-        <div class="medicine-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </div>
-      </div>
-
-      <button type="submit" class="medicine-submit-btn" id="postSubmitBtn">نشر العرض الآن</button>
-    </form>
+    </div>
   </div>
+
+  <!-- Delivery Dashboard -->
+  <div class="screen" id="deliveryDashboard">
+    <div class="deldash-v2-header">
+      <div>
+        <h1>أهلاً <span id="deliveryGreeting">مندوب</span> 🚴</h1>
+        <p>جاهز للعمل اليوم؟</p>
+      </div>
+      <div class="deldash-v2-header-actions">
+        <button class="deldash-v2-notif-btn" onclick="openNotifications()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <button class="deldash-v2-avatar" onclick="openProfile()">
+          <span id="deliveryAvatarLetter">م</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="deldash-v2-radar-section">
+      <div class="deldash-v2-radar" id="radarSimple">
+        <div class="deldash-v2-radar-dot" style="top: 10%; left: 25%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 25%; left: 75%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 45%; left: 88%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 70%; left: 78%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 82%; left: 35%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 60%; left: 12%;"></div>
+        <div class="deldash-v2-radar-dot" style="top: 30%; left: 10%;"></div>
+        <div class="deldash-v2-radar-ring deldash-v2-radar-ring-1"></div>
+        <div class="deldash-v2-radar-ring deldash-v2-radar-ring-2"></div>
+        <div class="deldash-v2-radar-ring deldash-v2-radar-ring-3"></div>
+        <div class="deldash-v2-radar-ring deldash-v2-radar-ring-4"></div>
+        <div class="deldash-v2-radar-core">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M7.76 7.76a6 6 0 0 0 0 8.48"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+        </div>
+        <div class="deldash-v2-radar-text">
+          <span id="radarTitle">ابدأ البحث</span>
+        </div>
+      </div>
+      <button class="deldash-v2-radar-btn" onclick="toggleRadar()" id="radarBtn">
+        <span id="radarBtnText">ابدأ البحث</span>
+      </button>
+    </div>
+
+    <div class="phdash-v2-section">
+      <h3>الطلبات</h3>
+      <a href="#" onclick="goToMyOrdersV2(); return false;">عرض الكل</a>
+    </div>
+
+    <div class="deldash-v2-orders" id="deliveryDashboardOrdersList">
+      <div class="phdash-v2-empty">
+        <div class="phdash-v2-empty-icon">📦</div>
+        <h4>لا توجد طلبات</h4>
+        <p>شغّل الرادار لاستقبال الطلبات</p>
+      </div>
+    </div>
   </div>
-    <!-- ============================================
-       ⭐ Rating Modal
-       ============================================ -->
+
+  <!-- Inventory Screen -->
+  <div class="screen" id="inventoryScreen">
+    <div class="phdash-v2-header">
+      <button class="phdash-v2-back" onclick="closeInventoryScreen()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div>
+        <h1>المخزون 💊</h1>
+        <p id="inventorySubtitle">0 دواء</p>
+      </div>
+      <button class="phdash-v2-add-btn" onclick="openAddMedicineModal()">+ إضافة</button>
+    </div>
+
+    <div class="inventory-v2-stats">
+      <div class="inventory-v2-stat">
+        <span class="inventory-v2-stat-num" id="invTotalMeds">0</span>
+        <span class="inventory-v2-stat-label">دواء</span>
+      </div>
+      <div class="inventory-v2-stat">
+        <span class="inventory-v2-stat-num" id="invLowStock">0</span>
+        <span class="inventory-v2-stat-label">منخفض</span>
+      </div>
+      <div class="inventory-v2-stat">
+        <span class="inventory-v2-stat-num" id="invOutOfStock">0</span>
+        <span class="inventory-v2-stat-label">نفد</span>
+      </div>
+      <div class="inventory-v2-stat">
+        <span class="inventory-v2-stat-num" id="invValue">0</span>
+        <span class="inventory-v2-stat-label">دينار</span>
+      </div>
+    </div>
+
+    <div class="inventory-v2-search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="inventorySearch" placeholder="ابحث عن دواء..." oninput="filterInventory()">
+    </div>
+
+    <div class="inventory-v2-filters">
+      <button class="inventory-v2-filter active" onclick="filterInventoryBy('all', this)">الكل</button>
+      <button class="inventory-v2-filter" onclick="filterInventoryBy('available', this)">متوفر</button>
+      <button class="inventory-v2-filter" onclick="filterInventoryBy('low', this)">منخفض</button>
+      <button class="inventory-v2-filter" onclick="filterInventoryBy('out', this)">نفد</button>
+    </div>
+
+    <div class="inventory-v2-list" id="inventoryList">
+      <div class="phdash-v2-empty">
+        <div class="phdash-v2-empty-icon">💊</div>
+        <h4>لا توجد أدوية</h4>
+        <p>اضغط "+ إضافة" للبدء</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prescription Screen -->
+  <div class="screen" id="prescriptionScreen">
+    <div class="rx-v2-top">
+      <button class="rx-v2-back" onclick="closePrescriptionScreen()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <h2 class="rx-v2-title">روشتتك 📸</h2>
+    </div>
+
+    <div class="rx-v2-upload" id="prescriptionUpload" onclick="openPrescriptionPicker()">
+      <div class="rx-v2-upload-placeholder" id="prescriptionPlaceholder">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>اضغط لرفع الصورة</p>
+        <small>JPG, PNG - الحد الأقصى 5MB</small>
+      </div>
+      <div class="rx-v2-preview" id="prescriptionPreview" style="display:none;">
+        <img id="prescriptionImage" src="" alt="">
+        <button type="button" class="rx-v2-remove" onclick="removePrescriptionImage(event)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <input type="file" id="prescriptionInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePrescriptionUpload(event)">
+
+    <div class="rx-v2-input-group">
+      <label>العنوان</label>
+      <input type="text" id="prescriptionAddress" placeholder="شارع الجامعة، مجمع النخيل، بغداد، العراق">
+    </div>
+
+    <div class="rx-v2-input-group">
+      <label>ملاحظات</label>
+      <textarea id="prescriptionNotes" rows="2" placeholder="إضافة ملاحظات للصيدلي..."></textarea>
+    </div>
+
+    <div class="rx-v2-input-group">
+      <label>الصيدلية</label>
+      <select id="prescriptionPharmacy">
+        <option value="">صيدلية النور</option>
+      </select>
+    </div>
+
+    <div class="rx-v2-input-group">
+      <label>طريقة الدفع</label>
+      <label class="rx-v2-radio active">
+        <input type="radio" name="rxPayment" value="zain" checked>
+        <span class="rx-v2-radio-circle"></span>
+        <span>زين كاش</span>
+      </label>
+      <label class="rx-v2-radio">
+        <input type="radio" name="rxPayment" value="cash">
+        <span class="rx-v2-radio-circle"></span>
+        <span>نقداً</span>
+      </label>
+      <label class="rx-v2-radio">
+        <input type="radio" name="rxPayment" value="asia">
+        <span class="rx-v2-radio-circle"></span>
+        <span>آسيا حوالة</span>
+      </label>
+    </div>
+
+    <button class="rx-v2-submit" onclick="submitPrescription(event)">إرسال الطلب</button>
+  </div>
+
+  <!-- Rating Modal -->
   <div class="modal-overlay" id="ratingModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -2442,7 +1269,7 @@
         <button class="modal-close" onclick="closeRatingModal()">×</button>
       </div>
       <div class="modal-body">
-        <div class="rating-target-info" id="ratingTargetInfo">
+        <div class="rating-target-info">
           <div class="rating-target-icon" id="ratingTargetIcon">🏪</div>
           <div>
             <h4 id="ratingTargetName">صيدلية</h4>
@@ -2451,7 +1278,7 @@
         </div>
         <div class="rating-stars-section">
           <label>تقييمك *</label>
-          <div class="rating-stars" id="ratingStars">
+          <div class="rating-stars">
             <button type="button" class="rating-star" data-value="1" onclick="selectRating(1)">★</button>
             <button type="button" class="rating-star" data-value="2" onclick="selectRating(2)">★</button>
             <button type="button" class="rating-star" data-value="3" onclick="selectRating(3)">★</button>
@@ -2462,7 +1289,7 @@
         </div>
         <div class="input-group">
           <label>تعليق (اختياري)</label>
-          <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك معنا..."></textarea>
+          <textarea id="ratingComment" rows="3" placeholder="شاركنا تجربتك..."></textarea>
         </div>
         <input type="hidden" id="ratingTargetId">
         <input type="hidden" id="ratingTargetType">
@@ -2471,75 +1298,78 @@
     </div>
   </div>
 
-  <!-- ============================================
-       📦 Order Details Modal
-       ============================================ -->
-  <div class="modal-overlay" id="orderDetailsModal">
+  <!-- Add Post Modal -->
+  <div class="modal-overlay" id="addPostModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="orderDetailsTitle">تفاصيل الطلب</h3>
-        <button class="modal-close" onclick="closeOrderDetailsModal()">×</button>
+        <h3>نشر عرض جديد</h3>
+        <button class="modal-close" onclick="closeAddPostModal()">×</button>
       </div>
-      <div class="modal-body">
-        <div class="rating-target-info">
-          <div class="rating-target-icon">📦</div>
-          <div>
-            <h4 id="orderDetailsPharmacy">-</h4>
-            <p>صيدلية</p>
-          </div>
+      <form class="modal-body" onsubmit="publishPost(event); return false;">
+        <div class="input-group">
+          <label>عنوان العرض</label>
+          <input type="text" id="postTitle" placeholder="عرض فيتامين C" required>
         </div>
-        <div class="product-modal-info">
-          <div class="product-modal-row"><span>📍 المسافة</span><strong id="orderDetailsDistance">-</strong></div>
-          <div class="product-modal-row"><span>💰 العمولة</span><strong class="price" id="orderDetailsCommission">-</strong></div>
-          <div class="product-modal-row"><span>⏱️ الوقت المقدر</span><strong>15 دقيقة</strong></div>
-          <div class="product-modal-row"><span>💵 طريقة الدفع</span><strong>كاش</strong></div>
-          <div class="product-modal-row"><span>🏠 عنوان التسليم</span><strong id="orderDetailsAddress">-</strong></div>
+        <div class="input-group">
+          <label>وصف العرض</label>
+          <textarea id="postDescription" rows="3" placeholder="مكمل غذائي فيتامين C..." required></textarea>
         </div>
-        <div style="display: flex; gap: 12px;">
-          <button class="btn-accept" style="flex: 1; padding: 14px; font-size: 15px; font-weight: 800;" onclick="acceptOrderFromDetails()">✅ قبول الطلب</button>
-          <button class="btn-reject" style="flex: 1; padding: 14px; font-size: 15px; font-weight: 800;" onclick="closeOrderDetailsModal()">إغلاق</button>
+        <div class="input-group">
+          <label>نسبة الخصم</label>
+          <input type="number" id="postDiscount" placeholder="20" min="0" max="90">
         </div>
-      </div>
+        <div class="input-group">
+          <label>مدة العرض</label>
+          <input type="date" id="postExpiry">
+        </div>
+        <div class="input-group">
+          <label>السعر (دينار)</label>
+          <input type="number" id="postPrice" placeholder="12000" required>
+        </div>
+        <div class="input-group">
+          <label>التصنيف</label>
+          <select id="postCategory" required>
+            <option value="">التصنيف</option>
+            <option value="medicine">عقاقير طبية</option>
+            <option value="vitamins">فيتامينات</option>
+            <option value="equipment">معدات طبية</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary" id="postSubmitBtn">نشر العرض الآن</button>
+      </form>
     </div>
   </div>
 
-  <!-- ============================================
-       📱 Bottom Navigation
-       ============================================ -->
+  <!-- Bottom Nav -->
   <div class="bottom-nav" id="mainBottomNav" style="display: none;">
-    <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-      </svg>
-      <small>الطلبات</small>
-    </button>
-
-    <button class="nav-btn nav-center active" data-tab="home" onclick="switchTab('home')">
-      <div class="nav-center-icon">
-        <span class="nav-cross">✚</span>
-      </div>
+    <button class="nav-btn" data-tab="home" onclick="switchTab('home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
       <small>الرئيسية</small>
     </button>
-
-    <button class="nav-btn" data-tab="more" onclick="switchTab('more')">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <line x1="3" y1="12" x2="21" y2="12"/>
-        <line x1="3" y1="18" x2="21" y2="18"/>
-      </svg>
-      <small>المزيد</small>
+    <button class="nav-btn" data-tab="orders" onclick="switchTab('orders')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <small>الطلبات</small>
+    </button>
+    <button class="nav-btn" data-tab="cart" onclick="openCartScreen()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <small>السلة</small>
+      <span class="nav-badge" id="cartBadgeNav">0</span>
+    </button>
+    <button class="nav-btn" data-tab="notifications" onclick="openNotifications()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <small>الإشعارات</small>
+    </button>
+    <button class="nav-btn" data-tab="profile" onclick="openProfile()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <small>حسابي</small>
     </button>
   </div>
 
-  <!-- ============================================
-       🔥 Firebase SDK
-       ============================================ -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDo_IU84fPcBf8fUloq6CWHcWMjWIo08kc",
@@ -2553,22 +1383,18 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
 
     window.firebaseApp = app;
     window.firebaseAuth = auth;
     window.firebaseDB = db;
-    window.firebaseStorage = storage;
     window.firebaseProvider = provider;
-
     window.firebaseSignInWithPopup = signInWithPopup;
     window.firebaseSignOut = signOut;
-    window.firebaseOnAuthStateChanged = onAuthStateChanged;
     window.firebaseCreateUser = createUserWithEmailAndPassword;
     window.firebaseSignIn = signInWithEmailAndPassword;
-
+    window.firebaseSendPasswordResetEmail = sendPasswordResetEmail;
     window.firebaseDoc = doc;
     window.firebaseSetDoc = setDoc;
     window.firebaseGetDoc = getDoc;
@@ -2579,15 +1405,9 @@
     window.firebaseWhere = where;
     window.firebaseUpdateDoc = updateDoc;
     window.firebaseDeleteDoc = deleteDoc;
-    window.firebaseOnSnapshot = onSnapshot;
     window.firebaseServerTimestamp = serverTimestamp;
 
-    window.firebaseRef = ref;
-    window.firebaseUploadBytes = uploadBytes;
-    window.firebaseGetDownloadURL = getDownloadURL;
-    window.firebaseDeleteObject = deleteObject;
-
-    console.log('✅ Firebase تم تهيئته بنجاح');
+    console.log('✅ Firebase initialized');
   </script>
 
   <script src="script.js"></script>
@@ -2595,18 +1415,12 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function (r) { console.log('✅ Service Worker مسجل:', r.scope); })
-          .catch(function (e) { console.log('❌ فشل SW:', e); });
-      });
-
-      navigator.serviceWorker.addEventListener('message', function (event) {
-        if (event.data && event.data.type === 'NOTIFICATION_CLICKED') {
-          handleNotificationClick(event.data);
-        }
+        navigator.serviceWorker.register('/sw.js').catch(function(e) {});
       });
     }
   </script>
 
+</body>
+</html>
 </body>
 </html>
