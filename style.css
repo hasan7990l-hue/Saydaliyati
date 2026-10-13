@@ -1552,38 +1552,638 @@ a {
 .reg-btn-blue:hover   { box-shadow: 0 12px 32px var(--shadow-primary); }
 .reg-btn-green:hover  { box-shadow: 0 12px 32px var(--shadow-success); }
 .reg-btn-orange:hover { box-shadow: 0 12px 32px rgba(245, 158, 11, 0.5); }
-
 /* ============================================
-   🏠 Home Header
+   🏠 Home Screen v2 — DAWAK
    ============================================ */
-.home-header {
+
+/* Header: Greeting + Location + Icons */
+.home-top-header {
   display: flex;
-  flex-direction: row;
-  align-items: center;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
   margin-bottom: 20px;
   padding: 4px 0;
 }
 
-.greeting-section { width: 100%; }
+.home-greeting-block {
+  flex: 1;
+  min-width: 0;
+}
 
-.greeting-title {
-  font-size: 24px;
+.home-greeting-text {
+  font-size: 22px;
   font-weight: 900;
   color: var(--text);
-  margin: 0 0 6px 0;
+  margin: 0 0 6px;
   line-height: 1.3;
 }
 
-.greeting-title span { color: var(--primary); }
+.home-greeting-text span {
+  color: var(--primary);
+}
 
-.greeting-sub {
-  font-size: 15px;
+.home-location-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
   color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: all var(--t-base);
+}
+
+.home-location-row:hover {
+  color: var(--primary);
+}
+
+.home-location-row svg {
+  stroke: var(--primary);
+  flex-shrink: 0;
+}
+
+.home-header-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.home-icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t-base);
+}
+
+.home-icon-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.home-icon-btn svg {
+  stroke: var(--text);
+  transition: stroke var(--t-base);
+}
+
+.home-icon-btn:hover svg {
+  stroke: var(--primary);
+}
+
+.home-notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  animation: homeDotPulse 2s ease-in-out infinite;
+}
+
+@keyframes homeDotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.home-avatar-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--hero-btn-primary);
+  border: 2px solid var(--primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all var(--t-base);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--shadow-primary);
+}
+
+.home-avatar-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px var(--shadow-primary);
+}
+
+.home-avatar-btn span {
+  pointer-events: none;
+}
+
+/* Search Bar */
+.home-search-wrapper {
+  margin-bottom: 16px;
+}
+
+.home-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all var(--t-base);
+}
+
+.home-search-bar:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.home-search-bar svg {
+  stroke: var(--text-secondary);
+  flex-shrink: 0;
+  transition: stroke var(--t-base);
+}
+
+.home-search-bar:hover svg {
+  stroke: var(--primary);
+}
+
+.home-search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.home-search-bar input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Prescription CTA (Big Green Card) */
+.home-rx-cta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  border-radius: var(--r-xl);
+  padding: 22px 20px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all var(--t-base);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-rx-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.home-rx-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+}
+
+.home-rx-cta-content {
+  flex: 1;
+  min-width: 0;
+  color: #FFFFFF;
+  position: relative;
+  z-index: 1;
+}
+
+.home-rx-cta-content h3 {
+  font-size: 17px;
+  font-weight: 900;
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.home-rx-cta-content p {
+  font-size: 12px;
+  opacity: 0.95;
+  margin: 0;
   font-weight: 500;
+  line-height: 1.5;
+}
+
+.home-rx-cta-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+
+.home-rx-cta-icon svg {
+  stroke: #FFFFFF;
+}
+
+/* Section Headers */
+.home-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  margin-top: 8px;
+}
+
+.home-section-header h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text);
   margin: 0;
 }
 
+.home-see-all {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--t-base);
+  cursor: pointer;
+}
+
+.home-see-all:hover {
+  color: var(--primary-hover);
+  transform: translateX(-3px);
+  display: inline-block;
+}
+
+/* Categories Scroll */
+.home-categories-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.home-cat-chip {
+  padding: 10px 18px;
+  border-radius: var(--r-pill);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--t-base);
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.home-cat-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.home-cat-chip.active {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px var(--shadow-primary);
+}
+
+/* Pharmacies List */
+.home-pharmacies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.home-pharmacy-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px;
+  cursor: pointer;
+  transition: all var(--t-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.home-pharmacy-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px var(--shadow-primary);
+  transform: translateY(-2px);
+}
+
+.home-pharmacy-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.home-pharmacy-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-pharmacy-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-pharmacy-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.home-pharmacy-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.home-pharmacy-rating {
+  color: #FBBF24 !important;
+  font-weight: 800 !important;
+}
+
+.home-pharmacy-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--success);
+  padding: 3px 10px;
+  background: var(--success-soft);
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.home-pharmacy-status.closed {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.home-pharmacy-status .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: homeStatusPulse 2s ease-in-out infinite;
+}
+
+@keyframes homeStatusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Offers Scroll */
+.home-offers-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 24px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-offers-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.home-offer-card {
+  min-width: 180px;
+  max-width: 180px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 12px;
+  cursor: pointer;
+  transition: all var(--t-base);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-offer-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px var(--shadow-primary);
+  transform: translateY(-3px);
+}
+
+.home-offer-image {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--r-md);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-offer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.home-offer-image .offer-emoji {
+  font-size: 60px;
+  line-height: 1;
+}
+
+.home-offer-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+  min-height: 34px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.home-offer-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-offer-price {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.3px;
+}
+
+.home-offer-price small {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin-right: 2px;
+}
+
+.home-offer-plus {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  flex-shrink: 0;
+  transition: all var(--t-fast);
+  box-shadow: 0 4px 10px var(--shadow-primary);
+}
+
+.home-offer-card:hover .home-offer-plus {
+  background: var(--primary-hover);
+  transform: scale(1.1) rotate(90deg);
+}
+
+/* Loading State */
+.home-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px 20px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.home-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: homeSpin 0.8s linear infinite;
+}
+
+@keyframes homeSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.home-empty-state {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  background: var(--bg-secondary);
+  border-radius: var(--r-md);
+  border: 1px dashed var(--border);
+}
+
+.home-empty-state .empty-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+  opacity: 0.6;
+  display: block;
+}
+
+/* Responsive — Mobile */
+@media (max-width: 480px) {
+  .home-greeting-text { font-size: 20px; }
+  .home-location-row { font-size: 12px; }
+  
+  .home-icon-btn,
+  .home-avatar-btn { width: 40px; height: 40px; }
+  .home-avatar-btn { font-size: 16px; }
+  
+  .home-rx-cta { padding: 18px 16px; }
+  .home-rx-cta-content h3 { font-size: 15px; }
+  .home-rx-cta-content p { font-size: 11px; }
+  .home-rx-cta-icon { width: 50px; height: 50px; }
+  .home-rx-cta-icon svg { width: 28px; height: 28px; }
+  
+  .home-section-header h3 { font-size: 15px; }
+  .home-see-all { font-size: 12px; }
+  
+  .home-cat-chip { padding: 8px 14px; font-size: 12px; }
+  
+  .home-pharmacy-logo { width: 48px; height: 48px; font-size: 20px; }
+  .home-pharmacy-name { font-size: 14px; }
+  
+  .home-offer-card { min-width: 160px; max-width: 160px; padding: 10px; }
+  .home-offer-title { font-size: 12px; min-height: 32px; }
+  .home-offer-price { font-size: 14px; }
+  .home-offer-plus { width: 28px; height: 28px; font-size: 16px; }
+  }
 /* ============================================
    🎯 Mini Logo
    ============================================ */
