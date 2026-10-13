@@ -503,120 +503,103 @@
   </div>
   </div>
   <!-- ============================================
-     🏠 Home Screen
+     🏠 Home Screen — DAWAK
      ============================================ -->
 <div class="screen" id="homeScreen">
-  <div class="home-header">
-    <div class="greeting-section">
-      <h1 class="greeting-title">أهلاً <span id="userGreeting">مستخدم</span> 👋</h1>
-      <p class="greeting-sub">📍 بغداد، المنصور</p>
+  
+  <!-- Header -->
+  <div class="home-top-header">
+    <div class="home-greeting-block">
+      <h1 class="home-greeting-text">
+        أهلاً <span id="homeUserName">مستخدم</span> 👋
+      </h1>
+      <div class="home-location-row" onclick="detectUserLocation()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span id="homeUserLocation">جاري تحديد موقعك...</span>
+      </div>
     </div>
-    <div class="home-avatar" id="homeAvatar" onclick="openProfile()">
-      <span id="homeAvatarLetter">م</span>
+    <div class="home-header-icons">
+      <button class="home-icon-btn" onclick="openNotifications()" aria-label="الإشعارات">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <span class="home-notif-dot" id="homeNotifDot" style="display:none;"></span>
+      </button>
+      <button class="home-avatar-btn" onclick="openProfile()" id="homeAvatarBtn">
+        <span id="homeAvatarLetter">م</span>
+      </button>
     </div>
   </div>
 
   <!-- Search Bar -->
-  <div class="search-wrapper">
-    <div class="search-bar">
+  <div class="home-search-wrapper">
+    <div class="home-search-bar" onclick="openSearchScreen()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/>
         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" placeholder="ابحث عن دواء، صيدلية...">
+      <input type="text" placeholder="ابحث عن دواء، صيدلية..." readonly>
     </div>
   </div>
 
   <!-- Prescription CTA -->
-  <div class="prescription-cta" onclick="openPrescriptionScreen()">
-    <div class="prescription-cta-icon">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <div class="home-rx-cta" onclick="openPrescriptionScreen()">
+    <div class="home-rx-cta-content">
+      <h3>ارفع روشتك الآن 📸</h3>
+      <p>ارفع صورة الروشتة ويصلك الدواء خلال 30 دقيقة</p>
+    </div>
+    <div class="home-rx-cta-icon">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
         <circle cx="12" cy="13" r="4"/>
       </svg>
     </div>
-    <div class="prescription-cta-content">
-      <h3>ارفع روشتك الآن 📸</h3>
-      <p>ارفع صورة الروشتة ويصلك الدواء خلال 30 دقيقة</p>
-    </div>
-    <div class="prescription-cta-arrow">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="19" y1="12" x2="5" y2="12"/>
-        <polyline points="12 19 5 12 12 5"/>
-      </svg>
-    </div>
-  </div>
-
-  <!-- Cart CTA -->
-  <div class="cart-cta" onclick="openCartScreen()">
-    <div class="cart-cta-icon">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="9" cy="21" r="1"/>
-        <circle cx="20" cy="21" r="1"/>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-      </svg>
-    </div>
-    <div class="cart-cta-content">
-      <h3>سلة الأدوية 🛒</h3>
-      <p>أضف أدويتك من المخزون واطلب</p>
-    </div>
-    <div class="cart-cta-badge" id="cartBadge">0</div>
   </div>
 
   <!-- Categories -->
-  <div class="section-header">
+  <div class="home-section-header">
     <h3>التصنيفات</h3>
   </div>
-  <div class="categories-scroll">
-    <button class="cat-chip active">💊 الكل</button>
-    <button class="cat-chip">🧴 عناية</button>
-    <button class="cat-chip">💉 مضادات</button>
-    <button class="cat-chip">🍊 فيتامينات</button>
-    <button class="cat-chip">🩹 مسكنات</button>
+  <div class="home-categories-scroll" id="homeCategoriesScroll">
+    <button class="home-cat-chip active" data-cat="all" onclick="filterHomeCategory('all', this)">💊 الكل</button>
+    <button class="home-cat-chip" data-cat="care" onclick="filterHomeCategory('care', this)">🧴 عناية</button>
+    <button class="home-cat-chip" data-cat="antibiotics" onclick="filterHomeCategory('antibiotics', this)">💉 مضادات</button>
+    <button class="home-cat-chip" data-cat="vitamins" onclick="filterHomeCategory('vitamins', this)">🍊 فيتامينات</button>
+    <button class="home-cat-chip" data-cat="painkillers" onclick="filterHomeCategory('painkillers', this)">🩹 مسكنات</button>
   </div>
 
   <!-- Nearby Pharmacies -->
-  <div class="section-header">
+  <div class="home-section-header">
     <h3>صيدليات قريبة منك</h3>
-    <a href="#" onclick="loadPharmaciesForPatient(); return false;">عرض الكل ←</a>
+    <a href="#" onclick="openPharmaciesList(); return false;" class="home-see-all">
+      عرض الكل ←
+    </a>
   </div>
-
-  <div class="pharmacy-list" id="pharmacyListContainer">
-    <div style="text-align:center;padding:20px;color:var(--text-muted);">⏳ جاري التحميل...</div>
-  </div>
-
-  <!-- Posts Feed -->
-  <div class="posts-feed-header">
-    <div class="posts-feed-title">
-      <span class="posts-feed-badge">عروض <span>اليوم</span></span>
-      <p class="posts-feed-subtitle">أحدث العروض من الصيدليات</p>
+  <div class="home-pharmacies-list" id="homePharmaciesList">
+    <div class="home-loading">
+      <div class="home-spinner"></div>
+      <span>جاري تحميل الصيدليات...</span>
     </div>
-    <button class="posts-feed-add-btn" onclick="openAddPostModal()">
-      <span>إضافة عرض</span>
-      <span class="add-icon">+</span>
-    </button>
   </div>
 
-  <div class="posts-filters-scroll">
-    <button class="post-filter-chip active" onclick="filterPosts('all', this)">الكل</button>
-    <button class="post-filter-chip" onclick="filterPosts('medicine', this)">عقاقير طبية</button>
-    <button class="post-filter-chip" onclick="filterPosts('vitamins', this)">فيتامينات</button>
-    <button class="post-filter-chip" onclick="filterPosts('equipment', this)">معدات</button>
+  <!-- Today's Offers -->
+  <div class="home-section-header">
+    <h3>عروض اليوم 🔥</h3>
+    <a href="#" onclick="openAllPosts(); return false;" class="home-see-all">
+      عرض الكل ←
+    </a>
   </div>
-
-  <div class="posts-counter">
-    إجمالي العروض النشطة: <span id="postsCount">0</span>
-  </div>
-
-  <div class="posts-list" id="postsList">
-    <div class="posts-empty">
-      <div class="posts-empty-icon">📢</div>
-      <h3>لا توجد عروض حالياً</h3>
-      <p>تابعنا قريباً - الصيدليات تنشر عروضاً جديدة</p>
+  <div class="home-offers-scroll" id="homeOffersScroll">
+    <div class="home-loading">
+      <div class="home-spinner"></div>
+      <span>جاري تحميل العروض...</span>
     </div>
   </div>
 </div>
-
 <!-- ============================================
      🏪 Pharmacy Dashboard
      ============================================ -->
