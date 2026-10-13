@@ -3972,7 +3972,7 @@ function renderPostsFeed() {
               '<div class="post-price-value">' + priceFormatted + '<small>د.ع</small></div>' +
             '</div>' +
           '</div>' +
-          '<button class="post-order-btn" onclick="orderFromPost(\'' + post.id + '\')">' +
+          '<button class="post-order-btn" onclick="orderFromPostV2(\'' + post.id + '\')">' +
             '<span class="order-icon">⚡</span>' +
             '<span>اطلب الآن</span>' +
           '</button>' +
