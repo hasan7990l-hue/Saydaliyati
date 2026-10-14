@@ -1,13 +1,11 @@
 // ============================================
-// 🔥 SUPABASE.JS — الاتصال بقاعدة البيانات
+// 🔥 SUPABASE.JS — Database Connection
 // ============================================
 
-// ═══════════════════════════════════════
-// 🌐 تحميل مكتبة Supabase
-// ═══════════════════════════════════════
-const supabaseScript = document.createElement('script');
-supabaseScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-supabaseScript.onload = () => {
+// ═══ Load Supabase Library ═══
+const _sbScript = document.createElement('script');
+_sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+_sbScript.onload = () => {
   window.supabase = window.supabase.createClient(
     CONFIG.SUPABASE.url,
     CONFIG.SUPABASE.key
@@ -15,32 +13,24 @@ supabaseScript.onload = () => {
   console.log('✅ Supabase Connected');
   window.dispatchEvent(new Event('supabase-ready'));
 };
-document.head.appendChild(supabaseScript);
+document.head.appendChild(_sbScript);
 
-// ═══════════════════════════════════════
-// 🎯 اختبار الاتصال
-// ═══════════════════════════════════════
+// ═══ Test Connection ═══
 async function testSupabaseConnection() {
   try {
     const { data, error } = await window.supabase
       .from('users')
       .select('count')
       .limit(1);
-    
     if (error) throw error;
-    console.log('✅ Supabase is ready');
     return true;
   } catch (error) {
-    console.error('❌ Supabase error:', error);
+    console.error('❌ Supabase:', error);
     return false;
   }
 }
 
-// ═══════════════════════════════════════
-// 👤 المستخدمين
-// ═══════════════════════════════════════
-
-// 1. إنشاء مستخدم جديد
+// ═══ Users ═══
 async function createUser(userData) {
   try {
     const { data, error } = await window.supabase
@@ -54,17 +44,13 @@ async function createUser(userData) {
       }])
       .select()
       .single();
-    
     if (error) throw error;
-    console.log('✅ User created:', data);
     return { success: true, user: data };
   } catch (error) {
-    console.error('❌ Create user error:', error);
     return { success: false, error: error.message };
   }
 }
 
-// 2. جلب مستخدم برقم الهاتف
 async function getUserByPhone(phone) {
   try {
     const { data, error } = await window.supabase
@@ -72,7 +58,6 @@ async function getUserByPhone(phone) {
       .select('*')
       .eq('phone', phone)
       .single();
-    
     if (error) throw error;
     return { success: true, user: data };
   } catch (error) {
@@ -80,7 +65,6 @@ async function getUserByPhone(phone) {
   }
 }
 
-// 3. جلب مستخدم بالـ ID
 async function getUserById(userId) {
   try {
     const { data, error } = await window.supabase
@@ -88,7 +72,6 @@ async function getUserById(userId) {
       .select('*')
       .eq('id', userId)
       .single();
-    
     if (error) throw error;
     return { success: true, user: data };
   } catch (error) {
@@ -96,19 +79,14 @@ async function getUserById(userId) {
   }
 }
 
-// 4. تحديث بيانات المستخدم
 async function updateUser(userId, updates) {
   try {
     const { data, error } = await window.supabase
       .from('users')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString()
-      })
+      .update({ ...updates, updated_at: new Date().toISOString() })
       .eq('id', userId)
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, user: data };
   } catch (error) {
@@ -116,23 +94,16 @@ async function updateUser(userId, updates) {
   }
 }
 
-// ═══════════════════════════════════════
-// 🪪 OTP — التحقق من الهاتف
-// ═══════════════════════════════════════
-
-// 1. إرسال OTP
+// ═══ OTP ═══
 async function sendOTP(phone) {
   try {
-    // أنشئ كود عشوائي 4 أرقام
     const code = Math.floor(1000 + Math.random() * 9000).toString();
     
-    // احذف الأكواد القديمة
     await window.supabase
       .from('otp_codes')
       .delete()
       .eq('phone', phone);
     
-    // احفظ الكود الجديد
     const { error } = await window.supabase
       .from('otp_codes')
       .insert([{
@@ -143,22 +114,13 @@ async function sendOTP(phone) {
     
     if (error) throw error;
     
-    // 🎯 في الإنتاج: هنا نرسل OTP عبر IraqOTPAPI
-    // حالياً — نظهره في الـ console للتطوير
-    console.log('📱 OTP:', code);
-    console.log('📱 Phone:', phone);
-    
-    // 🔔 إرسال عبر IraqOTPAPI (لاحقاً)
-    // await sendViaIraqOTP(phone, code);
-    
+    console.log('📱 OTP:', code, '→', phone);
     return { success: true, code: code };
   } catch (error) {
-    console.error('❌ Send OTP error:', error);
     return { success: false, error: error.message };
   }
 }
 
-// 2. التحقق من OTP
 async function verifyOTP(phone, code) {
   try {
     const { data, error } = await window.supabase
@@ -174,7 +136,6 @@ async function verifyOTP(phone, code) {
       return { success: false, error: 'الكود غير صحيح أو منتهي' };
     }
     
-    // علّم الكود كمستخدم
     await window.supabase
       .from('otp_codes')
       .update({ used: true })
@@ -186,11 +147,7 @@ async function verifyOTP(phone, code) {
   }
 }
 
-// ═══════════════════════════════════════
-// 📦 الطلبات
-// ═══════════════════════════════════════
-
-// 1. إنشاء طلب جديد
+// ═══ Orders ═══
 async function createOrder(orderData) {
   try {
     const { data, error } = await window.supabase
@@ -215,7 +172,6 @@ async function createOrder(orderData) {
       }])
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, order: data };
   } catch (error) {
@@ -223,7 +179,6 @@ async function createOrder(orderData) {
   }
 }
 
-// 2. جلب طلبات المستخدم
 async function getUserOrders(userId) {
   try {
     const { data, error } = await window.supabase
@@ -231,7 +186,6 @@ async function getUserOrders(userId) {
       .select('*')
       .eq('customer_id', userId)
       .order('created_at', { ascending: false });
-    
     if (error) throw error;
     return { success: true, orders: data };
   } catch (error) {
@@ -239,7 +193,6 @@ async function getUserOrders(userId) {
   }
 }
 
-// 3. جلب الطلبات المتاحة للمندوب
 async function getAvailableOrders() {
   try {
     const { data, error } = await window.supabase
@@ -248,7 +201,6 @@ async function getAvailableOrders() {
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(20);
-    
     if (error) throw error;
     return { success: true, orders: data };
   } catch (error) {
@@ -256,7 +208,6 @@ async function getAvailableOrders() {
   }
 }
 
-// 4. قبول الطلب
 async function acceptOrder(orderId, driverId) {
   try {
     const { data, error } = await window.supabase
@@ -269,7 +220,6 @@ async function acceptOrder(orderId, driverId) {
       .eq('id', orderId)
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, order: data };
   } catch (error) {
@@ -277,16 +227,11 @@ async function acceptOrder(orderId, driverId) {
   }
 }
 
-// 5. تحديث حالة الطلب
 async function updateOrderStatus(orderId, status) {
   try {
     const updates = { status: status };
-    
-    if (status === 'picked_up') {
-      updates.picked_up_at = new Date().toISOString();
-    } else if (status === 'delivered') {
-      updates.delivered_at = new Date().toISOString();
-    }
+    if (status === 'picked_up') updates.picked_up_at = new Date().toISOString();
+    else if (status === 'delivered') updates.delivered_at = new Date().toISOString();
     
     const { data, error } = await window.supabase
       .from('orders')
@@ -294,7 +239,6 @@ async function updateOrderStatus(orderId, status) {
       .eq('id', orderId)
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, order: data };
   } catch (error) {
@@ -302,11 +246,7 @@ async function updateOrderStatus(orderId, status) {
   }
 }
 
-// ═══════════════════════════════════════
-// 🛵 المندوبين
-// ═══════════════════════════════════════
-
-// 1. إنشاء ملف مندوب
+// ═══ Drivers ═══
 async function createDriverProfile(userId, vehicleType) {
   try {
     const { data, error } = await window.supabase
@@ -319,7 +259,6 @@ async function createDriverProfile(userId, vehicleType) {
       }])
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, driver: data };
   } catch (error) {
@@ -327,7 +266,6 @@ async function createDriverProfile(userId, vehicleType) {
   }
 }
 
-// 2. تحديث حالة المندوب
 async function updateDriverStatus(userId, isOnline, lat, lng) {
   try {
     const { data, error } = await window.supabase
@@ -341,7 +279,6 @@ async function updateDriverStatus(userId, isOnline, lat, lng) {
       .eq('user_id', userId)
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, driver: data };
   } catch (error) {
@@ -349,10 +286,7 @@ async function updateDriverStatus(userId, isOnline, lat, lng) {
   }
 }
 
-// ═══════════════════════════════════════
-// 🔔 الإشعارات
-// ═══════════════════════════════════════
-
+// ═══ Notifications ═══
 async function createNotification(userId, title, message, type) {
   try {
     const { data, error } = await window.supabase
@@ -365,7 +299,6 @@ async function createNotification(userId, title, message, type) {
       }])
       .select()
       .single();
-    
     if (error) throw error;
     return { success: true, notification: data };
   } catch (error) {
@@ -381,7 +314,6 @@ async function getUserNotifications(userId) {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(50);
-    
     if (error) throw error;
     return { success: true, notifications: data };
   } catch (error) {
@@ -389,10 +321,7 @@ async function getUserNotifications(userId) {
   }
 }
 
-// ═══════════════════════════════════════
-// 💼 المحفظة
-// ═══════════════════════════════════════
-
+// ═══ Wallet ═══
 async function getWallet(userId) {
   try {
     const { data, error } = await window.supabase
@@ -402,13 +331,11 @@ async function getWallet(userId) {
       .single();
     
     if (error && error.code === 'PGRST116') {
-      // ما عنده محفظة — أنشئ واحدة
       const { data: newWallet, error: createError } = await window.supabase
         .from('wallets')
         .insert([{ user_id: userId, balance: 0, total_earned: 0 }])
         .select()
         .single();
-      
       if (createError) throw createError;
       return { success: true, wallet: newWallet };
     }
@@ -420,40 +347,25 @@ async function getWallet(userId) {
   }
 }
 
-// ═══════════════════════════════════════
-// 🌐 جعل الدوال متاحة عالمياً
-// ═══════════════════════════════════════
+// ═══ Export ═══
 window.DB = {
-  // Users
+  testSupabaseConnection,
   createUser,
   getUserByPhone,
   getUserById,
   updateUser,
-  
-  // OTP
   sendOTP,
   verifyOTP,
-  
-  // Orders
   createOrder,
   getUserOrders,
   getAvailableOrders,
   acceptOrder,
   updateOrderStatus,
-  
-  // Drivers
   createDriverProfile,
   updateDriverStatus,
-  
-  // Notifications
   createNotification,
   getUserNotifications,
-  
-  // Wallet
-  getWallet,
-  
-  // Test
-  testSupabaseConnection
+  getWallet
 };
 
 console.log('🔥 Supabase.js loaded');
