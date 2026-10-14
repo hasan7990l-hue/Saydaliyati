@@ -1,15 +1,12 @@
 // ============================================
-// ⚙️ CONFIG.JS — إعدادات تطبيق وصّلها
+// ⚙️ CONFIG.JS — Wassilha App Config
 // ============================================
 
 const CONFIG = {
-  // ═══════════════════════════════════════
-  // 🏢 معلومات التطبيق
-  // ═══════════════════════════════════════
   APP: {
     name: 'وصّلها',
     nameEn: 'Wassilha',
-    tagline: 'طلباتك، بسرعة البرق ⚡',
+    tagline: 'خدمة توصيل موثوقة',
     version: '1.0.0',
     region: 'الرصافة - بغداد',
     currency: 'د.ع',
@@ -17,87 +14,36 @@ const CONFIG = {
     direction: 'rtl'
   },
 
-  // ═══════════════════════════════════════
-  // 🔥 Supabase
-  // ═══════════════════════════════════════
   SUPABASE: {
     url: 'https://fprcpijjbwnknebbcwns.supabase.co',
     key: 'sb_publishable_LFHm7iks01yrN59-mBIjZw_OdQkwuk7'
   },
 
-  // ═══════════════════════════════════════
-  // 💰 نظام التسعير
-  // ═══════════════════════════════════════
   PRICING: {
-    basePrice: 1000,        // رسم أساسي
-    pricePerKm: 500,        // سعر الكيلو
-    minPrice: 1500,         // حد أدنى
-    maxPrice: 20000,        // حد أعلى
-    
-    // نسب التوزيع
-    driverShare: 0.80,      // 80% للمندوب
-    platformShare: 0.20     // 20% للمنصة
+    basePrice: 1000,
+    pricePerKm: 500,
+    minPrice: 1500,
+    maxPrice: 20000,
+    driverShare: 0.80,
+    platformShare: 0.20
   },
 
-  // ═══════════════════════════════════════
-  // 📍 نطاقات البحث
-  // ═══════════════════════════════════════
   RANGES: {
-    ultraNear: 2000,        // 2 كم — قريب جداً
-    near: 5000,             // 5 كم — قريب
-    medium: 8000,           // 8 كم — متوسط
-    far: 15000              // 15 كم — بعيد
+    ultraNear: 2,
+    near: 5,
+    medium: 8,
+    far: 15
   },
 
-  // ═══════════════════════════════════════
-  // 🎯 معاملات التسعير الذكي
-  // ═══════════════════════════════════════
-  MULTIPLIERS: {
-    // الوقت
-    time: {
-      morning: 1.2,         // 6-10 صباحاً
-      day: 1.0,             // 10-4 مساءً
-      evening: 1.3,         // 4-8 مساءً
-      night: 1.5,           // 8-12 ليلاً
-      deepNight: 1.8        // 12-6 صباحاً
-    },
-    
-    // الطقس
-    weather: {
-      clear: 1.0,
-      cloudy: 1.05,
-      lightRain: 1.3,
-      heavyRain: 1.6,
-      fog: 1.5,
-      heat: 1.2
-    },
-    
-    // نوع الطرد
-    package: {
-      documents: 1.0,
-      normal: 1.0,
-      food: 1.15,
-      gift: 1.1,
-      medicine: 1.2,
-      electronics: 1.3
-    }
-  },
-
-  // ═══════════════════════════════════════
-  // 🗺️ الخرائط
-  // ═══════════════════════════════════════
   MAPS: {
-    default: 'osm',           // OSM / google / waze
+    default: 'osm',
     defaultCenter: {
-      lat: 33.3152,           // بغداد
+      lat: 33.3152,
       lng: 44.3661
     },
     defaultZoom: 13
   },
 
-  // ═══════════════════════════════════════
-  // 📞 الدعم
-  // ═══════════════════════════════════════
   SUPPORT: {
     phone: '+9647751459130',
     whatsapp: '+9647751459130',
@@ -105,39 +51,27 @@ const CONFIG = {
     telegram: '@wassilha_iraq'
   },
 
-  // ═══════════════════════════════════════
-  // ⏱️ أوقات الانتظار
-  // ═══════════════════════════════════════
   TIMERS: {
-    otpExpiry: 300000,        // 5 دقائق
-    orderTimeout: 60000,      // 60 ثانية للقبول
-    refreshInterval: 30000    // تحديث كل 30 ثانية
+    otpExpiry: 300000,
+    orderTimeout: 60000,
+    refreshInterval: 30000
   },
 
-  // ═══════════════════════════════════════
-  // 🎁 العروض
-  // ═══════════════════════════════════════
   OFFERS: {
-    welcome: 30,              // 30% خصم أول طلب
-    inviteFriend: 5000,       // 5000 د.ع لدعوة صديق
-    firstOrders: 3            // أول 3 طلبات لها عروض
+    welcome: 30,
+    inviteFriend: 5000,
+    firstOrders: 3
   },
 
-  // ═══════════════════════════════════════
-  // 🔐 المفاتيح
-  // ═══════════════════════════════════════
   STORAGE_KEYS: {
     user: 'wassilha_user',
     token: 'wassilha_token',
     theme: 'wassilha_theme',
     mapProvider: 'wassilha_map',
-    onboarding: 'wassilha_onboarding'
+    location: 'wassilha_location'
   }
 };
 
-// ═══════════════════════════════════════
-// 🌐 جعل الإعدادات متاحة عالمياً
-// ═══════════════════════════════════════
 window.CONFIG = CONFIG;
 
 console.log('⚙️ Config loaded:', CONFIG.APP.name);
