@@ -1,7 +1,6 @@
 /* ============================================
-   DAWAK دواك - v16
-   Complete Fix — Part 1/5
-   Variables + Base + Splash + Onboarding
+   DAWAK دواك - v17 (Fixed)
+   Part 1/5 — Variables + Base + Splash + Onboarding + Login + Role
    ============================================ */
 
 /* ============================================
@@ -39,6 +38,7 @@
   --r-pill: 999px;
   --t-fast: 0.2s ease;
   --t-base: 0.3s ease;
+  --nav-height: 68px;
 }
 
 [data-theme="light"] {
@@ -91,6 +91,10 @@ select {
   font-size: inherit;
   color: inherit;
   outline: none;
+}
+
+button {
+  cursor: pointer;
 }
 
 img {
@@ -539,7 +543,12 @@ a {
 .ob-next:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-   }
+}
+
+.ob-next.finish {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
 /* ============================================
    🔐 Login Screen
    ============================================ */
@@ -747,6 +756,7 @@ a {
   font-weight: 600;
   text-align: right;
   font-family: inherit;
+  transition: all 0.3s ease;
 }
 
 .login-input::placeholder {
@@ -1060,6 +1070,7 @@ a {
   text-align: center;
 }
 
+/* ⏩ الجزء 2/5 يكمل من هنا — Register + Home + Orders + Cart */
 /* ============================================
    📝 Registration Screens
    ============================================ */
@@ -1071,6 +1082,7 @@ a {
   position: fixed !important;
   inset: 0;
   overflow-y: auto !important;
+  overflow-x: hidden;
 }
 
 .reg-bg {
@@ -1209,6 +1221,7 @@ a {
   max-width: 400px;
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1.5px solid rgba(16, 185, 129, 0.25);
   border-radius: 24px;
   padding: 22px 18px;
@@ -1238,6 +1251,7 @@ a {
   font-weight: 500;
   text-align: right;
   font-family: inherit;
+  transition: all 0.3s ease;
 }
 
 .reg-input::placeholder {
@@ -1247,6 +1261,10 @@ a {
 .reg-input:focus {
   border-color: #10B981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.reg-input[type="password"] {
+  padding-left: 48px;
 }
 
 .reg-icon {
@@ -1314,6 +1332,7 @@ a {
   height: 18px;
   accent-color: #10B981;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .reg-terms a {
@@ -1386,6 +1405,7 @@ a {
   border-color: #4285F4;
 }
 
+/* Pharmacy Map */
 .reg-map-wrap {
   display: flex;
   flex-direction: column;
@@ -1448,7 +1468,8 @@ a {
 
 .reg-map-status.ok {
   color: #10B981;
-   }
+}
+
 /* ============================================
    🏠 Home Screen
    ============================================ */
@@ -2222,6 +2243,8 @@ a {
   align-items: center;
   padding-top: 12px;
   border-top: 1px solid rgba(148, 163, 184, 0.1);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .order-total {
@@ -2239,6 +2262,7 @@ a {
 .order-actions {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .order-btn {
@@ -2358,6 +2382,7 @@ a {
   cursor: pointer;
   font-size: 18px;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .cart-clear:hover {
@@ -2445,6 +2470,8 @@ a {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .cart-qty-btn {
@@ -2489,6 +2516,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .cart-remove:hover {
@@ -2574,6 +2602,7 @@ a {
   font-weight: 800;
   cursor: pointer;
   font-family: inherit;
+  transition: all 0.3s ease;
 }
 
 .cart-coupon-wrap button:hover {
@@ -2725,6 +2754,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .cart-address-wrap button:hover {
@@ -2772,12 +2802,15 @@ a {
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
   font-family: inherit;
   margin-top: 8px;
+  transition: all 0.3s ease;
 }
 
 .cart-checkout:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-   }
+}
+
+/* ⏩ الجزء 3/5 يكمل من هنا — Product + Tracking + Notifications + Settings + Conversations + Chat + Call */
 /* ============================================
    💊 Product Details Screen
    ============================================ */
@@ -3127,6 +3160,9 @@ a {
   line-height: 1.3;
   min-height: 32px;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .pdp-alt-price {
@@ -3389,6 +3425,7 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .track-call-btn:hover {
@@ -3561,6 +3598,7 @@ a {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .notif-back:hover {
@@ -3772,6 +3810,7 @@ a {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .settings-back:hover {
@@ -4348,6 +4387,7 @@ a {
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
   background: #0F172A;
   border-top: 1px solid rgba(148, 163, 184, 0.15);
   position: fixed;
@@ -4409,6 +4449,7 @@ a {
   font-size: 14px;
   font-family: inherit;
   text-align: right;
+  min-width: 0;
 }
 
 .chat-input:focus {
@@ -4670,7 +4711,9 @@ a {
 
 .call-end-btn svg {
   stroke: #FFFFFF;
-   }
+}
+
+/* ⏩ الجزء 4/5 يكمل من هنا — Profile + Pharmacy + Delivery + Inventory + Prescription */
 /* ============================================
    👤 Profile Screen
    ============================================ */
@@ -4855,6 +4898,12 @@ a {
   margin-bottom: 20px;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+}
+
+.profile-balance:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
 }
 
 .profile-balance-icon {
@@ -5014,6 +5063,11 @@ a {
   overflow: hidden;
   background-size: cover;
   background-position: center;
+  transition: all 0.3s ease;
+}
+
+.phdash-avatar:hover {
+  transform: scale(1.08);
 }
 
 .phdash-back {
@@ -5028,10 +5082,19 @@ a {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.phdash-back:hover {
+  border-color: #10B981;
 }
 
 .phdash-back svg {
   stroke: #F8FAFC;
+}
+
+.phdash-back:hover svg {
+  stroke: #10B981;
 }
 
 .phdash-add-btn {
@@ -5045,6 +5108,12 @@ a {
   cursor: pointer;
   font-family: inherit;
   flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.phdash-add-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
 }
 
 .phdash-stats {
@@ -5241,10 +5310,19 @@ a {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.deldash-notif-btn:hover {
+  border-color: #10B981;
 }
 
 .deldash-notif-btn svg {
   stroke: #F8FAFC;
+}
+
+.deldash-notif-btn:hover svg {
+  stroke: #10B981;
 }
 
 .deldash-avatar {
@@ -5264,6 +5342,11 @@ a {
   overflow: hidden;
   background-size: cover;
   background-position: center;
+  transition: all 0.3s ease;
+}
+
+.deldash-avatar:hover {
+  transform: scale(1.08);
 }
 
 .deldash-orders {
@@ -5431,6 +5514,12 @@ a {
   border-radius: 12px;
   padding: 14px 18px;
   margin-bottom: 14px;
+  transition: all 0.3s ease;
+}
+
+.inventory-search:focus-within {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
 .inventory-search svg {
@@ -5445,6 +5534,7 @@ a {
   font-size: 14px;
   color: #F8FAFC;
   font-family: inherit;
+  min-width: 0;
 }
 
 .inventory-search input::placeholder {
@@ -5474,12 +5564,15 @@ a {
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .inventory-filter.active {
   background: #10B981;
   color: #FFFFFF;
   border-color: #10B981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .inventory-list {
@@ -5516,10 +5609,19 @@ a {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.rx-back:hover {
+  border-color: #10B981;
 }
 
 .rx-back svg {
   stroke: #F8FAFC;
+}
+
+.rx-back:hover svg {
+  stroke: #10B981;
 }
 
 .rx-title {
@@ -5605,6 +5707,11 @@ a {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.rx-remove:hover {
+  transform: scale(1.1);
 }
 
 .rx-remove svg {
@@ -5638,6 +5745,7 @@ a {
   font-family: inherit;
   text-align: right;
   resize: vertical;
+  transition: all 0.3s ease;
 }
 
 .rx-input-group input:focus,
@@ -5645,6 +5753,15 @@ a {
 .rx-input-group select:focus {
   border-color: #10B981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.rx-input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  padding-left: 40px;
 }
 
 .rx-submit {
@@ -5668,6 +5785,7 @@ a {
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
 }
 
+/* ⏩ الجزء 5/5 الأخير — Modals + Nav + Toast + Confirm + Leaflet + Light + Responsive */
 /* ============================================
    🪟 Modals
    ============================================ */
@@ -5676,6 +5794,7 @@ a {
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: none;
   align-items: flex-end;
   justify-content: center;
@@ -5695,6 +5814,7 @@ a {
   overflow-y: auto;
   animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid rgba(16, 185, 129, 0.2);
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 @keyframes slideUp {
@@ -5712,6 +5832,10 @@ a {
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  position: sticky;
+  top: 0;
+  background: #0F172A;
+  z-index: 1;
 }
 
 .modal-header h3 {
@@ -5733,6 +5857,15 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  transform: rotate(90deg);
 }
 
 .modal-body {
@@ -5742,6 +5875,7 @@ a {
   gap: 16px;
 }
 
+/* Rating Modal */
 .rating-target-info {
   display: flex;
   align-items: center;
@@ -5810,6 +5944,10 @@ a {
   line-height: 1;
 }
 
+.rating-star:hover {
+  transform: scale(1.15);
+}
+
 .rating-star.active {
   color: #FBBF24;
   text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
@@ -5823,6 +5961,7 @@ a {
   margin: 0;
 }
 
+/* Input Group (Modal) */
 .input-group {
   display: flex;
   flex-direction: column;
@@ -5848,6 +5987,7 @@ a {
   font-family: inherit;
   text-align: right;
   resize: vertical;
+  transition: all 0.3s ease;
 }
 
 .input-group input:focus,
@@ -5855,6 +5995,15 @@ a {
 .input-group select:focus {
   border-color: #10B981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  padding-left: 40px;
 }
 
 .btn-primary {
@@ -5931,6 +6080,8 @@ a {
 
 .nav-btn.active svg {
   stroke: #10B981;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.5));
 }
 
 .nav-badge {
@@ -5972,9 +6123,11 @@ a {
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s ease;
-  white-space: nowrap;
   max-width: 90vw;
+  text-align: center;
   font-family: inherit;
+  line-height: 1.4;
+  word-wrap: break-word;
 }
 
 .toast-message.show {
@@ -5990,6 +6143,7 @@ a {
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6040,6 +6194,16 @@ a {
   justify-content: center;
   margin: 0 auto 20px;
   box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+  animation: successIconPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes successIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .success-box h2 {
@@ -6064,6 +6228,7 @@ a {
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6179,6 +6344,7 @@ a {
 .confirm-accept-warning:hover,
 .confirm-accept-info:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* ============================================
@@ -6236,30 +6402,69 @@ a {
 }
 
 /* ============================================
-   🌞 Light Theme
+   🌞 Light Theme Overrides
    ============================================ */
+[data-theme="light"] body {
+  background: #F8FAFC;
+}
+
+[data-theme="light"] .screen {
+  background: #F8FAFC;
+}
+
 [data-theme="light"] .login-card,
 [data-theme="light"] .reg-card {
   background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="light"] .login-input,
+[data-theme="light"] .reg-input {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+  color: #0F172A;
 }
 
 [data-theme="light"] .home-icon-btn,
 [data-theme="light"] .orders-back,
+[data-theme="light"] .orders-search-btn,
 [data-theme="light"] .cart-back,
 [data-theme="light"] .pdp-back,
+[data-theme="light"] .pdp-icon-btn,
 [data-theme="light"] .track-back,
+[data-theme="light"] .track-refresh,
 [data-theme="light"] .notif-back,
 [data-theme="light"] .settings-back,
-[data-theme="light"] .profile-back {
+[data-theme="light"] .profile-back,
+[data-theme="light"] .profile-settings-btn,
+[data-theme="light"] .conv-back,
+[data-theme="light"] .conv-search-btn,
+[data-theme="light"] .rx-back,
+[data-theme="light"] .phdash-back,
+[data-theme="light"] .deldash-notif-btn {
   background: #FFFFFF;
   border-color: #E2E8F0;
 }
 
+[data-theme="light"] .home-icon-btn svg,
+[data-theme="light"] .orders-back svg,
+[data-theme="light"] .cart-back svg,
+[data-theme="light"] .pdp-back svg,
+[data-theme="light"] .track-back svg,
+[data-theme="light"] .notif-back svg,
+[data-theme="light"] .settings-back svg,
+[data-theme="light"] .profile-back svg {
+  stroke: #0F172A;
+}
+
+[data-theme="light"] .home-search,
 [data-theme="light"] .home-pharmacy-card,
 [data-theme="light"] .home-offer-card,
 [data-theme="light"] .order-card,
 [data-theme="light"] .cart-item,
 [data-theme="light"] .cart-summary,
+[data-theme="light"] .cart-address,
+[data-theme="light"] .cart-payment-info,
 [data-theme="light"] .pdp-card,
 [data-theme="light"] .pdp-stock-price,
 [data-theme="light"] .track-delivery-card,
@@ -6268,9 +6473,77 @@ a {
 [data-theme="light"] .settings-toggle-card,
 [data-theme="light"] .settings-list,
 [data-theme="light"] .profile-menu,
-[data-theme="light"] .profile-stat {
+[data-theme="light"] .profile-stat,
+[data-theme="light"] .conv-card,
+[data-theme="light"] .chat-top,
+[data-theme="light"] .phdash-stat,
+[data-theme="light"] .phdash-action-btn,
+[data-theme="light"] .deldash-orders {
   background: #FFFFFF;
   border-color: #E2E8F0;
+}
+
+[data-theme="light"] .home-cat,
+[data-theme="light"] .orders-tabs,
+[data-theme="light"] .orders-tab,
+[data-theme="light"] .notif-tab,
+[data-theme="light"] .conv-tab,
+[data-theme="light"] .inventory-filter {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #475569;
+}
+
+[data-theme="light"] .cart-summary h3,
+[data-theme="light"] .home-section-header h3,
+[data-theme="light"] .home-greeting h1 {
+  color: #0F172A;
+}
+
+[data-theme="light"] .bottom-nav {
+  background: #FFFFFF;
+  border-top-color: #E2E8F0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .nav-btn {
+  color: #64748B;
+}
+
+[data-theme="light"] .toast-message {
+  background: #FFFFFF;
+  color: #0F172A;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="light"] .modal-content,
+[data-theme="light"] .modal-header {
+  background: #FFFFFF;
+}
+
+[data-theme="light"] .modal-header {
+  border-bottom-color: #E2E8F0;
+}
+
+[data-theme="light"] .rating-target-info,
+[data-theme="light"] .input-group input,
+[data-theme="light"] .input-group textarea,
+[data-theme="light"] .input-group select {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #0F172A;
+}
+
+[data-theme="light"] .confirm-box,
+[data-theme="light"] .success-box {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+}
+
+[data-theme="light"] .confirm-cancel {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #475569;
 }
 
 /* ============================================
@@ -6348,4 +6621,87 @@ a {
     width: 20px;
     height: 20px;
   }
+  .inventory-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .profile-avatar-wrap {
+    width: 90px;
+    height: 90px;
+  }
+  .profile-avatar {
+    font-size: 32px;
+  }
+  .phdash-header h1,
+  .deldash-header h1 {
+    font-size: 20px;
+  }
+  .order-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .order-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
+
+@media (max-width: 360px) {
+  .splash-title {
+    font-size: 34px;
+  }
+  .login-title {
+    font-size: 22px;
+  }
+  .nav-btn small {
+    display: none;
+  }
+  .cart-item-controls {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================
+   🎬 Animations عامة
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen.active>div:not([class*="bottom"]):not([class*="pdp-bottom"]) {
+  animation: fadeIn 0.35s ease-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* ============================================
+   ♿ تقليل الحركة (لتوفير البطارية)
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   🎉 نهاية style.css
+   ============================================ */
