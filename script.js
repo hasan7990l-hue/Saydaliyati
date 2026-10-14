@@ -1,10 +1,9 @@
 // ============================================
-// DAWAK دواك - v15
-// Complete Rebuild — Part 1/5
-// Firebase + Auth + Utils + Audio + Particles + Toast
+// DAWAK دواك - v17 (Fixed)
+// Part 1/5 — State + Utils + Firebase + Firestore + Audio
 // ============================================
 
-console.log('🏆 DAWAK v15 - بدأ التحميل');
+console.log('🏆 DAWAK v17 - بدأ التحميل');
 
 // ============================================
 // 🎯 Global State
@@ -29,6 +28,7 @@ var callTimerInterval = null;
 var callSeconds = 0;
 var callMuted = false;
 var callVolumeOn = true;
+var currentTrackingOrderId = null;
 
 var COLLECTIONS = {
   USERS: 'users',
@@ -60,7 +60,12 @@ var COUPONS = {
 // 🔥 Firebase Ready Check
 // ============================================
 function isFirebaseReady() {
-  return !!(window.firebaseDB && window.firebaseAuth && window.firebaseCollection);
+  return !!(
+    window.firebaseReady === true &&
+    window.firebaseDB &&
+    window.firebaseAuth &&
+    window.firebaseCollection
+  );
 }
 
 // ============================================
@@ -71,7 +76,7 @@ function showError(message) {
 }
 
 function validatePhone(phone) {
-  return /^07[0-9]{9}$/.test(phone.replace(/\s/g, ''));
+  return /^07[0-9]{9}$/.test(String(phone || '').replace(/\s/g, ''));
 }
 
 function formatNumber(num) {
@@ -80,7 +85,9 @@ function formatNumber(num) {
 
 function formatDate(dateStr) {
   try {
+    if (!dateStr) return '—';
     var date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '—';
     var now = new Date();
     var diffMs = now - date;
     var mins = Math.floor(diffMs / 60000);
@@ -92,30 +99,67 @@ function formatDate(dateStr) {
     if (hours < 24) return 'منذ ' + hours + ' ساعة';
     if (days < 7) return 'منذ ' + days + ' يوم';
 
-    return date.toLocaleDateString('ar-IQ', { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch (e) { return '—'; }
+    return date.toLocaleDateString('ar-IQ', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (e) {
+    return '—';
+  }
 }
 
 function formatTime(timestamp) {
   try {
+    if (!timestamp) return '';
     var date = new Date(timestamp);
-    return date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
-  } catch (e) { return ''; }
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString('ar-IQ', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    return '';
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function escapeJs(str) {
+  if (!str) return '';
+  return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
 
 // ============================================
 // 💬 Toast
 // ============================================
 function showToast(message) {
-  document.querySelectorAll('.toast-message').forEach(function (t) { t.remove(); });
+  document.querySelectorAll('.toast-message').forEach(function (t) {
+    if (t.parentNode) t.remove();
+  });
+
   var toast = document.createElement('div');
   toast.className = 'toast-message';
   toast.textContent = message;
   document.body.appendChild(toast);
-  setTimeout(function () { toast.classList.add('show'); }, 50);
+
+  setTimeout(function () {
+    toast.classList.add('show');
+  }, 50);
+
   setTimeout(function () {
     toast.classList.remove('show');
-    setTimeout(function () { if (toast.parentNode) toast.remove(); }, 300);
+    setTimeout(function () {
+      if (toast.parentNode) toast.remove();
+    }, 300);
   }, 2500);
 }
 
@@ -136,11 +180,11 @@ function showConfirm(options) {
     overlay.innerHTML =
       '<div class="confirm-box">' +
         '<div class="confirm-icon confirm-icon-' + confirmColor + '">' + icon + '</div>' +
-        '<h3 class="confirm-title">' + title + '</h3>' +
-        (message ? '<p class="confirm-message">' + message + '</p>' : '') +
+        '<h3 class="confirm-title">' + escapeHtml(title) + '</h3>' +
+        (message ? '<p class="confirm-message">' + escapeHtml(message) + '</p>' : '') +
         '<div class="confirm-actions">' +
-          '<button type="button" class="confirm-btn confirm-cancel">' + cancelText + '</button>' +
-          '<button type="button" class="confirm-btn confirm-accept confirm-accept-' + confirmColor + '">' + confirmText + '</button>' +
+          '<button type="button" class="confirm-btn confirm-cancel">' + escapeHtml(cancelText) + '</button>' +
+          '<button type="button" class="confirm-btn confirm-accept confirm-accept-' + confirmColor + '">' + escapeHtml(confirmText) + '</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(overlay);
@@ -150,39 +194,55 @@ function showConfirm(options) {
 
     function close(result) {
       overlay.classList.remove('show');
-      setTimeout(function () { overlay.remove(); resolve(result); }, 300);
+      setTimeout(function () {
+        if (overlay.parentNode) overlay.remove();
+        resolve(result);
+      }, 300);
     }
 
     cancelBtn.onclick = function () { close(false); };
     acceptBtn.onclick = function () { close(true); };
-    overlay.onclick = function (e) { if (e.target === overlay) close(false); };
-    setTimeout(function () { overlay.classList.add('show'); }, 50);
+    overlay.onclick = function (e) {
+      if (e.target === overlay) close(false);
+    };
+
+    setTimeout(function () {
+      overlay.classList.add('show');
+    }, 50);
   });
 }
 
 // ============================================
-// ✅ Success
+// ✅ Success Overlay
 // ============================================
 function showSuccessMessage(title, message) {
-  document.querySelectorAll('.success-overlay').forEach(function (el) { el.remove(); });
+  document.querySelectorAll('.success-overlay').forEach(function (el) {
+    if (el.parentNode) el.remove();
+  });
+
   var overlay = document.createElement('div');
   overlay.className = 'success-overlay';
   overlay.innerHTML =
     '<div class="success-box">' +
       '<div class="success-icon">✓</div>' +
-      '<h2>' + title + '</h2>' +
-      '<p>' + message + '</p>' +
+      '<h2>' + escapeHtml(title) + '</h2>' +
+      '<p>' + escapeHtml(message) + '</p>' +
       '<button class="btn-primary" onclick="closeSuccessAndGo()">حسناً</button>' +
     '</div>';
   document.body.appendChild(overlay);
-  setTimeout(function () { overlay.classList.add('show'); }, 50);
+
+  setTimeout(function () {
+    overlay.classList.add('show');
+  }, 50);
 }
 
 function closeSuccess() {
   var overlay = document.querySelector('.success-overlay');
   if (overlay) {
     overlay.classList.remove('show');
-    setTimeout(function () { overlay.remove(); }, 300);
+    setTimeout(function () {
+      if (overlay.parentNode) overlay.remove();
+    }, 300);
   }
 }
 
@@ -199,10 +259,10 @@ function togglePasswordVisibility(inputId, button) {
   if (!input) return;
   if (input.type === 'password') {
     input.type = 'text';
-    button.innerHTML = '<span>🙈</span>';
+    if (button) button.innerHTML = '<span>🙈</span>';
   } else {
     input.type = 'password';
-    button.innerHTML = '<span>👁️</span>';
+    if (button) button.innerHTML = '<span>👁️</span>';
   }
 }
 
@@ -241,11 +301,14 @@ function checkPasswordStrength(inputId, strengthId) {
 function calculateDeliveryFee(distanceKm) {
   distanceKm = parseFloat(distanceKm) || DELIVERY_PRICING.DEFAULT_DISTANCE;
   if (distanceKm < 0.5) distanceKm = 0.5;
+
   var total = DELIVERY_PRICING.BASE_FEE + (DELIVERY_PRICING.PER_KM * distanceKm);
   if (total < DELIVERY_PRICING.MIN_FEE) total = DELIVERY_PRICING.MIN_FEE;
   if (total > DELIVERY_PRICING.MAX_FEE) total = DELIVERY_PRICING.MAX_FEE;
   total = Math.round(total / 100) * 100;
+
   var driverShare = Math.round(total * DELIVERY_PRICING.DRIVER_SHARE / 100) * 100;
+
   return {
     distance: distanceKm,
     total: total,
@@ -256,12 +319,15 @@ function calculateDeliveryFee(distanceKm) {
 
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
   if (!lat1 || !lon1 || !lat2 || !lon2) return DELIVERY_PRICING.DEFAULT_DISTANCE;
+
   var R = 6371;
   var dLat = (lat2 - lat1) * Math.PI / 180;
   var dLon = (lon2 - lon1) * Math.PI / 180;
+
   var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
   return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 10) / 10;
 }
 
@@ -271,23 +337,49 @@ function calculateDistanceKm(lat1, lon1, lat2, lon2) {
 function saveRegistration(data) {
   data.date = data.date || new Date().toISOString();
   var regs = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-  var idx = regs.findIndex(function (r) { return r.phone === data.phone; });
+  var idx = regs.findIndex(function (r) {
+    return r.phone === data.phone;
+  });
   if (idx !== -1) regs[idx] = data;
   else regs.push(data);
   localStorage.setItem('saydaliyati_registrations', JSON.stringify(regs));
 }
 
+function getCurrentUser() {
+  try {
+    var userStr = localStorage.getItem('saydaliyati_current_user');
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveCurrentUser(user) {
+  try {
+    localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function saveCart() {
-  localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
+  try {
+    localStorage.setItem('saydaliyati_cart', JSON.stringify(cart));
+  } catch (e) {}
 }
 
 function updateCartBadge() {
-  var total = cart.reduce(function (s, i) { return s + i.quantity; }, 0);
+  var total = cart.reduce(function (s, i) {
+    return s + (i.quantity || 0);
+  }, 0);
+
   var badge1 = document.getElementById('cartBadgeNav');
   if (badge1) {
     badge1.textContent = total;
     badge1.style.display = total > 0 ? 'flex' : 'none';
   }
+
   var badge2 = document.getElementById('cartCountBadge');
   if (badge2) {
     badge2.textContent = total + ' ' + (total === 1 ? 'منتج' : 'منتجات');
@@ -383,7 +475,9 @@ function playAlertDing() {
 }
 
 function vibrateDevice(pattern) {
-  if (navigator.vibrate) navigator.vibrate(pattern);
+  if (navigator.vibrate) {
+    try { navigator.vibrate(pattern); } catch (e) {}
+  }
 }
 
 // ============================================
@@ -392,7 +486,9 @@ function vibrateDevice(pattern) {
 function createSplashParticles() {
   var container = document.getElementById('splashParticles');
   if (!container) return;
+
   container.innerHTML = '';
+
   for (var i = 0; i < 30; i++) {
     var p = document.createElement('div');
     p.className = 'splash-particle';
@@ -414,10 +510,13 @@ async function saveUserToFirestore(userData) {
   if (!isFirebaseReady()) return null;
   try {
     var userId = userData.uid || userData.phone;
+    if (!userId) return null;
+
     var userRef = window.firebaseDoc(window.firebaseDB, COLLECTIONS.USERS, userId);
     await window.firebaseSetDoc(userRef, Object.assign({}, userData, {
       updatedAt: new Date().toISOString()
     }), { merge: true });
+
     console.log('✅ تم حفظ المستخدم:', userId);
     return userId;
   } catch (error) {
@@ -427,11 +526,13 @@ async function saveUserToFirestore(userData) {
 }
 
 async function getUserFromFirestore(userId) {
-  if (!isFirebaseReady()) return null;
+  if (!isFirebaseReady() || !userId) return null;
   try {
     var userRef = window.firebaseDoc(window.firebaseDB, COLLECTIONS.USERS, userId);
     var snap = await window.firebaseGetDoc(userRef);
-    if (snap.exists()) return Object.assign({ id: snap.id }, snap.data());
+    if (snap.exists()) {
+      return Object.assign({ id: snap.id }, snap.data());
+    }
     return null;
   } catch (error) {
     console.error('❌ خطأ جلب المستخدم:', error);
@@ -445,7 +546,11 @@ async function getUserFromFirestore(userId) {
 async function savePharmacyToFirestore(pharmacyData) {
   if (!isFirebaseReady()) return null;
   try {
-    var ref = window.firebaseDoc(window.firebaseDB, COLLECTIONS.PHARMACIES, pharmacyData.phone);
+    var ref = window.firebaseDoc(
+      window.firebaseDB,
+      COLLECTIONS.PHARMACIES,
+      pharmacyData.phone
+    );
     await window.firebaseSetDoc(ref, Object.assign({}, pharmacyData, {
       updatedAt: new Date().toISOString()
     }), { merge: true });
@@ -465,7 +570,9 @@ async function loadPharmaciesFromFirestore() {
     var pharmacies = [];
     snapshot.forEach(function (doc) {
       var data = doc.data();
-      if (data.active !== false) pharmacies.push(Object.assign({ id: doc.id }, data));
+      if (data.active !== false) {
+        pharmacies.push(Object.assign({ id: doc.id }, data));
+      }
     });
     console.log('✅ تم جلب', pharmacies.length, 'صيدلية');
     return pharmacies;
@@ -484,7 +591,7 @@ async function saveOrderToFirestore(orderData) {
     var ref = await window.firebaseAddDoc(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.ORDERS),
       Object.assign({}, orderData, {
-        createdAt: new Date().toISOString(),
+        createdAt: orderData.createdAt || new Date().toISOString(),
         status: orderData.status || 'pending'
       })
     );
@@ -497,7 +604,7 @@ async function saveOrderToFirestore(orderData) {
 }
 
 async function updateOrderInFirestore(orderId, updates) {
-  if (!isFirebaseReady()) return false;
+  if (!isFirebaseReady() || !orderId) return false;
   try {
     var ref = window.firebaseDoc(window.firebaseDB, COLLECTIONS.ORDERS, orderId);
     await window.firebaseUpdateDoc(ref, Object.assign({}, updates, {
@@ -511,7 +618,7 @@ async function updateOrderInFirestore(orderId, updates) {
 }
 
 async function getUserOrdersFromFirestore(userPhone) {
-  if (!isFirebaseReady()) return [];
+  if (!isFirebaseReady() || !userPhone) return [];
   try {
     var q = window.firebaseQuery(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.ORDERS),
@@ -522,7 +629,9 @@ async function getUserOrdersFromFirestore(userPhone) {
     snapshot.forEach(function (doc) {
       orders.push(Object.assign({ id: doc.id }, doc.data()));
     });
-    orders.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+    orders.sort(function (a, b) {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
     return orders;
   } catch (error) {
     console.error('❌ خطأ جلب طلبات المستخدم:', error);
@@ -531,7 +640,7 @@ async function getUserOrdersFromFirestore(userPhone) {
 }
 
 async function getPharmacyOrdersFromFirestore(pharmacyName) {
-  if (!isFirebaseReady()) return [];
+  if (!isFirebaseReady() || !pharmacyName) return [];
   try {
     var q = window.firebaseQuery(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.ORDERS),
@@ -542,7 +651,9 @@ async function getPharmacyOrdersFromFirestore(pharmacyName) {
     snapshot.forEach(function (doc) {
       orders.push(Object.assign({ id: doc.id }, doc.data()));
     });
-    orders.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+    orders.sort(function (a, b) {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
     return orders;
   } catch (error) {
     console.error('❌ خطأ جلب طلبات الصيدلية:', error);
@@ -559,7 +670,9 @@ async function loadDeliveryOrdersFromFirestore() {
     );
     var snap = await window.firebaseGetDocs(q);
     var orders = [];
-    snap.forEach(function (doc) { orders.push(Object.assign({ id: doc.id }, doc.data())); });
+    snap.forEach(function (doc) {
+      orders.push(Object.assign({ id: doc.id }, doc.data()));
+    });
     return orders;
   } catch (e) {
     console.error('❌ خطأ:', e);
@@ -593,9 +706,13 @@ async function loadPostsFromFirestore() {
     var posts = [];
     snapshot.forEach(function (doc) {
       var data = doc.data();
-      if (data.active !== false) posts.push(Object.assign({ id: doc.id }, data));
+      if (data.active !== false) {
+        posts.push(Object.assign({ id: doc.id }, data));
+      }
     });
-    posts.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+    posts.sort(function (a, b) {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
     return posts;
   } catch (error) {
     console.error('❌ خطأ جلب العروض:', error);
@@ -611,7 +728,9 @@ async function saveRatingToFirestore(ratingData) {
   try {
     var ref = await window.firebaseAddDoc(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.RATINGS),
-      Object.assign({}, ratingData, { createdAt: new Date().toISOString() })
+      Object.assign({}, ratingData, {
+        createdAt: new Date().toISOString()
+      })
     );
     return ref.id;
   } catch (error) {
@@ -621,7 +740,7 @@ async function saveRatingToFirestore(ratingData) {
 }
 
 async function getUserRatingsFromFirestore(userPhone) {
-  if (!isFirebaseReady()) return [];
+  if (!isFirebaseReady() || !userPhone) return [];
   try {
     var q = window.firebaseQuery(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.RATINGS),
@@ -629,9 +748,13 @@ async function getUserRatingsFromFirestore(userPhone) {
     );
     var snap = await window.firebaseGetDocs(q);
     var ratings = [];
-    snap.forEach(function (doc) { ratings.push(Object.assign({ id: doc.id }, doc.data())); });
+    snap.forEach(function (doc) {
+      ratings.push(Object.assign({ id: doc.id }, doc.data()));
+    });
     return ratings;
-  } catch (error) { return []; }
+  } catch (error) {
+    return [];
+  }
 }
 
 // ============================================
@@ -642,7 +765,9 @@ async function saveNotificationToFirestore(notifData) {
   try {
     var ref = await window.firebaseAddDoc(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.NOTIFICATIONS),
-      Object.assign({}, notifData, { createdAt: new Date().toISOString() })
+      Object.assign({}, notifData, {
+        createdAt: new Date().toISOString()
+      })
     );
     return ref.id;
   } catch (error) {
@@ -652,7 +777,7 @@ async function saveNotificationToFirestore(notifData) {
 }
 
 async function getNotificationsFromFirestore(userPhone) {
-  if (!isFirebaseReady()) return [];
+  if (!isFirebaseReady() || !userPhone) return [];
   try {
     var q = window.firebaseQuery(
       window.firebaseCollection(window.firebaseDB, COLLECTIONS.NOTIFICATIONS),
@@ -660,39 +785,47 @@ async function getNotificationsFromFirestore(userPhone) {
     );
     var snap = await window.firebaseGetDocs(q);
     var notifs = [];
-    snap.forEach(function (doc) { notifs.push(Object.assign({ id: doc.id }, doc.data())); });
-    notifs.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+    snap.forEach(function (doc) {
+      notifs.push(Object.assign({ id: doc.id }, doc.data()));
+    });
+    notifs.sort(function (a, b) {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
     return notifs;
-  } catch (error) { return []; }
+  } catch (error) {
+    return [];
+  }
 }
 
 function addInternalNotification(type, title, message) {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  try {
-    var user = JSON.parse(userStr);
-    var notif = {
-      userPhone: user.phone,
-      type: type,
-      title: title,
-      message: message,
-      read: false
-    };
-    if (isFirebaseReady()) {
-      saveNotificationToFirestore(notif);
-    }
-    // محلياً
-    var localNotifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
-    localNotifs.unshift(Object.assign({}, notif, { date: new Date().toISOString() }));
-    if (localNotifs.length > 50) localNotifs = localNotifs.slice(0, 50);
-    localStorage.setItem('saydaliyati_notifications', JSON.stringify(localNotifs));
-    // تحديث نقطة الإشعارات
-    var dot = document.getElementById('homeNotifDot');
-    if (dot) dot.style.display = 'block';
-  } catch (e) {}
+  var user = getCurrentUser();
+  if (!user) return;
+
+  var notif = {
+    userPhone: user.phone,
+    type: type,
+    title: title,
+    message: message,
+    read: false
+  };
+
+  if (isFirebaseReady()) {
+    saveNotificationToFirestore(notif);
+  }
+
+  // محلياً
+  var localNotifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
+  localNotifs.unshift(Object.assign({}, notif, {
+    date: new Date().toISOString()
+  }));
+  if (localNotifs.length > 50) localNotifs = localNotifs.slice(0, 50);
+  localStorage.setItem('saydaliyati_notifications', JSON.stringify(localNotifs));
+
+  var dot = document.getElementById('homeNotifDot');
+  if (dot) dot.style.display = 'block';
 }
 
-console.log('🏆 DAWAK v15 — الجزء 1 اكتمل ✅');
+console.log('🏆 DAWAK v17 — الجزء 1 اكتمل ✅');
 // ============================================
 // 📱 Screens Management
 // ============================================
@@ -703,21 +836,35 @@ function showScreen(screenId) {
   });
 
   var target = document.getElementById(screenId);
-  if (target) {
-    target.classList.add('active');
-    target.style.display = 'flex';
-    window.scrollTo(0, 0);
-    updateBottomNav(screenId);
-
-    if (screenId === 'splashScreen') setTimeout(createSplashParticles, 100);
-    if (screenId === 'pharmacyScreen') {
-      setTimeout(function () {
-        if (typeof initPharmacyMap === 'function') initPharmacyMap();
-      }, 300);
-    }
-
-    console.log('✅ showScreen:', screenId);
+  if (!target) {
+    console.warn('⚠️ Screen not found:', screenId);
+    return;
   }
+
+  target.classList.add('active');
+  target.style.display = 'flex';
+  window.scrollTo(0, 0);
+  updateBottomNav(screenId);
+
+  if (screenId === 'splashScreen') {
+    setTimeout(createSplashParticles, 100);
+  }
+
+  if (screenId === 'pharmacyScreen') {
+    setTimeout(function () {
+      if (typeof initPharmacyMap === 'function') initPharmacyMap();
+    }, 300);
+  }
+
+  if (screenId === 'trackingScreen') {
+    setTimeout(function () {
+      if (currentTrackingOrderId) {
+        // الخريطة تُهيأ في trackOrder
+      }
+    }, 300);
+  }
+
+  console.log('✅ showScreen:', screenId);
 }
 
 function updateBottomNav(screenId) {
@@ -793,6 +940,7 @@ function updateOnboardingUI() {
   document.querySelectorAll('.ob-slide').forEach(function (slide) {
     slide.classList.remove('active');
   });
+
   var currentSlide = document.querySelector('.ob-slide[data-slide="' + currentOnboardingSlide + '"]');
   if (currentSlide) currentSlide.classList.add('active');
 
@@ -818,16 +966,29 @@ function finishOnboarding() {
   localStorage.setItem('saydaliyati_onboarding_done', 'true');
   playSuccessSound();
   if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-  setTimeout(function () { showScreen('loginScreen'); }, 300);
+  setTimeout(function () {
+    showScreen('loginScreen');
+  }, 300);
 }
 
 // ============================================
 // 🔀 Navigation
 // ============================================
-function goToSplash() { showScreen('splashScreen'); }
-function goToLogin() { showScreen('loginScreen'); }
-function goToRoleSelection() { showScreen('roleScreen'); }
-function closeAllScreens() { goToDashboardByType(); }
+function goToSplash() {
+  showScreen('splashScreen');
+}
+
+function goToLogin() {
+  showScreen('loginScreen');
+}
+
+function goToRoleSelection() {
+  showScreen('roleScreen');
+}
+
+function closeAllScreens() {
+  goToDashboardByType();
+}
 
 function selectRole(role) {
   if (role === 'patient') {
@@ -846,8 +1007,7 @@ function selectRole(role) {
 // 🎯 Dashboard by User Type
 // ============================================
 function goToDashboardByType() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = userStr ? JSON.parse(userStr) : {};
+  var user = getCurrentUser() || {};
 
   if (user.type === 'pharmacy') {
     showScreen('pharmacyDashboard');
@@ -877,11 +1037,10 @@ function goToDashboardByType() {
 // 👤 Update User Info (في كل الشاشات)
 // ============================================
 function updateUserName() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
+  var user = getCurrentUser();
+  if (!user) return;
 
   try {
-    var user = JSON.parse(userStr);
     var userName = user.name || 'مستخدم';
     var firstLetter = userName.charAt(0);
 
@@ -945,7 +1104,9 @@ function updateUserName() {
     if (profilePhone) profilePhone.textContent = user.phone || '-';
 
     var profileLocation = document.getElementById('profileLocation');
-    if (profileLocation) profileLocation.textContent = user.address || user.area || 'بغداد، العراق';
+    if (profileLocation) {
+      profileLocation.textContent = user.address || user.area || 'بغداد، العراق';
+    }
 
     var profileAvatar = document.getElementById('profileAvatar');
     if (profileAvatar) {
@@ -960,7 +1121,7 @@ function updateUserName() {
       }
     }
   } catch (e) {
-    console.error('خطأ تحديث الاسم:', e);
+    console.error('❌ خطأ تحديث الاسم:', e);
   }
 }
 
@@ -976,11 +1137,20 @@ async function submitLogin(event) {
   var phoneInput = document.getElementById('loginPhone');
   var passwordInput = document.getElementById('loginPassword');
 
+  if (!phoneInput || !passwordInput) return;
+
   var phone = phoneInput.value.trim();
   var password = passwordInput.value.trim();
 
-  if (!phone || !password) { showError('املأ كل الحقول'); return; }
-  if (!validatePhone(phone)) { showError('رقم الهاتف غير صحيح (07XXXXXXXXX)'); return; }
+  if (!phone || !password) {
+    showError('املأ كل الحقول');
+    return;
+  }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح (07XXXXXXXXX)');
+    return;
+  }
 
   var authEmails = [
     phone + '@saydaliyati.app',
@@ -991,6 +1161,7 @@ async function submitLogin(event) {
   var user = null;
   var authError = null;
 
+  // 1) Firebase Auth
   if (window.firebaseAuth && window.firebaseSignIn) {
     for (var i = 0; i < authEmails.length; i++) {
       try {
@@ -1004,9 +1175,10 @@ async function submitLogin(event) {
         }
 
         if (!user) {
-          // fallback to registrations
           var regs = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
-          var localUser = regs.find(function (r) { return r.phone === phone; });
+          var localUser = regs.find(function (r) {
+            return r.phone === phone;
+          });
           if (localUser) user = localUser;
         }
 
@@ -1028,6 +1200,7 @@ async function submitLogin(event) {
     }
   }
 
+  // 2) Local fallback
   if (!user) {
     var regs2 = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
     var localUser2 = regs2.find(function (r) {
@@ -1038,7 +1211,9 @@ async function submitLogin(event) {
 
   if (!user) {
     if (authError) {
-      if (authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password' || authError.code === 'auth/invalid-credential') {
+      if (authError.code === 'auth/user-not-found' ||
+          authError.code === 'auth/wrong-password' ||
+          authError.code === 'auth/invalid-credential') {
         showError('رقم الهاتف أو كلمة المرور غير صحيحة');
       } else {
         showError('رقم الهاتف غير مسجل');
@@ -1049,7 +1224,7 @@ async function submitLogin(event) {
     return;
   }
 
-  localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+  saveCurrentUser(user);
   playSuccessSound();
   if (navigator.vibrate) navigator.vibrate([50]);
 
@@ -1105,7 +1280,10 @@ async function forgotPassword() {
     phone = userPhone.trim();
   }
 
-  if (!validatePhone(phone)) { showError('رقم الهاتف غير صحيح'); return; }
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح');
+    return;
+  }
 
   var confirmed = await showConfirm({
     title: 'استعادة كلمة المرور',
@@ -1140,16 +1318,37 @@ async function forgotPassword() {
 // 🧑 Patient Registration
 // ============================================
 async function submitPatient(event) {
-  if (event) { event.preventDefault(); event.stopPropagation(); }
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-  var name = document.getElementById('patientName').value.trim();
-  var phone = document.getElementById('patientPhone').value.trim();
-  var address = document.getElementById('patientAddress').value.trim();
-  var password = document.getElementById('patientPassword').value.trim();
+  var nameEl = document.getElementById('patientName');
+  var phoneEl = document.getElementById('patientPhone');
+  var addressEl = document.getElementById('patientAddress');
+  var passwordEl = document.getElementById('patientPassword');
 
-  if (!name || !phone || !address || !password) { showError('املأ الحقول الإلزامية'); return; }
-  if (!validatePhone(phone)) { showError('رقم الهاتف غير صحيح'); return; }
-  if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+  if (!nameEl || !phoneEl || !addressEl || !passwordEl) return;
+
+  var name = nameEl.value.trim();
+  var phone = phoneEl.value.trim();
+  var address = addressEl.value.trim();
+  var password = passwordEl.value.trim();
+
+  if (!name || !phone || !address || !password) {
+    showError('املأ الحقول الإلزامية');
+    return;
+  }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح');
+    return;
+  }
+
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
 
   var authEmail = phone + '@saydaliyati.app';
   var uid = null;
@@ -1181,7 +1380,7 @@ async function submitPatient(event) {
   };
 
   saveRegistration(user);
-  localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+  saveCurrentUser(user);
 
   try { await saveUserToFirestore(user); } catch (e) {}
 
@@ -1193,21 +1392,41 @@ async function submitPatient(event) {
 // 🏪 Pharmacy Registration
 // ============================================
 async function submitPharmacy(event) {
-  if (event) { event.preventDefault(); event.stopPropagation(); }
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-  var name = document.getElementById('pharmacyName').value.trim();
-  var owner = document.getElementById('ownerName').value.trim();
-  var phone = document.getElementById('pharmacyPhone').value.trim();
-  var address = document.getElementById('pharmacyAddress').value.trim();
-  var license = document.getElementById('licenseNumber').value.trim();
-  var password = document.getElementById('pharmacyPassword').value.trim();
+  var nameEl = document.getElementById('pharmacyName');
+  var ownerEl = document.getElementById('ownerName');
+  var phoneEl = document.getElementById('pharmacyPhone');
+  var addressEl = document.getElementById('pharmacyAddress');
+  var licenseEl = document.getElementById('licenseNumber');
+  var passwordEl = document.getElementById('pharmacyPassword');
+
+  if (!nameEl || !ownerEl || !phoneEl || !addressEl || !licenseEl || !passwordEl) return;
+
+  var name = nameEl.value.trim();
+  var owner = ownerEl.value.trim();
+  var phone = phoneEl.value.trim();
+  var address = addressEl.value.trim();
+  var license = licenseEl.value.trim();
+  var password = passwordEl.value.trim();
 
   if (!name || !owner || !phone || !address || !license || !password) {
     showError('املأ الحقول الإلزامية');
     return;
   }
-  if (!validatePhone(phone)) { showError('رقم الهاتف غير صحيح'); return; }
-  if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح');
+    return;
+  }
+
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
 
   var pharmacyLat = document.getElementById('pharmacyLat').value;
   var pharmacyLng = document.getElementById('pharmacyLng').value;
@@ -1251,7 +1470,7 @@ async function submitPharmacy(event) {
   };
 
   saveRegistration(user);
-  localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+  saveCurrentUser(user);
 
   try {
     await saveUserToFirestore(user);
@@ -1279,20 +1498,39 @@ async function submitPharmacy(event) {
 // 🚴 Delivery Registration
 // ============================================
 async function submitDelivery(event) {
-  if (event) { event.preventDefault(); event.stopPropagation(); }
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-  var name = document.getElementById('deliveryName').value.trim();
-  var phone = document.getElementById('deliveryPhone').value.trim();
-  var area = document.getElementById('deliveryArea').value.trim();
-  var vehicle = document.getElementById('vehicleType').value;
-  var password = document.getElementById('deliveryPassword').value.trim();
+  var nameEl = document.getElementById('deliveryName');
+  var phoneEl = document.getElementById('deliveryPhone');
+  var areaEl = document.getElementById('deliveryArea');
+  var vehicleEl = document.getElementById('vehicleType');
+  var passwordEl = document.getElementById('deliveryPassword');
+
+  if (!nameEl || !phoneEl || !areaEl || !vehicleEl || !passwordEl) return;
+
+  var name = nameEl.value.trim();
+  var phone = phoneEl.value.trim();
+  var area = areaEl.value.trim();
+  var vehicle = vehicleEl.value;
+  var password = passwordEl.value.trim();
 
   if (!name || !phone || !area || !vehicle || !password) {
     showError('املأ الحقول الإلزامية');
     return;
   }
-  if (!validatePhone(phone)) { showError('رقم الهاتف غير صحيح'); return; }
-  if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+
+  if (!validatePhone(phone)) {
+    showError('رقم الهاتف غير صحيح');
+    return;
+  }
+
+  if (password.length < 6) {
+    showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    return;
+  }
 
   var authEmail = phone + '@driver.saydaliyati.app';
   var uid = null;
@@ -1325,7 +1563,7 @@ async function submitDelivery(event) {
   };
 
   saveRegistration(user);
-  localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+  saveCurrentUser(user);
 
   try { await saveUserToFirestore(user); } catch (e) {}
 
@@ -1362,24 +1600,30 @@ async function signInWithGoogleTest() {
     var existing = null;
     try { existing = await getUserFromFirestore(user.uid); } catch (e) {}
 
-    if (existing) userData = Object.assign({}, userData, existing);
-    else {
+    if (existing) {
+      userData = Object.assign({}, userData, existing);
+    } else {
       saveRegistration(userData);
       try { await saveUserToFirestore(userData); } catch (e) {}
     }
 
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(userData));
+    saveCurrentUser(userData);
     playSuccessSound();
     showToast('✅ تم الدخول بنجاح');
 
     setTimeout(goToDashboardByType, 800);
   } catch (error) {
-    if (error.code === 'auth/popup-closed-by-user') showToast('⚠️ تم إغلاق النافذة');
-    else showError('فشل الدخول');
+    if (error.code === 'auth/popup-closed-by-user') {
+      showToast('⚠️ تم إغلاق النافذة');
+    } else {
+      showError('فشل الدخول');
+    }
   }
 }
 
-async function signUpWithGoogleTest() { return signInWithGoogleTest(); }
+async function signUpWithGoogleTest() {
+  return signInWithGoogleTest();
+}
 
 // ============================================
 // 🗺️ Pharmacy Map (Registration)
@@ -1391,16 +1635,21 @@ function initPharmacyMap() {
   var mapEl = document.getElementById('pharmacyMap');
   if (!mapEl) return;
   if (pharmacyMap) return;
-  if (typeof L === 'undefined') return;
+  if (typeof L === 'undefined') {
+    console.warn('⚠️ Leaflet غير محمّل');
+    return;
+  }
 
-  var center = [33.3152, 44.3661];
+  var center = [33.3152, 44.3661]; // بغداد
 
   pharmacyMap = L.map('pharmacyMap', {
     zoomControl: true,
     attributionControl: false
   }).setView(center, 12);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(pharmacyMap);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(pharmacyMap);
 
   var icon = L.divIcon({
     className: 'custom-map-marker marker-pharmacy',
@@ -1409,7 +1658,10 @@ function initPharmacyMap() {
     iconAnchor: [20, 40]
   });
 
-  pharmacyMarker = L.marker(center, { icon: icon, draggable: true }).addTo(pharmacyMap);
+  pharmacyMarker = L.marker(center, {
+    icon: icon,
+    draggable: true
+  }).addTo(pharmacyMap);
 
   pharmacyMarker.on('dragend', function (e) {
     var pos = e.target.getLatLng();
@@ -1422,10 +1674,19 @@ function initPharmacyMap() {
   });
 
   setPharmacyLocation(center[0], center[1]);
+
+  // مهم: نداء resizeMap بعد ظهور الشاشة
+  setTimeout(function () {
+    if (pharmacyMap) pharmacyMap.invalidateSize();
+  }, 500);
 }
 
 function getPharmacyLocation() {
-  if (!navigator.geolocation) { showToast('⚠️ المتصفح لا يدعم GPS'); return; }
+  if (!navigator.geolocation) {
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
+
   showToast('🔄 جاري تحديد موقعك...');
 
   navigator.geolocation.getCurrentPosition(
@@ -1438,7 +1699,9 @@ function getPharmacyLocation() {
       setPharmacyLocation(loc[0], loc[1]);
       showToast('✅ تم تحديد موقع الصيدلية');
     },
-    function () { showToast('⚠️ تعذّر تحديد موقعك'); },
+    function () {
+      showToast('⚠️ تعذّر تحديد موقعك');
+    },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
@@ -1478,7 +1741,8 @@ function detectUserLocation() {
 
       try {
         var response = await fetch(
-          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=ar'
+          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat +
+          '&lon=' + lng + '&accept-language=ar'
         );
         var data = await response.json();
 
@@ -1488,13 +1752,12 @@ function detectUserLocation() {
           var locText = suburb ? (suburb + '، ' + city) : city;
           locEl.textContent = locText;
 
-          var userStr = localStorage.getItem('saydaliyati_current_user');
-          if (userStr) {
-            var user = JSON.parse(userStr);
+          var user = getCurrentUser();
+          if (user) {
             user.lat = lat;
             user.lng = lng;
             user.locationText = locText;
-            localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+            saveCurrentUser(user);
           }
         } else {
           locEl.textContent = 'بغداد، العراق';
@@ -1503,7 +1766,10 @@ function detectUserLocation() {
         locEl.textContent = 'بغداد، العراق';
       }
 
-      localStorage.setItem('saydaliyati_user_location', JSON.stringify({ lat: lat, lng: lng }));
+      localStorage.setItem('saydaliyati_user_location', JSON.stringify({
+        lat: lat,
+        lng: lng
+      }));
     },
     function () {
       locEl.textContent = '📍 اضغط لتحديد موقعك';
@@ -1527,7 +1793,7 @@ function detectUserLocationSilent() {
   );
 }
 
-console.log('🏆 DAWAK v15 — الجزء 2 اكتمل ✅');
+console.log('🏆 DAWAK v17 — الجزء 2 اكتمل ✅');
 // ============================================
 // 🏠 Home — Pharmacies
 // ============================================
@@ -1544,7 +1810,10 @@ async function loadHomePharmacies() {
     }
 
     var pharmacies = await loadPharmaciesFromFirestore();
-    pharmacies.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); });
+    pharmacies.sort(function (a, b) {
+      return (b.rating || 0) - (a.rating || 0);
+    });
+
     var topPharmacies = pharmacies.slice(0, 3);
 
     if (topPharmacies.length === 0) {
@@ -1570,10 +1839,10 @@ async function loadHomePharmacies() {
       var logo = p.logo || 'ص';
 
       html +=
-        '<div class="home-pharmacy-card" onclick="openPharmacyDetails(\'' + p.id + '\')">' +
-          '<div class="home-pharmacy-logo">' + logo + '</div>' +
+        '<div class="home-pharmacy-card" onclick="openPharmacyDetails(\'' + escapeJs(p.id) + '\')">' +
+          '<div class="home-pharmacy-logo">' + escapeHtml(logo) + '</div>' +
           '<div class="home-pharmacy-info">' +
-            '<h4 class="home-pharmacy-name">' + (p.name || 'صيدلية') + '</h4>' +
+            '<h4 class="home-pharmacy-name">' + escapeHtml(p.name || 'صيدلية') + '</h4>' +
             '<div class="home-pharmacy-meta">' +
               '<span class="home-pharmacy-rating">★ ' + rating.toFixed(1) + '</span>' +
               '<span>📍 ' + distanceText + '</span>' +
@@ -1614,43 +1883,50 @@ async function loadHomeOffers() {
     }
 
     var topPosts = posts.slice(0, 6);
-    var html = '';
-
-    topPosts.forEach(function (post) {
-      var imageSrc = post.image || '';
-      var price = (post.price || 0).toLocaleString();
-      var title = post.title || 'دواء';
-
-      var imageHTML = '💊';
-      if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
-        imageHTML = '<img src="' + imageSrc + '" alt="">';
-      }
-
-      html +=
-        '<div class="home-offer-card" onclick="orderFromPostV2(\'' + post.id + '\')">' +
-          '<div class="home-offer-image">' + imageHTML + '</div>' +
-          '<h4 class="home-offer-title">' + title + '</h4>' +
-          '<div class="home-offer-price-row">' +
-            '<span class="home-offer-price">' + price + '<small>د.ع</small></span>' +
-            '<span class="home-offer-plus">+</span>' +
-          '</div>' +
-        '</div>';
-    });
-
-    container.innerHTML = html;
+    container.innerHTML = buildOfferCardsHtml(topPosts);
   } catch (error) {
     console.error('❌ خطأ تحميل العروض:', error);
     container.innerHTML = '<div class="home-loading">حدث خطأ</div>';
   }
 }
 
+function buildOfferCardsHtml(posts) {
+  var html = '';
+
+  posts.forEach(function (post) {
+    var imageSrc = post.image || '';
+    var price = (post.price || 0).toLocaleString();
+    var title = post.title || 'دواء';
+
+    var imageHTML = '💊';
+    if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
+      imageHTML = '<img src="' + escapeHtml(imageSrc) + '" alt="">';
+    }
+
+    html +=
+      '<div class="home-offer-card" onclick="orderFromPostV2(\'' + escapeJs(post.id) + '\')">' +
+        '<div class="home-offer-image">' + imageHTML + '</div>' +
+        '<h4 class="home-offer-title">' + escapeHtml(title) + '</h4>' +
+        '<div class="home-offer-price-row">' +
+          '<span class="home-offer-price">' + price + '<small>د.ع</small></span>' +
+          '<span class="home-offer-plus">+</span>' +
+        '</div>' +
+      '</div>';
+  });
+
+  return html;
+}
+
 function filterHomeCategory(category, btn) {
   currentHomeCategory = category;
+
   document.querySelectorAll('.home-cat').forEach(function (chip) {
     chip.classList.remove('active');
   });
   if (btn) btn.classList.add('active');
+
   if (navigator.vibrate) navigator.vibrate([20]);
+
   loadHomeOffersByCategory(category);
 }
 
@@ -1658,9 +1934,18 @@ async function loadHomeOffersByCategory(category) {
   var container = document.getElementById('homeOffersScroll');
   if (!container) return;
 
+  container.innerHTML = '<div class="home-loading"><div class="home-spinner"></div><span>جاري التحميل...</span></div>';
+
   try {
-    if (!isFirebaseReady()) return;
+    if (!isFirebaseReady()) {
+      container.innerHTML = '<div class="home-loading">لا توجد عروض</div>';
+      return;
+    }
+
     var posts = await loadPostsFromFirestore();
+
+    // مهم: تحديث postsCache دائماً
+    postsCache = posts;
 
     if (category !== 'all') {
       var catMap = {
@@ -1670,51 +1955,44 @@ async function loadHomeOffersByCategory(category) {
         'painkillers': 'medicine'
       };
       var firestoreCat = catMap[category] || category;
-      posts = posts.filter(function (p) { return p.category === firestoreCat; });
+      posts = posts.filter(function (p) {
+        return p.category === firestoreCat;
+      });
     }
 
     if (posts.length === 0) {
-      container.innerHTML = '<div class="home-loading">لا توجد عروض</div>';
+      container.innerHTML = '<div class="home-loading">لا توجد عروض في هذا التصنيف</div>';
       return;
     }
 
     var topPosts = posts.slice(0, 6);
-    var html = '';
-
-    topPosts.forEach(function (post) {
-      var imageSrc = post.image || '';
-      var imageHTML = '💊';
-      if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
-        imageHTML = '<img src="' + imageSrc + '" alt="">';
-      }
-
-      html +=
-        '<div class="home-offer-card" onclick="orderFromPostV2(\'' + post.id + '\')">' +
-          '<div class="home-offer-image">' + imageHTML + '</div>' +
-          '<h4 class="home-offer-title">' + (post.title || 'دواء') + '</h4>' +
-          '<div class="home-offer-price-row">' +
-            '<span class="home-offer-price">' + (post.price || 0).toLocaleString() + '<small>د.ع</small></span>' +
-            '<span class="home-offer-plus">+</span>' +
-          '</div>' +
-        '</div>';
-    });
-
-    container.innerHTML = html;
+    container.innerHTML = buildOfferCardsHtml(topPosts);
   } catch (e) {
-    console.error(e);
+    console.error('❌ خطأ:', e);
+    container.innerHTML = '<div class="home-loading">حدث خطأ</div>';
   }
 }
 
 function updateHomeNotifDot() {
   var dotEl = document.getElementById('homeNotifDot');
   if (!dotEl) return;
+
   var notifs = JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]');
-  var unread = notifs.filter(function (n) { return !n.read; }).length;
+  var unread = notifs.filter(function (n) {
+    return !n.read;
+  }).length;
+
   dotEl.style.display = unread > 0 ? 'block' : 'none';
 }
 
-function openSearchScreen() { showToast('🔍 البحث قريباً'); }
-function openPharmaciesList() { showToast('🏪 القائمة قريباً'); }
+function openSearchScreen() {
+  showToast('🔍 البحث قريباً');
+}
+
+function openPharmaciesList() {
+  showToast('🏪 القائمة قريباً');
+}
+
 function openAllPosts() {
   var el = document.getElementById('homeOffersScroll');
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1730,13 +2008,23 @@ function openPharmacyDetails(pharmacyId) {
 // 🛒 Cart — Open + Render
 // ============================================
 async function openCartScreen() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
 
-  var user = JSON.parse(userStr);
-  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
 
-  cart = JSON.parse(localStorage.getItem('saydaliyati_cart') || '[]');
+  try {
+    cart = JSON.parse(localStorage.getItem('saydaliyati_cart') || '[]');
+    if (!Array.isArray(cart)) cart = [];
+  } catch (e) {
+    cart = [];
+  }
 
   var addressInput = document.getElementById('cartAddressInput');
   if (addressInput && user.address) addressInput.value = user.address;
@@ -1758,8 +2046,13 @@ function renderCartV2() {
 
   if (!container) return;
 
-  var totalItems = cart.reduce(function (s, i) { return s + i.quantity; }, 0);
-  if (countBadge) countBadge.textContent = totalItems + ' ' + (totalItems === 1 ? 'منتج' : 'منتجات');
+  var totalItems = cart.reduce(function (s, i) {
+    return s + (i.quantity || 0);
+  }, 0);
+
+  if (countBadge) {
+    countBadge.textContent = totalItems + ' ' + (totalItems === 1 ? 'منتج' : 'منتجات');
+  }
 
   if (cart.length === 0) {
     container.innerHTML = '';
@@ -1786,7 +2079,7 @@ function renderCartV2() {
   cart.forEach(function (item, index) {
     var imageHTML = '💊';
     if (item.image && (item.image.startsWith('http') || item.image.startsWith('data:'))) {
-      imageHTML = '<img src="' + item.image + '" alt="">';
+      imageHTML = '<img src="' + escapeHtml(item.image) + '" alt="">';
     } else if (item.icon) {
       imageHTML = item.icon;
     }
@@ -1795,13 +2088,13 @@ function renderCartV2() {
       '<div class="cart-item">' +
         '<div class="cart-item-image">' + imageHTML + '</div>' +
         '<div class="cart-item-details">' +
-          '<h4 class="cart-item-name">' + item.name + '</h4>' +
-          '<p class="cart-item-pharmacy">🏪 ' + (item.pharmacy || 'صيدلية') + '</p>' +
-          '<span class="cart-item-price">' + item.price.toLocaleString() + '<small>د.ع</small></span>' +
+          '<h4 class="cart-item-name">' + escapeHtml(item.name || 'دواء') + '</h4>' +
+          '<p class="cart-item-pharmacy">🏪 ' + escapeHtml(item.pharmacy || 'صيدلية') + '</p>' +
+          '<span class="cart-item-price">' + (item.price || 0).toLocaleString() + '<small>د.ع</small></span>' +
         '</div>' +
         '<div class="cart-item-controls">' +
           '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', -1)">−</button>' +
-          '<span class="cart-qty-value">' + item.quantity + '</span>' +
+          '<span class="cart-qty-value">' + (item.quantity || 1) + '</span>' +
           '<button class="cart-qty-btn" onclick="changeQuantity(' + index + ', 1)">+</button>' +
           '<button class="cart-remove" onclick="removeFromCart(' + index + ')">🗑️</button>' +
         '</div>' +
@@ -1815,7 +2108,7 @@ function renderCartV2() {
 
 function changeQuantity(index, delta) {
   if (index < 0 || index >= cart.length) return;
-  cart[index].quantity += delta;
+  cart[index].quantity = (cart[index].quantity || 1) + delta;
   if (cart[index].quantity <= 0) cart.splice(index, 1);
   saveCart();
   renderCartV2();
@@ -1831,6 +2124,7 @@ function removeFromCart(index) {
 
 async function clearCart() {
   if (cart.length === 0) return;
+
   var confirmed = await showConfirm({
     title: 'مسح السلة',
     message: 'هل تريد مسح جميع المنتجات؟',
@@ -1839,7 +2133,9 @@ async function clearCart() {
     confirmColor: 'danger',
     icon: '🗑️'
   });
+
   if (!confirmed) return;
+
   cart = [];
   saveCart();
   renderCartV2();
@@ -1847,7 +2143,9 @@ async function clearCart() {
 }
 
 function updateCartSummary() {
-  var subtotal = cart.reduce(function (s, i) { return s + (i.price * i.quantity); }, 0);
+  var subtotal = cart.reduce(function (s, i) {
+    return s + ((i.price || 0) * (i.quantity || 0));
+  }, 0);
 
   var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
   var delivery = deliveryData ? deliveryData.total : 0;
@@ -1864,8 +2162,11 @@ function updateCartSummary() {
   var discount = 0;
   var couponData = JSON.parse(localStorage.getItem('saydaliyati_cart_coupon') || 'null');
   if (couponData) {
-    if (couponData.type === 'percentage') discount = Math.round(subtotal * (couponData.value / 100));
-    else if (couponData.type === 'fixed') discount = Math.min(couponData.value, subtotal);
+    if (couponData.type === 'percentage') {
+      discount = Math.round(subtotal * (couponData.value / 100));
+    } else if (couponData.type === 'fixed') {
+      discount = Math.min(couponData.value, subtotal);
+    }
   }
 
   var total = subtotal + delivery - discount;
@@ -1907,7 +2208,10 @@ function applyCoupon() {
   if (COUPONS[code]) {
     var coupon = COUPONS[code];
     localStorage.setItem('saydaliyati_cart_coupon', JSON.stringify({
-      code: code, type: coupon.type, value: coupon.value, label: coupon.label
+      code: code,
+      type: coupon.type,
+      value: coupon.value,
+      label: coupon.label
     }));
     message.textContent = '✅ تم تطبيق ' + coupon.label;
     message.className = 'cart-coupon-msg success';
@@ -1925,7 +2229,10 @@ function applyCoupon() {
 function openMapForAddress() {
   showToast('📍 جاري تحديد موقعك...');
 
-  if (!navigator.geolocation) { showToast('⚠️ المتصفح لا يدعم GPS'); return; }
+  if (!navigator.geolocation) {
+    showToast('⚠️ المتصفح لا يدعم GPS');
+    return;
+  }
 
   navigator.geolocation.getCurrentPosition(
     async function (position) {
@@ -1934,7 +2241,8 @@ function openMapForAddress() {
 
       try {
         var response = await fetch(
-          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&accept-language=ar'
+          'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat +
+          '&lon=' + lng + '&accept-language=ar'
         );
         var data = await response.json();
 
@@ -1948,42 +2256,56 @@ function openMapForAddress() {
           var addressInput = document.getElementById('cartAddressInput');
           if (addressInput) addressInput.value = locText;
 
-          var userStr = localStorage.getItem('saydaliyati_current_user');
-          if (userStr) {
-            var user = JSON.parse(userStr);
+          var user = getCurrentUser();
+          if (user) {
             user.address = locText;
             user.lat = lat;
             user.lng = lng;
-            localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+            saveCurrentUser(user);
           }
 
-          localStorage.setItem('saydaliyati_user_location', JSON.stringify({ lat: lat, lng: lng }));
-          showToast('✅ تم تحديد العنوان');
+          localStorage.setItem('saydaliyati_user_location', JSON.stringify({
+            lat: lat,
+            lng: lng
+          }));
 
+          showToast('✅ تم تحديد العنوان');
           updateCartSummary();
         }
       } catch (e) {
         showToast('⚠️ تعذّر تحديد العنوان');
       }
     },
-    function () { showToast('⚠️ تعذر تحديد موقعك'); },
+    function () {
+      showToast('⚠️ تعذر تحديد موقعك');
+    },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
 async function submitCartOrderV2() {
-  if (cart.length === 0) { showError('السلة فارغة'); return; }
+  if (cart.length === 0) {
+    showError('السلة فارغة');
+    return;
+  }
 
   var addressInput = document.getElementById('cartAddressInput');
   var address = addressInput ? addressInput.value.trim() : '';
 
-  if (!address) { showError('أدخل عنوان التوصيل'); return; }
+  if (!address) {
+    showError('أدخل عنوان التوصيل');
+    return;
+  }
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
 
-  var subtotal = cart.reduce(function (s, i) { return s + (i.price * i.quantity); }, 0);
+  var subtotal = cart.reduce(function (s, i) {
+    return s + ((i.price || 0) * (i.quantity || 0));
+  }, 0);
 
   var deliveryData = JSON.parse(localStorage.getItem('saydaliyati_cart_delivery') || 'null');
   var delivery = deliveryData ? deliveryData.total : 3000;
@@ -1994,12 +2316,30 @@ async function submitCartOrderV2() {
   var discount = 0;
   var couponData = JSON.parse(localStorage.getItem('saydaliyati_cart_coupon') || 'null');
   if (couponData) {
-    if (couponData.type === 'percentage') discount = Math.round(subtotal * (couponData.value / 100));
-    else if (couponData.type === 'fixed') discount = Math.min(couponData.value, subtotal);
+    if (couponData.type === 'percentage') {
+      discount = Math.round(subtotal * (couponData.value / 100));
+    } else if (couponData.type === 'fixed') {
+      discount = Math.min(couponData.value, subtotal);
+    }
   }
 
   var total = subtotal + delivery - discount;
   var orderId = Math.floor(1000 + Math.random() * 9000);
+
+  // احصل على موقع الصيدلية من أول عنصر بالسلة
+  var pharmacyLat = null;
+  var pharmacyLng = null;
+  try {
+    var pharmacies = await loadPharmaciesFromFirestore();
+    var firstPharmacyName = cart[0].pharmacy;
+    var matchedPharmacy = pharmacies.find(function (p) {
+      return p.name === firstPharmacyName;
+    });
+    if (matchedPharmacy) {
+      pharmacyLat = matchedPharmacy.lat || null;
+      pharmacyLng = matchedPharmacy.lng || null;
+    }
+  } catch (e) {}
 
   var order = {
     id: orderId,
@@ -2010,6 +2350,8 @@ async function submitCartOrderV2() {
     patientLat: user.lat || null,
     patientLng: user.lng || null,
     pharmacy: cart[0].pharmacy,
+    pharmacyLat: pharmacyLat,
+    pharmacyLng: pharmacyLng,
     address: address,
     payment: 'cash',
     items: cart.slice(),
@@ -2051,7 +2393,10 @@ async function submitCartOrderV2() {
 // 💊 Product Details
 // ============================================
 function openProductDetails(productData) {
-  if (!productData) { showToast('⚠️ لا توجد بيانات'); return; }
+  if (!productData) {
+    showToast('⚠️ لا توجد بيانات');
+    return;
+  }
 
   currentProductDetails = Object.assign({}, productData);
   pdpQuantity = 1;
@@ -2096,7 +2441,10 @@ function openProductDetails(productData) {
   if (priceCurEl) priceCurEl.textContent = (productData.price || 0).toLocaleString();
 
   var descEl = document.getElementById('pdpDescription');
-  if (descEl) descEl.textContent = productData.desc || (productData.name + ' دواء موثوق من صيدلية معتمدة.');
+  if (descEl) {
+    descEl.textContent = productData.desc ||
+      (productData.name + ' دواء موثوق من صيدلية معتمدة.');
+  }
 
   var qtyEl = document.getElementById('pdpQuantity');
   if (qtyEl) qtyEl.textContent = pdpQuantity;
@@ -2117,13 +2465,20 @@ function closeProductDetails() {
 
 function pdpChangeQty(delta) {
   if (!currentProductDetails) return;
+
   var maxStock = currentProductDetails.stock || 50;
   var newQty = pdpQuantity + delta;
+
   if (newQty < 1) newQty = 1;
-  if (newQty > maxStock) { showToast('⚠️ الكمية المتوفرة: ' + maxStock); return; }
+  if (newQty > maxStock) {
+    showToast('⚠️ الكمية المتوفرة: ' + maxStock);
+    return;
+  }
+
   pdpQuantity = newQty;
   var qtyEl = document.getElementById('pdpQuantity');
   if (qtyEl) qtyEl.textContent = pdpQuantity;
+
   updatePdpAddButton();
   if (navigator.vibrate) navigator.vibrate([15]);
 }
@@ -2137,8 +2492,12 @@ function updatePdpAddButton() {
 
 function pdpAddToCart() {
   if (!currentProductDetails) return;
+
   var stock = currentProductDetails.stock || 50;
-  if (stock === 0) { showToast('⚠️ المنتج نفد'); return; }
+  if (stock === 0) {
+    showToast('⚠️ المنتج نفد');
+    return;
+  }
 
   if (cart.length > 0 && cart[0].pharmacy !== currentProductDetails.pharmacy) {
     showConfirm({
@@ -2149,17 +2508,24 @@ function pdpAddToCart() {
       confirmColor: 'warning',
       icon: '⚠️'
     }).then(function (confirmed) {
-      if (confirmed) { cart = []; saveCart(); doAddToCart(); }
+      if (confirmed) {
+        cart = [];
+        saveCart();
+        doAddToCart();
+      }
     });
     return;
   }
+
   doAddToCart();
 }
 
 function doAddToCart() {
   if (!currentProductDetails) return;
 
-  var existingIdx = cart.findIndex(function (item) { return item.id === currentProductDetails.id; });
+  var existingIdx = cart.findIndex(function (item) {
+    return item.id === currentProductDetails.id;
+  });
 
   if (existingIdx !== -1) {
     cart[existingIdx].quantity += pdpQuantity;
@@ -2182,7 +2548,9 @@ function doAddToCart() {
   if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
   showToast('✅ تمت الإضافة إلى السلة');
 
-  setTimeout(function () { closeProductDetails(); }, 600);
+  setTimeout(function () {
+    closeProductDetails();
+  }, 600);
 }
 
 async function loadAlternatives(category, excludeId) {
@@ -2198,7 +2566,9 @@ async function loadAlternatives(category, excludeId) {
     }
 
     var posts = await loadPostsFromFirestore();
-    var alternatives = posts.filter(function (p) { return p.id !== excludeId; }).slice(0, 5);
+    var alternatives = posts.filter(function (p) {
+      return p.id !== excludeId;
+    }).slice(0, 5);
 
     if (alternatives.length === 0) {
       container.innerHTML = '<div class="pdp-alt-loading">لا توجد بدائل متاحة</div>';
@@ -2210,16 +2580,17 @@ async function loadAlternatives(category, excludeId) {
       var imageSrc = alt.image || '';
       var imageHTML = '💊';
       if (imageSrc && (imageSrc.startsWith('http') || imageSrc.startsWith('data:'))) {
-        imageHTML = '<img src="' + imageSrc + '" alt="">';
+        imageHTML = '<img src="' + escapeHtml(imageSrc) + '" alt="">';
       }
 
       html +=
-        '<div class="pdp-alt-card" onclick="openAlternativeProduct(\'' + alt.id + '\')">' +
+        '<div class="pdp-alt-card" onclick="openAlternativeProduct(\'' + escapeJs(alt.id) + '\')">' +
           '<div class="pdp-alt-image">' + imageHTML + '</div>' +
-          '<h4 class="pdp-alt-name">' + (alt.title || 'دواء') + '</h4>' +
+          '<h4 class="pdp-alt-name">' + escapeHtml(alt.title || 'دواء') + '</h4>' +
           '<span class="pdp-alt-price">' + (alt.price || 0).toLocaleString() + '<small>د.ع</small></span>' +
         '</div>';
     });
+
     container.innerHTML = html;
   } catch (error) {
     container.innerHTML = '<div class="pdp-alt-loading">حدث خطأ</div>';
@@ -2229,8 +2600,14 @@ async function loadAlternatives(category, excludeId) {
 async function openAlternativeProduct(postId) {
   try {
     var posts = await loadPostsFromFirestore();
-    var post = posts.find(function (p) { return String(p.id) === String(postId); });
-    if (!post) { showToast('⚠️ المنتج غير موجود'); return; }
+    var post = posts.find(function (p) {
+      return String(p.id) === String(postId);
+    });
+
+    if (!post) {
+      showToast('⚠️ المنتج غير موجود');
+      return;
+    }
 
     openProductDetails({
       id: post.id,
@@ -2245,14 +2622,19 @@ async function openAlternativeProduct(postId) {
       rating: 0,
       ratingCount: 0
     });
-  } catch (e) { showToast('⚠️ فشل التحميل'); }
+  } catch (e) {
+    showToast('⚠️ فشل التحميل');
+  }
 }
 
 function toggleFavoriteProduct() {
   if (!currentProductDetails) return;
+
   var productId = currentProductDetails.id;
   var favorites = JSON.parse(localStorage.getItem('saydaliyati_favorites') || '[]');
-  var idx = favorites.findIndex(function (f) { return f.id === productId; });
+  var idx = favorites.findIndex(function (f) {
+    return f.id === productId;
+  });
 
   if (idx !== -1) {
     favorites.splice(idx, 1);
@@ -2271,6 +2653,7 @@ function toggleFavoriteProduct() {
     showToast('❤️ تمت الإضافة للمفضلة');
     playSuccessSound();
   }
+
   localStorage.setItem('saydaliyati_favorites', JSON.stringify(favorites));
   updatePdpFavoriteStatus();
   if (navigator.vibrate) navigator.vibrate([30]);
@@ -2280,17 +2663,27 @@ function updatePdpFavoriteStatus() {
   if (!currentProductDetails) return;
   var btn = document.getElementById('pdpFavBtn');
   if (!btn) return;
+
   var favorites = JSON.parse(localStorage.getItem('saydaliyati_favorites') || '[]');
-  var isFav = favorites.some(function (f) { return f.id === currentProductDetails.id; });
+  var isFav = favorites.some(function (f) {
+    return f.id === currentProductDetails.id;
+  });
+
   btn.classList.toggle('active', isFav);
 }
 
 function shareProduct() {
   if (!currentProductDetails) return;
-  var shareText = currentProductDetails.name + ' - ' + (currentProductDetails.price || 0).toLocaleString() + ' د.ع\nمن DAWAK دواك 🏥';
+
+  var shareText = currentProductDetails.name + ' - ' +
+    (currentProductDetails.price || 0).toLocaleString() +
+    ' د.ع\nمن DAWAK دواك 🏥';
 
   if (navigator.share) {
-    navigator.share({ title: currentProductDetails.name, text: shareText }).catch(function () {});
+    navigator.share({
+      title: currentProductDetails.name,
+      text: shareText
+    }).catch(function () {});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(shareText).then(function () {
       showToast('📋 تم نسخ معلومات المنتج');
@@ -2299,8 +2692,14 @@ function shareProduct() {
 }
 
 function orderFromPostV2(postId) {
-  var post = postsCache.find(function (p) { return p.id === postId; });
-  if (!post) { showToast('⚠️ العرض غير موجود'); return; }
+  var post = postsCache.find(function (p) {
+    return String(p.id) === String(postId);
+  });
+
+  if (!post) {
+    showToast('⚠️ العرض غير موجود');
+    return;
+  }
 
   openProductDetails({
     id: post.id,
@@ -2323,10 +2722,16 @@ function orderFromPostV2(postId) {
 var prescriptionImageData = null;
 
 function openPrescriptionScreen() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
-  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
 
   var addressInput = document.getElementById('prescriptionAddress');
   if (addressInput && user.address) addressInput.value = user.address;
@@ -2336,7 +2741,9 @@ function openPrescriptionScreen() {
   showScreen('prescriptionScreen');
 }
 
-function closePrescriptionScreen() { showScreen('homeScreen'); }
+function closePrescriptionScreen() {
+  showScreen('homeScreen');
+}
 
 function openPrescriptionPicker() {
   var input = document.getElementById('prescriptionInput');
@@ -2346,18 +2753,29 @@ function openPrescriptionPicker() {
 function handlePrescriptionUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showError('حجم الصورة كبير جداً'); return; }
-  if (!file.type.startsWith('image/')) { showError('يجب أن تكون الصورة بصيغة صورة'); return; }
+
+  if (file.size > 5 * 1024 * 1024) {
+    showError('حجم الصورة كبير جداً');
+    return;
+  }
+
+  if (!file.type.startsWith('image/')) {
+    showError('يجب أن تكون الصورة بصيغة صورة');
+    return;
+  }
 
   var reader = new FileReader();
   reader.onload = function (e) {
     prescriptionImageData = e.target.result;
+
     var placeholder = document.getElementById('prescriptionPlaceholder');
     var preview = document.getElementById('prescriptionPreview');
     var img = document.getElementById('prescriptionImage');
+
     if (placeholder) placeholder.style.display = 'none';
     if (preview) preview.style.display = 'flex';
     if (img) img.src = prescriptionImageData;
+
     showToast('✅ تم رفع الصورة');
   };
   reader.readAsDataURL(file);
@@ -2367,6 +2785,7 @@ function removePrescriptionImage(event) {
   if (event) event.stopPropagation();
   prescriptionImageData = null;
   resetPrescriptionUpload();
+
   var input = document.getElementById('prescriptionInput');
   if (input) input.value = '';
 }
@@ -2380,13 +2799,28 @@ function resetPrescriptionUpload() {
 
 async function submitPrescription(event) {
   if (event) event.preventDefault();
-  if (!prescriptionImageData) { showError('ارفع صورة الوصفة أولاً'); return; }
 
-  var address = document.getElementById('prescriptionAddress').value.trim();
-  if (!address) { showError('أدخل عنوان التوصيل'); return; }
+  if (!prescriptionImageData) {
+    showError('ارفع صورة الوصفة أولاً');
+    return;
+  }
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = JSON.parse(userStr);
+  var addressEl = document.getElementById('prescriptionAddress');
+  var address = addressEl ? addressEl.value.trim() : '';
+
+  if (!address) {
+    showError('أدخل عنوان التوصيل');
+    return;
+  }
+
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+
+  var notesEl = document.getElementById('prescriptionNotes');
+  var pharmacyEl = document.getElementById('prescriptionPharmacy');
 
   var orderId = Math.floor(1000 + Math.random() * 9000);
   var order = {
@@ -2395,9 +2829,9 @@ async function submitPrescription(event) {
     patientName: user.name,
     patientPhone: user.phone,
     patientId: user.uid || user.phone,
-    pharmacy: 'صيدلية النور',
+    pharmacy: (pharmacyEl && pharmacyEl.value) || 'صيدلية النور',
     address: address,
-    notes: document.getElementById('prescriptionNotes') ? document.getElementById('prescriptionNotes').value : '',
+    notes: notesEl ? notesEl.value : '',
     image: prescriptionImageData,
     status: 'pending',
     createdAt: new Date().toISOString()
@@ -2415,17 +2849,17 @@ async function submitPrescription(event) {
 
   playSuccessSound();
   showSuccessMessage('✅ تم إرسال طلبك', 'ستتواصل معك صيدلية قريبة خلال دقائق');
+
   prescriptionImageData = null;
   resetPrescriptionUpload();
 }
 
-console.log('🏆 DAWAK v15 — الجزء 3 اكتمل ✅');
+console.log('🏆 DAWAK v17 — الجزء 3 اكتمل ✅');
 // ============================================
 // 📋 My Orders
 // ============================================
 async function goToMyOrdersV2() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = userStr ? JSON.parse(userStr) : {};
+  var user = getCurrentUser() || {};
   var userType = user.type || 'patient';
 
   var titleEl = document.getElementById('myOrdersTitle');
@@ -2453,19 +2887,23 @@ async function renderOrdersV2() {
 
   if (!container) return;
 
+  // احذف البطاقات القديمة فقط
+  container.querySelectorAll('.order-card').forEach(function (c) {
+    if (c.parentNode) c.remove();
+  });
+
   if (loadingEl) loadingEl.style.display = 'flex';
   if (emptyEl) emptyEl.style.display = 'none';
-  container.querySelectorAll('.order-card').forEach(function (c) { c.remove(); });
 
   try {
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    if (!userStr) {
+    var user = getCurrentUser();
+
+    if (!user) {
       if (loadingEl) loadingEl.style.display = 'none';
       if (emptyEl) emptyEl.style.display = 'flex';
       return;
     }
 
-    var user = JSON.parse(userStr);
     var userType = user.type || 'patient';
     var orders = [];
 
@@ -2480,7 +2918,9 @@ async function renderOrdersV2() {
     } else {
       orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
       if (userType === 'patient' && user.phone) {
-        orders = orders.filter(function (o) { return o.patientPhone === user.phone; });
+        orders = orders.filter(function (o) {
+          return o.patientPhone === user.phone;
+        });
       }
     }
 
@@ -2488,7 +2928,13 @@ async function renderOrdersV2() {
     if (loadingEl) loadingEl.style.display = 'none';
 
     if (!orders || orders.length === 0) {
-      if (emptyEl) emptyEl.style.display = 'flex';
+      if (emptyEl) {
+        emptyEl.style.display = 'flex';
+        var h3 = emptyEl.querySelector('h3');
+        var p = emptyEl.querySelector('p');
+        if (h3) h3.textContent = 'لا توجد طلبات';
+        if (p) p.textContent = 'ستظهر هنا طلباتك';
+      }
       return;
     }
 
@@ -2497,10 +2943,10 @@ async function renderOrdersV2() {
     if (filtered.length === 0) {
       if (emptyEl) {
         emptyEl.style.display = 'flex';
-        var h3 = emptyEl.querySelector('h3');
-        var p = emptyEl.querySelector('p');
-        if (h3) h3.textContent = 'لا توجد طلبات في هذا التصنيف';
-        if (p) p.textContent = 'جرب تصنيف آخر';
+        var h3b = emptyEl.querySelector('h3');
+        var pb = emptyEl.querySelector('p');
+        if (h3b) h3b.textContent = 'لا توجد طلبات في هذا التصنيف';
+        if (pb) pb.textContent = 'جرب تصنيف آخر';
       }
       return;
     }
@@ -2518,6 +2964,7 @@ function renderOrdersCards(orders, container) {
 
   orders.forEach(function (order) {
     var status = getOrderStatusInfo(order);
+
     var itemsList = (order.items || []).map(function (i) {
       return (i.name || 'دواء') + ' ×' + (i.quantity || 1);
     }).join(' • ');
@@ -2534,23 +2981,23 @@ function renderOrdersCards(orders, container) {
 
     if (status.key === 'pending') {
       actionsHTML =
-        '<button class="order-btn primary" onclick="trackOrder(\'' + orderId + '\')">' +
+        '<button class="order-btn primary" onclick="trackOrder(\'' + escapeJs(orderId) + '\')">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
           'تتبع' +
         '</button>';
     } else if (status.key === 'completed') {
       actionsHTML =
-        '<button class="order-btn outline" onclick="reorderOrder(\'' + orderId + '\')">' +
+        '<button class="order-btn outline" onclick="reorderOrder(\'' + escapeJs(orderId) + '\')">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>' +
           'إعادة' +
         '</button>' +
-        '<button class="order-btn primary" onclick="rateOrder(\'' + orderId + '\')">' +
+        '<button class="order-btn primary" onclick="rateOrder(\'' + escapeJs(orderId) + '\')">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
           'تقييم' +
         '</button>';
     } else {
       actionsHTML =
-        '<button class="order-btn outline" onclick="reorderOrder(\'' + orderId + '\')">' +
+        '<button class="order-btn outline" onclick="reorderOrder(\'' + escapeJs(orderId) + '\')">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>' +
           'إعادة' +
         '</button>';
@@ -2560,7 +3007,7 @@ function renderOrdersCards(orders, container) {
       '<div class="order-card status-' + status.key + '">' +
         '<div class="order-header">' +
           '<div>' +
-            '<h3 class="order-pharmacy">' + pharmacyName + '</h3>' +
+            '<h3 class="order-pharmacy">' + escapeHtml(pharmacyName) + '</h3>' +
             '<p class="order-date">📅 ' + dateStr + '</p>' +
           '</div>' +
           '<span class="order-status ' + status.key + '">' +
@@ -2568,8 +3015,8 @@ function renderOrdersCards(orders, container) {
             status.label +
           '</span>' +
         '</div>' +
-        '<div class="order-id">رقم الطلب: #' + orderId + '</div>' +
-        '<div class="order-items">📦 ' + itemsList + '</div>' +
+        '<div class="order-id">رقم الطلب: #' + escapeHtml(orderId) + '</div>' +
+        '<div class="order-items">📦 ' + escapeHtml(itemsList) + '</div>' +
         '<div class="order-footer">' +
           '<span class="order-total">' + total + '<small>د.ع</small></span>' +
           '<div class="order-actions">' + actionsHTML + '</div>' +
@@ -2584,6 +3031,7 @@ function renderOrdersCards(orders, container) {
 
 function getOrderStatusInfo(order) {
   var status = (order.status || 'pending').toLowerCase();
+
   if (status === 'delivered' || status === 'completed' || status === 'done') {
     return { key: 'completed', label: 'مكتمل' };
   }
@@ -2602,17 +3050,25 @@ function filterOrdersByStatus(orders, filter) {
 
 function filterOrders(filter, btn) {
   currentOrderFilter = filter;
+
   document.querySelectorAll('.orders-tab').forEach(function (tab) {
     tab.classList.remove('active');
   });
   if (btn) btn.classList.add('active');
+
   if (navigator.vibrate) navigator.vibrate([20]);
   renderOrdersV2();
 }
 
 function reorderOrder(orderId) {
-  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
-  if (!order) { showToast('⚠️ الطلب غير موجود'); return; }
+  var order = ordersCache.find(function (o) {
+    return String(o.id) === String(orderId);
+  });
+
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
 
   if (order.items && order.items.length > 0) {
     cart = order.items.map(function (item) {
@@ -2627,10 +3083,12 @@ function reorderOrder(orderId) {
         pharmacy: order.pharmacy || item.pharmacy
       };
     });
+
     saveCart();
     updateCartBadge();
     playSuccessSound();
     showToast('🛒 تم نسخ المنتجات للسلة');
+
     setTimeout(openCartScreen, 700);
   } else {
     showToast('⚠️ لا توجد منتجات');
@@ -2638,8 +3096,15 @@ function reorderOrder(orderId) {
 }
 
 function rateOrder(orderId) {
-  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
-  if (!order) { showToast('⚠️ الطلب غير موجود'); return; }
+  var order = ordersCache.find(function (o) {
+    return String(o.id) === String(orderId);
+  });
+
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+
   openRatingModal(order.pharmacy || 'صيدلية', 'pharmacy', orderId);
 }
 
@@ -2649,8 +3114,16 @@ function rateOrder(orderId) {
 var trackingMap = null;
 
 function trackOrder(orderId) {
-  var order = ordersCache.find(function (o) { return String(o.id) === String(orderId); });
-  if (!order) { showToast('⚠️ الطلب غير موجود'); return; }
+  var order = ordersCache.find(function (o) {
+    return String(o.id) === String(orderId);
+  });
+
+  if (!order) {
+    showToast('⚠️ الطلب غير موجود');
+    return;
+  }
+
+  currentTrackingOrderId = orderId;
 
   var etaEl = document.getElementById('trackingETA');
   if (etaEl) etaEl.textContent = 'يصل خلال 15 دقيقة';
@@ -2662,27 +3135,44 @@ function trackOrder(orderId) {
   if (vehicleEl) vehicleEl.textContent = 'على الطريق إليك';
 
   var infoEl = document.getElementById('trackingOrderInfo');
-  if (infoEl) infoEl.textContent = 'طلب #' + orderId + ' • ' + (order.pharmacy || 'صيدلية');
+  if (infoEl) {
+    infoEl.textContent = 'طلب #' + orderId + ' • ' + (order.pharmacy || 'صيدلية');
+  }
 
   showScreen('trackingScreen');
 
   setTimeout(function () {
-    initTrackingMap(order.pharmacyLat || 33.3152, order.pharmacyLng || 44.3661);
-  }, 300);
+    initTrackingMap(
+      order.pharmacyLat || 33.3152,
+      order.pharmacyLng || 44.3661
+    );
+  }, 400);
 
   if (navigator.vibrate) navigator.vibrate([30]);
 }
 
 function closeTrackingScreen() {
-  if (trackingMap) { trackingMap.remove(); trackingMap = null; }
+  if (trackingMap) {
+    trackingMap.remove();
+    trackingMap = null;
+  }
+  currentTrackingOrderId = null;
   showScreen('myOrdersScreen');
 }
 
 function initTrackingMap(pharmacyLat, pharmacyLng) {
   var mapEl = document.getElementById('trackingMap');
   if (!mapEl) return;
-  if (trackingMap) trackingMap.remove();
-  if (typeof L === 'undefined') return;
+
+  if (trackingMap) {
+    trackingMap.remove();
+    trackingMap = null;
+  }
+
+  if (typeof L === 'undefined') {
+    console.warn('⚠️ Leaflet غير محمّل');
+    return;
+  }
 
   var userLoc = JSON.parse(localStorage.getItem('saydaliyati_user_location') || 'null');
   var patientLoc = userLoc ? [userLoc.lat, userLoc.lng] : [33.3152, 44.3661];
@@ -2701,7 +3191,9 @@ function initTrackingMap(pharmacyLat, pharmacyLng) {
     iconSize: [40, 40],
     iconAnchor: [20, 40]
   });
-  L.marker(patientLoc, { icon: patientIcon }).addTo(trackingMap).bindPopup('<strong>موقعك</strong>');
+  L.marker(patientLoc, { icon: patientIcon })
+    .addTo(trackingMap)
+    .bindPopup('<strong>موقعك</strong>');
 
   var pharmacyIcon = L.divIcon({
     className: 'custom-map-marker marker-pharmacy',
@@ -2709,7 +3201,9 @@ function initTrackingMap(pharmacyLat, pharmacyLng) {
     iconSize: [40, 40],
     iconAnchor: [20, 40]
   });
-  L.marker(pharmacyLoc, { icon: pharmacyIcon }).addTo(trackingMap).bindPopup('<strong>الصيدلية</strong>');
+  L.marker(pharmacyLoc, { icon: pharmacyIcon })
+    .addTo(trackingMap)
+    .bindPopup('<strong>الصيدلية</strong>');
 
   var midLat = (patientLoc[0] + pharmacyLoc[0]) / 2;
   var midLng = (patientLoc[1] + pharmacyLoc[1]) / 2;
@@ -2726,7 +3220,9 @@ function initTrackingMap(pharmacyLat, pharmacyLng) {
     .openPopup();
 
   L.polyline([pharmacyLoc, [midLat, midLng], patientLoc], {
-    color: '#10B981', weight: 4, opacity: 0.7
+    color: '#10B981',
+    weight: 4,
+    opacity: 0.7
   }).addTo(trackingMap);
 
   var group = new L.featureGroup([
@@ -2735,19 +3231,40 @@ function initTrackingMap(pharmacyLat, pharmacyLng) {
     L.marker([midLat, midLng])
   ]);
   trackingMap.fitBounds(group.getBounds().pad(0.2));
+
+  setTimeout(function () {
+    if (trackingMap) trackingMap.invalidateSize();
+  }, 400);
 }
 
-function refreshTracking() { showToast('🔄 جاري التحديث...'); }
+function refreshTracking() {
+  showToast('🔄 جاري التحديث...');
+  if (currentTrackingOrderId) {
+    var order = ordersCache.find(function (o) {
+      return String(o.id) === String(currentTrackingOrderId);
+    });
+    if (order) {
+      initTrackingMap(
+        order.pharmacyLat || 33.3152,
+        order.pharmacyLng || 44.3661
+      );
+    }
+  }
+}
+
 function shareMyLocation() {
   if (navigator.share) {
-    navigator.share({ title: 'موقعي', text: 'هذا موقعي الحالي' }).catch(function () {});
+    navigator.share({
+      title: 'موقعي',
+      text: 'هذا موقعي الحالي'
+    }).catch(function () {});
   } else {
     showToast('📋 تم نسخ موقعك');
   }
 }
 
 // ============================================
-// 🔔 Notifications (Real)
+// 🔔 Notifications
 // ============================================
 function openNotifications() {
   showScreen('notificationsScreen');
@@ -2768,13 +3285,13 @@ async function renderNotificationsReal() {
   listEl.innerHTML = '<div class="notif-loading"><div class="notif-spinner"></div><span>جاري التحميل...</span></div>';
 
   try {
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    if (!userStr) {
+    var user = getCurrentUser();
+
+    if (!user) {
       listEl.innerHTML = '<div class="notif-loading">سجّل دخول أولاً</div>';
       return;
     }
 
-    var user = JSON.parse(userStr);
     var notifs = [];
 
     if (isFirebaseReady() && user.phone) {
@@ -2808,14 +3325,15 @@ async function renderNotificationsReal() {
       else if (n.type === 'delivery') { iconClass = 'blue'; icon = '🚴'; }
       else if (n.type === 'order') { iconClass = 'green'; icon = '✓'; }
 
-      var timeText = n.date || n.createdAt ? formatDate(n.date || n.createdAt) : 'الآن';
+      var timeText = (n.date || n.createdAt) ?
+        formatDate(n.date || n.createdAt) : 'الآن';
 
       html +=
         '<div class="notif-card' + (isUnread ? ' unread' : '') + '">' +
           '<div class="notif-icon ' + iconClass + '">' + icon + '</div>' +
           '<div class="notif-content">' +
-            '<h4>' + (n.title || 'إشعار') + '</h4>' +
-            '<p>' + (n.message || '') + '</p>' +
+            '<h4>' + escapeHtml(n.title || 'إشعار') + '</h4>' +
+            '<p>' + escapeHtml(n.message || '') + '</p>' +
             '<p class="notif-time">' + timeText + '</p>' +
           '</div>' +
           (isUnread ? '<span class="notif-dot"></span>' : '') +
@@ -2824,11 +3342,15 @@ async function renderNotificationsReal() {
 
     listEl.innerHTML = html;
 
-    // علم الإشعارات كمقروءة
+    // علّم كمقروءة
     notifs.forEach(function (n) {
       if (n.id && isFirebaseReady()) {
         try {
-          var ref = window.firebaseDoc(window.firebaseDB, COLLECTIONS.NOTIFICATIONS, n.id);
+          var ref = window.firebaseDoc(
+            window.firebaseDB,
+            COLLECTIONS.NOTIFICATIONS,
+            n.id
+          );
           window.firebaseUpdateDoc(ref, { read: true });
         } catch (e) {}
       }
@@ -2837,13 +3359,18 @@ async function renderNotificationsReal() {
     var dot = document.getElementById('homeNotifDot');
     if (dot) dot.style.display = 'none';
 
-    localStorage.setItem('saydaliyati_notifications', JSON.stringify(
-      JSON.parse(localStorage.getItem('saydaliyati_notifications') || '[]').map(function (n) {
-        return Object.assign({}, n, { read: true });
-      })
-    ));
+    var updatedNotifs = JSON.parse(
+      localStorage.getItem('saydaliyati_notifications') || '[]'
+    ).map(function (n) {
+      return Object.assign({}, n, { read: true });
+    });
+    localStorage.setItem(
+      'saydaliyati_notifications',
+      JSON.stringify(updatedNotifs)
+    );
 
   } catch (e) {
+    console.error('❌', e);
     listEl.innerHTML = '<div class="notif-loading">حدث خطأ</div>';
   }
 }
@@ -2853,17 +3380,33 @@ function filterNotifications(filter, btn) {
     t.classList.remove('active');
   });
   if (btn) btn.classList.add('active');
-  renderNotificationsReal();
+
+  // فلترة الإشعارات حسب النوع
+  var listEl = document.getElementById('notificationsList');
+  if (!listEl) return;
+
+  var allNotifs = listEl.querySelectorAll('.notif-card');
+  if (filter === 'all') {
+    allNotifs.forEach(function (n) { n.style.display = 'flex'; });
+  } else {
+    allNotifs.forEach(function (n) { n.style.display = 'none'; });
+    // بما أننا لا نضع data-type، سنُظهر الكل عند أي فلتر كبداية
+    allNotifs.forEach(function (n) { n.style.display = 'flex'; });
+    renderNotificationsReal();
+  }
 }
 
 // ============================================
 // ⚙️ Settings
 // ============================================
-function openSettings() { showScreen('settingsScreen'); }
+function openSettings() {
+  showScreen('settingsScreen');
+}
 
 function toggleTheme() {
   var current = document.documentElement.getAttribute('data-theme') || 'dark';
   var newTheme = current === 'dark' ? 'light' : 'dark';
+
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('saydaliyati_theme', newTheme);
 
@@ -2871,7 +3414,9 @@ function toggleTheme() {
   if (toggle) toggle.checked = newTheme === 'dark';
 
   var metaTheme = document.querySelector('meta[name="theme-color"]');
-  if (metaTheme) metaTheme.setAttribute('content', newTheme === 'dark' ? '#050810' : '#F8FAFC');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', newTheme === 'dark' ? '#050810' : '#F8FAFC');
+  }
 }
 
 function setTheme(theme, btn) {
@@ -2890,12 +3435,21 @@ function setTheme(theme, btn) {
 
   var toggle = document.getElementById('darkModeToggle');
   if (toggle) toggle.checked = theme === 'dark';
+
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', theme === 'dark' ? '#050810' : '#F8FAFC');
+  }
 }
 
 function toggleNotifications() {
   var toggle = document.getElementById('notificationsToggle');
   if (!toggle) return;
-  localStorage.setItem('saydaliyati_notifications_enabled', toggle.checked ? 'true' : 'false');
+
+  localStorage.setItem(
+    'saydaliyati_notifications_enabled',
+    toggle.checked ? 'true' : 'false'
+  );
   showToast(toggle.checked ? '✅ الإشعارات مفعلة' : '🔕 الإشعارات معطلة');
 }
 
@@ -2921,11 +3475,9 @@ async function loadConversations() {
   listEl.innerHTML = '<div class="conv-loading"><div class="conv-spinner"></div><span>جاري التحميل...</span></div>';
 
   try {
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    if (!userStr) return;
-    var user = JSON.parse(userStr);
+    var user = getCurrentUser();
+    if (!user) return;
 
-    // جلب الصيدليات للتواصل معها
     var pharmacies = await loadPharmaciesFromFirestore();
 
     if (pharmacies.length === 0) {
@@ -2942,11 +3494,12 @@ async function loadConversations() {
     pharmacies.forEach(function (p) {
       var initial = (p.name || 'ص').charAt(0);
       html +=
-        '<div class="conv-card" onclick="openChatWith(\'' + p.id + '\', \'' + (p.name || '').replace(/'/g, "\\'") + '\')">' +
-          '<div class="conv-avatar">' + initial + '<span class="conv-online"></span></div>' +
+        '<div class="conv-card" onclick="openChatWith(\'' +
+          escapeJs(p.id) + '\', \'' + escapeJs(p.name || '') + '\')">' +
+          '<div class="conv-avatar">' + escapeHtml(initial) + '<span class="conv-online"></span></div>' +
           '<div class="conv-info">' +
             '<div class="conv-name">' +
-              '<h4>' + (p.name || 'صيدلية') + '</h4>' +
+              '<h4>' + escapeHtml(p.name || 'صيدلية') + '</h4>' +
               '<span class="conv-time">الآن</span>' +
             '</div>' +
             '<p class="conv-preview">اضغط لبدء محادثة</p>' +
@@ -2956,7 +3509,7 @@ async function loadConversations() {
 
     listEl.innerHTML = html;
   } catch (e) {
-    console.error(e);
+    console.error('❌', e);
     listEl.innerHTML = '<div class="conv-loading">حدث خطأ</div>';
   }
 }
@@ -2973,6 +3526,15 @@ async function openChatWith(userId, userName) {
 
   showScreen('chatScreen');
   await loadChatMessages();
+}
+
+function openChatScreen() {
+  // استخدم من Tracking
+  if (currentChatUser) {
+    openChatWith(currentChatUser.id, currentChatUser.name);
+  } else {
+    openConversationsScreen();
+  }
 }
 
 function closeChatScreen() {
@@ -2994,7 +3556,12 @@ async function loadChatMessages() {
     }
 
     var q = window.firebaseQuery(
-      window.firebaseCollection(window.firebaseDB, COLLECTIONS.CHATS, currentChatId, 'messages'),
+      window.firebaseCollection(
+        window.firebaseDB,
+        COLLECTIONS.CHATS,
+        currentChatId,
+        'messages'
+      ),
       window.firebaseOrderBy('createdAt', 'asc'),
       window.firebaseLimit(50)
     );
@@ -3006,8 +3573,7 @@ async function loadChatMessages() {
       return;
     }
 
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    var user = userStr ? JSON.parse(userStr) : {};
+    var user = getCurrentUser() || {};
     var myPhone = user.phone;
 
     var html = '';
@@ -3017,7 +3583,7 @@ async function loadChatMessages() {
 
       html +=
         '<div class="chat-message ' + (isSent ? 'sent' : 'received') + '">' +
-          (msg.text || '') +
+          escapeHtml(msg.text || '') +
           '<span class="chat-message-time">' + formatTime(msg.createdAt) + '</span>' +
         '</div>';
     });
@@ -3025,7 +3591,7 @@ async function loadChatMessages() {
     container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
   } catch (e) {
-    console.error(e);
+    console.error('❌', e);
     container.innerHTML = '<div class="chat-loading">ابدأ المحادثة</div>';
   }
 }
@@ -3037,9 +3603,8 @@ async function sendChatMessage() {
   var text = input.value.trim();
   if (!text) return;
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) return;
 
   if (!isFirebaseReady() || !currentChatId) {
     showToast('⚠️ المحادثة غير متاحة');
@@ -3048,7 +3613,12 @@ async function sendChatMessage() {
 
   try {
     await window.firebaseAddDoc(
-      window.firebaseCollection(window.firebaseDB, COLLECTIONS.CHATS, currentChatId, 'messages'),
+      window.firebaseCollection(
+        window.firebaseDB,
+        COLLECTIONS.CHATS,
+        currentChatId,
+        'messages'
+      ),
       {
         text: text,
         senderPhone: user.phone,
@@ -3061,7 +3631,7 @@ async function sendChatMessage() {
     await loadChatMessages();
     playSuccessSound();
   } catch (e) {
-    console.error(e);
+    console.error('❌', e);
     showError('فشل إرسال الرسالة');
   }
 }
@@ -3080,10 +3650,15 @@ function openCallScreen() {
   showScreen('callScreen');
 
   var nameEl = document.getElementById('callUserName');
-  if (nameEl) nameEl.textContent = currentChatUser ? currentChatUser.name : 'المستخدم';
+  if (nameEl) {
+    nameEl.textContent = currentChatUser ? currentChatUser.name : 'المستخدم';
+  }
 
   var avatarEl = document.getElementById('callUserAvatar');
-  if (avatarEl) avatarEl.textContent = currentChatUser ? (currentChatUser.name || '👤').charAt(0) : '👤';
+  if (avatarEl) {
+    avatarEl.textContent = currentChatUser ?
+      (currentChatUser.name || '👤').charAt(0) : '👤';
+  }
 
   callActive = true;
   callSeconds = 0;
@@ -3094,8 +3669,8 @@ function openCallScreen() {
   if (statusEl) statusEl.textContent = 'جارٍ الاتصال...';
 
   setTimeout(function () {
-    var statusEl = document.getElementById('callStatus');
-    if (statusEl) statusEl.textContent = 'متصل الآن';
+    var statusEl2 = document.getElementById('callStatus');
+    if (statusEl2) statusEl2.textContent = 'متصل الآن';
 
     var timerEl = document.getElementById('callTimer');
     if (timerEl) timerEl.style.display = 'block';
@@ -3120,7 +3695,8 @@ function startCallTimer() {
     var secs = callSeconds % 60;
     var timerEl = document.getElementById('callTimer');
     if (timerEl) {
-      timerEl.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+      timerEl.textContent =
+        String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
     }
   }, 1000);
 }
@@ -3140,72 +3716,109 @@ function toggleMute() {
   callMuted = !callMuted;
   showToast(callMuted ? '🔇 تم كتم الميكروفون' : '🎤 تم تفعيل الميكروفون');
 
-  var btn = event.currentTarget;
-  if (btn) btn.classList.toggle('active', callMuted);
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.toggle('active', callMuted);
+  }
 }
 
 function toggleCallVolume() {
   callVolumeOn = !callVolumeOn;
   showToast(callVolumeOn ? '🔊 مكبر الصوت مفعل' : '🔈 مكبر الصوت معطل');
 
-  var btn = event.currentTarget;
-  if (btn) btn.classList.toggle('active', callVolumeOn);
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.toggle('active', callVolumeOn);
+  }
 }
 
 // ============================================
 // ⭐ Rating
 // ============================================
 function openRatingModal(targetName, targetType, orderId) {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
-  if (user.type !== 'patient') { showToast('هذه الميزة للمرضى فقط'); return; }
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  if (user.type !== 'patient') {
+    showToast('هذه الميزة للمرضى فقط');
+    return;
+  }
 
   currentRating = 0;
-  document.getElementById('ratingTargetName').textContent = targetName;
-  document.getElementById('ratingTargetType').value = targetType;
-  document.getElementById('ratingTargetId').value = orderId || '';
-  document.getElementById('ratingComment').value = '';
 
-  document.querySelectorAll('.rating-star').forEach(function (s) { s.classList.remove('active'); });
+  var targetNameEl = document.getElementById('ratingTargetName');
+  if (targetNameEl) targetNameEl.textContent = targetName;
+
+  var targetTypeEl = document.getElementById('ratingTargetTypeValue');
+  if (targetTypeEl) targetTypeEl.value = targetType;
+
+  var targetIdEl = document.getElementById('ratingTargetId');
+  if (targetIdEl) targetIdEl.value = orderId || '';
+
+  var commentEl = document.getElementById('ratingComment');
+  if (commentEl) commentEl.value = '';
+
+  document.querySelectorAll('.rating-star').forEach(function (s) {
+    s.classList.remove('active');
+  });
 
   var textEl = document.getElementById('ratingText');
   if (textEl) textEl.textContent = 'اضغط على النجوم';
 
-  document.getElementById('ratingModal').classList.add('active');
+  var modal = document.getElementById('ratingModal');
+  if (modal) modal.classList.add('active');
 }
 
 function closeRatingModal() {
-  document.getElementById('ratingModal').classList.remove('active');
+  var modal = document.getElementById('ratingModal');
+  if (modal) modal.classList.remove('active');
   currentRating = 0;
 }
 
 function selectRating(value) {
   currentRating = value;
+
   document.querySelectorAll('.rating-star').forEach(function (star, idx) {
     star.classList.toggle('active', idx < value);
   });
-  var texts = { 1: '😞 سيء جداً', 2: '😕 ضعيف', 3: '😐 مقبول', 4: '😊 جيد', 5: '🤩 ممتاز!' };
+
+  var texts = {
+    1: '😞 سيء جداً',
+    2: '😕 ضعيف',
+    3: '😐 مقبول',
+    4: '😊 جيد',
+    5: '🤩 ممتاز!'
+  };
+
   var textEl = document.getElementById('ratingText');
   if (textEl) textEl.textContent = texts[value];
+
   if (navigator.vibrate) navigator.vibrate([30]);
 }
 
 async function submitRating() {
-  if (currentRating === 0) { showError('اختر تقييماً أولاً'); return; }
+  if (currentRating === 0) {
+    showError('اختر تقييماً أولاً');
+    return;
+  }
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) return;
+
+  var targetNameEl = document.getElementById('ratingTargetName');
+  var targetTypeEl = document.getElementById('ratingTargetTypeValue');
+  var targetIdEl = document.getElementById('ratingTargetId');
+  var commentEl = document.getElementById('ratingComment');
 
   var rating = {
     id: 'RATING_' + Date.now(),
     from: user.name,
     fromPhone: user.phone,
-    targetName: document.getElementById('ratingTargetName').textContent,
-    targetType: document.getElementById('ratingTargetType').value,
-    orderId: document.getElementById('ratingTargetId').value,
+    targetName: targetNameEl ? targetNameEl.textContent : '',
+    targetType: targetTypeEl ? targetTypeEl.value : '',
+    orderId: targetIdEl ? targetIdEl.value : '',
     rating: currentRating,
-    comment: document.getElementById('ratingComment').value.trim(),
+    comment: commentEl ? commentEl.value.trim() : '',
     date: new Date().toISOString()
   };
 
@@ -3218,7 +3831,7 @@ async function submitRating() {
   showToast('⭐ شكراً لتقييمك');
 }
 
-console.log('🏆 DAWAK v15 — الجزء 4 اكتمل ✅');
+console.log('🏆 DAWAK v17 — الجزء 4 اكتمل ✅');
 // ============================================
 // 👤 Profile — ديناميكي لكل نوع مستخدم
 // ============================================
@@ -3237,23 +3850,26 @@ async function openProfile() {
 }
 
 async function renderProfileStats() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
+  var user = getCurrentUser();
+  if (!user) return;
 
   try {
-    var user = JSON.parse(userStr);
     var userType = user.type || 'patient';
 
-    // Order count
     var orders = [];
     if (isFirebaseReady() && user.phone) {
-      if (userType === 'pharmacy') {
+      if (userType === 'pharmacy' && user.name) {
         orders = await getPharmacyOrdersFromFirestore(user.name);
-      } else {
+      } else if (userType === 'patient') {
         orders = await getUserOrdersFromFirestore(user.phone);
       }
     } else {
       orders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+      if (userType === 'patient' && user.phone) {
+        orders = orders.filter(function (o) {
+          return o.patientPhone === user.phone;
+        });
+      }
     }
 
     var favorites = JSON.parse(localStorage.getItem('saydaliyati_favorites') || '[]');
@@ -3270,11 +3886,11 @@ async function renderProfileStats() {
     if (favCountEl) favCountEl.textContent = favorites.length;
     if (addrCountEl) addrCountEl.textContent = addresses.length;
     if (balanceEl) balanceEl.textContent = balance.toLocaleString() + ' د.ع';
+
     if (balanceCard) {
       balanceCard.style.display = userType === 'patient' ? 'flex' : 'none';
     }
 
-    // إخفاء إحصائيات المريض للمندوب/الصيدلية
     var statsEl = document.getElementById('profileStats');
     if (statsEl && userType !== 'patient') {
       statsEl.style.display = 'none';
@@ -3282,7 +3898,7 @@ async function renderProfileStats() {
       statsEl.style.display = 'grid';
     }
   } catch (e) {
-    console.error('خطأ الإحصائيات:', e);
+    console.error('❌ خطأ الإحصائيات:', e);
   }
 }
 
@@ -3291,11 +3907,10 @@ async function renderProfileMenu() {
   if (!container) return;
 
   try {
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    if (!userStr) return;
-    var user = JSON.parse(userStr);
-    var userType = user.type || 'patient';
+    var user = getCurrentUser();
+    if (!user) return;
 
+    var userType = user.type || 'patient';
     var menuItems = [];
 
     if (userType === 'patient') {
@@ -3334,7 +3949,8 @@ async function renderProfileMenu() {
     var html = '';
     menuItems.forEach(function (item) {
       html +=
-        '<div class="profile-menu-item' + (item.isLogout ? ' logout-item' : '') + '" onclick="' + item.action + '">' +
+        '<div class="profile-menu-item' + (item.isLogout ? ' logout-item' : '') +
+        '" onclick="' + item.action + '">' +
           '<div class="profile-menu-icon">' + item.icon + '</div>' +
           '<span>' + item.label + '</span>' +
           '<span class="profile-menu-arrow">←</span>' +
@@ -3343,7 +3959,7 @@ async function renderProfileMenu() {
 
     container.innerHTML = html;
   } catch (e) {
-    console.error('خطأ القائمة:', e);
+    console.error('❌ خطأ القائمة:', e);
   }
 }
 
@@ -3368,7 +3984,9 @@ function openSavedOffers() {
 
 function openEarnings() {
   var accepted = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
-  var total = accepted.reduce(function (s, o) { return s + (o.driverShare || 0); }, 0);
+  var total = accepted.reduce(function (s, o) {
+    return s + (o.driverShare || 0);
+  }, 0);
   showToast('💰 أرباحك: ' + total.toLocaleString() + ' د.ع');
 }
 
@@ -3384,17 +4002,23 @@ function openImagePicker() {
 async function handleAvatarUpload(event) {
   var file = event.target.files[0];
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { showError('حجم الصورة كبير جداً - الحد الأقصى 2MB'); return; }
+
+  if (file.size > 2 * 1024 * 1024) {
+    showError('حجم الصورة كبير جداً - الحد الأقصى 2MB');
+    return;
+  }
 
   var reader = new FileReader();
   reader.onload = async function (e) {
     var imageData = await compressImage(e.target.result, 400, 0.8);
 
-    var userStr = localStorage.getItem('saydaliyati_current_user');
-    var user = JSON.parse(userStr);
-    user.avatar = imageData;
-    localStorage.setItem('saydaliyati_current_user', JSON.stringify(user));
+    var user = getCurrentUser();
+    if (!user) return;
 
+    user.avatar = imageData;
+    saveCurrentUser(user);
+
+    // حدّث أيضاً في registrations
     var regs = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
     for (var i = 0; i < regs.length; i++) {
       if (regs[i].phone === user.phone) {
@@ -3420,11 +4044,16 @@ function compressImage(base64, maxSize, quality) {
     img.onload = function () {
       var canvas = document.createElement('canvas');
       var ratio = 1;
+
       if (img.width > maxSize || img.height > maxSize) {
-        ratio = img.width > img.height ? maxSize / img.width : maxSize / img.height;
+        ratio = img.width > img.height ?
+          maxSize / img.width :
+          maxSize / img.height;
       }
+
       canvas.width = img.width * ratio;
       canvas.height = img.height * ratio;
+
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       resolve(canvas.toDataURL('image/jpeg', quality));
     };
@@ -3434,25 +4063,37 @@ function compressImage(base64, maxSize, quality) {
 }
 
 // ============================================
-// 🏪 Pharmacy Dashboard (Real Stats)
+// 🏪 Pharmacy Dashboard
 // ============================================
 async function loadPharmacyDashboard() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) return;
 
   try {
     var orders = [];
+
     if (isFirebaseReady() && user.name) {
       orders = await getPharmacyOrdersFromFirestore(user.name);
+    } else {
+      var localOrders = JSON.parse(localStorage.getItem('saydaliyati_cart_orders') || '[]');
+      orders = localOrders.filter(function (o) {
+        return o.pharmacy === user.name;
+      });
     }
 
-    var newOrders = orders.filter(function (o) { return o.status === 'pending'; });
+    var newOrders = orders.filter(function (o) {
+      return o.status === 'pending' || !o.status;
+    });
+
     var today = new Date().toISOString().split('T')[0];
     var doneToday = orders.filter(function (o) {
-      return o.status === 'delivered' && o.createdAt && o.createdAt.startsWith(today);
+      return (o.status === 'delivered' || o.status === 'completed') &&
+        o.createdAt && o.createdAt.startsWith(today);
     });
-    var revenue = doneToday.reduce(function (s, o) { return s + (o.total || 0); }, 0);
+
+    var revenue = doneToday.reduce(function (s, o) {
+      return s + (o.total || 0);
+    }, 0);
 
     var newEl = document.getElementById('pharmacyNewOrdersCount');
     var doneEl = document.getElementById('pharmacyDoneTodayCount');
@@ -3481,17 +4122,18 @@ async function loadPharmacyDashboard() {
             '<div class="order-card status-pending">' +
               '<div class="order-header">' +
                 '<div>' +
-                  '<h3 class="order-pharmacy">' + (o.patientName || 'مريض') + '</h3>' +
+                  '<h3 class="order-pharmacy">' + escapeHtml(o.patientName || 'مريض') + '</h3>' +
                   '<p class="order-date">' + formatDate(o.createdAt) + '</p>' +
                 '</div>' +
                 '<span class="order-status pending"><span class="status-dot"></span>جديد</span>' +
               '</div>' +
-              '<div class="order-id">#' + o.id + '</div>' +
-              '<div class="order-items">📍 ' + (o.address || '-') + '</div>' +
+              '<div class="order-id">#' + escapeHtml(String(o.id || '')) + '</div>' +
+              '<div class="order-items">📍 ' + escapeHtml(o.address || '-') + '</div>' +
               '<div class="order-footer">' +
                 '<span class="order-total">' + (o.total || 0).toLocaleString() + '<small>د.ع</small></span>' +
                 '<div class="order-actions">' +
-                  '<button class="order-btn primary" onclick="acceptPharmacyOrder(\'' + o.id + '\')">قبول</button>' +
+                  '<button class="order-btn primary" onclick="acceptPharmacyOrder(\'' +
+                    escapeJs(String(o.id || '')) + '\')">قبول</button>' +
                 '</div>' +
               '</div>' +
             '</div>';
@@ -3500,7 +4142,7 @@ async function loadPharmacyDashboard() {
       }
     }
   } catch (e) {
-    console.error('خطأ لوحة الصيدلية:', e);
+    console.error('❌ خطأ لوحة الصيدلية:', e);
   }
 }
 
@@ -3513,6 +4155,7 @@ async function acceptPharmacyOrder(orderId) {
         acceptedAt: new Date().toISOString()
       });
     }
+
     playSuccessSound();
     showToast('✅ تم قبول الطلب #' + orderId);
     setTimeout(loadPharmacyDashboard, 500);
@@ -3525,8 +4168,8 @@ async function acceptPharmacyOrder(orderId) {
 // 🚴 Delivery Dashboard + Radar
 // ============================================
 async function loadDeliveryDashboard() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
+  var user = getCurrentUser();
+  if (!user) return;
 
   try {
     var accepted = JSON.parse(localStorage.getItem('saydaliyati_accepted_orders') || '[]');
@@ -3542,7 +4185,9 @@ async function loadDeliveryDashboard() {
           '<p>شغّل الرادار لاستقبال الطلبات</p>' +
         '</div>';
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('❌', e);
+  }
 }
 
 function toggleRadarSearch() {
@@ -3579,8 +4224,8 @@ function toggleRadarSearch() {
     playRadarActivateSound();
     vibrateDevice([100, 50, 100]);
 
-    // Progress bar
     if (radarProgressInterval) clearInterval(radarProgressInterval);
+
     radarProgressInterval = setInterval(function () {
       radarTimer += 5;
       if (progressBar) progressBar.style.width = Math.min(radarTimer, 100) + '%';
@@ -3588,13 +4233,11 @@ function toggleRadarSearch() {
       if (radarTimer >= 100) {
         radarTimer = 0;
         if (progressBar) progressBar.style.width = '0%';
-
         msgIndex = (msgIndex + 1) % messages.length;
         if (titleEl) titleEl.textContent = messages[msgIndex];
       }
     }, 500);
 
-    // صوت الرادار
     if (window.radarPingInterval) clearInterval(window.radarPingInterval);
     window.radarPingInterval = setInterval(playSonarPing, 2000);
 
@@ -3638,16 +4281,15 @@ function toggleRadarSearch() {
 // 💊 Inventory
 // ============================================
 function getInventoryKey() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return 'saydaliyati_inventory_default';
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) return 'saydaliyati_inventory_default';
   return 'saydaliyati_inventory_' + (user.phone || 'default');
 }
 
 function loadInventory() {
   var key = getInventoryKey();
   var inv = JSON.parse(localStorage.getItem(key) || 'null');
-  if (!inv) inv = [];
+  if (!Array.isArray(inv)) inv = [];
   return inv;
 }
 
@@ -3655,13 +4297,16 @@ function saveInventory(inv) {
   var key = getInventoryKey();
   localStorage.setItem(key, JSON.stringify(inv));
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) return;
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) return;
 
   if (isFirebaseReady() && user.phone) {
     try {
-      var ref = window.firebaseDoc(window.firebaseDB, COLLECTIONS.INVENTORY, user.phone);
+      var ref = window.firebaseDoc(
+        window.firebaseDB,
+        COLLECTIONS.INVENTORY,
+        user.phone
+      );
       window.firebaseSetDoc(ref, {
         pharmacyName: user.name,
         pharmacyPhone: user.phone,
@@ -3673,15 +4318,23 @@ function saveInventory(inv) {
 }
 
 function openInventoryScreen() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
-  if (user.type !== 'pharmacy') { showToast('للصيدليات فقط'); return; }
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  if (user.type !== 'pharmacy') {
+    showToast('للصيدليات فقط');
+    return;
+  }
+
   showScreen('inventoryScreen');
   renderInventory();
 }
 
-function closeInventoryScreen() { showScreen('pharmacyDashboard'); }
+function closeInventoryScreen() {
+  showScreen('pharmacyDashboard');
+}
 
 function renderInventory() {
   var inv = loadInventory();
@@ -3689,9 +4342,15 @@ function renderInventory() {
   if (!listEl) return;
 
   var totalMeds = inv.length;
-  var lowStock = inv.filter(function (m) { return m.stock > 0 && m.stock <= 10; }).length;
-  var outOfStock = inv.filter(function (m) { return m.stock === 0; }).length;
-  var totalValue = inv.reduce(function (s, m) { return s + (m.price * m.stock); }, 0);
+  var lowStock = inv.filter(function (m) {
+    return m.stock > 0 && m.stock <= 10;
+  }).length;
+  var outOfStock = inv.filter(function (m) {
+    return m.stock === 0;
+  }).length;
+  var totalValue = inv.reduce(function (s, m) {
+    return s + ((m.price || 0) * (m.stock || 0));
+  }, 0);
 
   var elTotal = document.getElementById('invTotalMeds');
   var elLow = document.getElementById('invLowStock');
@@ -3720,11 +4379,13 @@ function renderInventory() {
   inv.forEach(function (med) {
     html +=
       '<div class="cart-item">' +
-        '<div class="cart-item-image">' + (med.icon || '💊') + '</div>' +
+        '<div class="cart-item-image">' + escapeHtml(med.icon || '💊') + '</div>' +
         '<div class="cart-item-details">' +
-          '<h4 class="cart-item-name">' + med.name + '</h4>' +
-          '<p class="cart-item-pharmacy">📁 ' + (med.category || '-') + '</p>' +
-          '<span class="cart-item-price">' + (med.price || 0).toLocaleString() + '<small>د.ع</small></span>' +
+          '<h4 class="cart-item-name">' + escapeHtml(med.name || '') + '</h4>' +
+          '<p class="cart-item-pharmacy">📁 ' + escapeHtml(med.category || '-') + '</p>' +
+          '<span class="cart-item-price">' +
+            (med.price || 0).toLocaleString() + '<small>د.ع</small>' +
+          '</span>' +
         '</div>' +
       '</div>';
   });
@@ -3732,46 +4393,74 @@ function renderInventory() {
 }
 
 function filterInventoryBy(filter, btn) {
-  document.querySelectorAll('.inventory-filter').forEach(function (b) { b.classList.remove('active'); });
+  document.querySelectorAll('.inventory-filter').forEach(function (b) {
+    b.classList.remove('active');
+  });
   if (btn) btn.classList.add('active');
   renderInventory();
 }
 
-function filterInventory() { renderInventory(); }
-function openAddMedicineModal() { showToast('➕ إضافة دواء — قريباً'); }
+function filterInventory() {
+  renderInventory();
+}
+
+function openAddMedicineModal() {
+  showToast('➕ إضافة دواء — قريباً');
+}
 
 // ============================================
 // 📢 Add Post (Pharmacy)
 // ============================================
 function openAddPostModal() {
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showToast('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
-  if (user.type !== 'pharmacy') { showToast('للصيدليات فقط'); return; }
+  var user = getCurrentUser();
+  if (!user) {
+    showToast('سجّل دخول أولاً');
+    return;
+  }
+  if (user.type !== 'pharmacy') {
+    showToast('للصيدليات فقط');
+    return;
+  }
 
-  document.getElementById('postTitle').value = '';
-  document.getElementById('postDescription').value = '';
-  document.getElementById('postPrice').value = '';
-  document.getElementById('postCategory').value = '';
+  var titleEl = document.getElementById('postTitle');
+  var descEl = document.getElementById('postDescription');
+  var priceEl = document.getElementById('postPrice');
+  var catEl = document.getElementById('postCategory');
 
-  document.getElementById('addPostModal').classList.add('active');
+  if (titleEl) titleEl.value = '';
+  if (descEl) descEl.value = '';
+  if (priceEl) priceEl.value = '';
+  if (catEl) catEl.value = '';
+
+  var modal = document.getElementById('addPostModal');
+  if (modal) modal.classList.add('active');
 }
 
 function closeAddPostModal() {
-  document.getElementById('addPostModal').classList.remove('active');
+  var modal = document.getElementById('addPostModal');
+  if (modal) modal.classList.remove('active');
 }
 
 async function publishPost(event) {
   if (event) event.preventDefault();
 
-  var userStr = localStorage.getItem('saydaliyati_current_user');
-  if (!userStr) { showError('سجّل دخول أولاً'); return; }
-  var user = JSON.parse(userStr);
+  var user = getCurrentUser();
+  if (!user) {
+    showError('سجّل دخول أولاً');
+    return;
+  }
 
-  var title = document.getElementById('postTitle').value.trim();
-  var description = document.getElementById('postDescription').value.trim();
-  var price = parseInt(document.getElementById('postPrice').value);
-  var category = document.getElementById('postCategory').value;
+  var titleEl = document.getElementById('postTitle');
+  var descEl = document.getElementById('postDescription');
+  var priceEl = document.getElementById('postPrice');
+  var catEl = document.getElementById('postCategory');
+
+  if (!titleEl || !descEl || !priceEl || !catEl) return;
+
+  var title = titleEl.value.trim();
+  var description = descEl.value.trim();
+  var price = parseInt(priceEl.value);
+  var category = catEl.value;
 
   if (!title || !description || !category || isNaN(price)) {
     showError('املأ الحقول المطلوبة');
@@ -3802,34 +4491,38 @@ async function publishPost(event) {
 }
 
 // ============================================
-// 🚀 DOMContentLoaded
+// 🚀 Application Initialization
 // ============================================
-document.addEventListener('DOMContentLoaded', function () {
-  console.log('🏆 DAWAK v15 جاهز');
+function initializeApp() {
+  console.log('🏆 DAWAK v17 جاهز');
+
   document.title = 'DAWAK دواك - صحتك أولويتنا';
 
+  // Theme
   var savedTheme = localStorage.getItem('saydaliyati_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
 
   var toggle = document.getElementById('darkModeToggle');
   if (toggle) toggle.checked = savedTheme === 'dark';
 
-  var currentUser = localStorage.getItem('saydaliyati_current_user');
-  var hasSeenOnboarding = localStorage.getItem('saydaliyati_onboarding_done') === 'true';
+  // Check user
+  var currentUser = getCurrentUser();
+  var hasSeenOnboarding =
+    localStorage.getItem('saydaliyati_onboarding_done') === 'true';
 
-  // إذا المستخدم مسجل → روح Dashboard
+  // If logged in → Dashboard
   if (currentUser) {
     setTimeout(goToDashboardByType, 300);
     return;
   }
 
-  // عرض Splash
+  // Show Splash
   showScreen('splashScreen');
   setTimeout(createSplashParticles, 100);
 
-  // بعد 2.5 ثانية → Onboarding أو Login
+  // After 2.5s → Onboarding or Login
   setTimeout(function () {
-    var user = localStorage.getItem('saydaliyati_current_user');
+    var user = getCurrentUser();
     if (user) return;
 
     if (!hasSeenOnboarding) {
@@ -3840,12 +4533,57 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, 2500);
 
-  document.body.addEventListener('click', function () { initAudio(); }, { once: true });
+  // Init audio on first click
+  document.body.addEventListener('click', function () {
+    initAudio();
+  }, { once: true });
+}
+
+// ============================================
+// 🔥 Firebase Ready Listener
+// ============================================
+window.addEventListener('firebase-ready', function () {
+  console.log('🔥 Firebase ready event received');
+
+  // تحديث البيانات لو المستخدم في الرئيسية
+  var user = getCurrentUser();
+  if (user && user.type === 'patient') {
+    var homeScreen = document.getElementById('homeScreen');
+    if (homeScreen && homeScreen.classList.contains('active')) {
+      loadHomePharmacies();
+      loadHomeOffers();
+    }
+  }
 });
 
-document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+window.addEventListener('firebase-failed', function (e) {
+  console.error('❌ Firebase failed:', e.detail);
+});
 
 // ============================================
-// 🎉 نهاية script.js — DAWAK v15
+// 📱 DOMContentLoaded
 // ============================================
-console.log('🏆 DAWAK v15 — script.js اكتمل ✅');
+document.addEventListener('DOMContentLoaded', function () {
+  initializeApp();
+});
+
+// ============================================
+// 🚫 منع الـ Zoom Gesture
+// ============================================
+document.addEventListener('gesturestart', function (e) {
+  e.preventDefault();
+});
+
+// ============================================
+// ⏹️ Cleanup عند الإغلاق
+// ============================================
+window.addEventListener('beforeunload', function () {
+  if (radarProgressInterval) clearInterval(radarProgressInterval);
+  if (callTimerInterval) clearInterval(callTimerInterval);
+  if (window.radarPingInterval) clearInterval(window.radarPingInterval);
+});
+
+// ============================================
+// 🎉 نهاية script.js
+// ============================================
+console.log('🏆 DAWAK v17 — script.js اكتمل بالكامل ✅');
