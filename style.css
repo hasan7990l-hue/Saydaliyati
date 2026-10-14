@@ -1,7 +1,7 @@
 /* ============================================
-   DAWAK دواك - v15
-   Complete Rebuild — Part 1/5
-   Variables + Base + Splash + Onboarding + Login
+   DAWAK دواك - v16
+   Complete Fix — Part 1/5
+   Variables + Base + Splash + Onboarding
    ============================================ */
 
 /* ============================================
@@ -54,7 +54,7 @@
 }
 
 /* ============================================
-   🔄 Reset
+   🔄 Reset + Base
    ============================================ */
 * {
   margin: 0;
@@ -65,17 +65,22 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
   direction: rtl;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  position: fixed;
+  inset: 0;
 }
 
 button,
@@ -99,8 +104,8 @@ a {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -118,30 +123,45 @@ a {
 }
 
 /* ============================================
-   📱 Screens
+   📱 Screens — Fixed Full Screen
    ============================================ */
 .screen {
   display: none;
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
   background: var(--bg);
-  width: 100%;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
+
+.screen.active {
+  display: flex !important;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+}
+
 /* ============================================
    🏆 Splash Screen
    ============================================ */
 #splashScreen {
-  padding: 0;
-  position: relative;
-  overflow: hidden;
+  padding: 0 !important;
+  padding-bottom: 0 !important;
+  position: fixed !important;
+  inset: 0;
+  overflow: hidden !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at center, #0A1F1A 0%, #050810 60%);
   height: 100vh;
-  max-height: 100vh;
+  width: 100vw;
 }
 
 .splash-bg {
@@ -337,19 +357,22 @@ a {
     transform: scale(1.3);
     opacity: 1;
   }
-} 
+}
+
 /* ============================================
    🎬 Onboarding Screen
    ============================================ */
 #onboardingScreen {
-  padding: 0;
+  padding: 0 !important;
+  padding-bottom: 0 !important;
+  position: fixed !important;
+  inset: 0;
+  overflow: hidden !important;
   background: #050810;
-  position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-height: 100vh;
+  width: 100vw;
 }
 
 .ob-bg {
@@ -365,7 +388,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 20px 24px;
   width: 100%;
   overflow: hidden;
 }
@@ -457,6 +480,7 @@ a {
   padding: 20px 24px 30px;
   gap: 12px;
   direction: rtl;
+  flex-shrink: 0;
 }
 
 .ob-skip {
@@ -515,15 +539,17 @@ a {
 .ob-next:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-}
+   }
 /* ============================================
    🔐 Login Screen
    ============================================ */
 #loginScreen {
-  padding: 0;
+  padding: 0 !important;
   background: #050810;
-  position: relative;
-  overflow: hidden;
+  position: fixed !important;
+  inset: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden;
 }
 
 .login-bg {
@@ -562,7 +588,7 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 60px 24px 40px;
 }
 
 .login-back {
@@ -589,10 +615,14 @@ a {
   transform: scale(1.05);
 }
 
+.login-back svg {
+  stroke: #10B981;
+}
+
 .login-logo-wrap {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,10 +667,10 @@ a {
 }
 
 .login-title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 900;
   color: #34D399;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   margin: 0 0 8px;
   text-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
 }
@@ -649,7 +679,7 @@ a {
   font-size: 13px;
   color: #94A3B8;
   font-weight: 500;
-  margin: 0 0 28px;
+  margin: 0 0 24px;
 }
 
 .login-card {
@@ -866,50 +896,14 @@ a {
 }
 
 /* ============================================
-   📱 Responsive
-   ============================================ */
-@media (max-width: 480px) {
-  .splash-title {
-    font-size: 42px;
-    letter-spacing: 5px;
-  }
-  .splash-title-ar {
-    font-size: 38px;
-  }
-  .splash-logo-wrap {
-    width: 140px;
-    height: 140px;
-  }
-  .login-title {
-    font-size: 26px;
-  }
-  .login-logo-wrap {
-    width: 80px;
-    height: 80px;
-  }
-  .login-card {
-    padding: 22px 18px;
-  }
-  .ob-illustration {
-    max-width: 260px;
-    height: 260px;
-  }
-  .ob-title {
-    font-size: 22px;
-  }
-  .ob-next {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-}
-/* ============================================
    👥 Role Selection Screen
    ============================================ */
 #roleScreen {
-  padding: 0;
+  padding: 0 !important;
   background: #050810;
-  position: relative;
-  overflow: hidden;
+  position: fixed !important;
+  inset: 0;
+  overflow-y: auto !important;
 }
 
 .role-bg {
@@ -963,8 +957,12 @@ a {
   transform: scale(1.05);
 }
 
+.role-back svg {
+  stroke: #10B981;
+}
+
 .role-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 900;
   color: #F8FAFC;
   margin: 0 0 8px;
@@ -974,7 +972,7 @@ a {
 .role-subtitle {
   font-size: 14px;
   color: #94A3B8;
-  margin: 0 0 36px;
+  margin: 0 0 32px;
   text-align: center;
 }
 
@@ -1016,11 +1014,7 @@ a {
   flex-shrink: 0;
 }
 
-.role-icon-patient {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10B981;
-}
-
+.role-icon-patient,
 .role-icon-pharmacy {
   background: rgba(16, 185, 129, 0.15);
   color: #10B981;
@@ -1072,10 +1066,11 @@ a {
 #patientScreen,
 #pharmacyScreen,
 #deliveryScreen {
-  padding: 0;
+  padding: 0 !important;
   background: #050810;
-  position: relative;
-  overflow: hidden;
+  position: fixed !important;
+  inset: 0;
+  overflow-y: auto !important;
 }
 
 .reg-bg {
@@ -1103,7 +1098,7 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 60px 24px 40px;
 }
 
 .reg-back {
@@ -1130,6 +1125,10 @@ a {
   transform: scale(1.05);
 }
 
+.reg-back svg {
+  stroke: #10B981;
+}
+
 .reg-badge {
   position: absolute;
   top: 28px;
@@ -1146,8 +1145,8 @@ a {
 
 .reg-logo-wrap {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1191,7 +1190,7 @@ a {
 }
 
 .reg-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
   color: #F8FAFC;
   margin: 0 0 6px;
@@ -1201,7 +1200,7 @@ a {
 .reg-subtitle {
   font-size: 13px;
   color: #94A3B8;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   text-align: center;
 }
 
@@ -1212,7 +1211,7 @@ a {
   backdrop-filter: blur(20px);
   border: 1.5px solid rgba(16, 185, 129, 0.25);
   border-radius: 24px;
-  padding: 24px 20px;
+  padding: 22px 18px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
@@ -1449,48 +1448,14 @@ a {
 
 .reg-map-status.ok {
   color: #10B981;
-}
-
-/* ============================================
-   📱 Responsive
-   ============================================ */
-@media (max-width: 480px) {
-  .role-title {
-    font-size: 24px;
-  }
-  .role-card {
-    padding: 16px;
-  }
-  .role-card-icon {
-    width: 48px;
-    height: 48px;
-  }
-  .reg-title {
-    font-size: 22px;
-  }
-  .reg-card {
-    padding: 20px 16px;
-  }
-  .reg-input {
-    padding: 12px 42px;
-    font-size: 13px;
-  }
-  .reg-submit {
-    padding: 12px;
-    font-size: 14px;
-  }
-  .reg-logo-wrap {
-    width: 70px;
-    height: 70px;
-  }
-}
+   }
 /* ============================================
    🏠 Home Screen
    ============================================ */
 #homeScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .home-header {
@@ -1527,7 +1492,6 @@ a {
   font-weight: 600;
   cursor: pointer;
   padding: 4px 0;
-  transition: color 0.3s ease;
 }
 
 .home-location:hover {
@@ -1995,7 +1959,7 @@ a {
 #myOrdersScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .orders-top {
@@ -2326,7 +2290,7 @@ a {
 #cartScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 120px;
+  padding-bottom: 90px;
 }
 
 .cart-top {
@@ -2813,15 +2777,14 @@ a {
 .cart-checkout:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-}
-
+   }
 /* ============================================
    💊 Product Details Screen
    ============================================ */
 #productDetailsScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 120px;
+  padding-bottom: 100px;
 }
 
 .pdp-top {
@@ -3205,6 +3168,7 @@ a {
   left: 0;
   background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-top: 1px solid rgba(148, 163, 184, 0.15);
   padding: 12px 20px max(12px, env(safe-area-inset-bottom));
   display: flex;
@@ -3273,46 +3237,6 @@ a {
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
 }
 
-/* ============================================
-   📱 Responsive
-   ============================================ */
-@media (max-width: 480px) {
-  .home-greeting h1 {
-    font-size: 20px;
-  }
-  .home-rx-icon {
-    width: 50px;
-    height: 50px;
-  }
-  .home-rx-content h3 {
-    font-size: 15px;
-  }
-  .orders-title {
-    font-size: 20px;
-  }
-  .order-pharmacy {
-    font-size: 15px;
-  }
-  .order-total {
-    font-size: 16px;
-  }
-  .cart-title-block h2 {
-    font-size: 20px;
-  }
-  .pdp-title {
-    font-size: 22px;
-  }
-  .pdp-image-box {
-    width: 200px;
-    height: 200px;
-  }
-  .pdp-image-emoji {
-    font-size: 100px;
-  }
-  .pdp-price-current {
-    font-size: 22px;
-  }
-}
 /* ============================================
    🗺️ Tracking Screen
    ============================================ */
@@ -3615,7 +3539,7 @@ a {
 #notificationsScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .notif-top {
@@ -3710,6 +3634,7 @@ a {
   padding: 40px 20px;
   color: #64748B;
   font-size: 13px;
+  text-align: center;
 }
 
 .notif-spinner {
@@ -3769,10 +3694,6 @@ a {
   color: #3B82F6;
 }
 
-.notif-icon svg {
-  stroke: currentColor;
-}
-
 .notif-content {
   flex: 1;
   min-width: 0;
@@ -3829,7 +3750,7 @@ a {
 #settingsScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .settings-top {
@@ -4058,7 +3979,7 @@ a {
 #conversationsScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .conv-top {
@@ -4156,6 +4077,7 @@ a {
   padding: 40px 20px;
   color: #64748B;
   font-size: 13px;
+  text-align: center;
 }
 
 .conv-spinner {
@@ -4255,30 +4177,16 @@ a {
   font-weight: 500;
 }
 
-.conv-unread {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #10B981;
-  color: #FFFFFF;
-  font-size: 11px;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-}
-
 /* ============================================
    💬 Chat Screen
    ============================================ */
 #chatScreen {
   background: #050810;
-  padding: 0;
-  padding-bottom: 80px;
+  padding: 0 !important;
+  padding-bottom: 80px !important;
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
 
 .chat-top {
@@ -4291,6 +4199,7 @@ a {
   position: sticky;
   top: 0;
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .chat-back,
@@ -4379,6 +4288,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chat-loading {
@@ -4390,6 +4300,7 @@ a {
   padding: 40px 20px;
   color: #64748B;
   font-size: 13px;
+  text-align: center;
 }
 
 .chat-spinner {
@@ -4443,6 +4354,8 @@ a {
   bottom: 0;
   right: 0;
   left: 0;
+  flex-shrink: 0;
+  z-index: 100;
 }
 
 .chat-attach-btn,
@@ -4512,12 +4425,14 @@ a {
    ============================================ */
 #callScreen {
   background: radial-gradient(circle at center, #0A1F1A 0%, #050810 60%);
-  padding: 0;
-  position: relative;
-  overflow: hidden;
+  padding: 0 !important;
+  position: fixed !important;
+  inset: 0;
+  overflow: hidden !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100vh;
 }
 
 .call-bg {
@@ -4755,48 +4670,14 @@ a {
 
 .call-end-btn svg {
   stroke: #FFFFFF;
-}
-
+   }
 /* ============================================
-   📱 Responsive
-   ============================================ */
-@media (max-width: 480px) {
-  .track-title {
-    font-size: 18px;
-  }
-  .notif-title {
-    font-size: 20px;
-  }
-  .settings-title {
-    font-size: 20px;
-  }
-  .conv-title {
-    font-size: 20px;
-  }
-  .call-avatar-wrap {
-    width: 130px;
-    height: 130px;
-  }
-  .call-avatar {
-    width: 110px;
-    height: 110px;
-    font-size: 50px;
-  }
-  .call-name {
-    font-size: 20px;
-  }
-  .call-end-btn {
-    width: 64px;
-    height: 64px;
-  }
-}
-/* ============================================
-   👤 Profile Screen — ديناميكي
+   👤 Profile Screen
    ============================================ */
 #profileScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .profile-top {
@@ -5087,7 +4968,7 @@ a {
 #pharmacyDashboard {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .phdash-header {
@@ -5315,7 +5196,7 @@ a {
 #deliveryDashboard {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .deldash-header {
@@ -5508,7 +5389,7 @@ a {
 #inventoryScreen {
   background: #050810;
   padding: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 90px;
 }
 
 .inventory-stats {
@@ -5861,7 +5742,6 @@ a {
   gap: 16px;
 }
 
-/* Rating Modal */
 .rating-target-info {
   display: flex;
   align-items: center;
@@ -6011,7 +5891,7 @@ a {
   justify-content: space-around;
   align-items: center;
   padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-  height: 70px;
+  height: 68px;
   z-index: 100;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
 }
@@ -6022,7 +5902,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   color: #94A3B8;
   cursor: pointer;
   padding: 6px 4px;
@@ -6077,7 +5957,7 @@ a {
    ============================================ */
 .toast-message {
   position: fixed;
-  bottom: 100px;
+  bottom: 90px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
   background: #0F172A;
@@ -6397,20 +6277,68 @@ a {
    📱 Responsive
    ============================================ */
 @media (max-width: 480px) {
-  .profile-title {
+  .splash-title {
+    font-size: 40px;
+    letter-spacing: 4px;
+  }
+  .splash-title-ar {
+    font-size: 36px;
+  }
+  .splash-logo-wrap {
+    width: 120px;
+    height: 120px;
+  }
+  .login-title {
+    font-size: 24px;
+  }
+  .login-logo-wrap {
+    width: 70px;
+    height: 70px;
+  }
+  .login-card {
+    padding: 22px 18px;
+  }
+  .ob-illustration {
+    width: 220px;
+    height: 220px;
+  }
+  .ob-title {
     font-size: 20px;
   }
-  .profile-name {
+  .ob-next {
+    padding: 10px 22px;
+    font-size: 13px;
+  }
+  .home-greeting h1 {
     font-size: 20px;
   }
-  .phdash-header h1,
-  .deldash-header h1 {
-    font-size: 20px;
+  .home-rx-icon {
+    width: 50px;
+    height: 50px;
   }
-  .radar-search-title {
+  .home-rx-content h3 {
     font-size: 15px;
   }
-  .rx-title {
+  .pdp-title {
+    font-size: 22px;
+  }
+  .pdp-image-box {
+    width: 200px;
+    height: 200px;
+  }
+  .pdp-image-emoji {
+    font-size: 100px;
+  }
+  .call-avatar-wrap {
+    width: 130px;
+    height: 130px;
+  }
+  .call-avatar {
+    width: 110px;
+    height: 110px;
+    font-size: 50px;
+  }
+  .call-name {
     font-size: 20px;
   }
   .nav-btn small {
