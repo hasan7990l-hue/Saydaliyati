@@ -1,5 +1,5 @@
 /* ============================================
-   DAWAK دواك - v17 (Fixed)
+   DAWAK دواك - v19 (Fixed)
    Part 1/5 — Variables + Base + Splash + Onboarding + Login + Role
    ============================================ */
 
@@ -29,7 +29,6 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
   --shadow-primary: 0 8px 24px rgba(16, 185, 129, 0.4);
-  --hero-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
@@ -127,10 +126,11 @@ a {
 }
 
 /* ============================================
-   📱 Screens — Fixed Full Screen
+   📱 Screens — 🔥 الحل الأساسي
+   كل الشاشات مخفية افتراضياً
    ============================================ */
 .screen {
-  display: none;
+  display: none !important;
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -151,6 +151,21 @@ a {
   max-height: 100vh;
 }
 
+/* شاشات خاصة تعرض كـ flex في المنتصف */
+#splashScreen.active,
+#onboardingScreen.active,
+#callScreen.active,
+#loginScreen.active,
+#roleScreen.active,
+#patientScreen.active,
+#pharmacyScreen.active,
+#deliveryScreen.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ============================================
    🏆 Splash Screen
    ============================================ */
@@ -160,9 +175,6 @@ a {
   position: fixed !important;
   inset: 0;
   overflow: hidden !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
   background: radial-gradient(circle at center, #0A1F1A 0%, #050810 60%);
   height: 100vh;
   width: 100vw;
@@ -237,6 +249,7 @@ a {
   padding: 20px;
   width: 100%;
   max-width: 400px;
+  margin: auto;
 }
 
 .splash-logo-wrap {
@@ -373,8 +386,6 @@ a {
   inset: 0;
   overflow: hidden !important;
   background: #050810;
-  display: flex;
-  flex-direction: column;
   height: 100vh;
   width: 100vw;
 }
@@ -598,6 +609,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 60px 24px 40px;
+  margin: auto;
 }
 
 .login-back {
@@ -942,6 +954,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 60px 24px 40px;
+  margin: auto;
 }
 
 .role-back {
@@ -1070,7 +1083,7 @@ a {
   text-align: center;
 }
 
-/* ⏩ الجزء 2/5 يكمل من هنا — Register + Home + Orders + Cart */
+/* ⏩ الجزء 2/5 يكمل من هنا */
 /* ============================================
    📝 Registration Screens
    ============================================ */
@@ -1111,6 +1124,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: 60px 24px 40px;
+  margin: auto;
 }
 
 .reg-back {
@@ -2810,7 +2824,7 @@ a {
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
 }
 
-/* ⏩ الجزء 3/5 يكمل من هنا — Product + Tracking + Notifications + Settings + Conversations + Chat + Call */
+/* ⏩ الجزء 3/5 يكمل من هنا */
 /* ============================================
    💊 Product Details Screen
    ============================================ */
@@ -4462,7 +4476,7 @@ a {
 }
 
 /* ============================================
-   📞 Call Screen
+   📞 Call Screen — 🔥 Fixed (بدون display تلقائي)
    ============================================ */
 #callScreen {
   background: radial-gradient(circle at center, #0A1F1A 0%, #050810 60%);
@@ -4470,13 +4484,12 @@ a {
   position: fixed !important;
   inset: 0;
   overflow: hidden !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100vh;
+  width: 100vw;
 }
 
-.call-bg {
+/* عناصر الشاشة الداخلية */
+#callScreen .call-bg {
   position: absolute;
   inset: 0;
   background-image:
@@ -4486,7 +4499,7 @@ a {
   pointer-events: none;
 }
 
-.call-content {
+#callScreen .call-content {
   position: relative;
   z-index: 1;
   text-align: center;
@@ -4496,6 +4509,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: auto;
 }
 
 .call-avatar-wrap {
@@ -4713,7 +4727,7 @@ a {
   stroke: #FFFFFF;
 }
 
-/* ⏩ الجزء 4/5 يكمل من هنا — Profile + Pharmacy + Delivery + Inventory + Prescription */
+/* ⏩ الجزء 4/5 يكمل من هنا */
 /* ============================================
    👤 Profile Screen
    ============================================ */
@@ -5785,923 +5799,4 @@ a {
   box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
 }
 
-/* ⏩ الجزء 5/5 الأخير — Modals + Nav + Toast + Confirm + Leaflet + Light + Responsive */
-/* ============================================
-   🪟 Modals
-   ============================================ */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal-content {
-  background: #0F172A;
-  border-radius: 24px 24px 0 0;
-  width: 100%;
-  max-width: 500px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  position: sticky;
-  top: 0;
-  background: #0F172A;
-  z-index: 1;
-}
-
-.modal-header h3 {
-  font-size: 18px;
-  font-weight: 800;
-  color: #F8FAFC;
-  margin: 0;
-}
-
-.modal-close {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #1E293B;
-  border: none;
-  color: #F8FAFC;
-  font-size: 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.modal-close:hover {
-  background: #EF4444;
-  color: #FFFFFF;
-  transform: rotate(90deg);
-}
-
-.modal-body {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Rating Modal */
-.rating-target-info {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #1E293B;
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 16px;
-}
-
-.rating-target-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  background: rgba(16, 185, 129, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  flex-shrink: 0;
-}
-
-.rating-target-info h4 {
-  font-size: 15px;
-  font-weight: 800;
-  color: #F8FAFC;
-  margin: 0 0 4px;
-}
-
-.rating-target-info p {
-  font-size: 12px;
-  color: #94A3B8;
-  margin: 0;
-}
-
-.rating-stars-section {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.rating-stars-section>label {
-  display: block;
-  font-size: 14px;
-  font-weight: 700;
-  color: #F8FAFC;
-  margin-bottom: 12px;
-}
-
-.rating-stars {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.rating-star {
-  width: 48px;
-  height: 48px;
-  border: none;
-  background: transparent;
-  color: #334155;
-  font-size: 40px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
-  line-height: 1;
-}
-
-.rating-star:hover {
-  transform: scale(1.15);
-}
-
-.rating-star.active {
-  color: #FBBF24;
-  text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
-}
-
-.rating-text {
-  font-size: 13px;
-  font-weight: 700;
-  color: #94A3B8;
-  min-height: 20px;
-  margin: 0;
-}
-
-/* Input Group (Modal) */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.input-group label {
-  font-size: 13px;
-  font-weight: 700;
-  color: #F8FAFC;
-}
-
-.input-group input,
-.input-group textarea,
-.input-group select {
-  width: 100%;
-  padding: 14px 16px;
-  background: #1E293B;
-  border: 1.5px solid rgba(148, 163, 184, 0.15);
-  border-radius: 12px;
-  color: #F8FAFC;
-  font-size: 14px;
-  font-family: inherit;
-  text-align: right;
-  resize: vertical;
-  transition: all 0.3s ease;
-}
-
-.input-group input:focus,
-.input-group textarea:focus,
-.input-group select:focus {
-  border-color: #10B981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-}
-
-.input-group select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left 16px center;
-  padding-left: 40px;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: #FFFFFF;
-  border: none;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 800;
-  cursor: pointer;
-  font-family: inherit;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.6);
-}
-
-/* ============================================
-   📱 Bottom Navigation
-   ============================================ */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  background: #0F172A;
-  border-top: 1px solid rgba(148, 163, 184, 0.15);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-  height: 68px;
-  z-index: 100;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.nav-btn {
-  background: transparent;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  color: #94A3B8;
-  cursor: pointer;
-  padding: 6px 4px;
-  transition: all 0.3s ease;
-  flex: 1;
-  position: relative;
-  font-family: inherit;
-  min-width: 0;
-}
-
-.nav-btn svg {
-  width: 22px;
-  height: 22px;
-  stroke: currentColor;
-  transition: all 0.3s ease;
-}
-
-.nav-btn small {
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.nav-btn.active {
-  color: #10B981;
-}
-
-.nav-btn.active svg {
-  stroke: #10B981;
-  transform: translateY(-2px);
-  filter: drop-shadow(0 4px 8px rgba(16, 185, 129, 0.5));
-}
-
-.nav-badge {
-  position: absolute;
-  top: 2px;
-  right: 50%;
-  transform: translateX(14px);
-  background: #EF4444;
-  color: #FFFFFF;
-  font-size: 10px;
-  font-weight: 900;
-  min-width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 5px;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6);
-}
-
-/* ============================================
-   💬 Toast
-   ============================================ */
-.toast-message {
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #0F172A;
-  color: #F8FAFC;
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  border: 1.5px solid rgba(16, 185, 129, 0.3);
-  z-index: 99999;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  max-width: 90vw;
-  text-align: center;
-  font-family: inherit;
-  line-height: 1.4;
-  word-wrap: break-word;
-}
-
-.toast-message.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ============================================
-   ✅ Success Overlay
-   ============================================ */
-.success-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 99999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.success-overlay.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.success-box {
-  background: #0F172A;
-  border: 1.5px solid rgba(16, 185, 129, 0.3);
-  border-radius: 24px;
-  padding: 40px 32px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes popIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.success-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: #FFFFFF;
-  font-size: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
-  animation: successIconPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes successIconPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.success-box h2 {
-  color: #F8FAFC;
-  font-size: 22px;
-  font-weight: 900;
-  margin-bottom: 12px;
-}
-
-.success-box p {
-  color: #94A3B8;
-  font-size: 14px;
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-/* ============================================
-   🎯 Confirm Dialog
-   ============================================ */
-.confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 99999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.confirm-overlay.show {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.confirm-box {
-  background: #0F172A;
-  border: 1.5px solid rgba(148, 163, 184, 0.15);
-  border-radius: 24px;
-  padding: 32px 24px 24px;
-  max-width: 380px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.confirm-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  margin: 0 auto 16px;
-}
-
-.confirm-icon-danger {
-  background: rgba(239, 68, 68, 0.15);
-  border: 2px solid #EF4444;
-}
-
-.confirm-icon-warning {
-  background: rgba(245, 158, 11, 0.15);
-  border: 2px solid #F59E0B;
-}
-
-.confirm-icon-info {
-  background: rgba(16, 185, 129, 0.15);
-  border: 2px solid #10B981;
-}
-
-.confirm-title {
-  font-size: 18px;
-  font-weight: 900;
-  color: #F8FAFC;
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-.confirm-message {
-  font-size: 13px;
-  color: #94A3B8;
-  margin-bottom: 24px;
-  line-height: 1.6;
-}
-
-.confirm-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.confirm-btn {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.3s ease;
-}
-
-.confirm-cancel {
-  background: #1E293B;
-  color: #94A3B8;
-  border: 1.5px solid rgba(148, 163, 184, 0.15);
-}
-
-.confirm-cancel:hover {
-  border-color: #64748B;
-  color: #F8FAFC;
-}
-
-.confirm-accept-danger {
-  background: #EF4444;
-  color: #FFFFFF;
-}
-
-.confirm-accept-warning {
-  background: #F59E0B;
-  color: #FFFFFF;
-}
-
-.confirm-accept-info {
-  background: #10B981;
-  color: #FFFFFF;
-}
-
-.confirm-accept-danger:hover,
-.confirm-accept-warning:hover,
-.confirm-accept-info:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* ============================================
-   🗺️ Leaflet Overrides
-   ============================================ */
-.leaflet-container {
-  background: #0F172A !important;
-  font-family: 'IBM Plex Sans Arabic', sans-serif !important;
-}
-
-.leaflet-popup-content-wrapper {
-  background: #0F172A !important;
-  color: #F8FAFC !important;
-  border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
-  border-radius: 12px !important;
-}
-
-.leaflet-popup-tip {
-  background: #0F172A !important;
-}
-
-.custom-map-marker {
-  background: transparent;
-  border: none;
-}
-
-.custom-marker-pin {
-  width: 40px;
-  height: 40px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border: 3px solid #FFFFFF;
-}
-
-.custom-marker-pin span {
-  transform: rotate(45deg);
-  font-size: 18px;
-}
-
-.marker-me .custom-marker-pin,
-.marker-pharmacy .custom-marker-pin {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-}
-
-.marker-patient .custom-marker-pin {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-}
-
-.marker-delivery .custom-marker-pin {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
-}
-
-/* ============================================
-   🌞 Light Theme Overrides
-   ============================================ */
-[data-theme="light"] body {
-  background: #F8FAFC;
-}
-
-[data-theme="light"] .screen {
-  background: #F8FAFC;
-}
-
-[data-theme="light"] .login-card,
-[data-theme="light"] .reg-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-[data-theme="light"] .login-input,
-[data-theme="light"] .reg-input {
-  background: #F8FAFC;
-  border-color: #E2E8F0;
-  color: #0F172A;
-}
-
-[data-theme="light"] .home-icon-btn,
-[data-theme="light"] .orders-back,
-[data-theme="light"] .orders-search-btn,
-[data-theme="light"] .cart-back,
-[data-theme="light"] .pdp-back,
-[data-theme="light"] .pdp-icon-btn,
-[data-theme="light"] .track-back,
-[data-theme="light"] .track-refresh,
-[data-theme="light"] .notif-back,
-[data-theme="light"] .settings-back,
-[data-theme="light"] .profile-back,
-[data-theme="light"] .profile-settings-btn,
-[data-theme="light"] .conv-back,
-[data-theme="light"] .conv-search-btn,
-[data-theme="light"] .rx-back,
-[data-theme="light"] .phdash-back,
-[data-theme="light"] .deldash-notif-btn {
-  background: #FFFFFF;
-  border-color: #E2E8F0;
-}
-
-[data-theme="light"] .home-icon-btn svg,
-[data-theme="light"] .orders-back svg,
-[data-theme="light"] .cart-back svg,
-[data-theme="light"] .pdp-back svg,
-[data-theme="light"] .track-back svg,
-[data-theme="light"] .notif-back svg,
-[data-theme="light"] .settings-back svg,
-[data-theme="light"] .profile-back svg {
-  stroke: #0F172A;
-}
-
-[data-theme="light"] .home-search,
-[data-theme="light"] .home-pharmacy-card,
-[data-theme="light"] .home-offer-card,
-[data-theme="light"] .order-card,
-[data-theme="light"] .cart-item,
-[data-theme="light"] .cart-summary,
-[data-theme="light"] .cart-address,
-[data-theme="light"] .cart-payment-info,
-[data-theme="light"] .pdp-card,
-[data-theme="light"] .pdp-stock-price,
-[data-theme="light"] .track-delivery-card,
-[data-theme="light"] .notif-card,
-[data-theme="light"] .settings-card,
-[data-theme="light"] .settings-toggle-card,
-[data-theme="light"] .settings-list,
-[data-theme="light"] .profile-menu,
-[data-theme="light"] .profile-stat,
-[data-theme="light"] .conv-card,
-[data-theme="light"] .chat-top,
-[data-theme="light"] .phdash-stat,
-[data-theme="light"] .phdash-action-btn,
-[data-theme="light"] .deldash-orders {
-  background: #FFFFFF;
-  border-color: #E2E8F0;
-}
-
-[data-theme="light"] .home-cat,
-[data-theme="light"] .orders-tabs,
-[data-theme="light"] .orders-tab,
-[data-theme="light"] .notif-tab,
-[data-theme="light"] .conv-tab,
-[data-theme="light"] .inventory-filter {
-  background: #F1F5F9;
-  border-color: #E2E8F0;
-  color: #475569;
-}
-
-[data-theme="light"] .cart-summary h3,
-[data-theme="light"] .home-section-header h3,
-[data-theme="light"] .home-greeting h1 {
-  color: #0F172A;
-}
-
-[data-theme="light"] .bottom-nav {
-  background: #FFFFFF;
-  border-top-color: #E2E8F0;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .nav-btn {
-  color: #64748B;
-}
-
-[data-theme="light"] .toast-message {
-  background: #FFFFFF;
-  color: #0F172A;
-  border-color: rgba(16, 185, 129, 0.4);
-}
-
-[data-theme="light"] .modal-content,
-[data-theme="light"] .modal-header {
-  background: #FFFFFF;
-}
-
-[data-theme="light"] .modal-header {
-  border-bottom-color: #E2E8F0;
-}
-
-[data-theme="light"] .rating-target-info,
-[data-theme="light"] .input-group input,
-[data-theme="light"] .input-group textarea,
-[data-theme="light"] .input-group select {
-  background: #F1F5F9;
-  border-color: #E2E8F0;
-  color: #0F172A;
-}
-
-[data-theme="light"] .confirm-box,
-[data-theme="light"] .success-box {
-  background: #FFFFFF;
-  border-color: #E2E8F0;
-}
-
-[data-theme="light"] .confirm-cancel {
-  background: #F1F5F9;
-  border-color: #E2E8F0;
-  color: #475569;
-}
-
-/* ============================================
-   📱 Responsive
-   ============================================ */
-@media (max-width: 480px) {
-  .splash-title {
-    font-size: 40px;
-    letter-spacing: 4px;
-  }
-  .splash-title-ar {
-    font-size: 36px;
-  }
-  .splash-logo-wrap {
-    width: 120px;
-    height: 120px;
-  }
-  .login-title {
-    font-size: 24px;
-  }
-  .login-logo-wrap {
-    width: 70px;
-    height: 70px;
-  }
-  .login-card {
-    padding: 22px 18px;
-  }
-  .ob-illustration {
-    width: 220px;
-    height: 220px;
-  }
-  .ob-title {
-    font-size: 20px;
-  }
-  .ob-next {
-    padding: 10px 22px;
-    font-size: 13px;
-  }
-  .home-greeting h1 {
-    font-size: 20px;
-  }
-  .home-rx-icon {
-    width: 50px;
-    height: 50px;
-  }
-  .home-rx-content h3 {
-    font-size: 15px;
-  }
-  .pdp-title {
-    font-size: 22px;
-  }
-  .pdp-image-box {
-    width: 200px;
-    height: 200px;
-  }
-  .pdp-image-emoji {
-    font-size: 100px;
-  }
-  .call-avatar-wrap {
-    width: 130px;
-    height: 130px;
-  }
-  .call-avatar {
-    width: 110px;
-    height: 110px;
-    font-size: 50px;
-  }
-  .call-name {
-    font-size: 20px;
-  }
-  .nav-btn small {
-    font-size: 9px;
-  }
-  .nav-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-  .inventory-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .profile-avatar-wrap {
-    width: 90px;
-    height: 90px;
-  }
-  .profile-avatar {
-    font-size: 32px;
-  }
-  .phdash-header h1,
-  .deldash-header h1 {
-    font-size: 20px;
-  }
-  .order-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .order-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 360px) {
-  .splash-title {
-    font-size: 34px;
-  }
-  .login-title {
-    font-size: 22px;
-  }
-  .nav-btn small {
-    display: none;
-  }
-  .cart-item-controls {
-    flex-wrap: wrap;
-  }
-}
-
-/* ============================================
-   🎬 Animations عامة
-   ============================================ */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.screen.active>div:not([class*="bottom"]):not([class*="pdp-bottom"]) {
-  animation: fadeIn 0.35s ease-out;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-}
-
-/* ============================================
-   ♿ تقليل الحركة (لتوفير البطارية)
-   ============================================ */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ============================================
-   🎉 نهاية style.css
-   ============================================ */
+/* ⏩ الجزء 5/5 الأخير — Modals + Nav + Toast + Leaflet + Light + Responsive */
