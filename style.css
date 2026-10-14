@@ -1,36 +1,47 @@
 /* ============================================
-   🎨 WASSILHA — OFFICIAL STYLE
-   Corporate Design — Navy Blue + White
+   🎨 WASSILHA — OFFICIAL STYLE v2
+   مطابق للصور المرجعية — Navy + White
    ============================================ */
 
-/* ============================================
+/* ═══════════════════════════════════════
    🎯 Variables
-   ============================================ */
+   ═══════════════════════════════════════ */
 :root {
   --navy: #1E3A8A;
-  --navy-dark: #1E293B;
+  --navy-dark: #172554;
   --navy-light: #2563EB;
-  --blue: #3B82F6;
-  --blue-light: #EFF6FF;
+  --blue-50: #EFF6FF;
+  --blue-100: #DBEAFE;
   --white: #FFFFFF;
   --bg: #F8FAFC;
   --bg-gray: #F1F5F9;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
   --text: #0F172A;
-  --text-2: #64748B;
+  --text-2: #475569;
   --text-3: #94A3B8;
   --border: #E2E8F0;
-  --border-light: #F1F5F9;
-  --success: #059669;
-  --success-light: #D1FAE5;
-  --danger: #DC2626;
-  --danger-light: #FEE2E2;
+  --border-strong: #CBD5E1;
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --danger: #EF4444;
+  --danger-bg: #FEE2E2;
   --warning: #F59E0B;
-  --warning-light: #FEF3C7;
-  --gold: #D97706;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 24px rgba(0,0,0,0.12);
+  --warning-bg: #FEF3C7;
+  --purple: #8B5CF6;
+  --purple-bg: #EDE9FE;
+  --green: #10B981;
+  --green-bg: #D1FAE5;
+  --orange: #F97316;
+  --orange-bg: #FFEDD5;
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
@@ -38,9 +49,9 @@
   --r-pill: 999px;
 }
 
-/* ============================================
-   🔄 Reset + Base
-   ============================================ */
+/* ═══════════════════════════════════════
+   🔄 Reset
+   ═══════════════════════════════════════ */
 * {
   margin: 0;
   padding: 0;
@@ -73,18 +84,12 @@ button, input, textarea, select {
   background: none;
 }
 
-button {
-  cursor: pointer;
-}
+button { cursor: pointer; }
+img { max-width: 100%; display: block; }
 
-img {
-  max-width: 100%;
-  display: block;
-}
-
-/* ============================================
-   📱 Screens
-   ============================================ */
+/* ═══════════════════════════════════════
+   📱 Screens Base
+   ═══════════════════════════════════════ */
 .screen {
   display: none !important;
   position: fixed;
@@ -103,22 +108,19 @@ img {
   flex-direction: column;
 }
 
-#splashScreen.active,
-#loginScreen.active,
-#roleScreen.active,
-#registerScreen.active,
-#otpScreen.active {
+/* ═══════════════════════════════════════
+   🏆 Splash Screen — Navy Full
+   ═══════════════════════════════════════ */
+#splashScreen {
+  background: var(--navy);
+  padding: 0;
   align-items: center;
   justify-content: center;
 }
 
-/* ============================================
-   🏆 Splash Screen
-   ============================================ */
-#splashScreen {
-  padding: 0;
-  background: var(--navy);
-  overflow: hidden;
+#splashScreen.active {
+  align-items: center;
+  justify-content: center;
 }
 
 .splash-content {
@@ -140,27 +142,40 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  animation: splashLogoFloat 3s ease-in-out infinite;
+}
+
+@keyframes splashLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .splash-logo {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.25));
+}
+
+.splash-logo path,
+.splash-logo ellipse,
+.splash-logo circle {
+  fill: var(--white);
+  stroke: var(--white);
 }
 
 .splash-title {
   font-size: 44px;
   font-weight: 900;
   color: var(--white);
-  letter-spacing: 2px;
-  margin: 0;
+  letter-spacing: 1px;
+  margin: 0 0 8px;
 }
 
 .splash-tagline {
   font-size: 14px;
-  color: rgba(255,255,255,0.75);
-  margin: 8px 0 48px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 40px;
   font-weight: 500;
 }
 
@@ -171,10 +186,10 @@ img {
 }
 
 .splash-dots span {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.4);
   animation: dotPulse 1.5s ease-in-out infinite;
 }
 
@@ -183,7 +198,7 @@ img {
 
 @keyframes dotPulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
+  50% { opacity: 1; transform: scale(1.4); }
 }
 
 .splash-footer {
@@ -192,41 +207,97 @@ img {
   left: 0;
   right: 0;
   text-align: center;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 12px;
 }
 
-/* ============================================
-   🔐 Auth Screens
-   ============================================ */
+/* ═══════════════════════════════════════
+   🔷 Page Header — Navy Bar
+   ═══════════════════════════════════════ */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--navy);
+  color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: var(--shadow-md);
+}
+
+.page-header h2 {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  margin: 0;
+  text-align: center;
+}
+
+.back-btn-inline,
+.icon-btn-inline {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.back-btn-inline:hover,
+.icon-btn-inline:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.back-btn-inline svg,
+.icon-btn-inline svg {
+  stroke: var(--white);
+}
+
+/* ═══════════════════════════════════════
+   🔐 Login + Register + OTP
+   ═══════════════════════════════════════ */
 #loginScreen,
 #registerScreen,
 #otpScreen {
   background: var(--white);
-  padding: 20px;
+  padding: 0;
   overflow-y: auto;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .login-content,
 .register-content,
 .otp-content {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 400px;
-  margin: auto;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 40px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+  justify-content: center;
 }
 
 .auth-logo-wrap {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .auth-logo {
@@ -234,18 +305,27 @@ img {
   height: 100%;
 }
 
+.auth-logo path,
+.auth-logo ellipse,
+.auth-logo circle {
+  fill: var(--navy);
+  stroke: var(--navy);
+}
+
 .auth-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--navy);
-  margin: 0 0 6px;
+  margin: 0 0 8px;
+  text-align: center;
 }
 
 .auth-subtitle {
   font-size: 14px;
   color: var(--text-2);
-  margin: 0 0 24px;
+  margin: 0 0 28px;
   text-align: center;
+  line-height: 1.6;
 }
 
 .auth-card {
@@ -253,22 +333,22 @@ img {
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 24px 20px;
-  box-shadow: var(--shadow);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-md);
 }
 
 .auth-card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--text);
   text-align: center;
-  margin: 0 0 20px;
+  margin: 0 0 24px;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 
 .input-wrap {
@@ -279,7 +359,7 @@ img {
 
 .input-field {
   width: 100%;
-  padding: 15px 48px;
+  padding: 16px 48px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
@@ -292,11 +372,12 @@ img {
 
 .input-field::placeholder {
   color: var(--text-3);
+  font-weight: 500;
 }
 
 .input-field:focus {
   border-color: var(--navy);
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
 }
 
 select.input-field {
@@ -315,12 +396,12 @@ select.input-field {
 }
 
 .input-icon svg {
-  stroke: var(--text-2);
+  stroke: var(--text-3);
 }
 
 .eye-btn {
   position: absolute;
-  left: 12px;
+  left: 14px;
   padding: 6px;
   font-size: 16px;
   opacity: 0.6;
@@ -329,9 +410,7 @@ select.input-field {
   transition: opacity 0.2s;
 }
 
-.eye-btn:hover {
-  opacity: 1;
-}
+.eye-btn:hover { opacity: 1; }
 
 .terms-check {
   display: flex;
@@ -340,7 +419,7 @@ select.input-field {
   font-size: 13px;
   color: var(--text-2);
   cursor: pointer;
-  padding: 4px 0;
+  padding: 6px 0;
 }
 
 .terms-check input[type="checkbox"] {
@@ -357,9 +436,9 @@ select.input-field {
   text-decoration: none;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🔵 Buttons
-   ============================================ */
+   ═══════════════════════════════════════ */
 .btn-primary {
   width: 100%;
   padding: 16px;
@@ -374,7 +453,8 @@ select.input-field {
   gap: 10px;
   transition: all 0.2s;
   cursor: pointer;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
 }
 
 .btn-primary:hover {
@@ -387,9 +467,7 @@ select.input-field {
   transform: translateY(0);
 }
 
-.btn-primary svg {
-  stroke: var(--white);
-}
+.btn-primary svg { stroke: var(--white); }
 
 .btn-primary.btn-large {
   padding: 18px;
@@ -399,25 +477,26 @@ select.input-field {
 .btn-primary.btn-small {
   width: auto;
   padding: 10px 20px;
-  font-size: 14px;
+  font-size: 13px;
   margin-top: 12px;
 }
 
 .btn-outline {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1.5px solid var(--navy);
   color: var(--navy);
   border-radius: var(--r-md);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   transition: all 0.2s;
   cursor: pointer;
+  font-family: inherit;
 }
 
 .btn-outline:hover {
-  background: var(--blue-light);
+  background: var(--blue-50);
 }
 
 .btn-link {
@@ -428,6 +507,7 @@ select.input-field {
   padding: 8px;
   cursor: pointer;
   text-decoration: none;
+  font-family: inherit;
 }
 
 .btn-link:disabled {
@@ -439,7 +519,7 @@ select.input-field {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 20px 0 14px;
+  margin: 24px 0 16px;
 }
 
 .auth-divider::before,
@@ -460,18 +540,18 @@ select.input-field {
   font-size: 13px;
   color: var(--text-2);
   text-align: center;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .auth-footer a {
   color: var(--navy);
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
 }
 
-/* ============================================
-   ⬅️ Back Buttons
-   ============================================ */
+/* ═══════════════════════════════════════
+   ⬅️ Back Button (Auth Screens)
+   ═══════════════════════════════════════ */
 .back-btn {
   position: absolute;
   top: 20px;
@@ -488,77 +568,28 @@ select.input-field {
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .back-btn:hover {
-  background: var(--bg-gray);
+  background: var(--gray-100);
 }
 
-.back-btn svg {
-  stroke: var(--text);
-}
+.back-btn svg { stroke: var(--text); }
 
-.back-btn-inline {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.back-btn-inline:hover {
-  background: var(--bg-gray);
-}
-
-.back-btn-inline svg {
-  stroke: var(--text);
-}
-
-.icon-btn-inline {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.icon-btn-inline svg {
-  stroke: var(--text);
-}
-
-/* ============================================
-   📱 OTP Inputs
-   ============================================ */
-.otp-icon {
-  font-size: 60px;
-  margin-bottom: 16px;
-}
-
+/* ═══════════════════════════════════════
+   📱 OTP
+   ═══════════════════════════════════════ */
 .otp-inputs {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
-  margin: 24px 0;
+  margin: 28px 0;
 }
 
 .otp-input {
-  width: 58px;
-  height: 68px;
+  width: 60px;
+  height: 70px;
   text-align: center;
   font-size: 26px;
   font-weight: 900;
@@ -571,13 +602,14 @@ select.input-field {
 
 .otp-input:focus {
   border-color: var(--navy);
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+  background: var(--blue-50);
 }
 
 .otp-timer {
   font-size: 13px;
   color: var(--text-2);
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
 }
 
@@ -588,37 +620,46 @@ select.input-field {
   margin: 0 4px;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    👥 Role Selection
-   ============================================ */
+   ═══════════════════════════════════════ */
 #roleScreen {
   background: var(--white);
-  padding: 60px 24px 40px;
-  overflow-y: auto;
+  padding: 0;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .role-content {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  margin: auto;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 80px 24px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 100vh;
+}
+
+.role-content .back-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
 }
 
 .role-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--text);
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   text-align: center;
 }
 
 .role-subtitle {
   font-size: 14px;
   color: var(--text-2);
-  margin: 0 0 32px;
+  margin: 0 0 40px;
   text-align: center;
 }
 
@@ -633,12 +674,13 @@ select.input-field {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 20px;
+  padding: 22px 20px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-xs);
 }
 
 .role-card:hover {
@@ -648,10 +690,10 @@ select.input-field {
 }
 
 .role-icon {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: var(--r-md);
-  background: var(--blue-light);
+  background: var(--blue-50);
   color: var(--navy);
   display: flex;
   align-items: center;
@@ -659,12 +701,11 @@ select.input-field {
   flex-shrink: 0;
 }
 
-.role-icon svg {
-  stroke: var(--navy);
-}
+.role-icon svg { stroke: var(--navy); }
 
 .role-info {
   flex: 1;
+  text-align: right;
 }
 
 .role-info h3 {
@@ -675,32 +716,35 @@ select.input-field {
 }
 
 .role-info p {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-2);
   margin: 0;
+  font-weight: 500;
 }
 
 .role-arrow {
   color: var(--navy);
   font-size: 20px;
   font-weight: 900;
-} 
-/* ============================================
+  flex-shrink: 0;
+}
+/* ═══════════════════════════════════════
    🏠 Home Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #homeScreen {
   background: var(--bg);
-  padding: 20px;
-  padding-bottom: 100px;
-  overflow-y: auto;
+  padding: 0;
+  padding-bottom: 90px;
 }
 
 .home-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  padding: 20px;
+  background: var(--navy);
+  color: var(--white);
 }
 
 .home-header-info {
@@ -711,12 +755,12 @@ select.input-field {
 .home-greeting {
   font-size: 20px;
   font-weight: 900;
-  color: var(--text);
+  color: var(--white);
   margin: 0 0 6px;
 }
 
 .home-greeting span {
-  color: var(--navy);
+  color: var(--white);
 }
 
 .home-location {
@@ -724,12 +768,12 @@ select.input-field {
   align-items: center;
   gap: 5px;
   font-size: 13px;
-  color: var(--text-2);
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
 }
 
 .home-location svg {
-  stroke: var(--navy);
+  stroke: rgba(255, 255, 255, 0.75);
 }
 
 .home-header-actions {
@@ -740,12 +784,12 @@ select.input-field {
 
 .icon-btn {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -754,39 +798,41 @@ select.input-field {
 }
 
 .icon-btn:hover {
-  background: var(--bg-gray);
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.icon-btn svg {
-  stroke: var(--text);
-}
+.icon-btn svg { stroke: var(--white); }
 
 .notif-dot {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--danger);
-  border: 2px solid var(--white);
+  border: 2px solid var(--navy);
 }
 
 .home-avatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: var(--navy);
-  color: var(--white);
+  background: var(--white);
+  color: var(--navy);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 900;
   cursor: pointer;
   border: none;
   flex-shrink: 0;
-  box-shadow: var(--shadow);
+}
+
+/* Home Body */
+.home-body {
+  padding: 20px;
 }
 
 /* Search */
@@ -798,9 +844,10 @@ select.input-field {
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   padding: 14px 18px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: var(--shadow-xs);
 }
 
 .home-search:hover {
@@ -816,7 +863,7 @@ select.input-field {
   flex: 1;
   background: transparent;
   border: none;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text);
   cursor: pointer;
 }
@@ -833,13 +880,24 @@ select.input-field {
   gap: 16px;
   background: var(--navy);
   border-radius: var(--r-lg);
-  padding: 24px 20px;
+  padding: 24px 22px;
   margin-bottom: 24px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
+}
+
+.home-cta::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
 }
 
 .home-cta:hover {
@@ -850,25 +908,28 @@ select.input-field {
 .cta-content {
   flex: 1;
   color: var(--white);
+  position: relative;
+  z-index: 1;
 }
 
 .cta-content h2 {
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 900;
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .cta-content p {
-  font-size: 12px;
+  font-size: 13px;
   opacity: 0.85;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
+  font-weight: 500;
 }
 
 .cta-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   background: var(--white);
   color: var(--navy);
   border: none;
@@ -880,8 +941,10 @@ select.input-field {
 }
 
 .cta-icon {
-  font-size: 64px;
+  font-size: 68px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* Section Header */
@@ -894,8 +957,8 @@ select.input-field {
 }
 
 .home-section-header h3 {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 900;
   color: var(--text);
   margin: 0;
 }
@@ -907,12 +970,12 @@ select.input-field {
   text-decoration: none;
 }
 
-/* Services */
+/* Services Grid */
 .home-services {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .service-card {
@@ -920,39 +983,44 @@ select.input-field {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 14px 6px;
+  padding: 16px 6px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-xs);
 }
 
 .service-card:hover {
   border-color: var(--navy);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .service-icon {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--r-md);
-  background: var(--blue-light);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--white);
 }
 
-.service-icon svg {
-  stroke: var(--navy);
-}
+.service-icon.food { background: linear-gradient(135deg, #F97316, #EA580C); }
+.service-icon.grocery { background: linear-gradient(135deg, #10B981, #059669); }
+.service-icon.pharmacy { background: linear-gradient(135deg, #EF4444, #DC2626); }
+.service-icon.package { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+
+.service-icon svg { stroke: var(--white); }
 
 .service-card span {
   font-size: 11px;
   font-weight: 700;
   color: var(--text);
   text-align: center;
+  line-height: 1.3;
 }
 
 /* Home Orders */
@@ -962,39 +1030,39 @@ select.input-field {
   gap: 12px;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🚫 Empty State
-   ============================================ */
+   ═══════════════════════════════════════ */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 48px 20px;
   text-align: center;
   background: var(--white);
-  border: 1.5px dashed var(--border);
+  border: 1.5px dashed var(--border-strong);
   border-radius: var(--r-lg);
   gap: 6px;
 }
 
 .empty-icon {
-  width: 80px;
-  height: 80px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: var(--bg-gray);
+  background: var(--blue-50);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .empty-icon svg {
-  stroke: var(--text-3);
+  stroke: var(--navy);
 }
 
 .empty-state h4 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--text);
   margin: 0;
@@ -1006,9 +1074,9 @@ select.input-field {
   margin: 0;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    📱 Bottom Navigation
-   ============================================ */
+   ═══════════════════════════════════════ */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -1019,10 +1087,9 @@ select.input-field {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-  height: 68px;
+  padding: 10px 12px max(10px, env(safe-area-inset-bottom));
   z-index: 100;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 -2px 12px rgba(15, 23, 42, 0.06);
 }
 
 .nav-btn {
@@ -1030,13 +1097,14 @@ select.input-field {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  color: var(--text-2);
-  padding: 6px 8px;
+  gap: 4px;
+  color: var(--text-3);
+  padding: 6px 12px;
   flex: 1;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: inherit;
 }
 
 .nav-btn svg {
@@ -1046,7 +1114,7 @@ select.input-field {
 
 .nav-btn span {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .nav-btn.active {
@@ -1057,35 +1125,13 @@ select.input-field {
   stroke: var(--navy);
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🛵 New Order Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #newOrderScreen {
   background: var(--bg);
+  padding: 0;
   padding-bottom: 40px;
-  overflow-y: auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.page-header h2 {
-  flex: 1;
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0;
-  text-align: center;
 }
 
 .order-form {
@@ -1100,21 +1146,23 @@ select.input-field {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 18px 16px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: var(--shadow-xs);
 }
 
 .order-field:hover {
   border-color: var(--navy);
+  box-shadow: var(--shadow-sm);
 }
 
 .order-field-icon {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1123,24 +1171,21 @@ select.input-field {
 }
 
 .order-field-icon.pickup {
-  background: var(--success-light);
+  background: var(--success-bg);
 }
 
-.order-field-icon.pickup svg {
-  stroke: var(--success);
-}
+.order-field-icon.pickup svg { stroke: var(--success); }
 
 .order-field-icon.dropoff {
-  background: var(--danger-light);
+  background: var(--danger-bg);
 }
 
-.order-field-icon.dropoff svg {
-  stroke: var(--danger);
-}
+.order-field-icon.dropoff svg { stroke: var(--danger); }
 
 .order-field-content {
   flex: 1;
   min-width: 0;
+  text-align: right;
 }
 
 .order-field-content label {
@@ -1148,7 +1193,7 @@ select.input-field {
   font-size: 11px;
   color: var(--text-2);
   font-weight: 700;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .order-field-content input {
@@ -1163,6 +1208,7 @@ select.input-field {
 .order-field-content input::placeholder {
   color: var(--text-3);
   font-weight: 500;
+  font-size: 13px;
 }
 
 .order-field-arrow {
@@ -1173,13 +1219,11 @@ select.input-field {
 .order-connector {
   display: flex;
   justify-content: center;
-  margin: -8px 0;
+  margin: -10px 0;
   color: var(--text-3);
 }
 
-.order-connector svg {
-  stroke: var(--text-3);
-}
+.order-connector svg { stroke: var(--text-3); }
 
 /* Order Section */
 .order-section {
@@ -1189,27 +1233,29 @@ select.input-field {
 }
 
 .order-label {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: var(--text);
 }
 
 .type-chips {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .type-chip {
-  padding: 14px 12px;
+  padding: 16px 12px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: inherit;
+  box-shadow: var(--shadow-xs);
 }
 
 .type-chip:hover {
@@ -1217,14 +1263,15 @@ select.input-field {
 }
 
 .type-chip.active {
-  background: var(--blue-light);
+  background: var(--navy);
   border-color: var(--navy);
-  color: var(--navy);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
 }
 
 .order-textarea {
   width: 100%;
-  padding: 14px;
+  padding: 14px 16px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
@@ -1232,11 +1279,16 @@ select.input-field {
   font-size: 14px;
   resize: vertical;
   font-family: inherit;
+  box-shadow: var(--shadow-xs);
 }
 
 .order-textarea:focus {
   border-color: var(--navy);
   outline: none;
+}
+
+.order-textarea::placeholder {
+  color: var(--text-3);
 }
 
 /* Price Card */
@@ -1245,6 +1297,7 @@ select.input-field {
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
   padding: 20px;
+  box-shadow: var(--shadow-sm);
 }
 
 .price-row {
@@ -1276,48 +1329,47 @@ select.input-field {
 
 .price-row.total span:last-child {
   color: var(--navy);
-  font-size: 22px;
+  font-size: 24px;
 }
-
-/* ============================================
+/* ═══════════════════════════════════════
    📋 Orders List Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #ordersScreen {
   background: var(--bg);
-  padding-bottom: 90px;
-  overflow-y: auto;
+  padding: 0;
+  padding-bottom: 40px;
 }
 
 .orders-tabs {
   display: flex;
-  gap: 6px;
-  padding: 12px 20px;
+  gap: 8px;
+  padding: 16px 20px;
   background: var(--white);
   border-bottom: 1px solid var(--border);
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.orders-tabs::-webkit-scrollbar {
-  display: none;
-}
+.orders-tabs::-webkit-scrollbar { display: none; }
 
 .order-tab {
-  padding: 8px 16px;
+  padding: 10px 18px;
   border-radius: var(--r-pill);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-2);
-  background: var(--bg-gray);
+  background: var(--gray-100);
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
   border: none;
+  font-family: inherit;
 }
 
 .order-tab.active {
   background: var(--navy);
   color: var(--white);
+  box-shadow: var(--shadow-sm);
 }
 
 .orders-list {
@@ -1332,42 +1384,44 @@ select.input-field {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 16px;
-  transition: all 0.2s;
+  padding: 18px;
+  transition: all 0.25s;
   cursor: pointer;
+  box-shadow: var(--shadow-xs);
 }
 
 .order-card-item:hover {
   border-color: var(--navy);
   transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
 }
 
 .order-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   gap: 8px;
 }
 
 .order-card-number {
-  font-size: 12px;
-  color: var(--text-2);
-  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 800;
   margin-bottom: 4px;
 }
 
 .order-card-date {
   font-size: 11px;
   color: var(--text-3);
+  font-weight: 600;
 }
 
 .order-status-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: var(--r-pill);
   font-size: 11px;
   font-weight: 800;
@@ -1375,33 +1429,33 @@ select.input-field {
 }
 
 .order-status-badge.pending {
-  background: var(--warning-light);
-  color: var(--warning);
+  background: var(--warning-bg);
+  color: #B45309;
 }
 
 .order-status-badge.accepted {
-  background: var(--blue-light);
+  background: var(--blue-50);
   color: var(--navy);
 }
 
 .order-status-badge.delivered {
-  background: var(--success-light);
-  color: var(--success);
+  background: var(--success-bg);
+  color: #047857;
 }
 
 .order-status-badge.cancelled {
-  background: var(--danger-light);
-  color: var(--danger);
+  background: var(--danger-bg);
+  color: #B91C1C;
 }
 
 .order-route {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 10px;
+  padding: 14px;
   background: var(--bg-gray);
   border-radius: var(--r-md);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .order-route-item {
@@ -1411,17 +1465,19 @@ select.input-field {
   font-size: 13px;
   color: var(--text-2);
   font-weight: 600;
+  text-align: right;
 }
 
 .order-route-item strong {
   color: var(--text);
+  font-weight: 800;
 }
 
 .order-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px solid var(--border);
   gap: 8px;
 }
@@ -1435,16 +1491,17 @@ select.input-field {
 .order-price small {
   font-size: 11px;
   color: var(--text-2);
-  margin-right: 2px;
+  margin-right: 3px;
+  font-weight: 600;
 }
 
 .order-action-btn {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: var(--r-sm);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  border: 1.5px solid transparent;
+  border: none;
   transition: all 0.2s;
   font-family: inherit;
 }
@@ -1452,6 +1509,7 @@ select.input-field {
 .order-action-btn.primary {
   background: var(--navy);
   color: var(--white);
+  box-shadow: var(--shadow-sm);
 }
 
 .order-action-btn.primary:hover {
@@ -1460,16 +1518,17 @@ select.input-field {
 
 .order-action-btn.outline {
   background: transparent;
-  border-color: var(--border);
+  border: 1.5px solid var(--border);
   color: var(--text);
 }
-/* ============================================
+
+/* ═══════════════════════════════════════
    🗺️ Tracking Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #trackingScreen {
   background: var(--bg);
+  padding: 0;
   padding-bottom: 40px;
-  overflow-y: auto;
 }
 
 .tracking-content {
@@ -1483,20 +1542,18 @@ select.input-field {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: var(--blue-light);
-  border: 1.5px solid var(--navy);
+  padding: 12px 22px;
+  background: var(--navy);
   border-radius: var(--r-pill);
   font-size: 14px;
   font-weight: 800;
-  color: var(--navy);
+  color: var(--white);
   margin: 0 auto;
   width: fit-content;
+  box-shadow: var(--shadow-md);
 }
 
-.tracking-eta svg {
-  stroke: var(--navy);
-}
+.tracking-eta svg { stroke: var(--white); }
 
 .tracking-map {
   width: 100%;
@@ -1535,25 +1592,25 @@ select.input-field {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
 }
 
 .driver-avatar {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: var(--blue-light);
+  background: var(--blue-50);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.driver-avatar svg {
-  stroke: var(--navy);
-}
+.driver-avatar svg { stroke: var(--navy); }
 
 .driver-info {
   flex: 1;
+  text-align: right;
 }
 
 .driver-info h4 {
@@ -1570,8 +1627,8 @@ select.input-field {
 }
 
 .call-btn {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: var(--success);
   border: none;
@@ -1581,16 +1638,14 @@ select.input-field {
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .call-btn:hover {
-  background: var(--navy-dark);
   transform: scale(1.05);
 }
 
-.call-btn svg {
-  stroke: var(--white);
-}
+.call-btn svg { stroke: var(--white); }
 
 /* Timeline */
 .tracking-timeline {
@@ -1601,6 +1656,7 @@ select.input-field {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
 }
 
 .timeline-step {
@@ -1615,9 +1671,9 @@ select.input-field {
   content: '';
   position: absolute;
   right: 17px;
-  top: 44px;
+  top: 48px;
   width: 2px;
-  height: calc(100% - 20px);
+  height: calc(100% - 24px);
   background: var(--border);
   z-index: 1;
 }
@@ -1630,7 +1686,7 @@ select.input-field {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--bg-gray);
+  background: var(--gray-100);
   border: 2px solid var(--border);
   display: flex;
   align-items: center;
@@ -1658,12 +1714,13 @@ select.input-field {
 
 @keyframes stepPulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(30, 58, 138, 0); }
+  50% { box-shadow: 0 0 0 10px rgba(30, 58, 138, 0); }
 }
 
 .step-content {
   flex: 1;
   padding-top: 6px;
+  text-align: right;
 }
 
 .step-content strong {
@@ -1671,7 +1728,7 @@ select.input-field {
   font-size: 14px;
   font-weight: 800;
   color: var(--text);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .timeline-step.active .step-content strong {
@@ -1690,13 +1747,13 @@ select.input-field {
   gap: 10px;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    👤 Profile Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #profileScreen {
   background: var(--bg);
-  padding-bottom: 90px;
-  overflow-y: auto;
+  padding: 0;
+  padding-bottom: 40px;
 }
 
 .profile-content {
@@ -1705,7 +1762,12 @@ select.input-field {
 
 .profile-hero {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  padding: 24px 20px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
 }
 
 .profile-avatar {
@@ -1717,7 +1779,7 @@ select.input-field {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 42px;
   font-weight: 900;
   margin: 0 auto 16px;
   box-shadow: var(--shadow-md);
@@ -1727,7 +1789,7 @@ select.input-field {
   font-size: 22px;
   font-weight: 900;
   color: var(--text);
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 
 .profile-hero p {
@@ -1741,22 +1803,23 @@ select.input-field {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .stat-card {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
-  padding: 16px 8px;
+  padding: 18px 10px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: var(--shadow-xs);
 }
 
 .stat-num {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 900;
   color: var(--navy);
 }
@@ -1764,7 +1827,7 @@ select.input-field {
 .stat-label {
   font-size: 11px;
   color: var(--text-2);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .profile-menu {
@@ -1772,13 +1835,14 @@ select.input-field {
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-xs);
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
+  gap: 14px;
+  padding: 16px 18px;
   font-size: 14px;
   font-weight: 700;
   color: var(--text);
@@ -1787,31 +1851,26 @@ select.input-field {
   border-bottom: 1px solid var(--border);
 }
 
-.menu-item:last-child {
-  border-bottom: none;
-}
+.menu-item:last-child { border-bottom: none; }
 
-.menu-item:hover {
-  background: var(--bg-gray);
-}
+.menu-item:hover { background: var(--bg-gray); }
 
 .menu-item-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--r-sm);
-  background: var(--blue-light);
+  background: var(--blue-50);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.menu-item-icon svg {
-  stroke: var(--navy);
-}
+.menu-item-icon svg { stroke: var(--navy); }
 
 .menu-item > span:nth-child(2) {
   flex: 1;
+  text-align: right;
 }
 
 .menu-arrow {
@@ -1824,48 +1883,52 @@ select.input-field {
 }
 
 .menu-item.logout .menu-item-icon {
-  background: var(--danger-light);
+  background: var(--danger-bg);
 }
 
 .menu-item.logout .menu-item-icon svg {
   stroke: var(--danger);
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🛵 Driver Dashboard
-   ============================================ */
+   ═══════════════════════════════════════ */
 #driverScreen {
   background: var(--bg);
+  padding: 0;
   padding-bottom: 90px;
-  overflow-y: auto;
 }
 
 .driver-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 20px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.driver-header > div:first-child {
+  flex: 1;
 }
 
 .driver-header h1 {
   font-size: 20px;
   font-weight: 900;
-  color: var(--text);
+  color: var(--white);
   margin: 0 0 4px;
 }
 
 .driver-header h1 span {
-  color: var(--navy);
+  color: var(--white);
 }
 
 .driver-header p {
   font-size: 13px;
-  color: var(--text-2);
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .driver-content {
@@ -1876,21 +1939,24 @@ select.input-field {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 20px;
+  padding: 22px 20px;
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
   margin-bottom: 20px;
-  transition: all 0.2s;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-xs);
 }
 
 .driver-toggle-card.online {
-  background: var(--success-light);
+  background: var(--success-bg);
   border-color: var(--success);
+  box-shadow: var(--shadow-md);
 }
 
 .toggle-info {
   flex: 1;
+  text-align: right;
 }
 
 .toggle-info h3 {
@@ -1907,7 +1973,7 @@ select.input-field {
 }
 
 .toggle-btn {
-  padding: 14px 20px;
+  padding: 14px 22px;
   background: var(--navy);
   color: var(--white);
   border-radius: var(--r-md);
@@ -1918,11 +1984,10 @@ select.input-field {
   white-space: nowrap;
   border: none;
   font-family: inherit;
+  box-shadow: var(--shadow-sm);
 }
 
-.toggle-btn:hover {
-  background: var(--navy-dark);
-}
+.toggle-btn:hover { background: var(--navy-dark); }
 
 .toggle-btn.online {
   background: var(--danger);
@@ -1932,7 +1997,7 @@ select.input-field {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .driver-section-header {
@@ -1943,8 +2008,8 @@ select.input-field {
 }
 
 .driver-section-header h3 {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 900;
   color: var(--text);
   margin: 0;
 }
@@ -1953,8 +2018,8 @@ select.input-field {
   font-size: 12px;
   color: var(--navy);
   font-weight: 800;
-  padding: 4px 12px;
-  background: var(--blue-light);
+  padding: 5px 14px;
+  background: var(--blue-50);
   border-radius: var(--r-pill);
 }
 
@@ -1969,32 +2034,34 @@ select.input-field {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 16px;
-  transition: all 0.2s;
+  padding: 18px;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-xs);
 }
 
 .available-order-card:hover {
   border-color: var(--navy);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🗺️ Map Picker Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #mapPickerScreen {
   background: var(--bg);
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
-  padding-bottom: 0;
+  padding: 0;
 }
 
 .map-search {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 20px;
+  padding: 14px 20px;
   background: var(--white);
   border-bottom: 1px solid var(--border);
   z-index: 9;
@@ -2007,7 +2074,7 @@ select.input-field {
 
 .map-search input {
   flex: 1;
-  padding: 12px 16px;
+  padding: 13px 16px;
   background: var(--bg-gray);
   border: 1.5px solid transparent;
   border-radius: var(--r-md);
@@ -2025,15 +2092,13 @@ select.input-field {
 .map-search-results {
   background: var(--white);
   border-bottom: 1px solid var(--border);
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   display: none;
   z-index: 8;
 }
 
-.map-search-results.active {
-  display: block;
-}
+.map-search-results.active { display: block; }
 
 .search-result-item {
   padding: 14px 20px;
@@ -2042,21 +2107,19 @@ select.input-field {
   transition: all 0.2s;
   font-size: 14px;
   color: var(--text);
+  text-align: right;
 }
 
-.search-result-item:last-child {
-  border-bottom: none;
-}
+.search-result-item:last-child { border-bottom: none; }
 
-.search-result-item:hover {
-  background: var(--bg-gray);
-}
+.search-result-item:hover { background: var(--bg-gray); }
 
 .search-result-item strong {
   color: var(--navy);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   font-weight: 800;
+  font-size: 13px;
 }
 
 .search-result-item small {
@@ -2084,7 +2147,7 @@ select.input-field {
   transform: translate(-50%, -100%);
   z-index: 1000;
   pointer-events: none;
-  font-size: 40px;
+  font-size: 44px;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   animation: pinBounce 1.5s ease-in-out infinite;
 }
@@ -2128,13 +2191,14 @@ select.input-field {
 }
 
 .map-pin-icon {
-  font-size: 24px;
+  font-size: 26px;
   flex-shrink: 0;
 }
 
 .map-address-text {
   flex: 1;
   min-width: 0;
+  text-align: right;
 }
 
 .map-address-text label {
@@ -2142,26 +2206,26 @@ select.input-field {
   font-size: 11px;
   color: var(--text-2);
   font-weight: 700;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .map-address-text p {
   font-size: 14px;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 800;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🔔 Notifications Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #notificationsScreen {
   background: var(--bg);
+  padding: 0;
   padding-bottom: 40px;
-  overflow-y: auto;
 }
 
 .notifications-list {
@@ -2180,31 +2244,35 @@ select.input-field {
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   transition: all 0.2s;
+  box-shadow: var(--shadow-xs);
 }
 
 .notif-card.unread {
   border-color: var(--navy);
-  background: var(--blue-light);
+  background: var(--blue-50);
 }
 
 .notif-icon {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: var(--blue-light);
+  background: var(--blue-50);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.notif-icon svg {
-  stroke: var(--navy);
+.notif-icon svg { stroke: var(--navy); }
+
+.notif-card.unread .notif-icon {
+  background: var(--white);
 }
 
 .notif-content {
   flex: 1;
   min-width: 0;
+  text-align: right;
 }
 
 .notif-content h4 {
@@ -2218,7 +2286,7 @@ select.input-field {
   font-size: 12px;
   color: var(--text-2);
   margin: 0 0 4px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .notif-time {
@@ -2227,13 +2295,13 @@ select.input-field {
   font-weight: 600;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    ⚙️ Settings Screen
-   ============================================ */
+   ═══════════════════════════════════════ */
 #settingsScreen {
   background: var(--bg);
+  padding: 0;
   padding-bottom: 40px;
-  overflow-y: auto;
 }
 
 .settings-content {
@@ -2246,6 +2314,7 @@ select.input-field {
   border-radius: var(--r-lg);
   padding: 20px;
   margin-bottom: 16px;
+  box-shadow: var(--shadow-xs);
 }
 
 .settings-card-title {
@@ -2253,6 +2322,7 @@ select.input-field {
   font-weight: 900;
   color: var(--text);
   margin: 0 0 14px;
+  text-align: right;
 }
 
 .settings-theme-options {
@@ -2294,6 +2364,7 @@ select.input-field {
   border-radius: var(--r-lg);
   overflow: hidden;
   margin-bottom: 20px;
+  box-shadow: var(--shadow-xs);
 }
 
 .settings-row {
@@ -2307,9 +2378,7 @@ select.input-field {
   color: var(--text);
 }
 
-.settings-row:last-child {
-  border-bottom: none;
-}
+.settings-row:last-child { border-bottom: none; }
 
 .settings-value {
   color: var(--text-2);
@@ -2349,7 +2418,7 @@ select.input-field {
   background: var(--white);
   border-radius: 50%;
   transition: 0.3s;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .settings-switch input:checked + .settings-slider {
@@ -2367,15 +2436,15 @@ select.input-field {
   margin-top: 12px;
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    💬 Toast
-   ============================================ */
+   ═══════════════════════════════════════ */
 .toast {
   position: fixed;
-  bottom: 90px;
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--navy-dark);
+  background: var(--navy);
   color: var(--white);
   padding: 14px 24px;
   border-radius: var(--r-md);
@@ -2396,25 +2465,27 @@ select.input-field {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    📱 Responsive
-   ============================================ */
+   ═══════════════════════════════════════ */
 @media (max-width: 400px) {
   .splash-title { font-size: 38px; }
-  .splash-logo-wrap { width: 130px; height: 130px; }
+  .splash-logo-wrap { width: 140px; height: 140px; }
   .auth-title { font-size: 24px; }
   .home-greeting { font-size: 18px; }
-  .cta-content h2 { font-size: 16px; }
-  .cta-icon { font-size: 52px; }
+  .cta-content h2 { font-size: 17px; }
+  .cta-icon { font-size: 56px; }
+  .service-icon { width: 42px; height: 42px; }
   .service-card span { font-size: 10px; }
-  .stat-num { font-size: 18px; }
-  .otp-input { width: 52px; height: 62px; font-size: 22px; }
+  .stat-num { font-size: 19px; }
+  .otp-input { width: 54px; height: 64px; font-size: 22px; }
   .nav-btn span { font-size: 10px; }
+  .role-icon { width: 52px; height: 52px; }
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    ♿ Reduced Motion
-   ============================================ */
+   ═══════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -2423,6 +2494,6 @@ select.input-field {
   }
 }
 
-/* ============================================
+/* ═══════════════════════════════════════
    🎉 نهاية style.css
-   ============================================ */
+   ═══════════════════════════════════════ */
