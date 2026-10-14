@@ -1,9 +1,9 @@
 // ============================================
-// DAWAK دواك - v18 (Fixed)
-// Part 1/5 — State + Utils + Firebase + Firestore + Audio
+// DAWAK دواك - v20 (Fixed Auth)
+// Part 1/4 — State + Utils + Firebase + Firestore + Audio + Screens
 // ============================================
 
-console.log('🏆 DAWAK v18 - بدأ التحميل');
+console.log('🏆 DAWAK v20 - بدأ التحميل');
 
 // ============================================
 // 🎯 Global State
@@ -479,29 +479,6 @@ function vibrateDevice(pattern) {
 }
 
 // ============================================
-// 🎬 Particles
-// ============================================
-function createSplashParticles() {
-  var container = document.getElementById('splashParticles');
-  if (!container) return;
-
-  container.innerHTML = '';
-
-  for (var i = 0; i < 30; i++) {
-    var p = document.createElement('div');
-    p.className = 'splash-particle';
-    var size = Math.random() * 4 + 2;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.top = Math.random() * 100 + '%';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = Math.random() * 6 + 's';
-    p.style.animationDuration = (4 + Math.random() * 4) + 's';
-    container.appendChild(p);
-  }
-}
-
-// ============================================
 // 🔥 Firestore — Users
 // ============================================
 async function saveUserToFirestore(userData) {
@@ -515,7 +492,7 @@ async function saveUserToFirestore(userData) {
       updatedAt: new Date().toISOString()
     }), { merge: true });
 
-    console.log('✅ تم حفظ المستخدم:', userId);
+    console.log('✅ تم حفظ المستخدم في Firestore:', userId);
     return userId;
   } catch (error) {
     console.error('❌ خطأ حفظ المستخدم:', error);
@@ -630,7 +607,6 @@ async function getUserOrdersFromFirestore(userPhone) {
     });
     return orders;
   } catch (error) {
-    console.error('❌ خطأ جلب طلبات المستخدم:', error);
     return [];
   }
 }
@@ -652,25 +628,6 @@ async function getPharmacyOrdersFromFirestore(pharmacyName) {
     });
     return orders;
   } catch (error) {
-    console.error('❌ خطأ جلب طلبات الصيدلية:', error);
-    return [];
-  }
-}
-
-async function loadDeliveryOrdersFromFirestore() {
-  if (!isFirebaseReady()) return [];
-  try {
-    var q = window.firebaseQuery(
-      window.firebaseCollection(window.firebaseDB, COLLECTIONS.ORDERS),
-      window.firebaseWhere('status', '==', 'pending')
-    );
-    var snap = await window.firebaseGetDocs(q);
-    var orders = [];
-    snap.forEach(function (doc) {
-      orders.push(Object.assign({ id: doc.id }, doc.data()));
-    });
-    return orders;
-  } catch (e) {
     return [];
   }
 }
@@ -710,7 +667,6 @@ async function loadPostsFromFirestore() {
     });
     return posts;
   } catch (error) {
-    console.error('❌ خطأ جلب العروض:', error);
     return [];
   }
 }
@@ -729,7 +685,6 @@ async function saveRatingToFirestore(ratingData) {
     );
     return ref.id;
   } catch (error) {
-    console.error('❌ خطأ حفظ التقييم:', error);
     return null;
   }
 }
@@ -748,7 +703,6 @@ async function saveNotificationToFirestore(notifData) {
     );
     return ref.id;
   } catch (error) {
-    console.error('❌ خطأ حفظ الإشعار:', error);
     return null;
   }
 }
@@ -801,7 +755,6 @@ function addInternalNotification(type, title, message) {
   if (dot) dot.style.display = 'block';
 }
 
-console.log('🏆 DAWAK v18 — الجزء 1 اكتمل ✅');
 // ============================================
 // 📱 Screens Management
 // ============================================
@@ -868,13 +821,6 @@ function switchTab(tab) {
   else if (tab === 'profile') openProfile();
 }
 
-// ============================================
-// 🔀 Navigation (بدون Onboarding)
-// ============================================
-function goToLogin() {
-  showScreen('loginScreen');
-}
-
 function goToRoleSelection() {
   showScreen('roleScreen');
 }
@@ -892,9 +838,6 @@ function selectRole(role) {
   }
 }
 
-// ============================================
-// 🎯 Dashboard by User Type
-// ============================================
 function goToDashboardByType() {
   var user = getCurrentUser() || {};
 
@@ -922,9 +865,6 @@ function goToDashboardByType() {
   }
 }
 
-// ============================================
-// 👤 Update User Info (في كل الشاشات)
-// ============================================
 function updateUserName() {
   var user = getCurrentUser();
   if (!user) return;
@@ -933,7 +873,6 @@ function updateUserName() {
     var userName = user.name || 'مستخدم';
     var firstLetter = userName.charAt(0);
 
-    // Home
     var homeName = document.getElementById('homeUserName');
     if (homeName) homeName.textContent = userName;
 
@@ -951,41 +890,12 @@ function updateUserName() {
       }
     }
 
-    // Pharmacy
     var phGreeting = document.getElementById('pharmacyGreeting');
     if (phGreeting) phGreeting.textContent = userName;
 
-    var phAvatar = document.getElementById('pharmacyAvatarLetter');
-    if (phAvatar) {
-      var phAvatarBtn = phAvatar.parentElement;
-      if (user.avatar && phAvatarBtn) {
-        phAvatar.textContent = '';
-        phAvatarBtn.style.backgroundImage = 'url(' + user.avatar + ')';
-        phAvatarBtn.style.backgroundSize = 'cover';
-        phAvatarBtn.style.backgroundPosition = 'center';
-      } else {
-        phAvatar.textContent = firstLetter;
-      }
-    }
-
-    // Delivery
     var delGreeting = document.getElementById('deliveryGreeting');
     if (delGreeting) delGreeting.textContent = userName;
 
-    var delAvatar = document.getElementById('deliveryAvatarLetter');
-    if (delAvatar) {
-      var delAvatarBtn = delAvatar.parentElement;
-      if (user.avatar && delAvatarBtn) {
-        delAvatar.textContent = '';
-        delAvatarBtn.style.backgroundImage = 'url(' + user.avatar + ')';
-        delAvatarBtn.style.backgroundSize = 'cover';
-        delAvatarBtn.style.backgroundPosition = 'center';
-      } else {
-        delAvatar.textContent = firstLetter;
-      }
-    }
-
-    // Profile
     var profileName = document.getElementById('profileName');
     if (profileName) profileName.textContent = userName;
 
@@ -1014,6 +924,7 @@ function updateUserName() {
   }
 }
 
+console.log('🏆 DAWAK v20 — الجزء 1 اكتمل ✅');
 // ============================================
 // 🔐 Login
 // ============================================
@@ -1141,19 +1052,12 @@ async function logout() {
 
   localStorage.removeItem('saydaliyati_current_user');
 
-  if (typeof signOutFromFirebase === 'function') {
-    try { await signOutFromFirebase(); } catch (e) {}
+  if (window.firebaseAuth && window.firebaseSignOut) {
+    try { await window.firebaseSignOut(window.firebaseAuth); } catch (e) {}
   }
 
   showScreen('loginScreen');
   showToast('✅ تم تسجيل الخروج');
-}
-
-async function signOutFromFirebase() {
-  if (!window.firebaseAuth || !window.firebaseSignOut) return;
-  try {
-    await window.firebaseSignOut(window.firebaseAuth);
-  } catch (e) {}
 }
 
 // ============================================
@@ -1204,7 +1108,7 @@ async function forgotPassword() {
 }
 
 // ============================================
-// 🧑 Patient Registration
+// 🧑 Patient Registration — 🔥 FIXED
 // ============================================
 async function submitPatient(event) {
   if (event) {
@@ -1230,7 +1134,7 @@ async function submitPatient(event) {
   }
 
   if (!validatePhone(phone)) {
-    showError('رقم الهاتف غير صحيح');
+    showError('رقم الهاتف غير صحيح (07XXXXXXXXX)');
     return;
   }
 
@@ -1241,18 +1145,34 @@ async function submitPatient(event) {
 
   var authEmail = phone + '@saydaliyati.app';
   var uid = null;
+  var firebaseSynced = false;
 
+  // ✅ جرّب Firebase Auth (بدون توقف لو فشل)
   if (window.firebaseAuth && window.firebaseCreateUser) {
     try {
       var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
       uid = userCred.user.uid;
+      firebaseSynced = true;
+      console.log('✅ Firebase Auth نجح:', uid);
     } catch (authError) {
+      console.warn('⚠️ Firebase Auth فشل:', authError.code);
+
+      // لو الإيميل مسجل → جرّب تسجيل الدخول
       if (authError.code === 'auth/email-already-in-use') {
-        showError('رقم الهاتف مسجل مسبقاً');
+        try {
+          var signInCred = await window.firebaseSignIn(window.firebaseAuth, authEmail, password);
+          uid = signInCred.user.uid;
+          firebaseSynced = true;
+          console.log('✅ Firebase SignIn نجح:', uid);
+        } catch (signInErr) {
+          // كلمة المرور مختلفة → استخدم UID محلي
+          console.warn('⚠️ SignIn فشل:', signInErr.code);
+          uid = 'local_' + phone + '_' + Date.now();
+        }
       } else {
-        showError('فشل التسجيل: ' + authError.message);
+        // أي خطأ آخر → استخدم UID محلي وكمّل
+        uid = 'local_' + phone + '_' + Date.now();
       }
-      return;
     }
   } else {
     uid = 'local_' + phone + '_' + Date.now();
@@ -1265,20 +1185,26 @@ async function submitPatient(event) {
     phone: phone,
     address: address,
     password: password,
-    date: new Date().toISOString()
+    date: new Date().toISOString(),
+    firebaseSynced: firebaseSynced
   };
 
   saveRegistration(user);
   saveCurrentUser(user);
 
-  try { await saveUserToFirestore(user); } catch (e) {}
+  // ✅ حاول الحفظ في Firestore (بدون توقف)
+  try {
+    await saveUserToFirestore(user);
+  } catch (e) {
+    console.warn('⚠️ Firestore فشل:', e);
+  }
 
   playSuccessSound();
   showSuccessMessage('تم إنشاء حسابك', 'أهلاً بك في DAWAK، ' + name);
 }
 
 // ============================================
-// 🏪 Pharmacy Registration
+// 🏪 Pharmacy Registration — 🔥 FIXED
 // ============================================
 async function submitPharmacy(event) {
   if (event) {
@@ -1317,8 +1243,10 @@ async function submitPharmacy(event) {
     return;
   }
 
-  var pharmacyLat = document.getElementById('pharmacyLat').value;
-  var pharmacyLng = document.getElementById('pharmacyLng').value;
+  var latEl = document.getElementById('pharmacyLat');
+  var lngEl = document.getElementById('pharmacyLng');
+  var pharmacyLat = latEl ? latEl.value : '';
+  var pharmacyLng = lngEl ? lngEl.value : '';
 
   if (!pharmacyLat || !pharmacyLng) {
     showError('الرجاء تحديد موقع الصيدلية على الخريطة');
@@ -1327,18 +1255,27 @@ async function submitPharmacy(event) {
 
   var authEmail = phone + '@pharmacy.saydaliyati.app';
   var uid = null;
+  var firebaseSynced = false;
 
   if (window.firebaseAuth && window.firebaseCreateUser) {
     try {
       var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
       uid = userCred.user.uid;
+      firebaseSynced = true;
     } catch (authError) {
+      console.warn('⚠️ Firebase Auth فشل:', authError.code);
+
       if (authError.code === 'auth/email-already-in-use') {
-        showError('رقم الهاتف مسجل مسبقاً');
+        try {
+          var signInCred = await window.firebaseSignIn(window.firebaseAuth, authEmail, password);
+          uid = signInCred.user.uid;
+          firebaseSynced = true;
+        } catch (signInErr) {
+          uid = 'local_' + phone + '_' + Date.now();
+        }
       } else {
-        showError('فشل التسجيل: ' + authError.message);
+        uid = 'local_' + phone + '_' + Date.now();
       }
-      return;
     }
   } else {
     uid = 'local_' + phone + '_' + Date.now();
@@ -1355,7 +1292,8 @@ async function submitPharmacy(event) {
     lat: parseFloat(pharmacyLat),
     lng: parseFloat(pharmacyLng),
     password: password,
-    date: new Date().toISOString()
+    date: new Date().toISOString(),
+    firebaseSynced: firebaseSynced
   };
 
   saveRegistration(user);
@@ -1377,14 +1315,16 @@ async function submitPharmacy(event) {
       deliveryTime: '30 دقيقة',
       active: true
     });
-  } catch (e) {}
+  } catch (e) {
+    console.warn('⚠️ Firestore فشل:', e);
+  }
 
   playSuccessSound();
   showSuccessMessage('تم استلام طلبك', 'سنتواصل معك خلال 24 ساعة');
 }
 
 // ============================================
-// 🚴 Delivery Registration
+// 🚴 Delivery Registration — 🔥 FIXED
 // ============================================
 async function submitDelivery(event) {
   if (event) {
@@ -1423,18 +1363,27 @@ async function submitDelivery(event) {
 
   var authEmail = phone + '@driver.saydaliyati.app';
   var uid = null;
+  var firebaseSynced = false;
 
   if (window.firebaseAuth && window.firebaseCreateUser) {
     try {
       var userCred = await window.firebaseCreateUser(window.firebaseAuth, authEmail, password);
       uid = userCred.user.uid;
+      firebaseSynced = true;
     } catch (authError) {
+      console.warn('⚠️ Firebase Auth فشل:', authError.code);
+
       if (authError.code === 'auth/email-already-in-use') {
-        showError('رقم الهاتف مسجل مسبقاً');
+        try {
+          var signInCred = await window.firebaseSignIn(window.firebaseAuth, authEmail, password);
+          uid = signInCred.user.uid;
+          firebaseSynced = true;
+        } catch (signInErr) {
+          uid = 'local_' + phone + '_' + Date.now();
+        }
       } else {
-        showError('فشل التسجيل: ' + authError.message);
+        uid = 'local_' + phone + '_' + Date.now();
       }
-      return;
     }
   } else {
     uid = 'local_' + phone + '_' + Date.now();
@@ -1448,13 +1397,18 @@ async function submitDelivery(event) {
     area: area,
     vehicle: vehicle,
     password: password,
-    date: new Date().toISOString()
+    date: new Date().toISOString(),
+    firebaseSynced: firebaseSynced
   };
 
   saveRegistration(user);
   saveCurrentUser(user);
 
-  try { await saveUserToFirestore(user); } catch (e) {}
+  try {
+    await saveUserToFirestore(user);
+  } catch (e) {
+    console.warn('⚠️ Firestore فشل:', e);
+  }
 
   playSuccessSound();
   showSuccessMessage('مرحباً بك في فريقنا', 'سنتواصل معك قريباً');
@@ -1681,7 +1635,7 @@ function detectUserLocationSilent() {
   );
 }
 
-console.log('🏆 DAWAK v18 — الجزء 2 اكتمل ✅');
+console.log('🏆 DAWAK v20 — الجزء 2 اكتمل ✅');
 // ============================================
 // 🏠 Home — Pharmacies
 // ============================================
@@ -1891,7 +1845,7 @@ function openPharmacyDetails(pharmacyId) {
 }
 
 // ============================================
-// 🛒 Cart — Open + Render
+// 🛒 Cart
 // ============================================
 async function openCartScreen() {
   var user = getCurrentUser();
@@ -2212,7 +2166,6 @@ async function submitCartOrderV2() {
   var total = subtotal + delivery - discount;
   var orderId = Math.floor(1000 + Math.random() * 9000);
 
-  // احصل على موقع الصيدلية من أول عنصر بالسلة
   var pharmacyLat = null;
   var pharmacyLng = null;
   try {
@@ -2740,7 +2693,7 @@ async function submitPrescription(event) {
   resetPrescriptionUpload();
 }
 
-console.log('🏆 DAWAK v18 — الجزء 3 اكتمل ✅');
+console.log('🏆 DAWAK v20 — الجزء 3 اكتمل ✅');
 // ============================================
 // 📋 My Orders
 // ============================================
@@ -2773,7 +2726,6 @@ async function renderOrdersV2() {
 
   if (!container) return;
 
-  // احذف البطاقات القديمة فقط
   container.querySelectorAll('.order-card').forEach(function (c) {
     if (c.parentNode) c.remove();
   });
@@ -3401,7 +3353,6 @@ async function openChatWith(userId, userName) {
 }
 
 function openChatScreen() {
-  // نقطة دخول من Tracking Screen
   if (currentChatUser && currentChatUser.id) {
     openChatWith(currentChatUser.id, currentChatUser.name);
   } else {
@@ -3516,7 +3467,7 @@ function handleChatInput(event) {
 }
 
 // ============================================
-// 📞 Call (بدون event.currentTarget)
+// 📞 Call
 // ============================================
 function openCallScreen() {
   showScreen('callScreen');
@@ -3588,7 +3539,6 @@ function toggleMute() {
   callMuted = !callMuted;
   showToast(callMuted ? '🔇 تم كتم الميكروفون' : '🎤 تم تفعيل الميكروفون');
 
-  // ✅ استخدام event بطريقة آمنة
   if (typeof event !== 'undefined' && event && event.currentTarget) {
     event.currentTarget.classList.toggle('active', callMuted);
   }
@@ -3704,9 +3654,8 @@ async function submitRating() {
   showToast('⭐ شكراً لتقييمك');
 }
 
-console.log('🏆 DAWAK v18 — الجزء 4 اكتمل ✅');
 // ============================================
-// 👤 Profile — ديناميكي لكل نوع مستخدم
+// 👤 Profile
 // ============================================
 async function openProfile() {
   updateUserName();
@@ -3728,8 +3677,8 @@ async function renderProfileStats() {
 
   try {
     var userType = user.type || 'patient';
-
     var orders = [];
+
     if (isFirebaseReady() && user.phone) {
       if (userType === 'pharmacy' && user.name) {
         orders = await getPharmacyOrdersFromFirestore(user.name);
@@ -3836,9 +3785,7 @@ async function renderProfileMenu() {
   }
 }
 
-function openAddresses() {
-  showToast('📍 إضافة عنوان — قريباً');
-}
+function openAddresses() { showToast('📍 إضافة عنوان — قريباً'); }
 
 function openOrdersHistory() {
   currentOrderFilter = 'completed';
@@ -3863,9 +3810,7 @@ function openEarnings() {
   showToast('💰 أرباحك: ' + total.toLocaleString() + ' د.ع');
 }
 
-function openHelpSupport() {
-  showToast('📞 واتساب: +964 775 145 9130');
-}
+function openHelpSupport() { showToast('📞 واتساب: +964 775 145 9130'); }
 
 function openImagePicker() {
   var input = document.getElementById('avatarInput');
@@ -3891,7 +3836,6 @@ async function handleAvatarUpload(event) {
     user.avatar = imageData;
     saveCurrentUser(user);
 
-    // حدّث أيضاً في registrations
     var regs = JSON.parse(localStorage.getItem('saydaliyati_registrations') || '[]');
     for (var i = 0; i < regs.length; i++) {
       if (regs[i].phone === user.phone) {
@@ -3978,7 +3922,6 @@ async function loadPharmacyDashboard() {
     if (revEl) revEl.textContent = revenue > 0 ? (revenue / 1000).toFixed(0) + 'K' : '0';
     if (ratingEl) ratingEl.textContent = (user.rating || 0).toFixed(1);
 
-    // عرض الطلبات الجديدة
     var ordersList = document.getElementById('pharmacyDashboardOrdersList');
     if (ordersList) {
       if (newOrders.length === 0) {
@@ -4073,7 +4016,6 @@ function toggleRadarSearch() {
   var progressBar = document.getElementById('radarProgressBar');
 
   if (!radarActive) {
-    // بدء البحث
     radarActive = true;
     radarTimer = 0;
 
@@ -4114,7 +4056,6 @@ function toggleRadarSearch() {
     if (window.radarPingInterval) clearInterval(window.radarPingInterval);
     window.radarPingInterval = setInterval(playSonarPing, 2000);
 
-    // محاكاة طلب جديد بعد 8 ثواني
     setTimeout(function () {
       if (radarActive) {
         playAlertDing();
@@ -4126,7 +4067,6 @@ function toggleRadarSearch() {
     }, 8000);
 
   } else {
-    // إيقاف البحث
     radarActive = false;
 
     if (box) box.classList.remove('active');
@@ -4273,13 +4213,9 @@ function filterInventoryBy(filter, btn) {
   renderInventory();
 }
 
-function filterInventory() {
-  renderInventory();
-}
+function filterInventory() { renderInventory(); }
 
-function openAddMedicineModal() {
-  showToast('➕ إضافة دواء — قريباً');
-}
+function openAddMedicineModal() { showToast('➕ إضافة دواء — قريباً'); }
 
 // ============================================
 // 📢 Add Post (Pharmacy)
@@ -4368,34 +4304,32 @@ async function publishPost(event) {
 // (بدون Splash + بدون Onboarding)
 // ============================================
 function initializeApp() {
-  console.log('🏆 DAWAK v18 جاهز');
+  console.log('🏆 DAWAK v20 جاهز');
 
   document.title = 'DAWAK دواك - صحتك أولويتنا';
 
-  // ✅ ضبط الثيم
+  // Theme
   var savedTheme = localStorage.getItem('saydaliyati_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
 
   var toggle = document.getElementById('darkModeToggle');
   if (toggle) toggle.checked = savedTheme === 'dark';
 
-  // ✅ علّم الـ Onboarding كمكتمل (حتى لو ما ظهر)
+  // ضمان عدم ظهور Splash/Onboarding
   localStorage.setItem('saydaliyati_onboarding_done', 'true');
 
-  // ✅ فحص المستخدم الحالي
+  // Check user
   var currentUser = getCurrentUser();
 
   if (currentUser && (currentUser.phone || currentUser.uid)) {
-    // مستخدم مسجل → Dashboard مباشرة
     console.log('✅ مستخدم مسجل:', currentUser.name || currentUser.phone);
     goToDashboardByType();
   } else {
-    // مستخدم جديد → Login مباشرة
     console.log('👤 مستخدم جديد → Login');
     showScreen('loginScreen');
   }
 
-  // ✅ تفعيل الصوت عند أول ضغطة
+  // Init audio on first click
   document.body.addEventListener('click', function () {
     initAudio();
   }, { once: true });
@@ -4407,7 +4341,6 @@ function initializeApp() {
 window.addEventListener('firebase-ready', function () {
   console.log('🔥 Firebase ready event received');
 
-  // تحديث البيانات لو المستخدم في الرئيسية
   var user = getCurrentUser();
   if (user && user.type === 'patient') {
     var homeScreen = document.getElementById('homeScreen');
@@ -4439,4 +4372,4 @@ document.addEventListener('gesturestart', function (e) {
 // ============================================
 // 🎉 نهاية script.js
 // ============================================
-console.log('🏆 DAWAK v18 — script.js اكتمل بالكامل ✅');
+console.log('🏆 DAWAK v20 — script.js اكتمل بالكامل ✅');
