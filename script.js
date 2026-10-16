@@ -1781,30 +1781,58 @@ window.handleLogout = handleLogout;
 window.togglePassword = togglePassword;
 window.showToast = showToast;
 // ═══════════════════════════════════════
-// 🔊 Sound System — 6 أصوات × 2
+// 🔊 Sound System — Real MP3 Sounds
 // ═══════════════════════════════════════
 let currentSoundType = 'notification';
-let _audioContext = null;
+let _currentAudio = null;
+
+// ═══ Audio URLs (GitHub) ═══
+const AUDIO_BASE = 'https://raw.githubusercontent.com/hasan7990l-hue/Saydaliyati/main/sounds';
 
 const SOUNDS = {
   notification: [
-    { id: 'default', name: 'افتراضي', icon: '🔔', type: 'sine', freq: 800, duration: 0.3 },
-    { id: 'chime', name: 'رنين ناعم', icon: '🎵', type: 'sine', freq: 600, duration: 0.5 },
-    { id: 'bell', name: 'جرس', icon: '🔕', type: 'triangle', freq: 1000, duration: 0.4 },
-    { id: 'pop', name: 'نقرة', icon: '💧', type: 'sine', freq: 1200, duration: 0.15 },
-    { id: 'soft', name: 'هادئ', icon: '🌙', type: 'sine', freq: 400, duration: 0.6 },
-    { id: 'silent', name: 'صامت', icon: '🔇', type: 'silent', freq: 0, duration: 0 }
+    { 
+      id: 'notif_1', 
+      name: 'تنبيه قوي', 
+      icon: '🚨', 
+      url: `${AUDIO_BASE}/notif_1.m4a` 
+    },
+    { 
+      id: 'notif_2', 
+      name: 'إنذار مشع', 
+      icon: '📻', 
+      url: `${AUDIO_BASE}/notif_2.m4a` 
+    },
+    { 
+      id: 'silent', 
+      name: 'صامت', 
+      icon: '🔇', 
+      url: null 
+    }
   ],
   order: [
-    { id: 'default', name: 'افتراضي', icon: '🔔', type: 'square', freq: 600, duration: 0.4 },
-    { id: 'alert', name: 'تنبيه', icon: '🚨', type: 'sawtooth', freq: 800, duration: 0.5 },
-    { id: 'bell', name: 'جرس', icon: '🛎️', type: 'triangle', freq: 1200, duration: 0.4 },
-    { id: 'urgent', name: 'عاجل', icon: '⚡', type: 'square', freq: 1500, duration: 0.3 },
-    { id: 'classic', name: 'كلاسيكي', icon: '📞', type: 'sine', freq: 900, duration: 0.6 },
-    { id: 'silent', name: 'صامت', icon: '🔇', type: 'silent', freq: 0, duration: 0 }
+    { 
+      id: 'order_1', 
+      name: 'رنين الطلبات', 
+      icon: '🛎️', 
+      url: `${AUDIO_BASE}/order_1.m4a` 
+    },
+    { 
+      id: 'notif_1', 
+      name: 'تنبيه قوي', 
+      icon: '🚨', 
+      url: `${AUDIO_BASE}/notif_1.m4a` 
+    },
+    { 
+      id: 'silent', 
+      name: 'صامت', 
+      icon: '🔇', 
+      url: null 
+    }
   ]
 };
 
+// ═══ Sound Picker ═══
 function openSoundPicker(type) {
   currentSoundType = type;
   
@@ -1816,7 +1844,7 @@ function openSoundPicker(type) {
   
   title.textContent = type === 'notification' ? 'صوت الإشعارات' : 'رنين الطلبات';
   
-  const savedSound = localStorage.getItem(`wassilha_sound_${type}`) || 'default';
+  const savedSound = localStorage.getItem(`wassilha_sound_${type}`) || SOUNDS[type][0].id;
   const sounds = SOUNDS[type];
   
   list.innerHTML = sounds.map(sound => `
@@ -1848,12 +1876,17 @@ function openSoundPicker(type) {
 function closeSoundPicker() {
   const modal = document.getElementById('soundPickerModal');
   if (modal) modal.classList.remove('active');
+  
+  // إيقاف أي صوت يعمل
+  if (_currentAudio) {
+    _currentAudio.pause();
+    _currentAudio = null;
+  }
 }
 
 function selectSound(soundId, event) {
   localStorage.setItem(`wassilha_sound_${currentSoundType}`, soundId);
   
-  // تحديث UI
   document.querySelectorAll('#soundList .sound-item').forEach(item => {
     item.classList.remove('selected');
   });
@@ -1861,12 +1894,11 @@ function selectSound(soundId, event) {
     event.currentTarget.classList.add('selected');
   }
   
-  // تشغيل الصوت
+  // تشغيل الصوت للمعاينة
   if (soundId !== 'silent') {
     playSound(currentSoundType, soundId);
   }
   
-  // تحديث القيمة المعروضة
   const sound = SOUNDS[currentSoundType].find(s => s.id === soundId);
   if (sound) {
     const valueEl = document.getElementById(
@@ -1875,43 +1907,53 @@ function selectSound(soundId, event) {
     if (valueEl) valueEl.textContent = sound.name;
   }
   
-  showToast('✅ تم اختيار: ' + (sound?.name || ''));
+  showToast('✅ ' + (sound?.name || ''));
   
-  setTimeout(closeSoundPicker, 500);
+  setTimeout(closeSoundPicker, 800);
 }
 
 function playSound(type, soundId) {
   const sound = SOUNDS[type].find(s => s.id === soundId);
-  if (!sound || sound.id === 'silent') return;
+  if (!sound || !sound.url) return;
   
   try {
-    if (!_audioContext) {
-      _audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // إيقاف الصوت القديم
+    if (_currentAudio) {
+      _currentAudio.pause();
+      _currentAudio.currentTime = 0;
     }
     
-    const osc = _audioContext.createOscillator();
-    const gain = _audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(_audioContext.destination);
-    
-    osc.type = sound.type;
-    osc.frequency.value = sound.freq;
-    
-    gain.gain.setValueAtTime(0.3, _audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, _audioContext.currentTime + sound.duration);
-    
-    osc.start(_audioContext.currentTime);
-    osc.stop(_audioContext.currentTime + sound.duration);
+    // تشغيل الصوت الجديد
+    _currentAudio = new Audio(sound.url);
+    _currentAudio.volume = 0.8;
+    _currentAudio.play().catch(e => {
+      console.log('Sound play blocked:', e);
+    });
   } catch (e) {
-    console.log('Sound play failed:', e);
+    console.log('Sound error:', e);
   }
 }
 
-// تحديث قيم الأصوات في Settings عند الفتح
+// ═══ Play sound by setting (without preview) ═══
+function playNotificationSound() {
+  if (localStorage.getItem('wassilha_sound') === 'false') return;
+  if (localStorage.getItem('wassilha_notifications') === 'false') return;
+  
+  const soundId = localStorage.getItem('wassilha_sound_notification') || 'notif_1';
+  playSound('notification', soundId);
+}
+
+function playOrderSound() {
+  if (localStorage.getItem('wassilha_sound') === 'false') return;
+  
+  const soundId = localStorage.getItem('wassilha_sound_order') || 'order_1';
+  playSound('order', soundId);
+}
+
+// ═══ Update Sound Values in Settings ═══
 function updateSoundValues() {
-  const notifSound = localStorage.getItem('wassilha_sound_notification') || 'default';
-  const orderSound = localStorage.getItem('wassilha_sound_order') || 'default';
+  const notifSound = localStorage.getItem('wassilha_sound_notification') || 'notif_1';
+  const orderSound = localStorage.getItem('wassilha_sound_order') || 'order_1';
   
   const notifSoundObj = SOUNDS.notification.find(s => s.id === notifSound);
   const orderSoundObj = SOUNDS.order.find(s => s.id === orderSound);
@@ -1923,11 +1965,13 @@ function updateSoundValues() {
   if (orderEl && orderSoundObj) orderEl.textContent = orderSoundObj.name;
 }
 
-// Global
+// ═══ Global ═══
 window.openSoundPicker = openSoundPicker;
 window.closeSoundPicker = closeSoundPicker;
 window.selectSound = selectSound;
 window.playSound = playSound;
+window.playNotificationSound = playNotificationSound;
+window.playOrderSound = playOrderSound;
 window.updateSoundValues = updateSoundValues;
 
 console.log('✅ Script.js loaded — Wassilha v4.0');
