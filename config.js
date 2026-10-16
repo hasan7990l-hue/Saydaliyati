@@ -21,7 +21,7 @@ const CONFIG = {
     url: 'https://fprcpijjbwnknebbcwns.supabase.co',
     // ⚠️⚠️ استبدل هذا بمفتاح anon الحقيقي من:
     // https://supabase.com/dashboard/project/fprcpijjbwnknebbcwns/settings/api
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.REPLACE_WITH_YOUR_KEY'
+    key: 'sb_publishable_wquVUw8JANcgcVOTgRspMw_oFueuIrR'
   },
 
   PRICING: {
