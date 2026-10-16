@@ -1,5 +1,5 @@
 // ============================================
-// ⚙️ CONFIG.JS — Wassilha App Configuration
+// ⚙️ CONFIG.JS — Wassilha App Configuration v2
 // ============================================
 
 const CONFIG = {
@@ -19,7 +19,9 @@ const CONFIG = {
 
   SUPABASE: {
     url: 'https://fprcpijjbwnknebbcwns.supabase.co',
-    key: 'sb_publishable_LFHm7iks01yrN59-mBIjZw_OdQkwuk7'
+    // ⚠️⚠️ استبدل هذا بمفتاح anon الحقيقي من:
+    // https://supabase.com/dashboard/project/fprcpijjbwnknebbcwns/settings/api
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.REPLACE_WITH_YOUR_KEY'
   },
 
   PRICING: {
@@ -40,18 +42,15 @@ const CONFIG = {
 
   MAPS: {
     default: 'osm',
-    defaultCenter: {
-      lat: 33.3152,
-      lng: 44.3661
-    },
+    defaultCenter: { lat: 33.3152, lng: 44.3661 },
     defaultZoom: 13
   },
 
   SUPPORT: {
     phone: '+9647751459130',
-    whatsapp: '+9647751459130',
-    email: 'support@wassilha.iq',
-    telegram: '@wassilha_iraq'
+    whatsapp: '+9647761090465',
+    email: 'hasan7990l@gmail.com',
+    telegram: '@lb2_c'
   },
 
   TIMERS: {
@@ -72,17 +71,21 @@ const CONFIG = {
     theme: 'wassilha_theme',
     lang: 'wassilha_lang',
     mapProvider: 'wassilha_map',
-    location: 'wassilha_location'
+    location: 'wassilha_location',
+    locationCoords: 'wassilha_location_coords',
+    dropoffCoords: 'wassilha_dropoff_coords',
+    sound: 'wassilha_sound',
+    notifications: 'wassilha_notifications',
+    appRating: 'wassilha_app_rating'
   },
 
   SERVICES: [
-    { id: 'food', icon: 'food', color: 'orange' },
-    { id: 'grocery', icon: 'grocery', color: 'green' },
-    { id: 'pharmacy', icon: 'pharmacy', color: 'red' },
-    { id: 'package', icon: 'package', color: 'purple' }
+    { id: 'food',     icon: 'food',     color: 'orange' },
+    { id: 'grocery',  icon: 'grocery',  color: 'green'  },
+    { id: 'pharmacy', icon: 'pharmacy', color: 'red'    },
+    { id: 'package',  icon: 'package',  color: 'purple' }
   ]
 };
 
 window.CONFIG = CONFIG;
-
 console.log('⚙️ Config loaded:', CONFIG.APP.name);
