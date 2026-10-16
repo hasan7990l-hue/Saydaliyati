@@ -1415,8 +1415,10 @@ function openSettings() {
   if (soundToggle) {
     soundToggle.checked = localStorage.getItem('wassilha_sound') !== 'false';
   }
+  if (typeof updateSoundValues === 'function') {
+  updateSoundValues();
+  }
 }
-
 function setTheme(theme, btn) {
   document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
