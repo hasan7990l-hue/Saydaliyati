@@ -1,8 +1,8 @@
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha App Logic
+// ⚙️ SCRIPT.JS — Wassilha App Logic v3
 // ============================================
 
-console.log('🚀 Wassilha v1.0 loading...');
+console.log('🚀 Wassilha v3.0 loading...');
 
 // ═══════════════════════════════════════
 // 🎯 Global State
@@ -38,12 +38,20 @@ function showScreen(screenId) {
   target.classList.add('active');
   target.style.display = 'flex';
   window.scrollTo(0, 0);
+  
+  // إعادة تطبيق اللغة بعد عرض الشاشة
+  if (window.Lang) {
+    setTimeout(() => Lang.apply(Lang.current()), 50);
+  }
 }
 
 // ═══════════════════════════════════════
 // 🎬 Splash → Auto Navigate
 // ═══════════════════════════════════════
 function initSplash() {
+  // تطبيق اللغة أولاً
+  if (window.Lang) Lang.init();
+  
   setTimeout(async () => {
     const savedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.user);
     
@@ -57,6 +65,9 @@ function initSplash() {
         } else if (currentUser.role === 'driver') {
           showScreen('driverScreen');
           loadDriverData();
+        } else {
+          showScreen('homeScreen');
+          loadHomeData();
         }
       } catch (e) {
         console.error('Invalid user:', e);
@@ -77,15 +88,15 @@ async function handleLogin(e) {
   const phone = document.getElementById('loginPhone').value.trim();
   
   if (!validatePhone(phone)) {
-    showToast('رقم الهاتف غير صحيح');
+    showToast(t('invalidPhone'));
     return;
   }
   
   const result = await DB.getUserByPhone(phone);
   
   if (!result.success || !result.user) {
-    showToast('الرقم غير مسجل — سجل حساب جديد');
-    setTimeout(() => goToRoleSelection(), 1000);
+    showToast(t('phoneNotRegistered'));
+    setTimeout(() => goToRoleSelection(), 1200);
     return;
   }
   
@@ -96,7 +107,7 @@ async function sendOTPForLogin(phone) {
   const btn = document.getElementById('loginBtn');
   const originalHTML = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '<span>جاري الإرسال...</span>';
+  btn.innerHTML = '<span>...</span>';
   
   const result = await DB.sendOTP(phone);
   
@@ -104,13 +115,13 @@ async function sendOTPForLogin(phone) {
   btn.innerHTML = originalHTML;
   
   if (!result.success) {
-    showToast('فشل إرسال الكود');
+    showToast(t('sendFailed'));
     return;
   }
   
   currentOTPPhone = phone;
   console.log('🔑 OTP:', result.code);
-  showToast('📱 الكود: ' + result.code);
+  showToast('📱 ' + t('codeSent') + ': ' + result.code);
   
   document.getElementById('otpPhone').textContent = phone;
   goToOTPScreen();
@@ -158,20 +169,21 @@ async function handleVerifyOTP() {
   const code = Array.from(inputs).map(i => i.value).join('');
   
   if (code.length !== 4) {
-    showToast('أدخل الكود كاملاً');
+    showToast(t('enterFullCode'));
     return;
   }
   
   const btn = document.getElementById('verifyBtn');
   btn.disabled = true;
-  btn.textContent = 'جاري التحقق...';
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span>...</span>';
   
   const result = await DB.verifyOTP(currentOTPPhone, code);
   
   if (!result.success) {
     btn.disabled = false;
-    btn.textContent = 'تحقق';
-    showToast(result.error);
+    btn.innerHTML = originalHTML;
+    showToast(t('wrongCode'));
     inputs.forEach(i => i.value = '');
     inputs[0].focus();
     return;
@@ -183,15 +195,15 @@ async function handleVerifyOTP() {
     currentUser = userResult.user;
     localStorage.setItem(CONFIG.STORAGE_KEYS.user, JSON.stringify(currentUser));
     
-    showToast('أهلاً ' + currentUser.name);
+    showToast(t('welcomeUser') + ' ' + currentUser.name);
     
     setTimeout(() => {
-      if (currentUser.role === 'customer') {
-        showScreen('homeScreen');
-        loadHomeData();
-      } else if (currentUser.role === 'driver') {
+      if (currentUser.role === 'driver') {
         showScreen('driverScreen');
         loadDriverData();
+      } else {
+        showScreen('homeScreen');
+        loadHomeData();
       }
     }, 800);
   }
@@ -221,10 +233,10 @@ async function handleResendOTP() {
   const result = await DB.sendOTP(currentOTPPhone);
   
   if (result.success) {
-    showToast('📱 الكود: ' + result.code);
-    startOTPTimer();
+    showToast('📱 ' + t('codeSent') + ': ' + result.code);
+    startOTPimer();
   } else {
-    showToast('فشل الإرسال');
+    showToast(t('sendFailed'));
   }
 }
 
@@ -243,16 +255,16 @@ function selectRole(role) {
   const vehicleField = document.getElementById('vehicleField');
   
   if (role === 'customer') {
-    title.textContent = 'تسجيل عميل';
-    subtitle.textContent = 'اطلب توصيل لأي مكان';
+    title.textContent = t('customer');
+    subtitle.textContent = t('customerDesc');
     vehicleField.style.display = 'none';
   } else if (role === 'driver') {
-    title.textContent = 'تسجيل مندوب';
-    subtitle.textContent = 'استقبل طلبات واكسب';
+    title.textContent = t('driver');
+    subtitle.textContent = t('driverDesc');
     vehicleField.style.display = 'flex';
   } else {
-    title.textContent = 'تسجيل متجر';
-    subtitle.textContent = 'سجّل متجرك وابدأ البيع';
+    title.textContent = t('store');
+    subtitle.textContent = t('storeDesc');
     vehicleField.style.display = 'none';
   }
   
@@ -272,39 +284,40 @@ async function handleRegister(e) {
   const terms = document.getElementById('termsCheckbox').checked;
   
   if (!name || name.length < 3) {
-    showToast('الاسم قصير جداً');
+    showToast(t('nameTooShort'));
     return;
   }
   
   if (!validatePhone(phone)) {
-    showToast('رقم الهاتف غير صحيح');
+    showToast(t('invalidPhone'));
     return;
   }
   
   if (password.length < 6) {
-    showToast('كلمة المرور 6 أحرف على الأقل');
+    showToast(t('passwordMin'));
     return;
   }
   
   if (currentRole === 'driver' && !vehicle) {
-    showToast('اختر نوع المركبة');
+    showToast(t('selectVehicleType'));
     return;
   }
   
   if (!terms) {
-    showToast('وافق على الشروط');
+    showToast(t('agreeTermsFirst'));
     return;
   }
   
   const existing = await DB.getUserByPhone(phone);
   if (existing.success && existing.user) {
-    showToast('الرقم مسجل مسبقاً');
+    showToast(t('phoneRegistered'));
     return;
   }
   
   const btn = document.getElementById('registerBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span>جاري التسجيل...</span>';
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span>...</span>';
   
   const result = await DB.createUser({
     name: name,
@@ -314,8 +327,8 @@ async function handleRegister(e) {
   
   if (!result.success) {
     btn.disabled = false;
-    btn.innerHTML = '<span>إنشاء الحساب</span>';
-    showToast('فشل التسجيل');
+    btn.innerHTML = originalHTML;
+    showToast(t('registerFailed'));
     return;
   }
   
@@ -329,15 +342,12 @@ async function handleRegister(e) {
   localStorage.setItem(CONFIG.STORAGE_KEYS.user, JSON.stringify(currentUser));
   
   btn.disabled = false;
-  btn.innerHTML = '<span>إنشاء الحساب</span>';
+  btn.innerHTML = originalHTML;
   
-  showToast('تم إنشاء حسابك');
+  showToast(t('accountCreated'));
   
   setTimeout(() => {
-    if (currentRole === 'customer') {
-      showScreen('homeScreen');
-      loadHomeData();
-    } else if (currentRole === 'driver') {
+    if (currentRole === 'driver') {
       showScreen('driverScreen');
       loadDriverData();
     } else {
@@ -353,11 +363,15 @@ async function handleRegister(e) {
 async function loadHomeData() {
   if (!currentUser) return;
   
-  document.getElementById('homeUserName').textContent = currentUser.name;
-  document.getElementById('homeAvatarLetter').textContent = currentUser.name.charAt(0);
+  const nameEl = document.getElementById('homeUserName');
+  if (nameEl) nameEl.textContent = currentUser.name;
   
-  const loc = localStorage.getItem(CONFIG.STORAGE_KEYS.location) || 'الرصافة، بغداد';
-  document.getElementById('homeLocation').textContent = loc;
+  const avatarEl = document.getElementById('homeAvatarLetter');
+  if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0);
+  
+  const loc = localStorage.getItem(CONFIG.STORAGE_KEYS.location);
+  const locEl = document.getElementById('homeLocation');
+  if (locEl && loc) locEl.textContent = loc;
   
   await loadUserOrders();
 }
@@ -372,14 +386,14 @@ async function loadUserOrders() {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
           </svg>
         </div>
-        <h4>لا توجد طلبات بعد</h4>
-        <p>ابدأ أول طلب لك الآن</p>
-        <button class="btn-primary btn-small" onclick="openNewOrder()">اطلب الآن</button>
+        <h4>${t('noOrders')}</h4>
+        <p>${t('startFirstOrder')}</p>
+        <button class="btn-primary btn-small" onclick="openNewOrder()">${t('orderNow')}</button>
       </div>
     `;
     return;
@@ -390,11 +404,11 @@ async function loadUserOrders() {
 
 function renderOrderCard(order) {
   const statusMap = {
-    'pending': { label: 'قيد الانتظار', class: 'pending' },
-    'accepted': { label: 'تم القبول', class: 'accepted' },
-    'picked_up': { label: 'في الطريق', class: 'accepted' },
-    'delivered': { label: 'تم التوصيل', class: 'delivered' },
-    'cancelled': { label: 'ملغي', class: 'cancelled' }
+    'pending': { label: t('pending'), class: 'pending' },
+    'accepted': { label: t('accepted'), class: 'accepted' },
+    'picked_up': { label: t('pickedUp'), class: 'accepted' },
+    'delivered': { label: t('delivered'), class: 'delivered' },
+    'cancelled': { label: t('cancelled'), class: 'cancelled' }
   };
   
   const status = statusMap[order.status] || statusMap.pending;
@@ -403,7 +417,7 @@ function renderOrderCard(order) {
     <div class="order-card-item" onclick="openTracking('${order.id}')">
       <div class="order-card-header">
         <div>
-          <div class="order-card-number">طلب #${order.order_number || '—'}</div>
+          <div class="order-card-number">${t('order')} #${order.order_number || '—'}</div>
           <div class="order-card-date">${formatDate(order.created_at)}</div>
         </div>
         <span class="order-status-badge ${status.class}">${status.label}</span>
@@ -413,8 +427,8 @@ function renderOrderCard(order) {
         <div class="order-route-item">🎯 <strong>${order.dropoff_address || '—'}</strong></div>
       </div>
       <div class="order-card-footer">
-        <span class="order-price">${(order.total_price || 0).toLocaleString()}<small> د.ع</small></span>
-        <button class="order-action-btn primary">تتبع</button>
+        <span class="order-price">${(order.total_price || 0).toLocaleString()}<small> ${t('balance')}</small></span>
+        <button class="order-action-btn primary">${t('track')}</button>
       </div>
     </div>
   `;
@@ -432,9 +446,9 @@ function resetOrderForm() {
   document.getElementById('orderFrom').value = '';
   document.getElementById('orderTo').value = '';
   document.getElementById('orderNotes').value = '';
-  document.getElementById('previewDistance').textContent = '— كم';
-  document.getElementById('previewKmCost').textContent = '— د.ع';
-  document.getElementById('previewTotal').textContent = '— د.ع';
+  document.getElementById('previewDistance').textContent = '—';
+  document.getElementById('previewKmCost').textContent = '—';
+  document.getElementById('previewTotal').textContent = '—';
   selectedPackageType = 'normal';
   
   document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active'));
@@ -453,9 +467,9 @@ function calculatePreviewPrice() {
   const kmCost = distance * CONFIG.PRICING.pricePerKm;
   const total = Math.max(base + kmCost, CONFIG.PRICING.minPrice);
   
-  document.getElementById('previewDistance').textContent = distance + ' كم';
-  document.getElementById('previewKmCost').textContent = kmCost.toLocaleString() + ' د.ع';
-  document.getElementById('previewTotal').textContent = total.toLocaleString() + ' د.ع';
+  document.getElementById('previewDistance').textContent = distance + ' ' + t('km');
+  document.getElementById('previewKmCost').textContent = kmCost.toLocaleString() + ' ' + t('balance');
+  document.getElementById('previewTotal').textContent = total.toLocaleString() + ' ' + t('balance');
 }
 
 async function submitOrder() {
@@ -463,22 +477,23 @@ async function submitOrder() {
   const to = document.getElementById('orderTo').value.trim();
   
   if (!from) {
-    showToast('حدد مكان الانطلاق');
+    showToast(t('selectPickupFirst'));
     return;
   }
   
   if (!to) {
-    showToast('حدد مكان الوصول');
+    showToast(t('selectDropoffFirst'));
     return;
   }
   
   const btn = document.getElementById('submitOrderBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span>جاري الإرسال...</span>';
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<span>...</span>';
   
   const distance = Math.floor(Math.random() * 8) + 2;
   const base = CONFIG.PRICING.basePrice;
-  const kmCost = distance * CONFIG.PRICING.pricePerKm;
+  const kmCost = distance * CONFIG.PRICING.perKm;
   const total = Math.max(base + kmCost, CONFIG.PRICING.minPrice);
   const driverShare = Math.round(total * CONFIG.PRICING.driverShare);
   const platformShare = total - driverShare;
@@ -497,19 +512,19 @@ async function submitOrder() {
   });
   
   btn.disabled = false;
-  btn.innerHTML = '<span>إرسال الطلب</span>';
+  btn.innerHTML = originalHTML;
   
   if (!result.success) {
-    showToast('فشل إرسال الطلب: ' + result.error);
+    showToast('❌ ' + result.error);
     return;
   }
   
-  showToast('تم إرسال طلبك!');
+  showToast(t('orderSentSuccess'));
   
   await DB.createNotification(
     currentUser.id,
-    '🛵 تم إرسال طلبك',
-    'في انتظار قبول مندوب',
+    '🛵 ' + t('orderSent'),
+    t('willContact'),
     'order'
   );
   
@@ -536,14 +551,14 @@ async function loadOrdersList() {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
           </svg>
         </div>
-        <h4>لا توجد طلبات</h4>
-        <p>ستظهر طلباتك هنا</p>
-        <button class="btn-primary btn-small" onclick="openNewOrder()">ابدأ طلب</button>
+        <h4>${t('noOrders')}</h4>
+        <p>${t('startFirstOrder')}</p>
+        <button class="btn-primary btn-small" onclick="openNewOrder()">${t('orderNow')}</button>
       </div>
     `;
     return;
@@ -568,7 +583,7 @@ async function openTracking(orderId) {
   const order = result.orders?.find(o => o.id === orderId);
   
   if (!order) {
-    showToast('الطلب غير موجود');
+    showToast(t('orderNotFound'));
     goHome();
     return;
   }
@@ -604,8 +619,10 @@ async function openTracking(orderId) {
     }
   });
   
-  document.getElementById('trackingETA').textContent = 
-    order.status === 'delivered' ? 'تم التوصيل ✓' : 'يصل خلال 15 دقيقة';
+  const etaEl = document.getElementById('trackingETA');
+  if (etaEl) {
+    etaEl.textContent = order.status === 'delivered' ? t('delivered') + ' ✓' : t('arriving15');
+  }
   
   setTimeout(() => initTrackingMap(order), 300);
 }
@@ -630,7 +647,7 @@ function initTrackingMap(order) {
     maxZoom: 19
   }).addTo(trackingMap);
   
-  L.marker(center).addTo(trackingMap).bindPopup('موقعك');
+  L.marker(center).addTo(trackingMap).bindPopup('📍 ' + t('myLocation'));
   
   const driverCoords = [center[0] + 0.005, center[1] + 0.005];
   L.marker(driverCoords, {
@@ -639,27 +656,27 @@ function initTrackingMap(order) {
       html: '<div style="font-size:30px;">🛵</div>',
       iconSize: [40, 40]
     })
-  }).addTo(trackingMap).bindPopup('المندوب');
+  }).addTo(trackingMap).bindPopup(t('driver'));
   
   setTimeout(() => trackingMap.invalidateSize(), 300);
 }
 
-function cancelOrder() {
+async function cancelOrder() {
   if (!currentOrder) return;
-  if (confirm('هل تريد إلغاء الطلب؟')) {
-    DB.updateOrderStatus(currentOrder.id, 'cancelled').then(() => {
-      showToast('تم إلغاء الطلب');
-      goHome();
-    });
+  
+  if (confirm(t('cancel') + '؟')) {
+    await DB.updateOrderStatus(currentOrder.id, 'cancelled');
+    showToast(t('cancelled'));
+    goHome();
   }
 }
 
 function chatWithDriver() {
-  showToast('الدردشة قريباً');
+  showToast(t('comingSoon'));
 }
 
 function callDriver() {
-  showToast('جاري الاتصال...');
+  showToast(t('comingSoon'));
 }
 // ═══════════════════════════════════════
 // 🛵 Driver Dashboard
@@ -667,8 +684,11 @@ function callDriver() {
 async function loadDriverData() {
   if (!currentUser) return;
   
-  document.getElementById('driverName').textContent = currentUser.name;
-  document.getElementById('driverAvatarLetter').textContent = currentUser.name.charAt(0);
+  const nameEl = document.getElementById('driverName');
+  if (nameEl) nameEl.textContent = currentUser.name;
+  
+  const avatarEl = document.getElementById('driverAvatarLetter');
+  if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0);
   
   await loadAvailableOrders();
 }
@@ -684,13 +704,13 @@ async function toggleDriverOnline() {
   
   if (driverOnline) {
     card.classList.add('online');
-    title.textContent = 'متصل الآن';
-    subtitle.textContent = 'جاري البحث عن طلبات...';
-    btn.textContent = 'إيقاف';
+    title.textContent = t('online');
+    subtitle.textContent = t('nearbyOrders') + '...';
+    btn.textContent = t('stop');
     btn.classList.add('online');
-    status.textContent = 'متصل الآن';
+    status.textContent = t('online');
     
-    showToast('أنت متصل — استقبل الطلبات');
+    showToast('✅ ' + t('online'));
     
     await DB.updateDriverStatus(currentUser.id, true, 33.3152, 44.3661);
     
@@ -699,13 +719,13 @@ async function toggleDriverOnline() {
     }, 2000);
   } else {
     card.classList.remove('online');
-    title.textContent = 'غير متصل';
-    subtitle.textContent = 'فعّل الاتصال لاستقبال الطلبات';
-    btn.textContent = 'ابدأ العمل';
+    title.textContent = t('offline');
+    subtitle.textContent = t('activateConnection');
+    btn.textContent = t('startWork');
     btn.classList.remove('online');
-    status.textContent = 'غير متصل';
+    status.textContent = t('offline');
     
-    showToast('تم إيقاف الاستقبال');
+    showToast('⏹️ ' + t('offline'));
     
     await DB.updateDriverStatus(currentUser.id, false);
   }
@@ -723,13 +743,13 @@ async function loadAvailableOrders() {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
         </div>
-        <h4>لا توجد طلبات</h4>
-        <p>فعّل الاتصال لاستقبال الطلبات</p>
+        <h4>${t('noNearbyOrders')}</h4>
+        <p>${t('activateConnection')}</p>
       </div>
     `;
     if (count) count.textContent = '0';
@@ -750,18 +770,18 @@ function renderAvailableOrder(order) {
     <div class="available-order-card">
       <div class="order-card-header">
         <div>
-          <div class="order-card-number">طلب #${order.order_number || '—'}</div>
+          <div class="order-card-number">${t('order')} #${order.order_number || '—'}</div>
           <div class="order-card-date">${formatDate(order.created_at)}</div>
         </div>
-        <span class="order-status-badge ${badgeClass}">${distance} كم</span>
+        <span class="order-status-badge ${badgeClass}">${distance} ${t('km')}</span>
       </div>
       <div class="order-route">
         <div class="order-route-item">📍 <strong>${order.pickup_address || '—'}</strong></div>
         <div class="order-route-item">🎯 <strong>${order.dropoff_address || '—'}</strong></div>
       </div>
       <div class="order-card-footer">
-        <span class="order-price">${(order.total_price || 0).toLocaleString()}<small> د.ع</small></span>
-        <button class="order-action-btn primary" onclick="acceptOrder('${order.id}')">قبول</button>
+        <span class="order-price">${(order.total_price || 0).toLocaleString()}<small> ${t('balance')}</small></span>
+        <button class="order-action-btn primary" onclick="acceptOrder('${order.id}')">${t('accept')}</button>
       </div>
     </div>
   `;
@@ -771,17 +791,17 @@ async function acceptOrder(orderId) {
   const result = await DB.acceptOrder(orderId, currentUser.id);
   
   if (!result.success) {
-    showToast('فشل قبول الطلب');
+    showToast(t('acceptFailed'));
     return;
   }
   
-  showToast('تم قبول الطلب — توجه للموقع');
+  showToast('✅ ' + t('orderAccepted'));
   
   if (result.order?.customer_id) {
     await DB.createNotification(
       result.order.customer_id,
-      '✅ تم قبول طلبك',
-      currentUser.name + ' في الطريق',
+      '✅ ' + t('accepted'),
+      currentUser.name + ' — ' + t('onTheWay'),
       'order'
     );
   }
@@ -796,13 +816,15 @@ function openMapPicker(mode) {
   mapPickerMode = mode;
   
   const title = document.getElementById('mapPickerTitle');
-  title.textContent = mode === 'from' ? 'حدد موقع الانطلاق' : 'حدد مكان الوصول';
+  if (title) {
+    title.textContent = mode === 'from' ? t('selectPickupTitle') : t('selectDropoffTitle');
+  }
   
   showScreen('mapPickerScreen');
   
   document.getElementById('mapSearchInput').value = '';
   document.getElementById('mapSearchResults').classList.remove('active');
-  document.getElementById('mapSelectedAddress').textContent = 'جاري التحديد...';
+  document.getElementById('mapSelectedAddress').textContent = t('detecting');
   
   setTimeout(() => initMapPicker(), 400);
 }
@@ -855,7 +877,7 @@ async function updateMapLocation() {
   
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&accept-language=ar`
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&accept-language=${Lang.current()}`
     );
     const data = await res.json();
     
@@ -864,28 +886,28 @@ async function updateMapLocation() {
       const address = parts.slice(0, 3).join('، ');
       document.getElementById('mapSelectedAddress').textContent = address;
     } else {
-      document.getElementById('mapSelectedAddress').textContent = 'موقع محدد';
+      document.getElementById('mapSelectedAddress').textContent = t('myLocation');
     }
   } catch (e) {
-    document.getElementById('mapSelectedAddress').textContent = 'موقع محدد';
+    document.getElementById('mapSelectedAddress').textContent = t('myLocation');
   }
 }
 
 function locateUserOnMap() {
   if (!navigator.geolocation || !mapPickerInstance) {
-    showToast('GPS غير متاح');
+    showToast(t('gpsUnavailable'));
     return;
   }
   
-  showToast('جاري تحديد موقعك...');
+  showToast('📍 ' + t('detectingLocation'));
   
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const loc = [position.coords.latitude, position.coords.longitude];
       mapPickerInstance.setView(loc, 16);
-      showToast('تم تحديد موقعك');
+      showToast('✅ ' + t('locationDetected'));
     },
-    () => showToast('تعذّر تحديد موقعك'),
+    () => showToast('⚠️ ' + t('locationFailed')),
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
@@ -903,7 +925,7 @@ async function handleMapSearch(event) {
   window._searchTimeout = setTimeout(async () => {
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' بغداد')}&accept-language=ar&limit=5`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' بغداد')}&accept-language=${Lang.current()}&limit=5`
       );
       const data = await res.json();
       
@@ -940,7 +962,7 @@ function selectSearchResult(lat, lng, name) {
 
 function confirmMapLocation() {
   if (!mapPickerLocation) {
-    showToast('لم يتم تحديد موقع');
+    showToast(t('locationNotSet'));
     return;
   }
   
@@ -956,7 +978,7 @@ function confirmMapLocation() {
   }
   
   calculatePreviewPrice();
-  showToast('تم تثبيت الموقع');
+  showToast('✅ ' + t('locationSet'));
   
   setTimeout(() => closeMapPicker(), 500);
 }
@@ -969,13 +991,18 @@ async function openProfile() {
   
   if (!currentUser) return;
   
-  document.getElementById('profileName').textContent = currentUser.name;
-  document.getElementById('profilePhone').textContent = currentUser.phone;
-  document.getElementById('profileAvatar').textContent = currentUser.name.charAt(0);
+  const nameEl = document.getElementById('profileName');
+  if (nameEl) nameEl.textContent = currentUser.name;
+  
+  const phoneEl = document.getElementById('profilePhone');
+  if (phoneEl) phoneEl.textContent = currentUser.phone;
+  
+  const avatarEl = document.getElementById('profileAvatar');
+  if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0);
   
   const result = await DB.getUserOrders(currentUser.id);
-  document.getElementById('profileOrderCount').textContent = 
-    result.success ? result.orders.length : 0;
+  const countEl = document.getElementById('profileOrderCount');
+  if (countEl) countEl.textContent = result.success ? result.orders.length : 0;
 }
 
 // ═══════════════════════════════════════
@@ -996,13 +1023,13 @@ async function loadNotifications() {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
           </svg>
         </div>
-        <h4>لا توجد إشعارات</h4>
-        <p>ستظهر الإشعارات هنا</p>
+        <h4>${t('noNotifications')}</h4>
+        <p>${t('notifWillAppear')}</p>
       </div>
     `;
     return;
@@ -1017,7 +1044,7 @@ async function loadNotifications() {
         </svg>
       </div>
       <div class="notif-content">
-        <h4>${n.title || 'إشعار'}</h4>
+        <h4>${n.title || t('notifications')}</h4>
         <p>${n.message || ''}</p>
         <span class="notif-time">${formatDate(n.created_at)}</span>
       </div>
@@ -1030,14 +1057,21 @@ async function loadNotifications() {
 // ═══════════════════════════════════════
 function openSettings() {
   showScreen('settingsScreen');
+  
+  // تحديث أزرار اللغة
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === Lang.current());
+  });
 }
 
 function setTheme(theme, btn) {
-  document.querySelectorAll('.settings-theme-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.settings-theme-btn').forEach(b => {
+    if (!b.hasAttribute('data-lang-btn')) b.classList.remove('active');
+  });
   btn.classList.add('active');
   
   localStorage.setItem(CONFIG.STORAGE_KEYS.theme, theme);
-  showToast('تم تغيير المظهر');
+  showToast('✅ ' + t('themeChanged'));
 }
 
 // ═══════════════════════════════════════
@@ -1055,16 +1089,6 @@ function goHome() {
 
 function goToLogin() {
   showScreen('loginScreen');
-}
-
-function goBack() {
-  if (currentUser?.role === 'driver') {
-    showScreen('driverScreen');
-  } else if (currentUser) {
-    showScreen('homeScreen');
-  } else {
-    showScreen('loginScreen');
-  }
 }
 
 function switchTab(tab) {
@@ -1092,11 +1116,11 @@ function quickOrder(type) {
 // 🚪 Logout
 // ═══════════════════════════════════════
 async function handleLogout() {
-  if (!confirm('هل تريد تسجيل الخروج؟')) return;
+  if (!confirm(t('logoutConfirm'))) return;
   
   localStorage.removeItem(CONFIG.STORAGE_KEYS.user);
   currentUser = null;
-  showToast('تم تسجيل الخروج');
+  showToast('✅ ' + t('logoutSuccess'));
   setTimeout(() => showScreen('loginScreen'), 500);
 }
 
@@ -1113,10 +1137,12 @@ function formatDate(dateStr) {
   const now = new Date();
   const diff = Math.floor((now - date) / 60000);
   
-  if (diff < 1) return 'الآن';
-  if (diff < 60) return `منذ ${diff} دقيقة`;
-  if (diff < 1440) return `منذ ${Math.floor(diff / 60)} ساعة`;
-  return date.toLocaleDateString('ar-IQ');
+  if (diff < 1) return t('now');
+  if (diff < 60) return t('minsAgo') + ' ' + diff + ' ' + t('minsAgoSuffix');
+  if (diff < 1440) return t('minsAgo') + ' ' + Math.floor(diff / 60) + ' ' + t('hoursAgoSuffix');
+  
+  const locale = Lang.current() === 'ar' ? 'ar-IQ' : 'en-US';
+  return date.toLocaleDateString(locale);
 }
 
 function showToast(message) {
@@ -1143,10 +1169,41 @@ function togglePassword(inputId, btn) {
 }
 
 // ═══════════════════════════════════════
+// 🌐 Language Integration
+// ═══════════════════════════════════════
+window.addEventListener('language-changed', (e) => {
+  const lang = e.detail.lang;
+  
+  // تحديث زر اللغة العلوي
+  const langBtnText = document.getElementById('langBtnText');
+  if (langBtnText) {
+    langBtnText.textContent = lang === 'ar' ? 'EN' : 'ع';
+  }
+  
+  // تحديث أزرار اللغة في الإعدادات
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === lang);
+  });
+  
+  console.log('🌐 Language changed to:', lang);
+});
+
+// ═══════════════════════════════════════
 // 🚀 Initialize
 // ═══════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Wassilha initialized');
+  console.log('🚀 Wassilha v3.0 initialized');
+  
+  // تطبيق اللغة
+  if (window.Lang) {
+    Lang.init();
+    
+    // تحديث زر اللغة
+    const langBtnText = document.getElementById('langBtnText');
+    if (langBtnText) {
+      langBtnText.textContent = Lang.current() === 'ar' ? 'EN' : 'ع';
+    }
+  }
   
   window.addEventListener('supabase-ready', () => {
     console.log('✅ Supabase ready');
@@ -1165,7 +1222,6 @@ window.handleVerifyOTP = handleVerifyOTP;
 window.handleResendOTP = handleResendOTP;
 window.goToRoleSelection = goToRoleSelection;
 window.goToLogin = goToLogin;
-window.goBack = goBack;
 window.goHome = goHome;
 window.selectRole = selectRole;
 window.switchTab = switchTab;
@@ -1195,4 +1251,4 @@ window.handleLogout = handleLogout;
 window.togglePassword = togglePassword;
 window.showToast = showToast;
 
-console.log('✅ Script.js loaded');
+console.log('✅ Script.js loaded — Wassilha v3.0');
