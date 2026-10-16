@@ -1431,45 +1431,49 @@ function setTheme(theme, btn) {
   
   showToast('✅ ' + t('themeChanged'));
 }
-
 async function toggleNotifications() {
   const toggle = document.getElementById('notifToggle');
   if (!toggle) return;
   
   if (toggle.checked) {
-    // طلب إذن
+    let permissionGranted = false;
+    
+    // ✅ محاولة طلب الإذن من المتصفح
     if ('Notification' in window) {
       try {
         const permission = await Notification.requestPermission();
+        permissionGranted = permission === 'granted';
         
-        if (permission === 'granted') {
-          localStorage.setItem('wassilha_notifications', 'true');
-          showToast('✅ ' + t('notificationsEnabled'));
-          
-          // إشعار اختباري
-          new Notification('وصّلها', {
-            body: 'تم تفعيل الإشعارات بنجاح',
-            icon: '/icon-192.png'
-          });
-        } else {
-          toggle.checked = false;
-          localStorage.setItem('wassilha_notifications', 'false');
-          showToast('⚠️ لم يتم تفعيل الإشعارات');
+        if (permissionGranted) {
+          setTimeout(() => {
+            try {
+              new Notification('وصّلها 🛵', {
+                body: 'تم تفعيل الإشعارات بنجاح',
+                icon: '/icon-192.png'
+              });
+            } catch (e) {
+              console.log('Notification test failed:', e);
+            }
+          }, 500);
         }
       } catch (e) {
-        toggle.checked = false;
-        showToast('⚠️ ' + t('notSupported'));
+        console.warn('Notification permission error:', e);
       }
+    }
+    
+    // ✅ حتى لو فشل الإذن — نحفظ الإعداد
+    localStorage.setItem('wassilha_notifications', 'true');
+    
+    if (permissionGranted) {
+      showToast('✅ تم تفعيل الإشعارات');
     } else {
-      toggle.checked = false;
-      showToast('⚠️ ' + t('notSupported'));
+      showToast('✅ الإشعارات الداخلية مفعلة');
     }
   } else {
     localStorage.setItem('wassilha_notifications', 'false');
-    showToast('🔕 ' + t('notificationsDisabled'));
+    showToast('🔕 تم تعطيل الإشعارات');
   }
 }
-
 function toggleSound() {
   const toggle = document.getElementById('soundToggle');
   if (!toggle) return;
