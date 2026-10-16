@@ -1,5 +1,5 @@
 // ============================================
-// ⚙️ CONFIG.JS — Wassilha App Config
+// ⚙️ CONFIG.JS — Wassilha App Configuration
 // ============================================
 
 const CONFIG = {
@@ -7,11 +7,14 @@ const CONFIG = {
     name: 'وصّلها',
     nameEn: 'Wassilha',
     tagline: 'خدمة توصيل موثوقة',
+    taglineEn: 'Reliable Delivery Service',
     version: '1.0.0',
-    region: 'الرصافة - بغداد',
+    region: 'الرصافة، بغداد',
+    regionEn: 'Rusafa, Baghdad',
     currency: 'د.ع',
-    language: 'ar',
-    direction: 'rtl'
+    currencyEn: 'IQD',
+    defaultLang: 'ar',
+    availableLangs: ['ar', 'en']
   },
 
   SUPABASE: {
@@ -67,9 +70,17 @@ const CONFIG = {
     user: 'wassilha_user',
     token: 'wassilha_token',
     theme: 'wassilha_theme',
+    lang: 'wassilha_lang',
     mapProvider: 'wassilha_map',
     location: 'wassilha_location'
-  }
+  },
+
+  SERVICES: [
+    { id: 'food', icon: 'food', color: 'orange' },
+    { id: 'grocery', icon: 'grocery', color: 'green' },
+    { id: 'pharmacy', icon: 'pharmacy', color: 'red' },
+    { id: 'package', icon: 'package', color: 'purple' }
+  ]
 };
 
 window.CONFIG = CONFIG;
