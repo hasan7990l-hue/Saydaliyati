@@ -2,7 +2,6 @@
 // 🔥 SUPABASE.JS — Database Connection
 // ============================================
 
-// ═══ Load Supabase Library ═══
 const _sbScript = document.createElement('script');
 _sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 _sbScript.onload = () => {
@@ -15,7 +14,7 @@ _sbScript.onload = () => {
 };
 document.head.appendChild(_sbScript);
 
-// ═══ Test Connection ═══
+// ═══ Test ═══
 async function testSupabaseConnection() {
   try {
     const { data, error } = await window.supabase
@@ -98,12 +97,7 @@ async function updateUser(userId, updates) {
 async function sendOTP(phone) {
   try {
     const code = Math.floor(1000 + Math.random() * 9000).toString();
-    
-    await window.supabase
-      .from('otp_codes')
-      .delete()
-      .eq('phone', phone);
-    
+    await window.supabase.from('otp_codes').delete().eq('phone', phone);
     const { error } = await window.supabase
       .from('otp_codes')
       .insert([{
@@ -111,9 +105,7 @@ async function sendOTP(phone) {
         code: code,
         expires_at: new Date(Date.now() + CONFIG.TIMERS.otpExpiry).toISOString()
       }]);
-    
     if (error) throw error;
-    
     console.log('📱 OTP:', code, '→', phone);
     return { success: true, code: code };
   } catch (error) {
@@ -131,16 +123,10 @@ async function verifyOTP(phone, code) {
       .eq('used', false)
       .gt('expires_at', new Date().toISOString())
       .single();
-    
     if (error || !data) {
-      return { success: false, error: 'الكود غير صحيح أو منتهي' };
+      return { success: false, error: 'Invalid or expired code' };
     }
-    
-    await window.supabase
-      .from('otp_codes')
-      .update({ used: true })
-      .eq('id', data.id);
-    
+    await window.supabase.from('otp_codes').update({ used: true }).eq('id', data.id);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
@@ -232,7 +218,6 @@ async function updateOrderStatus(orderId, status) {
     const updates = { status: status };
     if (status === 'picked_up') updates.picked_up_at = new Date().toISOString();
     else if (status === 'delivered') updates.delivered_at = new Date().toISOString();
-    
     const { data, error } = await window.supabase
       .from('orders')
       .update(updates)
@@ -329,7 +314,6 @@ async function getWallet(userId) {
       .select('*')
       .eq('user_id', userId)
       .single();
-    
     if (error && error.code === 'PGRST116') {
       const { data: newWallet, error: createError } = await window.supabase
         .from('wallets')
@@ -339,7 +323,6 @@ async function getWallet(userId) {
       if (createError) throw createError;
       return { success: true, wallet: newWallet };
     }
-    
     if (error) throw error;
     return { success: true, wallet: data };
   } catch (error) {
