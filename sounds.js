@@ -8,8 +8,7 @@ console.log('🔊 Sounds.js loading...');
 // ═══════════════════════════════════════
 // 🌐 Base URL
 // ═══════════════════════════════════════
-const AUDIO_BASE = 'https://raw.githubusercontent.com/hasan7990l-hue/Saydaliyati/main/sounds';
-
+const AUDIO_BASE = 'https://cdn.jsdelivr.net/gh/hasan7990l-hue/Saydaliyati@main/sounds';
 // ═══════════════════════════════════════
 // 🔔 نغمات الإشعارات — 7 أصوات
 // ═══════════════════════════════════════
