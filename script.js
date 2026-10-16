@@ -1,8 +1,9 @@
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha App Logic v3
+// ⚙️ SCRIPT.JS — Wassilha v4
+// State + Utils + Splash + Login + Register + OTP
 // ============================================
 
-console.log('🚀 Wassilha v3.0 loading...');
+console.log('🚀 Wassilha v4.0 loading...');
 
 // ═══════════════════════════════════════
 // 🎯 Global State
@@ -19,6 +20,8 @@ let trackingMap = null;
 let mapPickerInstance = null;
 let mapPickerMode = 'from';
 let mapPickerLocation = null;
+let mapPickerDetails = null;
+let currentCategory = 'food';
 
 // ═══════════════════════════════════════
 // 📱 Screens Management
@@ -39,9 +42,8 @@ function showScreen(screenId) {
   target.style.display = 'flex';
   window.scrollTo(0, 0);
   
-  // إعادة تطبيق اللغة بعد عرض الشاشة
   if (window.Lang) {
-    setTimeout(() => Lang.apply(Lang.current()), 50);
+    setTimeout(() => Lang.apply(Lang.current()), 30);
   }
 }
 
@@ -49,7 +51,6 @@ function showScreen(screenId) {
 // 🎬 Splash → Auto Navigate
 // ═══════════════════════════════════════
 function initSplash() {
-  // تطبيق اللغة أولاً
   if (window.Lang) Lang.init();
   
   setTimeout(async () => {
@@ -59,10 +60,7 @@ function initSplash() {
       try {
         currentUser = JSON.parse(savedUser);
         
-        if (currentUser.role === 'customer') {
-          showScreen('homeScreen');
-          loadHomeData();
-        } else if (currentUser.role === 'driver') {
+        if (currentUser.role === 'driver') {
           showScreen('driverScreen');
           loadDriverData();
         } else {
@@ -80,7 +78,7 @@ function initSplash() {
 }
 
 // ═══════════════════════════════════════
-// 🔐 Login Flow
+// 🔐 Login
 // ═══════════════════════════════════════
 async function handleLogin(e) {
   e.preventDefault();
@@ -92,7 +90,15 @@ async function handleLogin(e) {
     return;
   }
   
+  const btn = document.getElementById('loginBtn');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span>...</span>';
+  
   const result = await DB.getUserByPhone(phone);
+  
+  btn.disabled = false;
+  btn.innerHTML = originalHTML;
   
   if (!result.success || !result.user) {
     showToast(t('phoneNotRegistered'));
@@ -128,7 +134,7 @@ async function sendOTPForLogin(phone) {
 }
 
 // ═══════════════════════════════════════
-// 📱 OTP Screen
+// 📱 OTP
 // ═══════════════════════════════════════
 function goToOTPScreen() {
   showScreen('otpScreen');
@@ -234,7 +240,7 @@ async function handleResendOTP() {
   
   if (result.success) {
     showToast('📱 ' + t('codeSent') + ': ' + result.code);
-    startOTPimer();
+    startOTPTimer();
   } else {
     showToast(t('sendFailed'));
   }
@@ -356,7 +362,6 @@ async function handleRegister(e) {
     }
   }, 1000);
 }
-
 // ═══════════════════════════════════════
 // 🏠 Home Functions
 // ═══════════════════════════════════════
@@ -435,6 +440,199 @@ function renderOrderCard(order) {
 }
 
 // ═══════════════════════════════════════
+// 🔍 Search Screen
+// ═══════════════════════════════════════
+function openSearchScreen() {
+  showScreen('searchScreen');
+  
+  const input = document.getElementById('mainSearchInput');
+  if (input) {
+    input.value = '';
+    setTimeout(() => input.focus(), 300);
+  }
+  
+  resetSearchUI();
+}
+
+function closeSearch() {
+  goHome();
+}
+
+function resetSearchUI() {
+  const popular = document.getElementById('searchPopular');
+  const cats = document.getElementById('searchCategories');
+  const results = document.getElementById('searchResults');
+  
+  if (popular) popular.style.display = 'block';
+  if (cats) cats.style.display = 'block';
+  if (results) results.innerHTML = '';
+}
+
+function handleMainSearch(event) {
+  const query = event.target.value.trim();
+  const popular = document.getElementById('searchPopular');
+  const cats = document.getElementById('searchCategories');
+  const results = document.getElementById('searchResults');
+  
+  if (query.length < 2) {
+    resetSearchUI();
+    return;
+  }
+  
+  if (popular) popular.style.display = 'none';
+  if (cats) cats.style.display = 'none';
+  
+  // ═══ نتائج البحث (mock للآن) ═══
+  const mockResults = getMockSearchResults(query);
+  
+  if (!mockResults.length) {
+    results.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <h4>${t('noResults') || 'لا توجد نتائج'}</h4>
+        <p>${t('tryOtherSearch') || 'جرب كلمة أخرى'}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  results.innerHTML = mockResults.map(r => `
+    <div class="store-card" onclick="openCategory('${r.category}')">
+      <div class="store-logo">${r.icon}</div>
+      <div class="store-info">
+        <h4 class="store-name">${r.name}</h4>
+        <div class="store-meta">
+          <span class="store-rating">⭐ ${r.rating}</span>
+          <span>📍 ${r.distance} ${t('km')}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function quickSearch(term) {
+  const input = document.getElementById('mainSearchInput');
+  if (input) {
+    input.value = term;
+    handleMainSearch({ target: { value: term } });
+  }
+}
+
+function getMockSearchResults(query) {
+  const allStores = [
+    { name: 'صيدلية النور', icon: '💊', rating: 4.8, distance: 1.2, category: 'pharmacy' },
+    { name: 'صيدلية الحياة', icon: '💊', rating: 4.6, distance: 2.5, category: 'pharmacy' },
+    { name: 'مطعم البصرة', icon: '🍕', rating: 4.7, distance: 1.8, category: 'food' },
+    { name: 'مطعم بغداد', icon: '🍔', rating: 4.5, distance: 3.1, category: 'food' },
+    { name: 'بقالة الرصافة', icon: '🛒', rating: 4.4, distance: 2.0, category: 'grocery' },
+    { name: 'سوبر ماركت المدينة', icon: '🛒', rating: 4.6, distance: 3.5, category: 'grocery' }
+  ];
+  
+  return allStores.filter(s => 
+    s.name.includes(query) || query.includes(s.name.split(' ')[0])
+  );
+}
+
+// ═══════════════════════════════════════
+// 🏪 Category Screen
+// ═══════════════════════════════════════
+function openCategory(category) {
+  currentCategory = category;
+  
+  const titleEl = document.getElementById('categoryTitle');
+  if (titleEl) {
+    const titles = {
+      'food': t('food'),
+      'grocery': t('grocery'),
+      'pharmacy': t('pharmacy'),
+      'package': t('package')
+    };
+    titleEl.textContent = titles[category] || t('category');
+  }
+  
+  showScreen('categoryScreen');
+  loadCategoryStores(category);
+}
+
+function loadCategoryStores(category) {
+  const list = document.getElementById('categoryList');
+  if (!list) return;
+  
+  // ═══ بيانات تجريبية (تستخدم لاحقاً من Supabase) ═══
+  const mockStores = {
+    'food': [
+      { name: 'مطعم البصرة', icon: '🍕', rating: 4.7, distance: 1.8, time: 25 },
+      { name: 'مطعم بغداد', icon: '🍔', rating: 4.5, distance: 3.1, time: 30 },
+      { name: 'مطعم الشرق', icon: '🍗', rating: 4.6, distance: 2.2, time: 28 }
+    ],
+    'grocery': [
+      { name: 'بقالة الرصافة', icon: '🛒', rating: 4.4, distance: 2.0, time: 20 },
+      { name: 'سوبر ماركت المدينة', icon: '🛒', rating: 4.6, distance: 3.5, time: 30 }
+    ],
+    'pharmacy': [
+      { name: 'صيدلية النور', icon: '💊', rating: 4.8, distance: 1.2, time: 15 },
+      { name: 'صيدلية الحياة', icon: '💊', rating: 4.6, distance: 2.5, time: 20 }
+    ],
+    'package': [
+      { name: 'توصيل عام', icon: '📦', rating: 4.9, distance: 0, time: 30 }
+    ]
+  };
+  
+  const stores = mockStores[category] || [];
+  
+  if (!stores.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 21h18"/>
+            <path d="M5 21V7l8-4v18"/>
+          </svg>
+        </div>
+        <h4>${t('noStores') || 'لا توجد متاجر'}</h4>
+        <p>${t('comingSoon')}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  list.innerHTML = stores.map(s => `
+    <div class="store-card" onclick="openNewOrder()">
+      <div class="store-logo">${s.icon}</div>
+      <div class="store-info">
+        <h4 class="store-name">${s.name}</h4>
+        <div class="store-meta">
+          <span class="store-rating">⭐ ${s.rating}</span>
+          ${s.distance > 0 ? `<span>📍 ${s.distance} ${t('km')}</span>` : ''}
+          <span>⏱️ ${s.time} ${t('min')}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCategory(event) {
+  const query = event.target.value.trim().toLowerCase();
+  const cards = document.querySelectorAll('#categoryList .store-card');
+  
+  cards.forEach(card => {
+    const name = card.querySelector('.store-name').textContent.toLowerCase();
+    card.style.display = name.includes(query) ? 'flex' : 'none';
+  });
+}
+
+function applyFilter(filter, btn) {
+  document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // TODO: Apply real filter
+}
+
+// ═══════════════════════════════════════
 // 🛵 New Order
 // ═══════════════════════════════════════
 function openNewOrder() {
@@ -493,7 +691,7 @@ async function submitOrder() {
   
   const distance = Math.floor(Math.random() * 8) + 2;
   const base = CONFIG.PRICING.basePrice;
-  const kmCost = distance * CONFIG.PRICING.perKm;
+  const kmCost = distance * CONFIG.PRICING.pricePerKm;
   const total = Math.max(base + kmCost, CONFIG.PRICING.minPrice);
   const driverShare = Math.round(total * CONFIG.PRICING.driverShare);
   const platformShare = total - driverShare;
@@ -534,6 +732,300 @@ async function submitOrder() {
 }
 
 // ═══════════════════════════════════════
+// 🗺️ Map Picker — 3 States
+// ═══════════════════════════════════════
+function openMapPicker(mode) {
+  mapPickerMode = mode;
+  
+  const title = document.getElementById('mapPickerTitle');
+  if (title) {
+    title.textContent = mode === 'from' ? t('selectPickupTitle') : t('selectDropoffTitle');
+  }
+  
+  showScreen('mapPickerScreen');
+  
+  // Reset states
+  document.getElementById('mapSearchInput').value = '';
+  document.getElementById('mapSearchResults').classList.remove('active');
+  document.getElementById('mapSelectedAddress').textContent = t('detecting');
+  document.getElementById('addressSimple').style.display = 'flex';
+  document.getElementById('addressDetailed').style.display = 'none';
+  document.getElementById('mapNoteInput').value = '';
+  document.getElementById('mapFloatingLabel').classList.remove('active');
+  
+  const confirmBtn = document.getElementById('mapConfirmBtn');
+  confirmBtn.classList.remove('confirmed');
+  document.getElementById('mapConfirmText').textContent = t('confirmLocation');
+  
+  setTimeout(() => initMapPicker(), 400);
+}
+
+function closeMapPicker() {
+  if (mapPickerInstance) {
+    mapPickerInstance.remove();
+    mapPickerInstance = null;
+  }
+  showScreen('newOrderScreen');
+}
+
+function initMapPicker() {
+  const mapEl = document.getElementById('mapPickerMap');
+  if (!mapEl) return;
+  
+  if (mapPickerInstance) {
+    mapPickerInstance.remove();
+    mapPickerInstance = null;
+  }
+  
+  if (typeof L === 'undefined') return;
+  
+  const defaultCenter = [33.3152, 44.3661];
+  
+  mapPickerInstance = L.map('mapPickerMap', {
+    zoomControl: true,
+    attributionControl: false
+  }).setView(defaultCenter, 14);
+  
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(mapPickerInstance);
+  
+  // ═══ Events ═══
+  mapPickerInstance.on('movestart', () => {
+    showFloatingLabel();
+  });
+  
+  mapPickerInstance.on('moveend', () => {
+    updateMapLocation();
+  });
+  
+  mapPickerInstance.on('zoomstart', () => {
+    showFloatingLabel();
+  });
+  
+  setTimeout(() => {
+    updateMapLocation();
+    mapPickerInstance.invalidateSize();
+  }, 500);
+}
+
+function showFloatingLabel() {
+  const label = document.getElementById('mapFloatingLabel');
+  if (!label) return;
+  
+  label.classList.add('active');
+  
+  clearTimeout(window._floatingLabelTimer);
+  window._floatingLabelTimer = setTimeout(() => {
+    label.classList.remove('active');
+  }, 800);
+}
+
+async function updateMapLocation() {
+  if (!mapPickerInstance) return;
+  
+  const center = mapPickerInstance.getCenter();
+  mapPickerLocation = { lat: center.lat, lng: center.lng };
+  
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&accept-language=${Lang.current()}`
+    );
+    const data = await res.json();
+    
+    if (data.address) {
+      const addr = data.address;
+      
+      // ═══ استخراج التفاصيل ═══
+      const area = addr.suburb || addr.neighbourhood || addr.city_district || addr.city || '';
+      const street = addr.road || addr.street || '';
+      const building = addr.house_number || '';
+      
+      mapPickerDetails = {
+        fullAddress: data.display_name ? data.display_name.split(', ').slice(0, 3).join('، ') : '',
+        area: area,
+        street: street,
+        building: building,
+        coordinates: `${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`,
+        lat: center.lat,
+        lng: center.lng
+      };
+      
+      const addressText = mapPickerDetails.fullAddress || t('myLocation');
+      document.getElementById('mapSelectedAddress').textContent = addressText;
+    } else {
+      mapPickerLocation = { lat: center.lat, lng: center.lng };
+      document.getElementById('mapSelectedAddress').textContent = t('myLocation');
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById('mapSelectedAddress').textContent = t('myLocation');
+  }
+}
+
+function locateUserOnMap() {
+  if (!navigator.geolocation) {
+    showToast('⚠️ ' + t('gpsUnavailable'));
+    return;
+  }
+  
+  if (!mapPickerInstance) {
+    showToast('⏳ ' + t('detecting'));
+    return;
+  }
+  
+  const btn = document.querySelector('.map-locate-btn');
+  btn.classList.add('loading');
+  showToast('📍 ' + t('detectingLocation'));
+  
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      
+      mapPickerInstance.flyTo([lat, lng], 16, {
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
+      
+      mapPickerLocation = { lat, lng };
+      localStorage.setItem('wassilha_location_coords', JSON.stringify({ lat, lng }));
+      
+      setTimeout(async () => {
+        await updateMapLocation();
+        btn.classList.remove('loading');
+        showToast('✅ ' + t('locationDetected'));
+      }, 1600);
+    },
+    (error) => {
+      btn.classList.remove('loading');
+      let errorMsg = '⚠️ ' + t('locationFailed');
+      
+      if (error.code === 1) {
+        errorMsg = '⚠️ اسمح بالوصول للموقع';
+      } else if (error.code === 2) {
+        errorMsg = '⚠️ GPS غير متاح';
+      } else if (error.code === 3) {
+        errorMsg = '⚠️ انتهت مدة الانتظار';
+      }
+      
+      showToast(errorMsg);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+async function handleMapSearch(event) {
+  const query = event.target.value.trim();
+  const resultsEl = document.getElementById('mapSearchResults');
+  
+  if (query.length < 3) {
+    resultsEl.classList.remove('active');
+    return;
+  }
+  
+  clearTimeout(window._mapSearchTimeout);
+  window._mapSearchTimeout = setTimeout(async () => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' بغداد')}&accept-language=${Lang.current()}&limit=5`
+      );
+      const data = await res.json();
+      
+      if (!data.length) {
+        resultsEl.classList.remove('active');
+        return;
+      }
+      
+      resultsEl.innerHTML = data.map(r => {
+        const name = r.display_name.split(', ')[0];
+        const addr = r.display_name.split(', ').slice(1, 3).join('، ');
+        return `
+          <div class="search-result-item" onclick="selectMapSearchResult(${r.lat}, ${r.lon}, '${name.replace(/'/g, '')}')">
+            <strong>${name}</strong>
+            <small>${addr}</small>
+          </div>
+        `;
+      }).join('');
+      
+      resultsEl.classList.add('active');
+    } catch (e) {
+      console.error(e);
+    }
+  }, 500);
+}
+
+function selectMapSearchResult(lat, lng, name) {
+  if (!mapPickerInstance) return;
+  
+  mapPickerInstance.flyTo([lat, lng], 16, { duration: 1.2 });
+  document.getElementById('mapSearchResults').classList.remove('active');
+  document.getElementById('mapSearchInput').value = name;
+}
+
+// ═══════════════════════════════════════
+// ✅ Confirm Map Location
+// ═══════════════════════════════════════
+function confirmMapLocation() {
+  if (!mapPickerLocation) {
+    showToast(t('locationNotSet'));
+    return;
+  }
+  
+  const confirmBtn = document.getElementById('mapConfirmBtn');
+  const isConfirmed = confirmBtn.classList.contains('confirmed');
+  
+  // ═══ المرحلة 1: عرض التفاصيل ═══
+  if (!isConfirmed) {
+    if (!mapPickerDetails) {
+      showToast('⏳ جاري التحميل...');
+      return;
+    }
+    
+    // تعبئة التفاصيل
+    document.getElementById('detailFullAddress').textContent = mapPickerDetails.fullAddress || '—';
+    document.getElementById('detailArea').textContent = mapPickerDetails.area || '—';
+    document.getElementById('detailStreet').textContent = mapPickerDetails.street || '—';
+    document.getElementById('detailBuilding').textContent = mapPickerDetails.building || '—';
+    document.getElementById('detailCoordinates').textContent = mapPickerDetails.coordinates || '—';
+    
+    // عرض
+    document.getElementById('addressSimple').style.display = 'none';
+    document.getElementById('addressDetailed').style.display = 'block';
+    
+    confirmBtn.classList.add('confirmed');
+    document.getElementById('mapConfirmText').textContent = t('confirmAndContinue');
+    
+    return;
+  }
+  
+  // ═══ المرحلة 2: التأكيد النهائي ═══
+  const address = document.getElementById('detailFullAddress').textContent;
+  const note = document.getElementById('mapNoteInput').value.trim();
+  
+  // حفظ
+  if (mapPickerMode === 'from') {
+    document.getElementById('orderFrom').value = address;
+    localStorage.setItem(CONFIG.STORAGE_KEYS.location, address);
+    localStorage.setItem('wassilha_location_coords', JSON.stringify(mapPickerLocation));
+  } else {
+    document.getElementById('orderTo').value = address;
+    localStorage.setItem('wassilha_dropoff_coords', JSON.stringify(mapPickerLocation));
+  }
+  
+  if (note) {
+    const notesField = document.getElementById('orderNotes');
+    if (notesField && !notesField.value) {
+      notesField.value = note;
+    }
+  }
+  
+  calculatePreviewPrice();
+  showToast('✅ ' + t('locationConfirmed'));
+  
+  setTimeout(() => closeMapPicker(), 500);
+}
+// ═══════════════════════════════════════
 // 📋 Orders List
 // ═══════════════════════════════════════
 function openOrders() {
@@ -543,7 +1035,7 @@ function openOrders() {
 
 async function loadOrdersList() {
   const list = document.getElementById('ordersList');
-  if (!list) return;
+  if (!list || !currentUser) return;
   
   const result = await DB.getUserOrders(currentUser.id);
   
@@ -568,8 +1060,10 @@ async function loadOrdersList() {
 }
 
 function filterOrders(filter, btn) {
-  document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.order-tab').forEach(tab => tab.classList.remove('active'));
   btn.classList.add('active');
+  
+  // TODO: Apply real filter
   loadOrdersList();
 }
 
@@ -577,6 +1071,8 @@ function filterOrders(filter, btn) {
 // 🗺️ Tracking
 // ═══════════════════════════════════════
 async function openTracking(orderId) {
+  if (!currentUser) return;
+  
   showScreen('trackingScreen');
   
   const result = await DB.getUserOrders(currentUser.id);
@@ -664,7 +1160,7 @@ function initTrackingMap(order) {
 async function cancelOrder() {
   if (!currentOrder) return;
   
-  if (confirm(t('cancel') + '؟')) {
+  if (confirm(t('cancelOrderConfirm') || 'هل تريد إلغاء الطلب؟')) {
     await DB.updateOrderStatus(currentOrder.id, 'cancelled');
     showToast(t('cancelled'));
     goHome();
@@ -678,6 +1174,84 @@ function chatWithDriver() {
 function callDriver() {
   showToast(t('comingSoon'));
 }
+
+// ═══════════════════════════════════════
+// 👤 Profile
+// ═══════════════════════════════════════
+async function openProfile() {
+  showScreen('profileScreen');
+  
+  if (!currentUser) return;
+  
+  const nameEl = document.getElementById('profileName');
+  if (nameEl) nameEl.textContent = currentUser.name;
+  
+  const phoneEl = document.getElementById('profilePhone');
+  if (phoneEl) phoneEl.textContent = currentUser.phone;
+  
+  const avatarEl = document.getElementById('profileAvatar');
+  if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0);
+  
+  const result = await DB.getUserOrders(currentUser.id);
+  const countEl = document.getElementById('profileOrderCount');
+  if (countEl) countEl.textContent = result.success ? result.orders.length : 0;
+}
+
+function openAddresses() {
+  showToast(t('comingSoon'));
+}
+
+function openPaymentMethods() {
+  showToast(t('comingSoon'));
+}
+
+// ═══════════════════════════════════════
+// 🔔 Notifications
+// ═══════════════════════════════════════
+function openNotifications() {
+  showScreen('notificationsScreen');
+  loadNotifications();
+}
+
+async function loadNotifications() {
+  const list = document.getElementById('notificationsList');
+  if (!list || !currentUser) return;
+  
+  const result = await DB.getUserNotifications(currentUser.id);
+  
+  if (!result.success || !result.notifications.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <h4>${t('noNotifications')}</h4>
+        <p>${t('notifWillAppear')}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  list.innerHTML = result.notifications.map(n => `
+    <div class="notif-card ${n.is_read ? '' : 'unread'}">
+      <div class="notif-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <div class="notif-content">
+        <h4>${n.title || t('notifications')}</h4>
+        <p>${n.message || ''}</p>
+        <span class="notif-time">${formatDate(n.created_at)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ═══════════════════════════════════════
 // 🛵 Driver Dashboard
 // ═══════════════════════════════════════
@@ -764,7 +1338,7 @@ async function loadAvailableOrders() {
 function renderAvailableOrder(order) {
   const distance = (1 + Math.random() * 5).toFixed(1);
   const distanceNum = parseFloat(distance);
-  const badgeClass = distanceNum < 2 ? 'accepted' : distanceNum < 5 ? 'pending' : 'cancelled';
+  const badgeClass = distanceNum < 2 ? 'delivered' : distanceNum < 5 ? 'pending' : 'cancelled';
   
   return `
     <div class="available-order-card">
@@ -809,249 +1383,9 @@ async function acceptOrder(orderId) {
   await loadAvailableOrders();
 }
 
-// ═══════════════════════════════════════
-// 🗺️ Map Picker
-// ═══════════════════════════════════════
-function openMapPicker(mode) {
-  mapPickerMode = mode;
-  
-  const title = document.getElementById('mapPickerTitle');
-  if (title) {
-    title.textContent = mode === 'from' ? t('selectPickupTitle') : t('selectDropoffTitle');
-  }
-  
-  showScreen('mapPickerScreen');
-  
-  document.getElementById('mapSearchInput').value = '';
-  document.getElementById('mapSearchResults').classList.remove('active');
-  document.getElementById('mapSelectedAddress').textContent = t('detecting');
-  
-  setTimeout(() => initMapPicker(), 400);
+function openDriverEarnings() {
+  showToast(t('comingSoon'));
 }
-
-function closeMapPicker() {
-  if (mapPickerInstance) {
-    mapPickerInstance.remove();
-    mapPickerInstance = null;
-  }
-  showScreen('newOrderScreen');
-}
-
-function initMapPicker() {
-  const mapEl = document.getElementById('mapPickerMap');
-  if (!mapEl) return;
-  
-  if (mapPickerInstance) {
-    mapPickerInstance.remove();
-    mapPickerInstance = null;
-  }
-  
-  if (typeof L === 'undefined') return;
-  
-  const defaultCenter = [33.3152, 44.3661];
-  
-  mapPickerInstance = L.map('mapPickerMap', {
-    zoomControl: true,
-    attributionControl: false
-  }).setView(defaultCenter, 13);
-  
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(mapPickerInstance);
-  
-  mapPickerInstance.on('moveend', () => {
-    updateMapLocation();
-  });
-  
-  setTimeout(() => {
-    updateMapLocation();
-    mapPickerInstance.invalidateSize();
-  }, 500);
-}
-
-async function updateMapLocation() {
-  if (!mapPickerInstance) return;
-  
-  const center = mapPickerInstance.getCenter();
-  mapPickerLocation = { lat: center.lat, lng: center.lng };
-  
-  try {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&accept-language=${Lang.current()}`
-    );
-    const data = await res.json();
-    
-    if (data.display_name) {
-      const parts = data.display_name.split(', ');
-      const address = parts.slice(0, 3).join('، ');
-      document.getElementById('mapSelectedAddress').textContent = address;
-    } else {
-      document.getElementById('mapSelectedAddress').textContent = t('myLocation');
-    }
-  } catch (e) {
-    document.getElementById('mapSelectedAddress').textContent = t('myLocation');
-  }
-}
-
-function locateUserOnMap() {
-  if (!navigator.geolocation || !mapPickerInstance) {
-    showToast(t('gpsUnavailable'));
-    return;
-  }
-  
-  showToast('📍 ' + t('detectingLocation'));
-  
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const loc = [position.coords.latitude, position.coords.longitude];
-      mapPickerInstance.setView(loc, 16);
-      showToast('✅ ' + t('locationDetected'));
-    },
-    () => showToast('⚠️ ' + t('locationFailed')),
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
-
-async function handleMapSearch(event) {
-  const query = event.target.value.trim();
-  const resultsEl = document.getElementById('mapSearchResults');
-  
-  if (query.length < 3) {
-    resultsEl.classList.remove('active');
-    return;
-  }
-  
-  clearTimeout(window._searchTimeout);
-  window._searchTimeout = setTimeout(async () => {
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' بغداد')}&accept-language=${Lang.current()}&limit=5`
-      );
-      const data = await res.json();
-      
-      if (!data.length) {
-        resultsEl.classList.remove('active');
-        return;
-      }
-      
-      resultsEl.innerHTML = data.map(r => {
-        const name = r.display_name.split(', ')[0];
-        const addr = r.display_name.split(', ').slice(1, 3).join('، ');
-        return `
-          <div class="search-result-item" onclick="selectSearchResult(${r.lat}, ${r.lon}, '${name.replace(/'/g, '')}')">
-            <strong>${name}</strong>
-            <small>${addr}</small>
-          </div>
-        `;
-      }).join('');
-      
-      resultsEl.classList.add('active');
-    } catch (e) {
-      console.error(e);
-    }
-  }, 500);
-}
-
-function selectSearchResult(lat, lng, name) {
-  if (!mapPickerInstance) return;
-  
-  mapPickerInstance.setView([lat, lng], 16);
-  document.getElementById('mapSearchResults').classList.remove('active');
-  document.getElementById('mapSearchInput').value = name;
-}
-
-function confirmMapLocation() {
-  if (!mapPickerLocation) {
-    showToast(t('locationNotSet'));
-    return;
-  }
-  
-  const address = document.getElementById('mapSelectedAddress').textContent;
-  
-  if (mapPickerMode === 'from') {
-    document.getElementById('orderFrom').value = address;
-    localStorage.setItem(CONFIG.STORAGE_KEYS.location, address);
-    localStorage.setItem('wassilha_location_coords', JSON.stringify(mapPickerLocation));
-  } else {
-    document.getElementById('orderTo').value = address;
-    localStorage.setItem('wassilha_dropoff_coords', JSON.stringify(mapPickerLocation));
-  }
-  
-  calculatePreviewPrice();
-  showToast('✅ ' + t('locationSet'));
-  
-  setTimeout(() => closeMapPicker(), 500);
-}
-
-// ═══════════════════════════════════════
-// 👤 Profile
-// ═══════════════════════════════════════
-async function openProfile() {
-  showScreen('profileScreen');
-  
-  if (!currentUser) return;
-  
-  const nameEl = document.getElementById('profileName');
-  if (nameEl) nameEl.textContent = currentUser.name;
-  
-  const phoneEl = document.getElementById('profilePhone');
-  if (phoneEl) phoneEl.textContent = currentUser.phone;
-  
-  const avatarEl = document.getElementById('profileAvatar');
-  if (avatarEl) avatarEl.textContent = currentUser.name.charAt(0);
-  
-  const result = await DB.getUserOrders(currentUser.id);
-  const countEl = document.getElementById('profileOrderCount');
-  if (countEl) countEl.textContent = result.success ? result.orders.length : 0;
-}
-
-// ═══════════════════════════════════════
-// 🔔 Notifications
-// ═══════════════════════════════════════
-function openNotifications() {
-  showScreen('notificationsScreen');
-  loadNotifications();
-}
-
-async function loadNotifications() {
-  const list = document.getElementById('notificationsList');
-  if (!list || !currentUser) return;
-  
-  const result = await DB.getUserNotifications(currentUser.id);
-  
-  if (!result.success || !result.notifications.length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-          </svg>
-        </div>
-        <h4>${t('noNotifications')}</h4>
-        <p>${t('notifWillAppear')}</p>
-      </div>
-    `;
-    return;
-  }
-  
-  list.innerHTML = result.notifications.map(n => `
-    <div class="notif-card ${n.is_read ? '' : 'unread'}">
-      <div class="notif-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-        </svg>
-      </div>
-      <div class="notif-content">
-        <h4>${n.title || t('notifications')}</h4>
-        <p>${n.message || ''}</p>
-        <span class="notif-time">${formatDate(n.created_at)}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
 // ═══════════════════════════════════════
 // ⚙️ Settings
 // ═══════════════════════════════════════
@@ -1062,16 +1396,186 @@ function openSettings() {
   document.querySelectorAll('[data-lang-btn]').forEach(btn => {
     btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === Lang.current());
   });
+  
+  // تحديث أزرار الثيم
+  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'dark';
+  document.querySelectorAll('[data-theme-btn]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === savedTheme);
+  });
+  
+  // تحديث toggle الإشعارات
+  const notifToggle = document.getElementById('notifToggle');
+  if (notifToggle) {
+    notifToggle.checked = Notification.permission === 'granted' && 
+      localStorage.getItem('wassilha_notifications') !== 'false';
+  }
+  
+  // تحديث toggle الصوت
+  const soundToggle = document.getElementById('soundToggle');
+  if (soundToggle) {
+    soundToggle.checked = localStorage.getItem('wassilha_sound') !== 'false';
+  }
 }
 
 function setTheme(theme, btn) {
-  document.querySelectorAll('.settings-theme-btn').forEach(b => {
-    if (!b.hasAttribute('data-lang-btn')) b.classList.remove('active');
-  });
-  btn.classList.add('active');
+  document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
   
+  let appliedTheme = theme;
+  if (theme === 'auto') {
+    appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  
+  document.documentElement.setAttribute('data-theme', appliedTheme);
   localStorage.setItem(CONFIG.STORAGE_KEYS.theme, theme);
+  
   showToast('✅ ' + t('themeChanged'));
+}
+
+async function toggleNotifications() {
+  const toggle = document.getElementById('notifToggle');
+  if (!toggle) return;
+  
+  if (toggle.checked) {
+    // طلب إذن
+    if ('Notification' in window) {
+      try {
+        const permission = await Notification.requestPermission();
+        
+        if (permission === 'granted') {
+          localStorage.setItem('wassilha_notifications', 'true');
+          showToast('✅ ' + t('notificationsEnabled'));
+          
+          // إشعار اختباري
+          new Notification('وصّلها', {
+            body: 'تم تفعيل الإشعارات بنجاح',
+            icon: '/icon-192.png'
+          });
+        } else {
+          toggle.checked = false;
+          localStorage.setItem('wassilha_notifications', 'false');
+          showToast('⚠️ لم يتم تفعيل الإشعارات');
+        }
+      } catch (e) {
+        toggle.checked = false;
+        showToast('⚠️ ' + t('notSupported'));
+      }
+    } else {
+      toggle.checked = false;
+      showToast('⚠️ ' + t('notSupported'));
+    }
+  } else {
+    localStorage.setItem('wassilha_notifications', 'false');
+    showToast('🔕 ' + t('notificationsDisabled'));
+  }
+}
+
+function toggleSound() {
+  const toggle = document.getElementById('soundToggle');
+  if (!toggle) return;
+  
+  localStorage.setItem('wassilha_sound', toggle.checked ? 'true' : 'false');
+  showToast(toggle.checked ? '🔊 الصوت مفعل' : '🔇 الصوت معطل');
+}
+
+// ═══════════════════════════════════════
+// 📞 Contact Us
+// ═══════════════════════════════════════
+function openContactUs() {
+  showScreen('contactScreen');
+}
+
+function openWhatsApp() {
+  const phone = '+9647761090465';
+  const message = encodeURIComponent('مرحباً، أريد الاستفسار عن تطبيق وصّلها');
+  window.open(`https://wa.me/${phone.replace('+', '')}?text=${message}`, '_blank');
+}
+
+function openEmail() {
+  window.location.href = 'mailto:hasan7990l@gmail.com?subject=استفسار عن تطبيق وصّلها';
+}
+
+function openTelegram() {
+  window.open('https://t.me/lb2_c', '_blank');
+}
+
+// ═══════════════════════════════════════
+// 📄 About
+// ═══════════════════════════════════════
+function openAbout() {
+  showScreen('aboutScreen');
+}
+
+// ═══════════════════════════════════════
+// 📜 Legal
+// ═══════════════════════════════════════
+function openTerms() {
+  showScreen('termsScreen');
+}
+
+function openPrivacy() {
+  showScreen('privacyScreen');
+}
+
+// ═══════════════════════════════════════
+// ⭐ Rate App
+// ═══════════════════════════════════════
+function openRateApp() {
+  const rating = prompt(t('rateAppPrompt') || 'قيّم التطبيق من 1 إلى 5:', '5');
+  
+  if (!rating) return;
+  
+  const num = parseInt(rating);
+  if (isNaN(num) || num < 1 || num > 5) {
+    showToast('⚠️ ' + t('invalidRating'));
+    return;
+  }
+  
+  // حفظ التقييم محلياً
+  localStorage.setItem('wassilha_app_rating', num);
+  
+  showToast('⭐ ' + t('thanksForRating'));
+}
+
+// ═══════════════════════════════════════
+// 📤 Share App
+// ═══════════════════════════════════════
+async function shareApp() {
+  const shareData = {
+    title: 'وصّلها - Wassilha',
+    text: '🛵 جرب تطبيق وصّلها\nخدمة توصيل موثوقة في بغداد\nأسرع توصيل — أقل سعر',
+    url: window.location.origin
+  };
+  
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      showToast('✅ ' + t('thanksForSharing'));
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        copyToClipboard(shareData.url + '\n\n' + shareData.text);
+      }
+    }
+  } else {
+    copyToClipboard(shareData.url + '\n\n' + shareData.text);
+  }
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('📋 تم نسخ الرابط');
+    });
+  } else {
+    // Fallback
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('📋 تم نسخ الرابط');
+  }
 }
 
 // ═══════════════════════════════════════
@@ -1104,14 +1608,6 @@ function switchTab(tab) {
   }
 }
 
-function quickOrder(type) {
-  openNewOrder();
-  setTimeout(() => {
-    const chip = document.querySelector(`.type-chip[data-type="${type}"]`);
-    if (chip) selectPackageType(type, chip);
-  }, 300);
-}
-
 // ═══════════════════════════════════════
 // 🚪 Logout
 // ═══════════════════════════════════════
@@ -1121,6 +1617,7 @@ async function handleLogout() {
   localStorage.removeItem(CONFIG.STORAGE_KEYS.user);
   currentUser = null;
   showToast('✅ ' + t('logoutSuccess'));
+  
   setTimeout(() => showScreen('loginScreen'), 500);
 }
 
@@ -1152,7 +1649,8 @@ function showToast(message) {
   toast.textContent = message;
   toast.classList.add('show');
   
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 function togglePassword(inputId, btn) {
@@ -1174,13 +1672,11 @@ function togglePassword(inputId, btn) {
 window.addEventListener('language-changed', (e) => {
   const lang = e.detail.lang;
   
-  // تحديث زر اللغة العلوي
   const langBtnText = document.getElementById('langBtnText');
   if (langBtnText) {
     langBtnText.textContent = lang === 'ar' ? 'EN' : 'ع';
   }
   
-  // تحديث أزرار اللغة في الإعدادات
   document.querySelectorAll('[data-lang-btn]').forEach(btn => {
     btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === lang);
   });
@@ -1192,23 +1688,33 @@ window.addEventListener('language-changed', (e) => {
 // 🚀 Initialize
 // ═══════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Wassilha v3.0 initialized');
+  console.log('🚀 Wassilha v4.0 initialized');
   
-  // تطبيق اللغة
+  // ═══ تطبيق الثيم ═══
+  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'dark';
+  let appliedTheme = savedTheme;
+  if (savedTheme === 'auto') {
+    appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-theme', appliedTheme);
+  console.log('🎨 Theme:', appliedTheme);
+  
+  // ═══ تطبيق اللغة ═══
   if (window.Lang) {
     Lang.init();
     
-    // تحديث زر اللغة
     const langBtnText = document.getElementById('langBtnText');
     if (langBtnText) {
       langBtnText.textContent = Lang.current() === 'ar' ? 'EN' : 'ع';
     }
   }
   
+  // ═══ Supabase Ready ═══
   window.addEventListener('supabase-ready', () => {
     console.log('✅ Supabase ready');
   });
   
+  // ═══ بدء ═══
   initSplash();
 });
 
@@ -1225,7 +1731,6 @@ window.goToLogin = goToLogin;
 window.goHome = goHome;
 window.selectRole = selectRole;
 window.switchTab = switchTab;
-window.quickOrder = quickOrder;
 window.openNewOrder = openNewOrder;
 window.openOrders = openOrders;
 window.selectPackageType = selectPackageType;
@@ -1236,19 +1741,40 @@ window.cancelOrder = cancelOrder;
 window.chatWithDriver = chatWithDriver;
 window.callDriver = callDriver;
 window.openProfile = openProfile;
+window.openAddresses = openAddresses;
+window.openPaymentMethods = openPaymentMethods;
+window.openNotifications = openNotifications;
 window.toggleDriverOnline = toggleDriverOnline;
 window.acceptOrder = acceptOrder;
+window.openDriverEarnings = openDriverEarnings;
 window.openMapPicker = openMapPicker;
 window.closeMapPicker = closeMapPicker;
 window.locateUserOnMap = locateUserOnMap;
 window.handleMapSearch = handleMapSearch;
-window.selectSearchResult = selectSearchResult;
+window.selectMapSearchResult = selectMapSearchResult;
 window.confirmMapLocation = confirmMapLocation;
-window.openNotifications = openNotifications;
+window.openSearchScreen = openSearchScreen;
+window.closeSearch = closeSearch;
+window.handleMainSearch = handleMainSearch;
+window.quickSearch = quickSearch;
+window.openCategory = openCategory;
+window.filterCategory = filterCategory;
+window.applyFilter = applyFilter;
 window.openSettings = openSettings;
 window.setTheme = setTheme;
+window.toggleNotifications = toggleNotifications;
+window.toggleSound = toggleSound;
+window.openContactUs = openContactUs;
+window.openWhatsApp = openWhatsApp;
+window.openEmail = openEmail;
+window.openTelegram = openTelegram;
+window.openAbout = openAbout;
+window.openTerms = openTerms;
+window.openPrivacy = openPrivacy;
+window.openRateApp = openRateApp;
+window.shareApp = shareApp;
 window.handleLogout = handleLogout;
 window.togglePassword = togglePassword;
 window.showToast = showToast;
 
-console.log('✅ Script.js loaded — Wassilha v3.0');
+console.log('✅ Script.js loaded — Wassilha v4.0');
