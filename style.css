@@ -581,3 +581,220 @@ body.lang-en .dev-info {
 [data-theme="dark"] .legal-section h3 svg {
   stroke: #60A5FA !important;
 }
+/* ═══════════════════════════════════════
+   🔒 Blind Acceptance Screen (للمندوب)
+   ═══════════════════════════════════════ */
+
+#blindAcceptContainer {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUpFade 0.4s ease-out;
+}
+
+#blindAcceptContainer.active {
+  display: flex !important;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Banner برتقالي */
+.blind-banner {
+  background: #FFF3CD;
+  color: #856404;
+  padding: 12px;
+  border-radius: var(--r-md);
+  font-weight: 800;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #FFE0B2;
+}
+
+/* الكارت الرئيسي */
+.blind-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.blind-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.blind-header h3 {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+}
+
+.blind-header h3 span {
+  color: var(--navy);
+}
+
+/* الدائرة التنازلية */
+.blind-timer-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #FFF3CD;
+  border: 3px solid #FF9800;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: timerPulse 1s infinite;
+}
+
+.blind-timer-circle span {
+  font-size: 20px;
+  font-weight: 900;
+  color: #E65100;
+  line-height: 1;
+}
+
+.blind-timer-circle small {
+  font-size: 9px;
+  color: #E65100;
+  font-weight: 700;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* مسار الرحلة (مقفل) */
+.blind-route {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.blind-route-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-gray);
+  border-radius: var(--r-md);
+}
+
+.blind-route-item .blind-icon {
+  font-size: 24px;
+}
+
+.blind-route-item strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.blind-route-item .lock-text {
+  font-size: 11px;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+/* تأثير الضبابية للعنوان */
+.blur-text {
+  filter: blur(4px);
+  user-select: none;
+}
+
+/* المسافة */
+.blind-distance {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  background: var(--blue-50);
+  border-radius: var(--r-md);
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+/* الربح */
+.blind-earnings {
+  background: var(--success-bg);
+  color: #047857;
+  padding: 14px;
+  border-radius: var(--r-md);
+  text-align: center;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.blind-earnings strong {
+  font-size: 20px;
+}
+
+/* الأزرار */
+.blind-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.blind-reject-btn {
+  flex: 1;
+  padding: 18px;
+  background: transparent;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--r-md);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.blind-accept-btn {
+  flex: 2;
+  padding: 18px;
+  background: var(--navy);
+  border: none;
+  border-radius: var(--r-md);
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFFFFF;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .blind-card {
+  background: #1E293B;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .blind-route-item {
+  background: #0F172A;
+}
+
+[data-theme="dark"] .blind-banner {
+  background: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .blind-distance {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+}
+
+[data-theme="dark"] .blind-earnings {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+}
