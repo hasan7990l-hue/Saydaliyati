@@ -560,3 +560,24 @@ body.lang-en .dev-info {
   font-size: 12px !important;
   color: var(--text-2) !important;
 }
+/* ═══════════════════════════════════════
+   تنسيق أيقونات الشروط والخصوصية
+   ═══════════════════════════════════════ */
+.legal-section h3 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 15px !important;
+  margin-bottom: 12px !important;
+  color: var(--navy) !important;
+}
+[data-theme="dark"] .legal-section h3 {
+  color: #60A5FA !important;
+}
+.legal-section h3 svg {
+  stroke: var(--navy) !important;
+  flex-shrink: 0 !important;
+}
+[data-theme="dark"] .legal-section h3 svg {
+  stroke: #60A5FA !important;
+}
