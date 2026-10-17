@@ -1996,5 +1996,7 @@ window.shareApp = shareApp;
 window.handleLogout = handleLogout;
 window.togglePassword = togglePassword;
 window.showToast = showToast;
-
+window.applyTheme = applyTheme;
+window.initSystemThemeListener = initSystemThemeListener;
+window.handleSystemThemeChange = handleSystemThemeChange;
 console.log('✅ Script.js loaded — Wassilha v5.0');
