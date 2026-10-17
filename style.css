@@ -512,3 +512,51 @@ body.lang-en .contact-value { text-align: left; }
   .otp-input { width: 54px; height: 64px; }
   .theme-option { padding: 12px 6px; font-size: 11px; }
 }
+/* ═══════════════════════════════════════
+   🔧 إصلاح بطاقة "عن المطوّر" في شاشة About
+   ═══════════════════════════════════════ */
+
+.about-dev {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-top: 10px !important;
+}
+
+.dev-avatar {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  border-radius: 50% !important;
+  background: var(--navy) !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  flex-shrink: 0 !important;
+}
+
+.dev-info {
+  flex: 1 !important;
+  text-align: right !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+body.lang-en .dev-info {
+  text-align: left !important;
+}
+
+.dev-info strong {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--text) !important;
+}
+
+.dev-info span {
+  font-size: 12px !important;
+  color: var(--text-2) !important;
+}
