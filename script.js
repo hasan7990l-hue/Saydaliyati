@@ -1612,17 +1612,20 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   
   if (typeof updateSoundValues === 'function') updateSoundValues();
-  // إخفاء خيارات الصوت لغير المندوبين (بناءً على ID)
-const orderSoundRow = document.getElementById('orderSoundRow');
-const notifSoundRow = document.getElementById('notifSoundRow');
+  // إخفاء قسري لخيارات الصوت لغير المندوبين
+const allRows = document.querySelectorAll('.settings-row-new');
 
-if (currentUser && currentUser.role !== 'driver') {
-  if (orderSoundRow) orderSoundRow.style.display = 'none';
-  if (notifSoundRow) notifSoundRow.style.display = 'none';
-} else {
-  if (orderSoundRow) orderSoundRow.style.display = 'flex';
-  if (notifSoundRow) notifSoundRow.style.display = 'flex';
-}
+allRows.forEach(row => {
+  const text = row.textContent || row.innerText || "";
+  
+  if (text.includes("رنين") || text.includes("صوت الإشعارات")) {
+    if (currentUser && currentUser.role !== 'driver') {
+      row.style.setProperty('display', 'none', 'important');
+    } else {
+      row.style.setProperty('display', 'flex', 'important');
+    }
+  }
+});
 }
 
 function setTheme(theme, btn) {
