@@ -931,47 +931,116 @@ function locateUserOnMap() {
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
-
 async function handleMapSearch(event) {
   const query = event.target.value.trim();
   const resultsEl = document.getElementById('mapSearchResults');
 
-  if (query.length < 3) {
+  if (query.length < 2) {
     resultsEl.classList.remove('active');
     return;
   }
 
   clearTimeout(window._mapSearchTimeout);
   window._mapSearchTimeout = setTimeout(async () => {
+    resultsEl.innerHTML = `
+      <div class="search-result-item" style="text-align:center;color:var(--text-3);">
+        ⏳ جاري البحث...
+      </div>
+    `;
+    resultsEl.classList.add('active');
+
+    let allResults = [];
+
+    // ═══ LocationIQ ═══
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' بغداد')}&accept-language=${Lang.current()}&limit=5`
-      );
-      const data = await res.json();
+      const liqUrl = `${CONFIG.MAPS.locationiq.baseUrl}/autocomplete?key=${CONFIG.MAPS.locationiq.key}&q=${encodeURIComponent(query)}&limit=8&countrycodes=iq&accept-language=${Lang.current()}`;
+      
+      const liqRes = await fetch(liqUrl);
+      
+      if (liqRes.ok) {
+        const liqData = await liqRes.json();
 
-      if (!data.length) {
-        resultsEl.classList.remove('active');
-        return;
+        if (Array.isArray(liqData) && liqData.length > 0) {
+          allResults = liqData.map(r => {
+            const mainName = r.address?.name || r.display_name?.split(', ')[0] || query;
+            
+            const parts = [
+              r.address?.road,
+              r.address?.suburb || r.address?.neighbourhood,
+              r.address?.city || r.address?.town,
+              r.address?.state
+            ].filter(Boolean);
+
+            return {
+              name: mainName,
+              subtitle: parts.join('، ') || r.display_name?.split(', ').slice(1, 4).join('، ') || 'العراق',
+              lat: parseFloat(r.lat),
+              lng: parseFloat(r.lon),
+              source: 'locationiq'
+            };
+          });
+        }
       }
-
-      resultsEl.innerHTML = data.map(r => {
-        const name = r.display_name.split(', ')[0];
-        const addr = r.display_name.split(', ').slice(1, 3).join('، ');
-        return `
-          <div class="search-result-item" onclick="selectMapSearchResult(${r.lat}, ${r.lon}, '${name.replace(/'/g, '')}')">
-            <strong>${name}</strong>
-            <small>${addr}</small>
-          </div>
-        `;
-      }).join('');
-
-      resultsEl.classList.add('active');
     } catch (e) {
-      console.error(e);
+      console.warn('LocationIQ failed:', e);
     }
-  }, 500);
-}
 
+    // ═══ Nominatim احتياطي ═══
+    if (allResults.length === 0) {
+      try {
+        const nomiRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&accept-language=${Lang.current()}&limit=8&countrycodes=iq`
+        );
+        const nomiData = await nomiRes.json();
+
+        if (nomiData.length > 0) {
+          allResults = nomiData.map(r => ({
+            name: r.display_name.split(', ')[0],
+            subtitle: r.display_name.split(', ').slice(1, 4).join('، '),
+            lat: parseFloat(r.lat),
+            lng: parseFloat(r.lon),
+            source: 'nominatim'
+          }));
+        }
+      } catch (e) {
+        console.warn('Nominatim failed:', e);
+      }
+    }
+
+    // ═══ عرض النتائج ═══
+    if (allResults.length === 0) {
+      resultsEl.innerHTML = `
+        <div class="search-result-item" style="text-align:center;color:var(--text-3);padding:20px;">
+          <div style="font-size:32px;margin-bottom:8px;">🔍</div>
+          <div style="font-weight:800;color:var(--text);margin-bottom:4px;">لا توجد نتائج</div>
+          <div style="font-size:11px;">جرّب اسم منطقة أو معلم</div>
+        </div>
+      `;
+      return;
+    }
+
+    const uniqueResults = [];
+    const seen = new Set();
+    allResults.forEach(r => {
+      const key = `${r.lat.toFixed(4)},${r.lng.toFixed(4)}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueResults.push(r);
+      }
+    });
+
+    resultsEl.innerHTML = uniqueResults.slice(0, 6).map(r => {
+      const safeName = r.name.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+      return `
+        <div class="search-result-item" onclick="selectMapSearchResult(${r.lat}, ${r.lng}, '${safeName}')">
+          <strong>📍 ${r.name}</strong>
+          <small>${r.subtitle}</small>
+        </div>
+      `;
+    }).join('');
+
+  }, 400);
+}
 function selectMapSearchResult(lat, lng, name) {
   if (!mapPickerInstance) return;
 
