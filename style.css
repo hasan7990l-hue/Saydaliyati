@@ -345,3 +345,138 @@ body.lang-en .eye-btn { right: 14px; }
 [data-theme="dark"] .chat-bubble.other { background: #1E293B; border-color: #334155; }
 [data-theme="dark"] .chat-bubble.mine { background: #2563EB; }
 [data-theme="dark"] .chat-input-field { background: #0F172A; }
+/* ═══════════════════════════════════════
+   🔧 FIXES v2 — إصلاحات نهائية
+   ═══════════════════════════════════════ */
+
+/* 1️⃣ زر اللغة — الزاوية العلوية اليمين */
+.lang-switch-top {
+  position: fixed !important;
+  top: 16px !important;
+  right: 16px !important;
+  left: auto !important;
+  z-index: 9999 !important;
+}
+
+.lang-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 14px !important;
+  background: rgba(30, 58, 138, 0.6) !important;
+  border: 1.5px solid rgba(96, 165, 250, 0.5) !important;
+  border-radius: 999px !important;
+  color: #FFFFFF !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+.lang-btn svg {
+  stroke: #FFFFFF !important;
+}
+
+.lang-btn:hover {
+  background: rgba(37, 99, 235, 0.8) !important;
+}
+
+/* 2️⃣ زر "إنشاء حساب جديد" — أوضح في Dark Mode */
+[data-theme="dark"] .btn-outline {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border: 2px solid #3B82F6 !important;
+  color: #60A5FA !important;
+}
+
+[data-theme="dark"] .btn-outline span {
+  color: #60A5FA !important;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+  background: rgba(59, 130, 246, 0.25) !important;
+}
+
+/* 3️⃣ زر "متابعة" — تأكيد الأبيض */
+.btn-primary {
+  color: #FFFFFF !important;
+  background: var(--navy) !important;
+}
+
+.btn-primary span {
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .btn-primary {
+  background: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+/* 4️⃣ زر "سجل دخول" و "الشروط" */
+.auth-footer a {
+  color: #60A5FA !important;
+  font-weight: 800 !important;
+}
+
+.auth-footer span {
+  color: #CBD5E1 !important;
+}
+
+/* 5️⃣ حقل الهاتف — أوضح */
+[data-theme="dark"] .input-field {
+  background: #1E293B !important;
+  border: 1.5px solid #334155 !important;
+  color: #F1F5F9 !important;
+}
+
+[data-theme="dark"] .input-field::placeholder {
+  color: #64748B !important;
+}
+
+[data-theme="dark"] .input-field:focus {
+  border-color: #3B82F6 !important;
+  background: #0F172A !important;
+}
+
+/* 6️⃣ أيقونة الهاتف */
+[data-theme="dark"] .input-icon svg {
+  stroke: #94A3B8 !important;
+}
+
+/* 7️⃣ النصوص الثانوية */
+[data-theme="dark"] .auth-subtitle {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="dark"] .auth-card-title {
+  color: #F1F5F9 !important;
+}
+
+[data-theme="dark"] .auth-title {
+  color: #60A5FA !important;
+}
+
+[data-theme="dark"] .auth-divider span {
+  color: #94A3B8 !important;
+}
+
+[data-theme="dark"] .auth-divider::before,
+[data-theme="dark"] .auth-divider::after {
+  background: #334155 !important;
+}
+
+/* 8️⃣ الشعار في Dark Mode */
+[data-theme="dark"] .auth-logo path,
+[data-theme="dark"] .auth-logo ellipse,
+[data-theme="dark"] .auth-logo circle {
+  fill: #60A5FA !important;
+}
+
+[data-theme="dark"] .auth-logo path[stroke] {
+  stroke: #60A5FA !important;
+}
+
+/* 9️⃣ زر EN — إخفاء إذا كان يظهر في المنتصف */
+.lang-switch-top {
+  transform: none !important;
+  margin: 0 !important;
+}
