@@ -1896,3 +1896,24 @@ window.applyTheme = applyTheme;
 window.initSystemThemeListener = initSystemThemeListener;
 
 console.log('✅ Script.js loaded — Wassilha v6.0');
+// ═══════════════════════════════════════
+// 🛠️ إجباري: تفعيل أزرار اختيار الحساب
+// ═══════════════════════════════════════
+document.addEventListener('click', function(e) {
+  // البحث عن أقرب بطاقة دور (عميل، مندوب، متجر) تم الضغط عليها
+  const roleCard = e.target.closest('.role-card');
+  if (roleCard) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // معرفة أي زر تم الضغط عليه بناءً على النص أو الترتيب
+    const text = roleCard.innerText;
+    if (text.includes('عميل') || text.includes('Customer')) {
+      selectRole('customer');
+    } else if (text.includes('مندوب') || text.includes('Driver')) {
+      selectRole('driver');
+    } else if (text.includes('متجر') || text.includes('Store')) {
+      selectRole('store');
+    }
+  }
+}, true); // true تعني أن الحدث يعمل في مرحلة الالتقاط (Capture Phase) لتجاوز أي عوائق
