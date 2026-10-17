@@ -480,3 +480,69 @@ body.lang-en .eye-btn { right: 14px; }
   transform: none !important;
   margin: 0 !important;
 }
+/* ═══════════════════════════════════════
+   🔧 إصلاحات شاشة الإعدادات
+   ═══════════════════════════════════════ */
+
+/* 1️⃣ إصلاح زر التبديل (Toggle) */
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #475569; /* لون رمادي داكن */
+  border-radius: 999px;
+  transition: 0.3s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px; /* يبدأ من اليمين */
+  width: 20px;
+  height: 20px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+/* عند التفعيل (في الوضع العربي RTL) */
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--navy-light);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  right: calc(100% - 23px); /* يتحرك لليسار */
+}
+
+/* 2️⃣ إصلاح الأيقونات (ألوان أوضح في Dark Mode) */
+[data-theme="dark"] .row-icon {
+  background: rgba(59, 130, 246, 0.15); /* خلفية زرقاء شفافة */
+}
+
+[data-theme="dark"] .row-icon svg {
+  stroke: #60A5FA; /* أيقونة أزرق فاتح واضح */
+}
+
+/* 3️⃣ إصلاح السهم في القائمة */
+.menu-arrow, .row-arrow {
+  color: #64748B; /* لون رمادي فاتح */
+  font-size: 16px;
+  margin-right: auto; /* يدفعه لليسار في RTL */
+}
+
+[data-theme="dark"] .menu-arrow, 
+[data-theme="dark"] .row-arrow {
+  color: #94A3B8;
+}
+
+/* 4️⃣ إزالة السهم من الصفحة الرئيسية للإعدادات إذا كان يسبب إزعاجاً */
+.settings-row-new[onclick] .row-arrow {
+  opacity: 0.6;
+}
