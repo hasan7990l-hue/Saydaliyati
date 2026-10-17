@@ -398,17 +398,18 @@ body.lang-en .toggle-slider::before { right: auto !important; left: 3px !importa
 .toggle-switch input:checked + .toggle-slider { background: #3B82F6 !important; }
 .toggle-switch input:checked + .toggle-slider::before { right: calc(100% - 23px) !important; }
 body.lang-en .toggle-switch input:checked + .toggle-slider::before { right: auto !important; left: calc(100% - 23px) !important; }
-
-/* ═══ إخفاء خيارات الأصوات لغير المندوبين ═══ */
-#notifSoundRow,
+/* ═══ إخفاء رنين الطلبات عن غير المندوبين فقط ═══ */
 #orderSoundRow {
   display: none !important;
 }
-body.role-driver #notifSoundRow,
 body.role-driver #orderSoundRow {
   display: flex !important;
 }
 
+/* صوت الإشعارات يظهر للجميع دائماً */
+#notifSoundRow {
+  display: flex !important;
+}
 /* ═══ Driver Dashboard ═══ */
 .driver-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--navy); color: #FFF; gap: 12px; }
 .driver-header > div:first-child { flex: 1; min-width: 0; text-align: right; }
