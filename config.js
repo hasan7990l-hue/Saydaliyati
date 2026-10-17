@@ -41,10 +41,15 @@ const CONFIG = {
   },
 
   MAPS: {
-    default: 'osm',
-    defaultCenter: { lat: 33.3152, lng: 44.3661 },
-    defaultZoom: 13
-  },
+  default: 'osm',
+  defaultCenter: { lat: 33.3152, lng: 44.3661 },
+  defaultZoom: 13,
+  // ═══ LocationIQ — بحث وعناوين دقيقة ═══
+  locationiq: {
+    key: 'pk.650f569f9e1b17cebb209086fd67291b',
+    baseUrl: 'https://us1.locationiq.com/v1'
+  }
+},
 
   SUPPORT: {
     phone: '+9647751459130',
