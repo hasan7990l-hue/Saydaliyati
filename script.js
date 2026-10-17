@@ -1915,34 +1915,28 @@ window.addEventListener('language-changed', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 Wassilha v5.0 initialized');
 
-  // الثيم
-  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'dark';
-  let appliedTheme = savedTheme;
-  if (savedTheme === 'auto') {
-    appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  document.documentElement.setAttribute('data-theme', appliedTheme);
-  console.log('🎨 Theme:', appliedTheme);
+  // ═══ الثيم — يعمل مع نظام الجهاز ═══
+  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'auto';
+  applyTheme(savedTheme);
+  initSystemThemeListener();  // ← يراقب تغييرات النظام
 
-  // اللغة
+  // ═══ اللغة ═══
   if (window.Lang) {
     Lang.init();
-
     const langBtnText = document.getElementById('langBtnText');
     if (langBtnText) {
       langBtnText.textContent = Lang.current() === 'ar' ? 'EN' : 'ع';
     }
   }
 
-  // Supabase ready
+  // ═══ Supabase ready ═══
   window.addEventListener('supabase-ready', () => {
     console.log('✅ Supabase ready');
   });
 
-  // ابدأ
+  // ═══ ابدأ ═══
   initSplash();
 });
-
 // ═══════════════════════════════════════
 // 🌐 Global Exports
 // ═══════════════════════════════════════
