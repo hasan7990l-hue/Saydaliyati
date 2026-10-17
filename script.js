@@ -1606,22 +1606,48 @@ function openSettings() {
     updateSoundValues();
   }
 }
-
 function setTheme(theme, btn) {
   document.querySelectorAll('[data-theme-btn]').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
-  let appliedTheme = theme;
-  if (theme === 'auto') {
-    appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  document.documentElement.setAttribute('data-theme', appliedTheme);
   localStorage.setItem(CONFIG.STORAGE_KEYS.theme, theme);
+
+  applyTheme(theme);
 
   showToast('✅ ' + t('themeChanged'));
 }
 
+function applyTheme(theme) {
+  let appliedTheme = theme;
+
+  if (theme === 'auto') {
+    appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    console.log('🌓 Auto theme →', appliedTheme, '(system)');
+  }
+
+  document.documentElement.setAttribute('data-theme', appliedTheme);
+  console.log('🎨 Theme applied:', appliedTheme);
+}
+
+function initSystemThemeListener() {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  if (mediaQuery.addEventListener) {
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+  } else if (mediaQuery.addListener) {
+    mediaQuery.addListener(handleSystemThemeChange);
+  }
+}
+
+function handleSystemThemeChange(e) {
+  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'auto';
+
+  if (savedTheme !== 'auto') return;
+
+  const newTheme = e.matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  console.log('🌓 System theme changed →', newTheme);
+}
 async function toggleNotifications() {
   const toggle = document.getElementById('notifToggle');
   if (!toggle) return;
