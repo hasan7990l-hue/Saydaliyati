@@ -1612,6 +1612,17 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   
   if (typeof updateSoundValues === 'function') updateSoundValues();
+  // إخفاء خيارات الصوت لغير المندوبين
+const orderSoundRow = document.querySelector('[onclick="openSoundPicker(\'order\')"]');
+const notifSoundRow = document.querySelector('[onclick="openSoundPicker(\'notification\')"]');
+
+if (currentUser && currentUser.role !== 'driver') {
+  if (orderSoundRow) orderSoundRow.style.display = 'none';
+  if (notifSoundRow) notifSoundRow.style.display = 'none';
+} else {
+  if (orderSoundRow) orderSoundRow.style.display = 'flex';
+  if (notifSoundRow) notifSoundRow.style.display = 'flex';
+}
 }
 
 function setTheme(theme, btn) {
