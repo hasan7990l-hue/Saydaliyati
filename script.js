@@ -1612,17 +1612,19 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   
   if (typeof updateSoundValues === 'function') updateSoundValues();
-  // إخفاء خيارات الصوت لغير المندوبين
-const orderSoundRow = document.querySelector('[onclick="openSoundPicker(\'order\')"]');
-const notifSoundRow = document.querySelector('[onclick="openSoundPicker(\'notification\')"]');
-
-if (currentUser && currentUser.role !== 'driver') {
-  if (orderSoundRow) orderSoundRow.style.display = 'none';
-  if (notifSoundRow) notifSoundRow.style.display = 'none';
-} else {
-  if (orderSoundRow) orderSoundRow.style.display = 'flex';
-  if (notifSoundRow) notifSoundRow.style.display = 'flex';
-}
+  // إخفاء خيارات الصوت لغير المندوبين (طريقة مضمونة)
+const settingsRows = document.querySelectorAll('.settings-row-new');
+settingsRows.forEach(row => {
+  const rowText = row.innerText || '';
+  // إذا كان الصف يحتوي على كلمة "صوت الإشعارات" أو "رنين الطلبات"
+  if (rowText.includes('صوت الإشعارات') || rowText.includes('رنين الطلبات')) {
+    if (currentUser && currentUser.role !== 'driver') {
+      row.style.display = 'none'; // إخفاء للعميل والمتجر
+    } else {
+      row.style.display = 'flex'; // إظهار للمندوب
+    }
+  }
+});
 }
 
 function setTheme(theme, btn) {
