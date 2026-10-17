@@ -18,11 +18,9 @@ const CONFIG = {
   },
 
   SUPABASE: {
-    url: 'https://fprcpijjbwnknebbcwns.supabase.co',
-    // ⚠️⚠️ استبدل هذا بمفتاح anon الحقيقي من:
-    // https://supabase.com/dashboard/project/fprcpijjbwnknebbcwns/settings/api
-    key: 'sb_publishable_wquVUw8JANcgcVOTgRspMw_oFueuIrR'
-  },
+  url: 'https://plcxknqhukdzgwkuocrp.supabase.co',
+  key: 'sb_publishable_KJ4CfCpq47M3XdVzFYQ5hA_3UVEheGf'
+},
 
   PRICING: {
     basePrice: 1000,
