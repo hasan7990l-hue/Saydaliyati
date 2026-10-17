@@ -969,3 +969,119 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('✅ Script.js loaded — Wassilha v7.0');
+// ═══════════════════════════════════════
+// ⭐ Subscription System (نظام الاشتراكات)
+// ═══════════════════════════════════════
+
+let selectedPlan = null;
+
+// فتح شاشة الباقات
+function openSubscription() {
+  showScreen('subscriptionScreen');
+}
+
+// اختيار باقة والانتقال للدفع
+function selectPlan(planId, price, name, days) {
+  selectedPlan = { id: planId, price: price, name: name, days: days };
+  
+  // تعبئة بيانات شاشة الدفع
+  document.getElementById('payPlanName').textContent = name;
+  document.getElementById('payPlanPrice').textContent = price.toLocaleString() + ' د.ع';
+  document.getElementById('payTotal').textContent = price.toLocaleString() + ' د.ع';
+  
+  showScreen('paymentScreen');
+}
+
+// الدفع عبر ZainCash
+async function payWithZainCash() {
+  const phone = document.getElementById('zcPhone').value.trim();
+  const pin = document.getElementById('zcPin').value.trim();
+  
+  if (phone.length < 10) { showToast('⚠️ أدخل رقم الهاتف بشكل صحيح'); return; }
+  if (pin.length !== 4) { showToast('⚠️ أدخل الرقم السري (4 أرقام)'); return; }
+  
+  showToast('⏳ جاري الاتصال بـ ZainCash...');
+  
+  // محاكاة الاتصال بالسيرفر (تأخير ثانيتين)
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  // محاكاة النجاح وتفعيل الاشتراك
+  await activateSubscription('ZainCash');
+}
+
+// الدفع عبر MasterCard
+async function payWithMasterCard() {
+  const number = document.getElementById('ccNumber').value.replace(/\s/g, '');
+  const expiry = document.getElementById('ccExpiry').value;
+  const cvv = document.getElementById('ccCvv').value;
+  const name = document.getElementById('ccName').value.trim();
+  
+  if (number.length !== 16) { showToast('⚠️ رقم البطاقة يجب أن يكون 16 رقماً'); return; }
+  if (!/^\d{2}\/\d{2}$/.test(expiry)) { showToast('⚠️ تاريخ الانتهاء غير صحيح (MM/YY)'); return; }
+  if (cvv.length !== 3) { showToast('⚠️ CVV يجب أن يكون 3 أرقام'); return; }
+  if (!name) { showToast('⚠️ أدخل اسم حامل البطاقة'); return; }
+  
+  showToast('⏳ جاري الاتصال بالبنك...');
+  
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  await activateSubscription('MasterCard');
+}
+
+// تفعيل الاشتراك في Supabase
+async function activateSubscription(method) {
+  if (!currentUser || !selectedPlan) return;
+  
+  const startDate = new Date();
+  const endDate = new Date();
+  endDate.setDate(startDate.getDate() + selectedPlan.days);
+  
+  try {
+    const sb = window.sb;
+    
+    // تحديث بيانات المندوب في قاعدة البيانات
+    const { error } = await sb.from('drivers').update({
+      is_subscribed: true,
+      subscription_end_date: endDate.toISOString(),
+      subscription_plan: selectedPlan.id,
+      subscription_method: method,
+      subscription_amount: selectedPlan.price
+    }).eq('user_id', currentUser.id);
+    
+    if (error) throw error;
+    
+    // إشعار نجاح
+    showToast(`✅ تم تفعيل ${selectedPlan.name} بنجاح!`);
+    
+    // إعادة توجيه للشاشة الرئيسية بعد ثانيتين
+    setTimeout(() => goHome(), 2000);
+    
+  } catch (error) {
+    console.error('Subscription error:', error);
+    showToast('❌ فشل تفعيل الاشتراك: ' + error.message);
+  }
+}
+
+// تنسيق رقم البطاقة (إضافة مسافات)
+function formatCardNumber(input) {
+  let value = input.value.replace(/\s/g, '').replace(/\D/g, '');
+  let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+  input.value = formattedValue;
+}
+
+// تنسيق تاريخ الانتهاء (إضافة /)
+function formatExpiry(input) {
+  let value = input.value.replace(/\D/g, '');
+  if (value.length >= 3) {
+    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+  }
+  input.value = value;
+}
+
+// تصدير الدوال لتصبح متاحة من HTML
+window.openSubscription = openSubscription;
+window.selectPlan = selectPlan;
+window.payWithZainCash = payWithZainCash;
+window.payWithMasterCard = payWithMasterCard;
+window.formatCardNumber = formatCardNumber;
+window.formatExpiry = formatExpiry;
