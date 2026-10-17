@@ -357,3 +357,143 @@ body.lang-en .lang-switch-top {
 .auth-form {
   gap: 18px !important;
 }
+/* ═══════════════════════════════════════
+   🔧 FIX: Role Selection Screen (إصلاح شاشة اختيار الحساب)
+   ═══════════════════════════════════════ */
+
+#roleScreen {
+  background: var(--bg) !important;
+}
+
+.role-content {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 460px !important;
+  margin: 0 auto !important;
+  padding: 80px 24px 40px !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.role-title {
+  font-size: 28px !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+  margin: 0 0 10px !important;
+  text-align: center !important;
+}
+
+.role-subtitle {
+  font-size: 14px !important;
+  color: var(--text-2) !important;
+  margin: 0 0 40px !important;
+  text-align: center !important;
+}
+
+.role-cards {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+}
+
+.role-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 22px 20px !important;
+  background: var(--white) !important;
+  border: 1.5px solid var(--border) !important;
+  border-radius: var(--r-lg) !important;
+  cursor: pointer !important;
+  transition: all 0.25s !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+}
+
+.role-card:hover {
+  border-color: var(--navy) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1) !important;
+}
+
+.role-icon {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  border-radius: var(--r-md) !important;
+  background: rgba(30, 58, 138, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.role-icon svg {
+  stroke: var(--navy) !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+[data-theme="dark"] .role-icon {
+  background: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"] .role-icon svg {
+  stroke: #60A5FA !important;
+}
+
+.role-info {
+  flex: 1 !important;
+  text-align: right !important;
+}
+
+body.lang-en .role-info {
+  text-align: left !important;
+}
+
+.role-info h3 {
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+  margin: 0 0 4px !important;
+}
+
+.role-info p {
+  font-size: 13px !important;
+  color: var(--text-2) !important;
+  margin: 0 !important;
+}
+
+.role-arrow {
+  color: var(--text-3) !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+}
+
+/* إصلاح زر الرجوع في شاشة اختيار الحساب */
+#roleScreen .back-btn {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: var(--white) !important;
+  border: 1.5px solid var(--border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+}
+
+body.lang-en #roleScreen .back-btn {
+  right: auto !important;
+  left: 20px !important;
+}
+
+#roleScreen .back-btn svg {
+  stroke: var(--text) !important;
+  width: 20px !important;
+  height: 20px !important;
+}
