@@ -1583,11 +1583,11 @@ function openSettings() {
     btn.classList.toggle('lang-active', btn.getAttribute('data-lang-btn') === Lang.current());
   });
 
-  // الثيم
-  const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'dark';
-  document.querySelectorAll('[data-theme-btn]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === savedTheme);
-  });
+  // ═══ الثيم ═══
+const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'auto';
+document.querySelectorAll('[data-theme-btn]').forEach(btn => {
+  btn.classList.toggle('active', btn.getAttribute('data-theme-btn') === savedTheme);
+});
 
   // toggle الإشعارات
   const notifToggle = document.getElementById('notifToggle');
