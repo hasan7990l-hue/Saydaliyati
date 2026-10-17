@@ -452,16 +452,90 @@ async function submitOrder() {
   await DB.createNotification(currentUser.id, '🛵 ' + t('orderSent'), t('willContact'), 'order');
   setTimeout(() => openTracking(result.order.id), 1000);
 }
+// ═══ Tracking (Blind Acceptance Logic) ═══
+let blindTimerInterval = null;
 
-// ═══ Tracking ═══
 async function openTracking(orderId) {
   if (!currentUser) return;
   showScreen('trackingScreen');
+  
   const result = await DB.getOrderById(orderId);
   const order = result.order;
   if (!order) { showToast(t('orderNotFound')); goHome(); return; }
+  
   currentOrder = order;
   document.getElementById('trackingOrderId').textContent = order.order_number || '—';
+
+  const isDriver = currentUser.role === 'driver';
+  const blindContainer = document.getElementById('blindAcceptContainer');
+  const normalContainer = document.getElementById('normalTrackingContainer');
+
+  // تنظيف أي عداد سابق
+  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
+
+  // 🟢 الحالة 1: المندوب يرى طلباً جديداً (Blind Acceptance)
+  if (isDriver && order.status === 'pending') {
+    blindContainer.classList.add('active');
+    normalContainer.style.display = 'none';
+    
+    // تعبئة بيانات الطلب
+    document.getElementById('blindOrderId').textContent = '#' + (order.order_number || '—');
+    document.getElementById('blindRestaurantName').textContent = 'مطعم برجر هاوس'; 
+    document.getElementById('blindCustomerAddress').textContent = order.dropoff_address || 'سيظهر بعد القبول';
+    document.getElementById('blindEarnings').textContent = (order.driver_share || 4500).toLocaleString();
+    
+    // بدء العداد التنازلي (45 ثانية)
+    let timeLeft = 45;
+    const timerEl = document.getElementById('blindTimer');
+    timerEl.textContent = timeLeft;
+    
+    blindTimerInterval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(blindTimerInterval);
+        rejectOrderBlind();
+        showToast('⏰ انتهى الوقت، تم إعادة توجيه الطلب لمندوب آخر');
+      }
+    }, 1000);
+    
+    return;
+  }
+
+  // 🟢 الحالة 2: المندوب قبل الطلب (يرى تفاصيل العميل)
+  if (isDriver && order.status !== 'pending') {
+    blindContainer.classList.remove('active');
+    normalContainer.style.display = 'block';
+    
+    const customerCard = document.getElementById('driverIdentityCard');
+    customerCard.style.display = 'block';
+    
+    // جلب بيانات العميل من جدول users
+    const customerResult = await DB.getUserById(order.customer_id);
+    if (customerResult.success && customerResult.user) {
+      const customer = customerResult.user;
+      document.getElementById('driverIdAvatar').textContent = customer.name.charAt(0);
+      document.getElementById('driverIdName').textContent = customer.name;
+      document.getElementById('driverIdRating').textContent = customer.rating || '5.0';
+      document.getElementById('driverIdVehicle').textContent = '📞 ' + customer.phone;
+      document.getElementById('driverIdVerified').textContent = '✅ موثق';
+      customerCard.dataset.driverPhone = customer.phone;
+      customerCard.dataset.driverName = customer.name;
+    }
+  } 
+  // 🟢 الحالة 3: العميل يرى طلبه (يرى المندوب)
+  else if (!isDriver) {
+    blindContainer.classList.remove('active');
+    normalContainer.style.display = 'block';
+    
+    if (order.driver_id) {
+      await renderDriverIdentity(order);
+    } else {
+      document.getElementById('driverIdentityCard').style.display = 'none';
+    }
+  }
+
+  // تحديث Timeline
   const statusIndex = { 'pending': 0, 'accepted': 1, 'picked_up': 2, 'delivered': 3, 'cancelled': -1 };
   const currentIndex = statusIndex[order.status] ?? 0;
   ['created', 'accepted', 'pickedup', 'delivered'].forEach((step, i) => {
@@ -472,10 +546,38 @@ async function openTracking(orderId) {
     else if (i === currentIndex) { el.classList.add('active'); el.querySelector('.step-dot').textContent = '●'; }
     else { el.querySelector('.step-dot').textContent = '○'; }
   });
-  if (order.driver_id) { await renderDriverIdentity(order); } else { document.getElementById('driverIdentityCard').style.display = 'none'; }
+
   setTimeout(() => initTrackingMap(order), 300);
 }
 
+// ═══ Blind Accept / Reject Functions ═══
+async function acceptOrderBlind() {
+  if (!currentOrder || !currentUser) return;
+  
+  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
+  
+  const result = await DB.acceptOrder(currentOrder.id, currentUser.id);
+  if (result.success) {
+    showToast('✅ تم قبول الطلب! توجه إلى المطعم');
+    
+    await DB.createNotification(
+      currentOrder.customer_id,
+      '✅ تم قبول طلبك',
+      currentUser.name + ' في الطريق إليك',
+      'order'
+    );
+    
+    openTracking(currentOrder.id);
+  } else {
+    showToast('❌ فشل قبول الطلب');
+  }
+}
+
+function rejectOrderBlind() {
+  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
+  showToast('تم رفض الطلب');
+  goHome();
+}
 async function renderDriverIdentity(order) {
   const card = document.getElementById('driverIdentityCard');
   if (!card) return;
