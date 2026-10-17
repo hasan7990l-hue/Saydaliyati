@@ -497,3 +497,39 @@ body.lang-en #roleScreen .back-btn {
   width: 20px !important;
   height: 20px !important;
 }
+/* ═══════════════════════════════════════
+   🔧 FIX: تفعيل الضغط على الأزرار
+   ═══════════════════════════════════════ */
+
+/* 1️⃣ التأكد من أن أزرار اختيار الحساب قابلة للضغط */
+.role-card {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* 2️⃣ التأكد من أن الحاوية لا تحجب الضغطات */
+.role-content {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* 3️⃣ إصلاح أي عنصر شفاف قد يغطي الشاشة */
+.screen.active {
+  pointer-events: auto !important;
+}
+
+/* 4️⃣ التأكد من أن النصوص والأيقونات داخل الأزرار لا تمنع الضغط */
+.role-card * {
+  pointer-events: none !important;
+}
+
+/* 5️⃣ إصلاح أزرار تسجيل الدخول والتسجيل أيضاً */
+.btn-primary, .btn-outline, .lang-btn {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
