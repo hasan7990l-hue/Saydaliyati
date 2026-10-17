@@ -1612,20 +1612,17 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   
   if (typeof updateSoundValues === 'function') updateSoundValues();
-  // إخفاء قسري لخيارات الصوت لغير المندوبين
-const allRows = document.querySelectorAll('.settings-row-new');
+  // إخفاء أزرار اختيار نغمات الأصوات لغير المندوبين (مع إبقاء زر التبديل)
+const orderSoundRow = document.getElementById('orderSoundRow');
+const notifSoundRow = document.getElementById('notifSoundRow');
 
-allRows.forEach(row => {
-  const text = row.textContent || row.innerText || "";
-  
-  if (text.includes("رنين") || text.includes("صوت الإشعارات")) {
-    if (currentUser && currentUser.role !== 'driver') {
-      row.style.setProperty('display', 'none', 'important');
-    } else {
-      row.style.setProperty('display', 'flex', 'important');
-    }
-  }
-});
+if (currentUser && currentUser.role !== 'driver') {
+  if (orderSoundRow) orderSoundRow.style.setProperty('display', 'none', 'important');
+  if (notifSoundRow) notifSoundRow.style.setProperty('display', 'none', 'important');
+} else {
+  if (orderSoundRow) orderSoundRow.style.setProperty('display', 'flex', 'important');
+  if (notifSoundRow) notifSoundRow.style.setProperty('display', 'flex', 'important');
+}
 }
 
 function setTheme(theme, btn) {
