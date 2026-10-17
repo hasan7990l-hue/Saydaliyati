@@ -540,5 +540,144 @@
   <script src="supabase.js"></script>
   <script src="sounds.js"></script>
   <script src="script.js"></script>
+  <!-- ═══ Subscription Plans Screen ═══ -->
+<div class="screen" id="subscriptionScreen">
+  <div class="page-header">
+    <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    <h2>باقات الاشتراك</h2>
+    <div></div>
+  </div>
+  <div class="subscription-content">
+    <p class="subscription-intro">اختر الباقة المناسبة لك واستمر في استقبال الطلبات</p>
+    
+    <div class="plans-grid">
+      <!-- الباقة الشهرية -->
+      <div class="plan-card" onclick="selectPlan('monthly', 60000, 'الباقة الشهرية', 30)">
+        <div class="plan-header">
+          <div class="plan-icon navy">📅</div>
+          <div class="plan-info">
+            <h3>الباقة الشهرية</h3>
+            <span class="plan-days">30 يوم</span>
+          </div>
+        </div>
+        <div class="plan-price">60,000 <small>د.ع</small></div>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+
+      <!-- باقة 3 أشهر -->
+      <div class="plan-card popular" onclick="selectPlan('quarterly', 170000, 'باقة 3 أشهر', 90)">
+        <div class="plan-badge orange">الأكثر شعبية</div>
+        <div class="plan-header">
+          <div class="plan-icon blue">⭐</div>
+          <div class="plan-info">
+            <h3>باقة 3 أشهر</h3>
+            <span class="plan-days">90 يوم</span>
+          </div>
+        </div>
+        <div class="plan-price">170,000 <small>د.ع</small></div>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+
+      <!-- باقة 6 أشهر -->
+      <div class="plan-card" onclick="selectPlan('semi_annual', 330000, 'باقة 6 أشهر', 180)">
+        <div class="plan-badge blue">توفير</div>
+        <div class="plan-header">
+          <div class="plan-icon orange">💎</div>
+          <div class="plan-info">
+            <h3>باقة 6 أشهر</h3>
+            <span class="plan-days">180 يوم</span>
+          </div>
+        </div>
+        <div class="plan-price">330,000 <small>د.ع</small></div>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+
+      <!-- الباقة السنوية -->
+      <div class="plan-card" onclick="selectPlan('yearly', 650000, 'الباقة السنوية', 365)">
+        <div class="plan-badge green">أفضل قيمة</div>
+        <div class="plan-header">
+          <div class="plan-icon green">👑</div>
+          <div class="plan-info">
+            <h3>الباقة السنوية</h3>
+            <span class="plan-days">365 يوم</span>
+          </div>
+        </div>
+        <div class="plan-price">650,000 <small>د.ع</small></div>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Payment Screen (ZainCash / MasterCard) ═══ -->
+<div class="screen" id="paymentScreen">
+  <div class="page-header">
+    <button class="back-btn-inline" onclick="showScreen('subscriptionScreen')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    <h2>الدفع - الاشتراك</h2>
+    <div></div>
+  </div>
+  
+  <div class="payment-content">
+    <!-- ملخص الباقة -->
+    <div class="payment-summary">
+      <div class="summary-icon">💳</div>
+      <div class="summary-info">
+        <h4 id="payPlanName">الباقة الشهرية</h4>
+        <p>دفع آمن • تشفير SSL</p>
+      </div>
+      <div class="summary-price" id="payPlanPrice">60,000 د.ع</div>
+    </div>
+
+    <!-- طرق الدفع -->
+    <div class="payment-methods">
+      <!-- ZainCash -->
+      <div class="payment-method-card">
+        <div class="method-header">
+          <h4 style="color: #FF8C00;">ZainCash</h4>
+          <span class="method-badge" style="color: #FF8C00; border-color: #FF8C00;">محفظة إلكترونية</span>
+        </div>
+        <label>رقم الهاتف</label>
+        <input type="tel" id="zcPhone" placeholder="0770... .... ..." maxlength="11">
+        
+        <label>الرقم السري (PIN)</label>
+        <input type="password" id="zcPin" placeholder="••••" maxlength="4">
+        
+        <button class="pay-btn orange" onclick="payWithZainCash()">ادفع عبر ZainCash</button>
+      </div>
+
+      <!-- MasterCard -->
+      <div class="payment-method-card">
+        <div class="method-header">
+          <h4 style="color: #2563EB;">MasterCard</h4>
+          <span class="method-badge" style="color: #2563EB; border-color: #2563EB;">بطاقة بنكية</span>
+        </div>
+        <label>رقم البطاقة (16 رقم)</label>
+        <input type="text" id="ccNumber" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)">
+        
+        <div class="row-inputs">
+          <div style="flex: 1;">
+            <label>تاريخ الانتهاء</label>
+            <input type="text" id="ccExpiry" placeholder="09/27" maxlength="5" oninput="formatExpiry(this)">
+          </div>
+          <div style="flex: 1;">
+            <label>CVV</label>
+            <input type="password" id="ccCvv" placeholder="•••" maxlength="3">
+          </div>
+        </div>
+        
+        <label>اسم حامل البطاقة</label>
+        <input type="text" id="ccName" placeholder="AHMED MOHAMMED" style="text-transform: uppercase;">
+        
+        <button class="pay-btn blue" onclick="payWithMasterCard()">ادفع عبر MasterCard</button>
+      </div>
+    </div>
+
+    <!-- الإجمالي -->
+    <div class="payment-total">
+      <span>المجموع الكلي:</span>
+      <strong id="payTotal">60,000 د.ع</strong>
+    </div>
+  </div>
+</div>
 </body>
 </html>
