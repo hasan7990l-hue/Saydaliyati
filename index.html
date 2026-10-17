@@ -179,14 +179,71 @@
     <div class="orders-tabs"><button class="order-tab active" onclick="filterOrders('all', this)" data-i18n="all">الكل</button><button class="order-tab" onclick="filterOrders('pending', this)" data-i18n="active">جارية</button><button class="order-tab" onclick="filterOrders('delivered', this)" data-i18n="completed">مكتملة</button><button class="order-tab" onclick="filterOrders('cancelled', this)" data-i18n="cancelled">ملغاة</button></div>
     <div class="orders-list" id="ordersList"></div>
   </div>
+  <!-- ═══ Tracking + Driver Identity (للمندوب والعميل) ═══ -->
+<div class="screen" id="trackingScreen">
+  <div class="page-header">
+    <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    <h2><span data-i18n="tracking">تتبع الطلب</span> #<span id="trackingOrderId">—</span></h2>
+    <div></div>
+  </div>
+  
+  <div class="tracking-content">
+    <!-- 1. شاشة القبول الأعمى (تظهر للمندوب فقط عند وجود طلب جديد) -->
+    <div id="blindAcceptContainer" style="display: none;">
+      <div class="blind-banner">⚠️ الطلب قريب منك</div>
+      
+      <div class="blind-card">
+        <div class="blind-header">
+          <h3>طلب جديد <span id="blindOrderId">#10284</span></h3>
+          <div class="blind-timer-circle">
+            <span id="blindTimer">45</span>
+            <small>ثانية</small>
+          </div>
+        </div>
+        
+        <div class="blind-route">
+          <div class="blind-route-item locked">
+            <span class="blind-icon">🏪</span>
+            <div>
+              <strong id="blindRestaurantName">مطعم برجر هاوس</strong>
+              <span class="lock-text">🔒 غير قابل للضغط</span>
+            </div>
+          </div>
+          <div class="blind-route-item locked">
+            <span class="blind-icon">🎯</span>
+            <div>
+              <strong class="blur-text" id="blindCustomerAddress">شارع فلسطين، بغداد</strong>
+              <span class="lock-text">🔒 سيظهر بعد القبول</span>
+            </div>
+          </div>
+        </div>
 
-  <!-- ═══ Tracking + Driver Identity ═══ -->
-  <div class="screen" id="trackingScreen">
-    <div class="page-header"><button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><h2><span data-i18n="tracking">تتبع الطلب</span> #<span id="trackingOrderId">—</span></h2><div></div></div>
-    <div class="tracking-content">
-      <div class="tracking-eta"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><strong id="trackingETA" data-i18n="arriving15">يصل خلال 15 دقيقة</strong></div>
+        <div class="blind-distance">
+          <span>📏 2.3 كم</span>
+          <span>⏱️ 8 دقائق</span>
+        </div>
+        
+        <div class="blind-earnings">
+          💰 ربحك: <strong id="blindEarnings">4,500</strong> د.ع + 500 بقشيش
+        </div>
+      </div>
+
+      <div class="blind-actions">
+        <button class="blind-reject-btn" onclick="rejectOrder()">رفض</button>
+        <button class="blind-accept-btn" onclick="acceptOrderBlind()">قبول الطلب</button>
+      </div>
+    </div>
+
+    <!-- 2. شاشة التتبع العادية (تظهر بعد القبول أو للعميل) -->
+    <div id="normalTrackingContainer">
+      <div class="tracking-eta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <strong id="trackingETA" data-i18n="arriving15">يصل خلال 15 دقيقة</strong>
+      </div>
+      
       <div class="tracking-map" id="trackingMap"></div>
       
+      <!-- بطاقة هوية العميل (تظهر للمندوب فقط) -->
       <div class="driver-identity-card" id="driverIdentityCard" style="display:none;">
         <div class="driver-id-header">
           <div class="driver-id-avatar" id="driverIdAvatar">أ</div>
@@ -208,10 +265,13 @@
         <div class="timeline-step" id="step-pickedup"><div class="step-dot">○</div><div class="step-content"><strong data-i18n="onTheWay">في الطريق</strong><span data-i18n="onTheWayDesc">سيتم تحديث الحالة</span></div></div>
         <div class="timeline-step" id="step-delivered"><div class="step-dot">○</div><div class="step-content"><strong data-i18n="delivered">تم التوصيل</strong><span data-i18n="deliveredDesc">شكراً لك</span></div></div>
       </div>
-      <div class="tracking-actions"><button class="btn-outline" onclick="cancelOrder()" data-i18n="cancel">إلغاء</button><button class="btn-primary" onclick="chatWithDriver()">💬 <span data-i18n="chat">دردشة</span></button></div>
+      <div class="tracking-actions">
+        <button class="btn-outline" onclick="cancelOrder()" data-i18n="cancel">إلغاء</button>
+        <button class="btn-primary" onclick="chatWithDriver()">💬 <span data-i18n="chat">دردشة</span></button>
+      </div>
     </div>
   </div>
-
+</div>
   <!-- ═══ Chat ═══ -->
   <div class="screen" id="chatScreen">
     <div class="chat-header"><button class="back-btn-inline" onclick="closeChat()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><div class="chat-user-info"><div class="chat-user-avatar" id="chatUserAvatar">أ</div><div class="chat-user-text"><h4 id="chatUserName">—</h4><span data-i18n="online">متصل الآن ●</span></div></div><button class="icon-btn-inline" onclick="callDriver()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div>
