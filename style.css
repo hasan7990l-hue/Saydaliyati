@@ -365,3 +365,22 @@ body.lang-en .driver-header > div:first-child { text-align: left; }
 .chat-input-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--white); border-top: 1px solid var(--border); }
 .chat-input-field { flex: 1; padding: 12px 16px; background: var(--bg-gray); border-radius: var(--r-pill); font-size: 14px; }
 .chat-send-btn { width: 44px; height: 44px; border-radius: 50%; background: #7C3AED; color: #FFFFFF; display: flex; align-items: center; justify-content: center; }
+/* ═══════════════════════════════════════
+   إخفاء خيارات الأصوات عن غير المندوبين
+   ═══════════════════════════════════════ */
+
+/* إخفاء خيار صوت الإشعارات افتراضياً */
+#notifSoundRow {
+  display: none !important;
+}
+
+/* إخفاء خيار رنين الطلبات افتراضياً */
+#orderSoundRow {
+  display: none !important;
+}
+
+/* إظهارهم فقط إذا كان المستخدم مندوباً (نستخدم كلاس خاص) */
+body.role-driver #notifSoundRow,
+body.role-driver #orderSoundRow {
+  display: flex !important;
+}
