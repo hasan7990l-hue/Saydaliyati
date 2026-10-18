@@ -500,47 +500,124 @@
     <p class="settings-footer"><span data-i18n="appName">وصّلها</span> © 2026</p>
   </div>
 </div>
-  <!-- ═══ Subscription Screen (تصميم الـ Storyboard) ═══ -->
-  <div class="screen" id="subscriptionScreen" style="background: #F8FAFC;">
-    <div class="page-header" style="background: #F8FAFC; box-shadow: none; border-bottom: 1px solid #E2E8F0;">
-      <button class="back-btn-inline" onclick="goHome()" style="background: #FFF; border: 1px solid #E2E8F0; color: #0F172A;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-      </button>
-      <h2 style="color: #0F172A; font-weight: 900;">الباقات الاشتراكية</h2>
-      <div></div>
-    </div>
-    
-    <div class="storyboard-container">
-      <!-- 1. البطاقة الخضراء (التجربة المجانية) -->
-      <div class="story-free-card" onclick="activateFreeTrial()">
-        <div class="free-badge-top">مجاناً</div>
-        <h3>تجربة مجانية</h3>
-        <div class="free-card-price">0 دينار / 3 أيام</div>
-        <p class="free-card-desc">ابدأ الآن - لا يتم الدفع حتى انتهاء الفترة التجريبية</p>
-        <button class="story-free-btn">تفعيل التجربة المجانية</button>
-      </div>
-
-      <!-- 2. البطاقة الشهرية (رمادية) -->
-      <div class="story-grey-card" onclick="openSupportForPlan('شهري', 15000)">
-        <div class="story-grey-info">
-          <h4>شهري - 15,000 د.ع</h4>
-          <p>تجدد شهرياً • إلغاء في أي وقت</p>
-        </div>
-      </div>
-
-      <!-- 3. البطاقة السنوية (رمادية) -->
-      <div class="story-grey-card" onclick="openSupportForPlan('سنوي', 150000)">
-        <div class="story-grey-info">
-          <h4>سنوي - 150,000 د.ع</h4>
-          <p>توفير 17% • أفضل قيمة</p>
-        </div>
-      </div>
-
-      <!-- 4. زر الاستمرار -->
-      <button class="story-continue-btn" onclick="goHome()">الاستمرار</button>
-    </div>
+  <!-- ═══ Subscription Screen (نظام المنسدل) ═══ -->
+<div class="screen" id="subscriptionScreen" style="background: #F8FAFC;">
+  <div class="page-header" style="background: #F8FAFC; box-shadow: none; border-bottom: 1px solid #E2E8F0;">
+    <button class="back-btn-inline" onclick="goHome()" style="background: #FFF; border: 1px solid #E2E8F0; color: #0F172A;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h2 style="color: #0F172A; font-weight: 900;">خطط الاشتراك</h2>
+    <div></div>
+  </div>
+  
+  <div class="sub-header">
+    <h1>خطط الاشتراك المرنة</h1>
+    <p>اختر الخطة المناسبة لتوصيل الأدوية والمستلزمات بسرعة وأمان.</p>
   </div>
 
+  <div class="accordion-container">
+    
+    <!-- 1. الباقة الشهرية -->
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="acc-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>شهري</span>
+          <strong>69,000 د.ع</strong>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <ul class="acc-features">
+          <li><span>✓</span> جميع مزايا الخطة الشهرية</li>
+          <li><span>✓</span> توفير 20% مقارنة بالشهري</li>
+          <li><span>✓</span> تقارير شهرية للأداء</li>
+          <li><span>✓</span> مدير حساب مخصص</li>
+        </ul>
+        <button class="acc-subscribe-btn outline" onclick="openSupportForPlan('شهري', 69000)">اشترك الآن</button>
+      </div>
+    </div>
+
+    <!-- 2. نصف سنوي -->
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="acc-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>نصف سنوي</span>
+          <strong>320,000 د.ع</strong>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <ul class="acc-features">
+          <li><span>✓</span> جميع مزايا الخطة الشهرية</li>
+          <li><span>✓</span> توفير 15% مقارنة بالشهري</li>
+          <li><span>✓</span> تقارير شهرية للأداء</li>
+          <li><span>✓</span> دعم فني ذو أولوية</li>
+        </ul>
+        <button class="acc-subscribe-btn solid" onclick="openSupportForPlan('نصف سنوي', 320000)">اشترك الآن</button>
+      </div>
+    </div>
+
+    <!-- 3. ربع سنوي -->
+    <div class="accordion-item">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="acc-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>ربع سنوي</span>
+          <strong>170,000 د.ع</strong>
+        </div>
+        <span class="acc-arrow">▼</span>
+      </button>
+      <div class="accordion-body">
+        <ul class="acc-features">
+          <li><span>✓</span> جميع مزايا الخطة الشهرية</li>
+          <li><span>✓</span> توفير 15% مقارنة بالشهري</li>
+          <li><span>✓</span> تقارير شهرية للأداء</li>
+          <li><span>✓</span> دعم فني ذو أولوية</li>
+        </ul>
+        <button class="acc-subscribe-btn outline" onclick="openSupportForPlan('ربع سنوي', 170000)">اشترك الآن</button>
+      </div>
+    </div>
+
+    <!-- 4. السنوي (الأفضل قيمة) -->
+    <div class="accordion-item featured">
+      <button class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="acc-title">
+          <div class="best-badge">الأفضل قيمة ⭐</div>
+          <span style="color: #C9A84C; font-weight: 900;">سنوي</span>
+          <strong style="color: #C9A84C;">590,000 د.ع</strong>
+        </div>
+        <span class="acc-arrow" style="color: #C9A84C;">▼</span>
+      </button>
+      <div class="accordion-body">
+        <div class="discount-badge">توفير 25% - أفضل قيمة</div>
+        <ul class="acc-features">
+          <li><span>✓</span> جميع المزايا السابقة</li>
+          <li><span>✓</span> دعم فني 24/7</li>
+          <li><span>✓</span> أولوية قصوى في التوصيل</li>
+          <li><span>✓</span> تحليلات متقدمة ولوحة إدارية</li>
+        </ul>
+        <button class="acc-subscribe-btn gold" onclick="openSupportForPlan('سنوي', 590000)">اشترك الآن</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- طرق الدفع -->
+  <div class="payment-footer">
+    <h4>طرق الدفع الآمنة</h4>
+    <div class="payment-logos">
+      <span class="pay-logo" style="color:#FF8C00;">ZainCash</span>
+      <span class="pay-logo" style="color:#2563EB;">MasterCard</span>
+    </div>
+    <p>دفع آمن ومشفر | إمكانية الإلغاء في أي وقت | استرجاع خلال 7 أيام</p>
+  </div>
+
+  <div class="support-note">
+    <p>للاستفسار: 0770 000 0000 • support@wassalha.iq</p>
+  </div>
+</div>
   <!-- ═══ Success Screen (شاشة النجاح) ═══ -->
   <div class="screen" id="successScreen">
     <div class="success-content">
