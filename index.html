@@ -14,27 +14,54 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- ═══ Splash Screen (الفخم) ═══ -->
-  <div class="screen active" id="splashScreen">
-    <div class="splash-gold-bg"></div>
-    <div class="splash-content">
-      <div class="splash-logo-wrap">
-        <svg class="splash-logo" viewBox="0 0 200 200" fill="none">
-          <circle cx="100" cy="100" r="85" stroke="#C9A84C" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.3"/>
-          <path d="M100 30 C60 70 60 120 100 160 C140 120 140 70 100 30 Z" stroke="#C9A84C" stroke-width="3" fill="none"/>
-          <path d="M85 85 H115 M100 70 V100" stroke="#C9A84C" stroke-width="4" stroke-linecap="round"/>
-          <line x1="20" y1="90" x2="60" y2="90" stroke="#C9A84C" stroke-width="2" opacity="0.6"/>
-          <line x1="30" y1="105" x2="55" y2="105" stroke="#C9A84C" stroke-width="2" opacity="0.4"/>
-          <line x1="40" y1="120" x2="60" y2="120" stroke="#C9A84C" stroke-width="2" opacity="0.2"/>
-        </svg>
-      </div>
-      <h1 class="splash-title">وصّلها</h1>
-      <p class="splash-tagline">نظام التوصيل الرسمي للصيدليات</p>
-      <button class="splash-start-btn" onclick="goToLogin()">ابدأ الآن</button>
+  <!-- ═══ Splash Screen (التصميم الفخم) ═══ -->
+<div class="screen active" id="splashScreen">
+  <div class="splash-gold-bg"></div>
+  
+  <div class="splash-content">
+    
+    <!-- الشعار الذهبي -->
+    <div class="splash-logo-wrap">
+      <svg class="splash-logo" viewBox="0 0 200 200" fill="none">
+        <!-- الدائرة المتقطعة -->
+        <circle cx="100" cy="90" r="65" stroke="#C9A84C" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.5"/>
+        <!-- شكل القطرة -->
+        <path d="M100 25 C65 65 65 115 100 155 C135 115 135 65 100 25 Z" fill="url(#goldGradient)" stroke="#FFF" stroke-width="2"/>
+        <!-- الصليب -->
+        <path d="M85 85 H115 M100 70 V100" stroke="#0A1931" stroke-width="6" stroke-linecap="round"/>
+        <!-- خطوط السرعة -->
+        <line x1="20" y1="70" x2="50" y2="70" stroke="#C9A84C" stroke-width="2" opacity="0.8"/>
+        <line x1="30" y1="85" x2="55" y2="85" stroke="#C9A84C" stroke-width="2" opacity="0.6"/>
+        <line x1="40" y1="100" x2="55" y2="100" stroke="#C9A84C" stroke-width="2" opacity="0.4"/>
+        
+        <!-- تدرج ذهبي للشعار -->
+        <defs>
+          <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FDE047" />
+            <stop offset="50%" stop-color="#D4AF37" />
+            <stop offset="100%" stop-color="#B8860B" />
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
-  </div>
 
+    <!-- النصوص -->
+    <h1 class="splash-title">وصّلها</h1>
+    <p class="splash-tagline">نظام التوصيل الرسمي للصيدليات</p>
+
+    <!-- بطاقة الترحيب الزجاجية -->
+    <div class="welcome-card">
+      <p>أهلاً بك في وصّلها.<br>منصتك الموثوقة لتوصيل الطلبات والمستلزمات بسرعة وأمان.<br>نحن هنا لخدمتك على مدار الساعة.</p>
+    </div>
+
+    <!-- زر ابدأ الآن -->
+    <button class="splash-start-btn" onclick="goToLoginScreen()">ابدأ الآن</button>
+    
+    <!-- نص الشروط -->
+    <p class="splash-terms">بالضغط على ابدأ، أنت توافق على الشروط والأحكام</p>
+    
+  </div>
+  </div>
   <!-- ═══ Login Screen ═══ -->
   <div class="screen" id="loginScreen">
     <div class="lang-switch-top">
