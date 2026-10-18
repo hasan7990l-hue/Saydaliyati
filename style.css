@@ -572,3 +572,99 @@ body.lang-en .driver-header > div:first-child { text-align: left; }
 
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--navy); color: #FFF; padding: 14px 24px; border-radius: var(--r-md); font-size: 14px; font-weight: 700; z-index: 99999; opacity: 0; pointer-events: none; transition: 0.3s; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+/* ═══ Subscription Accordion Design ═══ */
+.sub-header { text-align: center; padding: 20px; }
+.sub-header h1 { font-size: 24px; font-weight: 900; color: #1E3A8A; margin-bottom: 8px; }
+.sub-header p { font-size: 14px; color: #64748B; line-height: 1.6; }
+
+.accordion-container { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+
+.accordion-item {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordion-item.featured {
+  border: 2px solid #C9A84C;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.15);
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.acc-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.acc-title span { font-size: 16px; font-weight: 800; color: #0F172A; }
+.acc-title strong { font-size: 16px; font-weight: 900; color: #1E3A8A; margin-right: auto; }
+.acc-arrow { font-size: 12px; color: #64748B; transition: transform 0.3s; }
+
+.best-badge {
+  background: #C9A84C;
+  color: #FFF;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out;
+  background: #F8FAFC;
+}
+
+.accordion-body.active {
+  max-height: 500px;
+  padding-bottom: 20px;
+}
+
+.acc-features { list-style: none; padding: 16px 20px; margin: 0; }
+.acc-features li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #475569; margin-bottom: 10px; font-weight: 600; }
+.acc-features li span { color: #10B981; font-weight: 900; }
+
+.discount-badge {
+  background: #FEF3C7;
+  color: #D97706;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  margin: 16px 20px 0;
+}
+
+.acc-subscribe-btn {
+  width: calc(100% - 40px);
+  margin: 0 20px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  border: none;
+}
+
+.acc-subscribe-btn.outline { background: transparent; border: 1.5px solid #1E3A8A; color: #1E3A8A; }
+.acc-subscribe-btn.solid { background: #1E3A8A; color: #FFF; }
+.acc-subscribe-btn.gold { background: #C9A84C; color: #FFF; }
+
+.payment-footer { margin: 20px; padding: 20px; background: #FFFFFF; border-radius: 16px; text-align: center; border: 1px solid #E2E8F0; }
+.payment-footer h4 { font-size: 15px; color: #1E3A8A; margin-bottom: 12px; font-weight: 800; }
+.payment-logos { display: flex; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.pay-logo { padding: 6px 16px; background: #F1F5F9; border-radius: 8px; font-weight: 800; font-size: 13px; }
+.payment-footer p { font-size: 11px; color: #94A3B8; }
+.support-note { text-align: center; padding: 0 20px 30px; font-size: 12px; color: #64748B; }
