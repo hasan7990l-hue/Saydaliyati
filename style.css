@@ -668,3 +668,21 @@ body.lang-en .driver-header > div:first-child { text-align: left; }
 .pay-logo { padding: 6px 16px; background: #F1F5F9; border-radius: 8px; font-weight: 800; font-size: 13px; }
 .payment-footer p { font-size: 11px; color: #94A3B8; }
 .support-note { text-align: center; padding: 0 20px 30px; font-size: 12px; color: #64748B; }
+/* ═══════════════════════════════════════
+   ✨ Splash Screen (التصميم الفخم)
+   ═══════════════════════════════════════ */
+#splashScreen { background: #0A1931; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.splash-gold-bg { position: absolute; top: 0; right: 0; bottom: 0; width: 100%; background: radial-gradient(circle at top right, rgba(201, 168, 76, 0.2), transparent 60%); pointer-events: none; }
+.splash-content { position: relative; z-index: 2; text-align: center; width: 100%; max-width: 400px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+.splash-logo-wrap { width: 180px; height: 180px; margin-bottom: 0px; animation: logoPulse 3s ease-in-out infinite; }
+@keyframes logoPulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(201, 168, 76, 0.4)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 35px rgba(201, 168, 76, 0.8)); } }
+.splash-logo { width: 100%; height: 100%; }
+.splash-title { font-size: 52px; font-weight: 900; color: #FFFFFF; margin: 0 0 5px; letter-spacing: 1px; }
+.splash-tagline { font-size: 16px; color: #A0AEC0; margin: 0 0 30px; font-weight: 500; }
+
+.welcome-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 24px; margin-bottom: 40px; width: 100%; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); }
+.welcome-card p { font-size: 15px; color: #E2E8F0; line-height: 1.8; font-weight: 600; margin: 0; text-align: center; }
+
+.splash-start-btn { width: 100%; padding: 18px; background: #FFFFFF; color: #0A1931; border: none; border-radius: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); transition: transform 0.2s; margin-bottom: 16px; }
+.splash-start-btn:active { transform: scale(0.98); }
+.splash-terms { font-size: 11px; color: #64748B; text-align: center; margin: 0; }
