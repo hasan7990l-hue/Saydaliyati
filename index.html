@@ -336,6 +336,18 @@
         <div class="settings-row-new"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div><div class="row-content"><span data-i18n="sound">الصوت</span></div><label class="toggle-switch"><input type="checkbox" id="soundToggle" onchange="toggleSound()"><span class="toggle-slider"></span></label></div>
         <div class="settings-row-new" id="notifSoundRow" onclick="openSoundPicker('notification')"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div class="row-content"><span data-i18n="notifSound">صوت الإشعارات</span></div><span class="row-value" id="notifSoundValue">افتراضي</span><span class="row-arrow">←</span></div>
         <div class="settings-row-new" id="orderSoundRow" onclick="openSoundPicker('order')"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div><div class="row-content"><span data-i18n="orderSound">رنين الطلبات</span></div><span class="row-value" id="orderSoundValue">افتراضي</span><span class="row-arrow">←</span></div>
+        <!-- زر باقات الاشتراك (للمندوب فقط) -->
+<div class="settings-row-new" id="subscriptionRow" onclick="openSubscription()" style="display: none;">
+  <div class="row-icon" style="background: rgba(245, 158, 11, 0.15);">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+      <path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"/>
+    </svg>
+  </div>
+  <div class="row-content">
+    <span style="color: #F59E0B; font-weight: 900;">باقات الاشتراك</span>
+  </div>
+  <span class="row-arrow">←</span>
+</div>
         <div class="settings-row-new" onclick="openContactUs()"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div class="row-content"><span data-i18n="contactUs">تواصل معنا</span></div><span class="row-arrow">←</span></div>
         <div class="settings-row-new" onclick="openAbout()"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="row-content"><span data-i18n="aboutApp">عن التطبيق</span></div><span class="row-arrow">←</span></div>
         <div class="settings-row-new" onclick="openTerms()"><div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="row-content"><span data-i18n="terms">الشروط والأحكام</span></div><span class="row-arrow">←</span></div>
