@@ -781,6 +781,15 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   
   if (typeof updateSoundValues === 'function') updateSoundValues();
+  // إظهار زر الاشتراك للمندوب فقط
+const subRow = document.getElementById('subscriptionRow');
+if (subRow) {
+  if (currentUser && currentUser.role === 'driver') {
+    subRow.style.display = 'flex';
+  } else {
+    subRow.style.display = 'none';
+  }
+}
 }
 
 function setTheme(theme, btn) {
