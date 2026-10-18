@@ -1,9 +1,9 @@
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha v8.0 (Part 1/2)
-// State + Screens + Auth + Home + Profile
+// ⚙️ SCRIPT.JS — Wassilha v9.0 (Part 1/2)
+// State + Screens + Auth + Home + Map + Orders
 // ============================================
 
-console.log('🚀 Wassilha v8.0 loading...');
+console.log('🚀 Wassilha v9.0 loading...');
 
 // ═══ Global State ═══
 let currentUser = null;
@@ -43,13 +43,13 @@ function showScreen(screenId) {
 // ═══ Splash & Init ═══
 function initSplash() {
   if (window.Lang) Lang.init();
+  // Splash يظهر 2.5 ثانية ثم نتحقق من المستخدم
   setTimeout(async () => {
     const savedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.user);
     if (savedUser) {
       try {
         currentUser = JSON.parse(savedUser);
         
-        // إضافة الكلاس الخاص بالمندوب
         if (currentUser.role === 'driver') {
           document.body.classList.add('role-driver');
         } else {
@@ -291,7 +291,7 @@ function openProfile() {
   document.getElementById('profileRating').textContent = currentUser.rating || '5.0';
 }
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha v8.0 (Part 2/2)
+// ⚙️ SCRIPT.JS — Wassilha v9.0 (Part 2/2)
 // Map + Orders + Chat + Driver + Settings + Blind Acceptance + Subscription
 // ============================================
 
@@ -495,7 +495,6 @@ async function openTracking(orderId) {
 
   if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
 
-  // 1️⃣ المندوب يرى طلباً جديداً (قبول أعمى)
   if (isDriver && order.status === 'pending') {
     blindContainer.classList.add('active');
     normalContainer.style.display = 'none';
@@ -519,7 +518,6 @@ async function openTracking(orderId) {
     return;
   }
 
-  // 2️⃣ المندوب قبل الطلب (يرى تفاصيل العميل)
   if (isDriver && order.status !== 'pending') {
     blindContainer.classList.remove('active');
     normalContainer.style.display = 'block';
@@ -537,7 +535,6 @@ async function openTracking(orderId) {
       customerCard.dataset.driverName = customer.name;
     }
   } 
-  // 3️⃣ العميل يرى طلبه
   else if (!isDriver) {
     blindContainer.classList.remove('active');
     normalContainer.style.display = 'block';
@@ -548,7 +545,6 @@ async function openTracking(orderId) {
     }
   }
 
-  // تحديث Timeline
   const statusIndex = { 'pending': 0, 'accepted': 1, 'picked_up': 2, 'delivered': 3, 'cancelled': -1 };
   const currentIndex = statusIndex[order.status] ?? 0;
   ['created', 'accepted', 'pickedup', 'delivered'].forEach((step, i) => {
@@ -733,7 +729,6 @@ function updateDriverToggleUI() {
 }
 
 async function toggleDriverOnline() {
-  // إذا كان متصلاً، أوقف الاتصال
   if (driverOnline) {
     driverOnline = false;
     updateDriverToggleUI();
@@ -743,7 +738,6 @@ async function toggleDriverOnline() {
     return;
   }
 
-  // فحص الاشتراك قبل بدء العمل
   const sb = window.sb;
   try {
     const { data: driver, error } = await sb.from('drivers')
@@ -752,16 +746,13 @@ async function toggleDriverOnline() {
     if (error) throw error;
     const now = new Date();
 
-    // 1. مشترك مدفوع وفعال
     if (driver.is_subscribed && driver.subscription_end_date && new Date(driver.subscription_end_date) > now) {
       // مسموح
     }
-    // 2. الفترة التجريبية فعالة
     else if (driver.is_trial_used && driver.trial_end_date && new Date(driver.trial_end_date) > now) {
       const daysLeft = Math.ceil((new Date(driver.trial_end_date) - now) / (1000 * 60 * 60 * 24));
       showToast(`🎁 لديك ${daysLeft} أيام مجانية متبقية`);
     }
-    // 3. لم يستخدم الفترة التجريبية
     else if (!driver.is_trial_used) {
       const trialEnd = new Date();
       trialEnd.setDate(trialEnd.getDate() + 3);
@@ -772,7 +763,6 @@ async function toggleDriverOnline() {
       }).eq('user_id', currentUser.id);
       showToast('🎉 مرحباً بك! لديك 3 أيام تجريبية مجانية');
     }
-    // 4. انتهى الاشتراك والفترة
     else {
       showToast('⚠️ انتهى اشتراكك. يرجى الاشتراك للاستمرار');
       setTimeout(() => goToSubscription(), 1500);
@@ -784,7 +774,6 @@ async function toggleDriverOnline() {
     return;
   }
 
-  // ✅ مسموح
   driverOnline = true;
   updateDriverToggleUI();
   showToast('✅ ' + t('online'));
@@ -846,7 +835,6 @@ function openSettings() {
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
   if (typeof updateSoundValues === 'function') updateSoundValues();
   
-  // إظهار زر الاشتراك للمندوب فقط
   const subRow = document.getElementById('subscriptionRow');
   if (subRow) {
     subRow.style.display = (currentUser && currentUser.role === 'driver') ? 'flex' : 'none';
@@ -1098,7 +1086,7 @@ window.addEventListener('language-changed', (e) => {
 
 // ═══ Init ═══
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Wassilha v8.0 initialized');
+  console.log('🚀 Wassilha v9.0 initialized');
   const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'auto';
   applyTheme(savedTheme);
   initSystemThemeListener();
@@ -1115,4 +1103,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof window[fn] === 'function' || typeof eval(fn) === 'function') window[fn] = eval(fn);
 });
 
-console.log('✅ Script.js loaded — Wassilha v8.0');
+console.log('✅ Script.js loaded — Wassilha v9.0');
