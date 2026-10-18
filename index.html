@@ -15,17 +15,24 @@
 </head>
 <body>
 
-  <!-- ═══ Splash Screen ═══ -->
+  <!-- ═══ Splash Screen (الفخم) ═══ -->
   <div class="screen active" id="splashScreen">
+    <div class="splash-gold-bg"></div>
     <div class="splash-content">
       <div class="splash-logo-wrap">
-        <svg class="splash-logo" viewBox="0 0 200 200" fill="none"><path d="M35 100 Q25 75 40 55 Q55 40 75 50 L95 70 L75 90 Q55 105 35 100 Z" fill="#FFFFFF"/><path d="M165 100 Q175 75 160 55 Q145 40 125 50 L105 70 L125 90 Q145 105 165 100 Z" fill="#FFFFFF"/><ellipse cx="100" cy="110" rx="20" ry="28" fill="#FFFFFF"/><circle cx="100" cy="80" r="11" fill="#FFFFFF"/><path d="M100 138 L100 175 M85 160 L100 175 L115 160" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="splash-logo" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="100" r="85" stroke="#C9A84C" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.3"/>
+          <path d="M100 30 C60 70 60 120 100 160 C140 120 140 70 100 30 Z" stroke="#C9A84C" stroke-width="3" fill="none"/>
+          <path d="M85 85 H115 M100 70 V100" stroke="#C9A84C" stroke-width="4" stroke-linecap="round"/>
+          <line x1="20" y1="90" x2="60" y2="90" stroke="#C9A84C" stroke-width="2" opacity="0.6"/>
+          <line x1="30" y1="105" x2="55" y2="105" stroke="#C9A84C" stroke-width="2" opacity="0.4"/>
+          <line x1="40" y1="120" x2="60" y2="120" stroke="#C9A84C" stroke-width="2" opacity="0.2"/>
+        </svg>
       </div>
-      <h1 class="splash-title" data-i18n="appName">وصّلها</h1>
-      <p class="splash-tagline" data-i18n="tagline">خدمة توصيل موثوقة</p>
-      <div class="splash-dots"><span></span><span></span><span></span></div>
+      <h1 class="splash-title">وصّلها</h1>
+      <p class="splash-tagline">نظام التوصيل الرسمي للصيدليات</p>
+      <button class="splash-start-btn" onclick="goToLogin()">ابدأ الآن</button>
     </div>
-    <div class="splash-footer"><p data-i18n="version">الإصدار</p><p>1.0.0</p></div>
   </div>
 
   <!-- ═══ Login Screen ═══ -->
@@ -43,10 +50,7 @@
       <div class="auth-card">
         <h2 class="auth-card-title" data-i18n="signIn">تسجيل الدخول</h2>
         <form class="auth-form" onsubmit="handleLogin(event)">
-          <div class="input-wrap">
-            <input type="tel" id="loginPhone" class="input-field" data-i18n-placeholder="phonePlaceholder" placeholder="07XXXXXXXXX" maxlength="11" inputmode="numeric" required>
-            <div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-          </div>
+          <div class="input-wrap"><input type="tel" id="loginPhone" class="input-field" data-i18n-placeholder="phonePlaceholder" placeholder="07XXXXXXXXX" maxlength="11" required><div class="input-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div></div>
           <button type="submit" class="btn-primary" id="loginBtn"><span data-i18n="continue">متابعة</span></button>
         </form>
         <div class="auth-divider"><span data-i18n="or">أو</span></div>
@@ -79,7 +83,7 @@
       <div class="auth-card">
         <form class="auth-form" onsubmit="handleRegister(event)">
           <div class="input-wrap"><input type="text" id="registerName" class="input-field" data-i18n-placeholder="fullName" placeholder="الاسم الكامل" required><div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
-          <div class="input-wrap"><input type="tel" id="registerPhone" class="input-field" data-i18n-placeholder="phonePlaceholder" placeholder="07XXXXXXXXX" maxlength="11" inputmode="numeric" required><div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div></div>
+          <div class="input-wrap"><input type="tel" id="registerPhone" class="input-field" data-i18n-placeholder="phonePlaceholder" placeholder="07XXXXXXXXX" maxlength="11" required><div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div></div>
           <div class="input-wrap" id="vehicleField" style="display: none;"><select id="registerVehicle" class="input-field"><option value="" data-i18n="selectVehicle">اختر نوع المركبة</option><option value="motorcycle" data-i18n="motorcycle">دراجة نارية</option><option value="bicycle" data-i18n="bicycle">دراجة هوائية</option><option value="car" data-i18n="car">سيارة</option></select><div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-4l-2 6h8l-2-6z"/></svg></div></div>
           <div class="input-wrap"><input type="password" id="registerPassword" class="input-field" data-i18n-placeholder="password" placeholder="كلمة المرور" minlength="6" required><div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><button type="button" class="eye-btn" onclick="togglePassword('registerPassword', this)"><span>👁️</span></button></div>
           <label class="terms-check"><input type="checkbox" id="termsCheckbox" required><span><span data-i18n="agreeTerms">أوافق على</span> <a href="#" data-i18n="terms">الشروط والأحكام</a></span></label>
@@ -233,71 +237,32 @@
   <div class="orders-tabs"><button class="order-tab active" onclick="filterOrders('all', this)" data-i18n="all">الكل</button><button class="order-tab" onclick="filterOrders('pending', this)" data-i18n="active">جارية</button><button class="order-tab" onclick="filterOrders('delivered', this)" data-i18n="completed">مكتملة</button><button class="order-tab" onclick="filterOrders('cancelled', this)" data-i18n="cancelled">ملغاة</button></div>
   <div class="orders-list" id="ordersList"></div>
 </div>
-<!-- ═══ Tracking + Blind Acceptance (للمندوب والعميل) ═══ -->
+
+<!-- ═══ Tracking + Blind Acceptance ═══ -->
 <div class="screen" id="trackingScreen">
   <div class="page-header">
     <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
     <h2><span data-i18n="tracking">تتبع الطلب</span> #<span id="trackingOrderId">—</span></h2>
     <div></div>
   </div>
-  
   <div class="tracking-content">
-    <!-- 1. شاشة القبول الأعمى (تظهر للمندوب فقط عند وجود طلب جديد) -->
     <div id="blindAcceptContainer" style="display: none;">
       <div class="blind-banner">⚠️ الطلب قريب منك</div>
-      
       <div class="blind-card">
-        <div class="blind-header">
-          <h3>طلب جديد <span id="blindOrderId">#10284</span></h3>
-          <div class="blind-timer-circle">
-            <span id="blindTimer">45</span>
-            <small>ثانية</small>
-          </div>
-        </div>
-        
+        <div class="blind-header"><h3>طلب جديد <span id="blindOrderId">#10284</span></h3><div class="blind-timer-circle"><span id="blindTimer">45</span><small>ثانية</small></div></div>
         <div class="blind-route">
-          <div class="blind-route-item locked">
-            <span class="blind-icon">🏪</span>
-            <div>
-              <strong id="blindRestaurantName">مطعم برجر هاوس</strong>
-              <span class="lock-text">🔒 غير قابل للضغط</span>
-            </div>
-          </div>
-          <div class="blind-route-item locked">
-            <span class="blind-icon">🎯</span>
-            <div>
-              <strong class="blur-text" id="blindCustomerAddress">شارع فلسطين، بغداد</strong>
-              <span class="lock-text">🔒 سيظهر بعد القبول</span>
-            </div>
-          </div>
+          <div class="blind-route-item locked"><span class="blind-icon">🏪</span><div><strong id="blindRestaurantName">مطعم برجر هاوس</strong><span class="lock-text">🔒 غير قابل للضغط</span></div></div>
+          <div class="blind-route-item locked"><span class="blind-icon">🎯</span><div><strong class="blur-text" id="blindCustomerAddress">شارع فلسطين، بغداد</strong><span class="lock-text">🔒 سيظهر بعد القبول</span></div></div>
         </div>
-
-        <div class="blind-distance">
-          <span>📏 2.3 كم</span>
-          <span>⏱️ 8 دقائق</span>
-        </div>
-        
-        <div class="blind-earnings">
-          💰 ربحك: <strong id="blindEarnings">4,500</strong> د.ع + 500 بقشيش
-        </div>
+        <div class="blind-distance"><span>📏 2.3 كم</span><span>⏱️ 8 دقائق</span></div>
+        <div class="blind-earnings">💰 ربحك: <strong id="blindEarnings">4,500</strong> د.ع + 500 بقشيش</div>
       </div>
-
-      <div class="blind-actions">
-        <button class="blind-reject-btn" onclick="rejectOrderBlind()">رفض</button>
-        <button class="blind-accept-btn" onclick="acceptOrderBlind()">قبول الطلب</button>
-      </div>
+      <div class="blind-actions"><button class="blind-reject-btn" onclick="rejectOrderBlind()">رفض</button><button class="blind-accept-btn" onclick="acceptOrderBlind()">قبول الطلب</button></div>
     </div>
 
-    <!-- 2. شاشة التتبع العادية (تظهر بعد القبول أو للعميل) -->
     <div id="normalTrackingContainer">
-      <div class="tracking-eta">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <strong id="trackingETA" data-i18n="arriving15">يصل خلال 15 دقيقة</strong>
-      </div>
-      
+      <div class="tracking-eta"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><strong id="trackingETA" data-i18n="arriving15">يصل خلال 15 دقيقة</strong></div>
       <div class="tracking-map" id="trackingMap"></div>
-      
-      <!-- بطاقة هوية الطرف الآخر (تظهر للمندوب أو للعميل) -->
       <div class="driver-identity-card" id="driverIdentityCard" style="display:none;">
         <div class="driver-id-header">
           <div class="driver-id-avatar" id="driverIdAvatar">أ</div>
@@ -312,17 +277,13 @@
           <button class="driver-action-btn chat" onclick="chatWithDriver()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span data-i18n="chatDriver">دردشة</span></button>
         </div>
       </div>
-
       <div class="tracking-timeline">
         <div class="timeline-step done" id="step-created"><div class="step-dot">✓</div><div class="step-content"><strong data-i18n="orderConfirmed">تم التأكيد</strong><span data-i18n="orderConfirmedDesc">طلبك في النظام</span></div></div>
         <div class="timeline-step" id="step-accepted"><div class="step-dot">○</div><div class="step-content"><strong data-i18n="driverAccepted">قبول المندوب</strong><span data-i18n="driverAcceptedDesc">في انتظار</span></div></div>
         <div class="timeline-step" id="step-pickedup"><div class="step-dot">○</div><div class="step-content"><strong data-i18n="onTheWay">في الطريق</strong><span data-i18n="onTheWayDesc">سيتم تحديث الحالة</span></div></div>
         <div class="timeline-step" id="step-delivered"><div class="step-dot">○</div><div class="step-content"><strong data-i18n="delivered">تم التوصيل</strong><span data-i18n="deliveredDesc">شكراً لك</span></div></div>
       </div>
-      <div class="tracking-actions">
-        <button class="btn-outline" onclick="cancelOrder()" data-i18n="cancel">إلغاء</button>
-        <button class="btn-primary" onclick="chatWithDriver()">💬 <span data-i18n="chat">دردشة</span></button>
-      </div>
+      <div class="tracking-actions"><button class="btn-outline" onclick="cancelOrder()" data-i18n="cancel">إلغاء</button><button class="btn-primary" onclick="chatWithDriver()">💬 <span data-i18n="chat">دردشة</span></button></div>
     </div>
   </div>
 </div>
@@ -331,18 +292,11 @@
 <div class="screen" id="chatScreen">
   <div class="chat-header">
     <button class="back-btn-inline" onclick="closeChat()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-    <div class="chat-user-info">
-      <div class="chat-user-avatar" id="chatUserAvatar">أ</div>
-      <div class="chat-user-text"><h4 id="chatUserName">—</h4><span data-i18n="online">متصل الآن ●</span></div>
-    </div>
+    <div class="chat-user-info"><div class="chat-user-avatar" id="chatUserAvatar">أ</div><div class="chat-user-text"><h4 id="chatUserName">—</h4><span data-i18n="online">متصل الآن ●</span></div></div>
     <button class="icon-btn-inline" onclick="callDriver()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
   </div>
   <div class="chat-messages" id="chatMessagesContainer"></div>
-  <div class="chat-input-bar">
-    <button class="chat-attach-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button>
-    <input type="text" id="chatInput" class="chat-input-field" data-i18n-placeholder="typeMessage" placeholder="اكتب رسالة..." onkeypress="handleChatKeyPress(event)">
-    <button class="chat-send-btn" onclick="sendChatMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
-  </div>
+  <div class="chat-input-bar"><button class="chat-attach-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><input type="text" id="chatInput" class="chat-input-field" data-i18n-placeholder="typeMessage" placeholder="اكتب رسالة..." onkeypress="handleChatKeyPress(event)"><button class="chat-send-btn" onclick="sendChatMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button></div>
 </div>
 
 <!-- ═══ Profile ═══ -->
@@ -368,224 +322,226 @@
     </div>
   </div>
 </div>
-  <!-- ═══ Driver Dashboard (لوحة تحكم المندوب) ═══ -->
-  <div class="screen" id="driverScreen">
-    <div class="driver-header">
-      <div>
-        <h1><span data-i18n="driverWelcome">مرحباً</span>، <span id="driverName">—</span></h1>
-        <p id="driverStatus" data-i18n="offline">غير متصل</p>
+<!-- ═══ Driver Dashboard ═══ -->
+<div class="screen" id="driverScreen">
+  <div class="driver-header">
+    <div>
+      <h1><span data-i18n="driverWelcome">مرحباً</span>، <span id="driverName">—</span></h1>
+      <p id="driverStatus" data-i18n="offline">غير متصل</p>
+    </div>
+    <button class="home-avatar" onclick="openProfile()">
+      <span id="driverAvatarLetter">م</span>
+    </button>
+  </div>
+  
+  <div class="driver-content">
+    <!-- الشريط المتحرك للفترة التجريبية -->
+    <div class="trial-banner" id="trialBanner" onclick="goToSubscription()">
+      <div class="trial-banner-icon">🎁</div>
+      <div class="trial-banner-text">
+        <strong>فعل فترتك التجريبية المجانية</strong>
+        <span>3 أيام مجاناً!</span>
       </div>
-      <button class="home-avatar" onclick="openProfile()">
-        <span id="driverAvatarLetter">م</span>
+      <div class="trial-banner-arrow">←</div>
+    </div>
+
+    <!-- زر بدء العمل / إيقاف -->
+    <div class="driver-toggle-card" id="driverToggleCard">
+      <div class="toggle-info">
+        <h3 id="toggleTitle" data-i18n="offline">غير متصل</h3>
+        <p id="toggleSubtitle" data-i18n="activateConnection">فعّل الاتصال لاستقبال الطلبات</p>
+      </div>
+      <button class="toggle-btn" id="toggleBtn" onclick="toggleDriverOnline()">
+        <span data-i18n="startWork">ابدأ العمل</span>
       </button>
+    </div>
+
+    <!-- الإحصائيات -->
+    <div class="driver-stats">
+      <div class="stat-card"><span class="stat-num" id="driverTodayOrders">0</span><span class="stat-label" data-i18n="todayLabel">اليوم</span></div>
+      <div class="stat-card"><span class="stat-num" id="driverTodayEarnings">0</span><span class="stat-label" data-i18n="balance">د.ع</span></div>
+      <div class="stat-card"><span class="stat-num" id="driverRating">—</span><span class="stat-label" data-i18n="rating">تقييم</span></div>
+    </div>
+
+    <!-- الطلبات القريبة -->
+    <div class="driver-section-header">
+      <h3 data-i18n="nearbyOrders">الطلبات القريبة</h3>
+      <span id="ordersCount">0</span>
+    </div>
+    <div class="driver-orders" id="driverOrdersList">
+      <div class="empty-state">
+        <div class="empty-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+        <h4 data-i18n="noNearbyOrders">لا توجد طلبات</h4>
+        <p data-i18n="activateConnection">فعّل الاتصال لاستقبال الطلبات</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- الشريط السفلي للمندوب -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="goHome()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span data-i18n="home">الرئيسية</span>
+    </button>
+    <button class="nav-btn" onclick="openDriverEarnings()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span data-i18n="earnings">الأرباح</span>
+    </button>
+    <button class="nav-btn" onclick="openProfile()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span data-i18n="myAccount">حسابي</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ═══ Notifications ═══ -->
+<div class="screen" id="notificationsScreen">
+  <div class="page-header">
+    <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    <h2 data-i18n="notifications">الإشعارات</h2>
+    <div></div>
+  </div>
+  <div class="notifications-list" id="notificationsList"></div>
+</div>
+
+<!-- ═══ Settings ═══ -->
+<div class="screen" id="settingsScreen">
+  <div class="page-header">
+    <button class="back-btn-inline" onclick="openProfile()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+    <h2 data-i18n="settings">الإعدادات</h2>
+    <div></div>
+  </div>
+  <div class="settings-content">
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="theme">المظهر</h3>
+      <div class="settings-theme-grid">
+        <button class="theme-option" data-theme-btn="light" onclick="setTheme('light', this)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg><span data-i18n="light">فاتح</span></button>
+        <button class="theme-option active" data-theme-btn="dark" onclick="setTheme('dark', this)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span data-i18n="dark">داكن</span></button>
+        <button class="theme-option" data-theme-btn="auto" onclick="setTheme('auto', this)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.3"/></svg><span data-i18n="auto">تلقائي</span></button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="language">اللغة</h3>
+      <div class="settings-theme-grid">
+        <button class="theme-option lang-active" data-lang-btn="ar" onclick="setLanguage('ar')"><span>العربية</span></button>
+        <button class="theme-option" data-lang-btn="en" onclick="setLanguage('en')"><span>English</span></button>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 class="settings-section-title" data-i18n="general">عام</h3>
+      <div class="settings-list-new">
+        <div class="settings-row-new">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+          <div class="row-content"><span data-i18n="notifications">الإشعارات</span></div>
+          <label class="toggle-switch"><input type="checkbox" id="notifToggle" onchange="toggleNotifications()"><span class="toggle-slider"></span></label>
+        </div>
+        
+        <div class="settings-row-new">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
+          <div class="row-content"><span data-i18n="sound">الصوت</span></div>
+          <label class="toggle-switch"><input type="checkbox" id="soundToggle" onchange="toggleSound()"><span class="toggle-slider"></span></label>
+        </div>
+        
+        <div class="settings-row-new" id="subscriptionRow" onclick="goToSubscription()" style="display: none;">
+          <div class="row-icon" style="background: rgba(245, 158, 11, 0.15);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"/></svg>
+          </div>
+          <div class="row-content"><span style="color: #F59E0B; font-weight: 900;">باقات الاشتراك</span></div>
+          <span class="row-arrow">←</span>
+        </div>
+
+        <div class="settings-row-new" id="notifSoundRow" onclick="openSoundPicker('notification')">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+          <div class="row-content"><span data-i18n="notifSound">صوت الإشعارات</span></div>
+          <span class="row-value" id="notifSoundValue">افتراضي</span>
+          <span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" id="orderSoundRow" onclick="openSoundPicker('order')">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+          <div class="row-content"><span data-i18n="orderSound">رنين الطلبات</span></div>
+          <span class="row-value" id="orderSoundValue">افتراضي</span>
+          <span class="row-arrow">←</span>
+        </div>
+
+        <div class="settings-row-new" onclick="openContactUs()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="row-content"><span data-i18n="contactUs">تواصل معنا</span></div><span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" onclick="openAbout()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
+          <div class="row-content"><span data-i18n="aboutApp">عن التطبيق</span></div><span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" onclick="openTerms()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="row-content"><span data-i18n="terms">الشروط والأحكام</span></div><span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" onclick="openPrivacy()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="row-content"><span data-i18n="privacyPolicy">سياسة الخصوصية</span></div><span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" onclick="openRateApp()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="row-content"><span data-i18n="rateApp">قيّم التطبيق</span></div><span class="row-arrow">←</span>
+        </div>
+        
+        <div class="settings-row-new" onclick="shareApp()">
+          <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+          <div class="row-content"><span data-i18n="shareApp">شارك التطبيق</span></div><span class="row-arrow">←</span>
+        </div>
+      </div>
+    </div>
+    <p class="settings-footer"><span data-i18n="appName">وصّلها</span> © 2026</p>
+  </div>
+</div>
+  <!-- ═══ Subscription Screen (تصميم الـ Storyboard) ═══ -->
+  <div class="screen" id="subscriptionScreen" style="background: #F8FAFC;">
+    <div class="page-header" style="background: #F8FAFC; box-shadow: none; border-bottom: 1px solid #E2E8F0;">
+      <button class="back-btn-inline" onclick="goHome()" style="background: #FFF; border: 1px solid #E2E8F0; color: #0F172A;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <h2 style="color: #0F172A; font-weight: 900;">الباقات الاشتراكية</h2>
+      <div></div>
     </div>
     
-    <div class="driver-content">
-      <!-- الشريط المتحرك للفترة التجريبية (يظهر فقط للمندوب الجديد) -->
-      <div class="trial-banner" id="trialBanner" onclick="goToSubscription()">
-        <div class="trial-banner-icon">🎁</div>
-        <div class="trial-banner-text">
-          <strong>فعل فترتك التجريبية المجانية</strong>
-          <span>3 أيام مجاناً!</span>
-        </div>
-        <div class="trial-banner-arrow">←</div>
-      </div>
-
-      <!-- زر بدء العمل / إيقاف -->
-      <div class="driver-toggle-card" id="driverToggleCard">
-        <div class="toggle-info">
-          <h3 id="toggleTitle" data-i18n="offline">غير متصل</h3>
-          <p id="toggleSubtitle" data-i18n="activateConnection">فعّل الاتصال لاستقبال الطلبات</p>
-        </div>
-        <button class="toggle-btn" id="toggleBtn" onclick="toggleDriverOnline()">
-          <span data-i18n="startWork">ابدأ العمل</span>
-        </button>
-      </div>
-
-      <!-- الإحصائيات -->
-      <div class="driver-stats">
-        <div class="stat-card"><span class="stat-num" id="driverTodayOrders">0</span><span class="stat-label" data-i18n="todayLabel">اليوم</span></div>
-        <div class="stat-card"><span class="stat-num" id="driverTodayEarnings">0</span><span class="stat-label" data-i18n="balance">د.ع</span></div>
-        <div class="stat-card"><span class="stat-num" id="driverRating">—</span><span class="stat-label" data-i18n="rating">تقييم</span></div>
-      </div>
-
-      <!-- الطلبات القريبة -->
-      <div class="driver-section-header">
-        <h3 data-i18n="nearbyOrders">الطلبات القريبة</h3>
-        <span id="ordersCount">0</span>
-      </div>
-      <div class="driver-orders" id="driverOrdersList">
-        <div class="empty-state">
-          <div class="empty-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-          <h4 data-i18n="noNearbyOrders">لا توجد طلبات</h4>
-          <p data-i18n="activateConnection">فعّل الاتصال لاستقبال الطلبات</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- الشريط السفلي للمندوب -->
-    <nav class="bottom-nav">
-      <button class="nav-btn active" onclick="goHome()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <span data-i18n="home">الرئيسية</span>
-      </button>
-      <button class="nav-btn" onclick="openDriverEarnings()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span data-i18n="earnings">الأرباح</span>
-      </button>
-      <button class="nav-btn" onclick="openProfile()">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span data-i18n="myAccount">حسابي</span>
-      </button>
-    </nav>
-  </div>
-
-  <!-- ═══ Notifications ═══ -->
-  <div class="screen" id="notificationsScreen">
-    <div class="page-header">
-      <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-      <h2 data-i18n="notifications">الإشعارات</h2>
-      <div></div>
-    </div>
-    <div class="notifications-list" id="notificationsList"></div>
-  </div>
-
-  <!-- ═══ Settings ═══ -->
-  <div class="screen" id="settingsScreen">
-    <div class="page-header">
-      <button class="back-btn-inline" onclick="openProfile()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-      <h2 data-i18n="settings">الإعدادات</h2>
-      <div></div>
-    </div>
-    <div class="settings-content">
-      <!-- المظهر -->
-      <div class="settings-section">
-        <h3 class="settings-section-title" data-i18n="theme">المظهر</h3>
-        <div class="settings-theme-grid">
-          <button class="theme-option" data-theme-btn="light" onclick="setTheme('light', this)">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>
-            <span data-i18n="light">فاتح</span>
-          </button>
-          <button class="theme-option active" data-theme-btn="dark" onclick="setTheme('dark', this)">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            <span data-i18n="dark">داكن</span>
-          </button>
-          <button class="theme-option" data-theme-btn="auto" onclick="setTheme('auto', this)">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.3"/></svg>
-            <span data-i18n="auto">تلقائي</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- اللغة -->
-      <div class="settings-section">
-        <h3 class="settings-section-title" data-i18n="language">اللغة</h3>
-        <div class="settings-theme-grid">
-          <button class="theme-option lang-active" data-lang-btn="ar" onclick="setLanguage('ar')"><span>العربية</span></button>
-          <button class="theme-option" data-lang-btn="en" onclick="setLanguage('en')"><span>English</span></button>
-        </div>
-      </div>
-
-      <!-- عام -->
-      <div class="settings-section">
-        <h3 class="settings-section-title" data-i18n="general">عام</h3>
-        <div class="settings-list-new">
-          <div class="settings-row-new">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-            <div class="row-content"><span data-i18n="notifications">الإشعارات</span></div>
-            <label class="toggle-switch"><input type="checkbox" id="notifToggle" onchange="toggleNotifications()"><span class="toggle-slider"></span></label>
-          </div>
-          
-          <div class="settings-row-new">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div>
-            <div class="row-content"><span data-i18n="sound">الصوت</span></div>
-            <label class="toggle-switch"><input type="checkbox" id="soundToggle" onchange="toggleSound()"><span class="toggle-slider"></span></label>
-          </div>
-          
-          <!-- زر باقات الاشتراك (للمندوب فقط) -->
-          <div class="settings-row-new" id="subscriptionRow" onclick="goToSubscription()" style="display: none;">
-            <div class="row-icon" style="background: rgba(245, 158, 11, 0.15);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2z"/></svg>
-            </div>
-            <div class="row-content"><span style="color: #F59E0B; font-weight: 900;">باقات الاشتراك</span></div>
-            <span class="row-arrow">←</span>
-          </div>
-
-          <div class="settings-row-new" id="notifSoundRow" onclick="openSoundPicker('notification')">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-            <div class="row-content"><span data-i18n="notifSound">صوت الإشعارات</span></div>
-            <span class="row-value" id="notifSoundValue">افتراضي</span>
-            <span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" id="orderSoundRow" onclick="openSoundPicker('order')">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
-            <div class="row-content"><span data-i18n="orderSound">رنين الطلبات</span></div>
-            <span class="row-value" id="orderSoundValue">افتراضي</span>
-            <span class="row-arrow">←</span>
-          </div>
-
-          <div class="settings-row-new" onclick="openContactUs()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-            <div class="row-content"><span data-i18n="contactUs">تواصل معنا</span></div><span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" onclick="openAbout()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
-            <div class="row-content"><span data-i18n="aboutApp">عن التطبيق</span></div><span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" onclick="openTerms()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-            <div class="row-content"><span data-i18n="terms">الشروط والأحكام</span></div><span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" onclick="openPrivacy()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <div class="row-content"><span data-i18n="privacyPolicy">سياسة الخصوصية</span></div><span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" onclick="openRateApp()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-            <div class="row-content"><span data-i18n="rateApp">قيّم التطبيق</span></div><span class="row-arrow">←</span>
-          </div>
-          
-          <div class="settings-row-new" onclick="shareApp()">
-            <div class="row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-            <div class="row-content"><span data-i18n="shareApp">شارك التطبيق</span></div><span class="row-arrow">←</span>
-          </div>
-        </div>
-      </div>
-      <p class="settings-footer"><span data-i18n="appName">وصّلها</span> © 2026</p>
-    </div>
-  </div>
-
-  <!-- ═══ Subscription Plans (تصميم الباقات) ═══ -->
-  <div class="screen" id="subscriptionScreen">
-    <div class="page-header">
-      <button class="back-btn-inline" onclick="goHome()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
-      <h2>الباقات الاشتراكية</h2>
-      <div></div>
-    </div>
-    <div class="sub-plans-container">
-      <div class="sub-card free-card">
-        <div class="free-badge">مجاناً</div>
+    <div class="storyboard-container">
+      <!-- 1. البطاقة الخضراء (التجربة المجانية) -->
+      <div class="story-free-card" onclick="activateFreeTrial()">
+        <div class="free-badge-top">مجاناً</div>
         <h3>تجربة مجانية</h3>
-        <div class="free-price"><span>0</span> دينار / 3 أيام</div>
-        <p class="free-desc">ابدأ الآن - لا يتم الدفع حتى انتهاء الفترة التجريبية</p>
-        <button class="free-action-btn" onclick="activateFreeTrial()">تفعيل التجربة المجانية</button>
+        <div class="free-card-price">0 دينار / 3 أيام</div>
+        <p class="free-card-desc">ابدأ الآن - لا يتم الدفع حتى انتهاء الفترة التجريبية</p>
+        <button class="story-free-btn">تفعيل التجربة المجانية</button>
       </div>
-      <div class="sub-card" onclick="openSupportForPlan('شهري', 15000)">
-        <div class="sub-card-info"><h4>شهري - 15,000 د.ع</h4><p>تجدد شهرياً • إلغاء في أي وقت</p></div>
+
+      <!-- 2. البطاقة الشهرية (رمادية) -->
+      <div class="story-grey-card" onclick="openSupportForPlan('شهري', 15000)">
+        <div class="story-grey-info">
+          <h4>شهري - 15,000 د.ع</h4>
+          <p>تجدد شهرياً • إلغاء في أي وقت</p>
+        </div>
       </div>
-      <div class="sub-card" onclick="openSupportForPlan('سنوي', 150000)">
-        <div class="sub-card-info"><h4>سنوي - 150,000 د.ع</h4><p>توفير 17% • أفضل قيمة</p></div>
+
+      <!-- 3. البطاقة السنوية (رمادية) -->
+      <div class="story-grey-card" onclick="openSupportForPlan('سنوي', 150000)">
+        <div class="story-grey-info">
+          <h4>سنوي - 150,000 د.ع</h4>
+          <p>توفير 17% • أفضل قيمة</p>
+        </div>
       </div>
-      <button class="continue-btn" onclick="goHome()">الاستمرار</button>
+
+      <!-- 4. زر الاستمرار -->
+      <button class="story-continue-btn" onclick="goHome()">الاستمرار</button>
     </div>
   </div>
 
-  <!-- ═══ Success Screen (الاحتفال) ═══ -->
+  <!-- ═══ Success Screen (شاشة النجاح) ═══ -->
   <div class="screen" id="successScreen">
     <div class="success-content">
       <div class="success-icon">✅</div>
@@ -595,14 +551,92 @@
     </div>
   </div>
 
-  <!-- ═══ Contact, About, Terms, Privacy ═══ -->
-  <div class="screen" id="contactScreen"><div class="page-header"><button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><h2 data-i18n="contactUs">تواصل معنا</h2><div></div></div><div class="contact-content"><p class="contact-intro" data-i18n="contactIntro">نحن هنا لمساعدتك!</p><div class="contact-card" onclick="openWhatsApp()"><div class="contact-icon whatsapp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div><div class="contact-info"><span class="contact-label" data-i18n="whatsapp">واتساب</span><span class="contact-value" dir="ltr">+964 776 109 0465</span></div><span class="contact-arrow">←</span></div><div class="contact-card" onclick="openEmail()"><div class="contact-icon email"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="contact-info"><span class="contact-label" data-i18n="email">البريد الإلكتروني</span><span class="contact-value">hasan7990l@gmail.com</span></div><span class="contact-arrow">←</span></div><div class="contact-card" onclick="openTelegram()"><div class="contact-icon telegram"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div><div class="contact-info"><span class="contact-label" data-i18n="telegramChannel">القناة الرسمية</span><span class="contact-value" dir="ltr">@lb2_c</span></div><span class="contact-arrow">←</span></div><div class="contact-hours"><h4 data-i18n="workingHours">ساعات العمل</h4><p data-i18n="workingHoursValue">السبت - الخميس: 9 صباحاً - 9 مساءً</p></div></div></div>
+  <!-- ═══ Contact Screen ═══ -->
+  <div class="screen" id="contactScreen">
+    <div class="page-header">
+      <button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <h2 data-i18n="contactUs">تواصل معنا</h2>
+      <div></div>
+    </div>
+    <div class="contact-content">
+      <p class="contact-intro" data-i18n="contactIntro">نحن هنا لمساعدتك!</p>
+      <div class="contact-card" onclick="openWhatsApp()">
+        <div class="contact-icon whatsapp"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <div class="contact-info"><span class="contact-label" data-i18n="whatsapp">واتساب</span><span class="contact-value" dir="ltr">+964 776 109 0465</span></div>
+        <span class="contact-arrow">←</span>
+      </div>
+      <div class="contact-card" onclick="openEmail()">
+        <div class="contact-icon email"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="contact-info"><span class="contact-label" data-i18n="email">البريد الإلكتروني</span><span class="contact-value">hasan7990l@gmail.com</span></div>
+        <span class="contact-arrow">←</span>
+      </div>
+      <div class="contact-card" onclick="openTelegram()">
+        <div class="contact-icon telegram"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>
+        <div class="contact-info"><span class="contact-label" data-i18n="telegramChannel">القناة الرسمية</span><span class="contact-value" dir="ltr">@lb2_c</span></div>
+        <span class="contact-arrow">←</span>
+      </div>
+      <div class="contact-hours"><h4 data-i18n="workingHours">ساعات العمل</h4><p data-i18n="workingHoursValue">السبت - الخميس: 9 صباحاً - 9 مساءً</p></div>
+    </div>
+  </div>
 
-  <div class="screen" id="aboutScreen"><div class="page-header"><button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><h2 data-i18n="aboutApp">عن التطبيق</h2><div></div></div><div class="about-content"><div class="about-logo"><svg viewBox="0 0 200 200" fill="none"><path d="M35 100 Q25 75 40 55 Q55 40 75 50 L95 70 L75 90 Q55 105 35 100 Z" fill="#1E3A8A"/><path d="M165 100 Q175 75 160 55 Q145 40 125 50 L105 70 L125 90 Q145 105 165 100 Z" fill="#1E3A8A"/><ellipse cx="100" cy="110" rx="20" ry="28" fill="#1E3A8A"/><circle cx="100" cy="80" r="11" fill="#1E3A8A"/><path d="M100 138 L100 175 M85 160 L100 175 L115 160" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3 class="about-app-name">وصّلها</h3><p class="about-app-name-en">Wassilha</p><p class="about-version"><span data-i18n="version">الإصدار</span> 1.0.0</p><div class="about-section"><h4 data-i18n="aboutUs">من نحن</h4><p data-i18n="aboutUsText">وصّلها هو تطبيق عراقي...</p></div><div class="about-section"><h4 data-i18n="features">لماذا تختار وصّلها؟</h4><ul class="about-features"><li><span>✓</span> <span data-i18n="feature1">توصيل سريع خلال 30 دقيقة في بغداد.</span></li><li><span>✓</span> <span data-i18n="feature2">مندوبين موثقين ومدربين.</span></li><li><span>✓</span> <span data-i18n="feature3">تتبع مباشر للطلب عبر الخريطة.</span></li><li><span>✓</span> <span data-i18n="feature4">الدفع نقداً عند الاستلام.</span></li><li><span>✓</span> <span data-i18n="feature5">أسعار تنافسية وشفافة.</span></li></ul></div><div class="about-section"><h4 data-i18n="developer">عن المطوّر</h4><div class="about-dev"><div class="dev-avatar">ح</div><div class="dev-info"><strong data-i18n="devName">حسن عدنان</strong><span data-i18n="devRole">مؤسس ومطوّر تطبيق وصّلها</span></div></div></div><p class="about-footer"><span data-i18n="appName">وصّلها</span> © 2026<br><span data-i18n="madeInIraq">صُنع بكل حب وفخر في العراق 💜</span></p></div></div>
+  <!-- ═══ About Screen ═══ -->
+  <div class="screen" id="aboutScreen">
+    <div class="page-header">
+      <button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <h2 data-i18n="aboutApp">عن التطبيق</h2>
+      <div></div>
+    </div>
+    <div class="about-content">
+      <div class="about-logo"><svg viewBox="0 0 200 200" fill="none"><path d="M35 100 Q25 75 40 55 Q55 40 75 50 L95 70 L75 90 Q55 105 35 100 Z" fill="#1E3A8A"/><path d="M165 100 Q175 75 160 55 Q145 40 125 50 L105 70 L125 90 Q145 105 165 100 Z" fill="#1E3A8A"/><ellipse cx="100" cy="110" rx="20" ry="28" fill="#1E3A8A"/><circle cx="100" cy="80" r="11" fill="#1E3A8A"/><path d="M100 138 L100 175 M85 160 L100 175 L115 160" stroke="#1E3A8A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3 class="about-app-name">وصّلها</h3>
+      <p class="about-app-name-en">Wassilha</p>
+      <p class="about-version"><span data-i18n="version">الإصدار</span> 1.0.0</p>
+      <div class="about-section"><h4 data-i18n="aboutUs">من نحن</h4><p data-i18n="aboutUsText">وصّلها هو تطبيق عراقي...</p></div>
+      <div class="about-section"><h4 data-i18n="features">لماذا تختار وصّلها؟</h4><ul class="about-features"><li><span>✓</span> <span data-i18n="feature1">توصيل سريع خلال 30 دقيقة في بغداد.</span></li><li><span>✓</span> <span data-i18n="feature2">مندوبين موثقين ومدربين.</span></li><li><span>✓</span> <span data-i18n="feature3">تتبع مباشر للطلب عبر الخريطة.</span></li><li><span>✓</span> <span data-i18n="feature4">الدفع نقداً عند الاستلام.</span></li><li><span>✓</span> <span data-i18n="feature5">أسعار تنافسية وشفافة.</span></li></ul></div>
+      <div class="about-section"><h4 data-i18n="developer">عن المطوّر</h4><div class="about-dev"><div class="dev-avatar">ح</div><div class="dev-info"><strong data-i18n="devName">حسن عدنان</strong><span data-i18n="devRole">مؤسس ومطوّر تطبيق وصّلها</span></div></div></div>
+      <p class="about-footer"><span data-i18n="appName">وصّلها</span> © 2026<br><span data-i18n="madeInIraq">صُنع بكل حب وفخر في العراق 💜</span></p>
+    </div>
+  </div>
 
-  <div class="screen" id="termsScreen"><div class="page-header"><button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><h2 data-i18n="terms">الشروط والأحكام</h2><div></div></div><div class="legal-content"><p class="legal-update"><span data-i18n="lastUpdate">آخر تحديث:</span> 15 أكتوبر 2026</p><div class="legal-section"><h3 data-i18n="terms1Title">1. قبول الشروط</h3><p data-i18n="terms1Text">...</p></div><div class="legal-section"><h3 data-i18n="terms2Title">2. الأهلية</h3><p data-i18n="terms2Text">...</p></div><div class="legal-section"><h3 data-i18n="terms3Title">3. الحساب</h3><ul><li data-i18n="terms3_1">...</li><li data-i18n="terms3_2">...</li><li data-i18n="terms3_3">...</li><li data-i18n="terms3_4">...</li></ul></div><div class="legal-section"><h3 data-i18n="terms4Title">4. خدمات التوصيل</h3><ul><li data-i18n="terms4_1">...</li><li data-i18n="terms4_2">...</li><li data-i18n="terms4_3">...</li><li data-i18n="terms4_4">...</li></ul></div><div class="legal-section"><h3 data-i18n="terms5Title">5. الدفع</h3><ul><li data-i18n="terms5_1">...</li><li data-i18n="terms5_2">...</li><li data-i18n="terms5_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="terms6Title">6. الإلغاء</h3><ul><li data-i18n="terms6_1">...</li><li data-i18n="terms6_2">...</li><li data-i18n="terms6_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="terms7Title">7. المسؤولية</h3><ul><li data-i18n="terms7_1">...</li><li data-i18n="terms7_2">...</li></ul></div><div class="legal-section"><h3 data-i18n="terms8Title">8. التواصل</h3><p data-i18n="terms8Text">...</p><p class="legal-contact">📱 واتساب: <span dir="ltr">+964 776 109 0465</span><br>📧 إيميل: hasan7990l@gmail.com</p></div><div class="legal-section"><h3 data-i18n="terms9Title">9. التعديلات</h3><p data-i18n="terms9Text">...</p></div></div></div>
+  <!-- ═══ Terms Screen ═══ -->
+  <div class="screen" id="termsScreen">
+    <div class="page-header">
+      <button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <h2 data-i18n="terms">الشروط والأحكام</h2>
+      <div></div>
+    </div>
+    <div class="legal-content">
+      <p class="legal-update"><span data-i18n="lastUpdate">آخر تحديث:</span> 15 أكتوبر 2026</p>
+      <div class="legal-section"><h3 data-i18n="terms1Title">1. قبول الشروط</h3><p data-i18n="terms1Text">...</p></div>
+      <div class="legal-section"><h3 data-i18n="terms2Title">2. الأهلية</h3><p data-i18n="terms2Text">...</p></div>
+      <div class="legal-section"><h3 data-i18n="terms3Title">3. الحساب</h3><ul><li data-i18n="terms3_1">...</li><li data-i18n="terms3_2">...</li><li data-i18n="terms3_3">...</li><li data-i18n="terms3_4">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="terms4Title">4. خدمات التوصيل</h3><ul><li data-i18n="terms4_1">...</li><li data-i18n="terms4_2">...</li><li data-i18n="terms4_3">...</li><li data-i18n="terms4_4">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="terms5Title">5. الدفع</h3><ul><li data-i18n="terms5_1">...</li><li data-i18n="terms5_2">...</li><li data-i18n="terms5_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="terms6Title">6. الإلغاء</h3><ul><li data-i18n="terms6_1">...</li><li data-i18n="terms6_2">...</li><li data-i18n="terms6_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="terms7Title">7. المسؤولية</h3><ul><li data-i18n="terms7_1">...</li><li data-i18n="terms7_2">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="terms8Title">8. التواصل</h3><p data-i18n="terms8Text">...</p><p class="legal-contact">📱 واتساب: <span dir="ltr">+964 776 109 0465</span><br>📧 إيميل: hasan7990l@gmail.com</p></div>
+      <div class="legal-section"><h3 data-i18n="terms9Title">9. التعديلات</h3><p data-i18n="terms9Text">...</p></div>
+    </div>
+  </div>
 
-  <div class="screen" id="privacyScreen"><div class="page-header"><button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button><h2 data-i18n="privacyPolicy">سياسة الخصوصية</h2><div></div></div><div class="legal-content"><p class="legal-update"><span data-i18n="lastUpdate">آخر تحديث:</span> 15 أكتوبر 2026</p><div class="legal-section"><h3 data-i18n="privacy1Title">1. المعلومات التي نجمعها</h3><ul><li data-i18n="privacy1_1">...</li><li data-i18n="privacy1_2">...</li><li data-i18n="privacy1_3">...</li><li data-i18n="privacy1_4">...</li><li data-i18n="privacy1_5">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy2Title">2. كيف نستخدمها</h3><ul><li data-i18n="privacy2_1">...</li><li data-i18n="privacy2_2">...</li><li data-i18n="privacy2_3">...</li><li data-i18n="privacy2_4">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy3Title">3. ما لا نفعله</h3><ul><li data-i18n="privacy3_1">...</li><li data-i18n="privacy3_2">...</li><li data-i18n="privacy3_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy4Title">4. الحماية</h3><ul><li data-i18n="privacy4_1">...</li><li data-i18n="privacy4_2">...</li><li data-i18n="privacy4_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy5Title">5. الصلاحيات</h3><ul><li data-i18n="privacy5_1">...</li><li data-i18n="privacy5_2">...</li><li data-i18n="privacy5_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy6Title">6. حقوقك</h3><ul><li data-i18n="privacy6_1">...</li><li data-i18n="privacy6_2">...</li><li data-i18n="privacy6_3">...</li></ul></div><div class="legal-section"><h3 data-i18n="privacy7Title">7. التواصل</h3><p class="legal-contact">📱 واتساب: <span dir="ltr">+964 776 109 0465</span><br>📧 إيميل: hasan7990l@gmail.com</p></div></div></div>
+  <!-- ═══ Privacy Screen ═══ -->
+  <div class="screen" id="privacyScreen">
+    <div class="page-header">
+      <button class="back-btn-inline" onclick="openSettings()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+      <h2 data-i18n="privacyPolicy">سياسة الخصوصية</h2>
+      <div></div>
+    </div>
+    <div class="legal-content">
+      <p class="legal-update"><span data-i18n="lastUpdate">آخر تحديث:</span> 15 أكتوبر 2026</p>
+      <div class="legal-section"><h3 data-i18n="privacy1Title">1. المعلومات التي نجمعها</h3><ul><li data-i18n="privacy1_1">...</li><li data-i18n="privacy1_2">...</li><li data-i18n="privacy1_3">...</li><li data-i18n="privacy1_4">...</li><li data-i18n="privacy1_5">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy2Title">2. كيف نستخدمها</h3><ul><li data-i18n="privacy2_1">...</li><li data-i18n="privacy2_2">...</li><li data-i18n="privacy2_3">...</li><li data-i18n="privacy2_4">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy3Title">3. ما لا نفعله</h3><ul><li data-i18n="privacy3_1">...</li><li data-i18n="privacy3_2">...</li><li data-i18n="privacy3_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy4Title">4. الحماية</h3><ul><li data-i18n="privacy4_1">...</li><li data-i18n="privacy4_2">...</li><li data-i18n="privacy4_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy5Title">5. الصلاحيات</h3><ul><li data-i18n="privacy5_1">...</li><li data-i18n="privacy5_2">...</li><li data-i18n="privacy5_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy6Title">6. حقوقك</h3><ul><li data-i18n="privacy6_1">...</li><li data-i18n="privacy6_2">...</li><li data-i18n="privacy6_3">...</li></ul></div>
+      <div class="legal-section"><h3 data-i18n="privacy7Title">7. التواصل</h3><p class="legal-contact">📱 واتساب: <span dir="ltr">+964 776 109 0465</span><br>📧 إيميل: hasan7990l@gmail.com</p></div>
+    </div>
+  </div>
 
   <!-- ═══ Toast & Modal & Scripts ═══ -->
   <div class="toast" id="toast"></div>
