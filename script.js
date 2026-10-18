@@ -39,40 +39,37 @@ function showScreen(screenId) {
     window.scrollTo(0, 0);
   }
 }
-
 // ═══ Splash & Init ═══
 function initSplash() {
   if (window.Lang) Lang.init();
-  // Splash يظهر 2.5 ثانية ثم نتحقق من المستخدم
-  setTimeout(async () => {
-    const savedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.user);
-    if (savedUser) {
-      try {
-        currentUser = JSON.parse(savedUser);
-        
-        if (currentUser.role === 'driver') {
-          document.body.classList.add('role-driver');
-        } else {
-          document.body.classList.remove('role-driver');
-        }
-        
-        if (currentUser.role === 'driver') {
-          showScreen('driverScreen');
-          loadDriverData();
-        } else {
-          showScreen('homeScreen');
-          loadHomeData();
-        }
-      } catch (e) {
-        localStorage.removeItem(CONFIG.STORAGE_KEYS.user);
-        showScreen('loginScreen');
-      }
-    } else {
-      showScreen('loginScreen');
-    }
-  }, 2500);
+  // لا يوجد setTimeout هنا! الشاشة ستنتظر المستخدم.
 }
 
+// دالة الانتقال عند الضغط على "ابدأ الآن"
+function goToLoginScreen() {
+  const savedUser = localStorage.getItem(CONFIG.STORAGE_KEYS.user);
+  if (savedUser) {
+    try {
+      currentUser = JSON.parse(savedUser);
+      if (currentUser.role === 'driver') {
+        document.body.classList.add('role-driver');
+        showScreen('driverScreen');
+        loadDriverData();
+      } else {
+        document.body.classList.remove('role-driver');
+        showScreen('homeScreen');
+        loadHomeData();
+      }
+    } catch (e) {
+      localStorage.removeItem(CONFIG.STORAGE_KEYS.user);
+      showScreen('loginScreen');
+    }
+  } else {
+    showScreen('loginScreen');
+  }
+}
+
+window.goToLoginScreen = goToLoginScreen;
 // ═══ Login & OTP ═══
 async function handleLogin(e) {
   e.preventDefault();
