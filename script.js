@@ -1,10 +1,11 @@
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha v7.0 (Part 1/2)
+// ⚙️ SCRIPT.JS — Wassilha v8.0 (Part 1/2)
 // State + Screens + Auth + Home + Profile
 // ============================================
 
-console.log('🚀 Wassilha v7.0 loading...');
+console.log('🚀 Wassilha v8.0 loading...');
 
+// ═══ Global State ═══
 let currentUser = null;
 let currentRole = 'customer';
 let currentOrder = null;
@@ -22,6 +23,8 @@ let currentCategory = 'food';
 let ordersFilter = 'all';
 let currentChatOrder = null;
 let chatPollingInterval = null;
+let blindTimerInterval = null;
+let selectedPlan = null;
 
 // ═══ Screens ═══
 function showScreen(screenId) {
@@ -45,7 +48,8 @@ function initSplash() {
     if (savedUser) {
       try {
         currentUser = JSON.parse(savedUser);
-        // إضافة الكلاس الخاص بالمندوب هنا
+        
+        // إضافة الكلاس الخاص بالمندوب
         if (currentUser.role === 'driver') {
           document.body.classList.add('role-driver');
         } else {
@@ -69,15 +73,19 @@ function initSplash() {
   }, 2500);
 }
 
-// ═══ Login & Auth ═══
+// ═══ Login & OTP ═══
 async function handleLogin(e) {
   e.preventDefault();
   const phone = document.getElementById('loginPhone').value.trim();
   if (!validatePhone(phone)) { showToast(t('invalidPhone')); return; }
+
   const btn = document.getElementById('loginBtn');
+  const originalHTML = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<span>...</span>';
+
   const result = await DB.getUserByPhone(phone);
-  btn.disabled = false; btn.innerHTML = t('continue');
+  btn.disabled = false; btn.innerHTML = originalHTML;
+
   if (!result.success || !result.user) {
     showToast(t('phoneNotRegistered'));
     setTimeout(() => goToRoleSelection(), 1200);
@@ -88,9 +96,12 @@ async function handleLogin(e) {
 
 async function sendOTPForLogin(phone) {
   const btn = document.getElementById('loginBtn');
+  const originalHTML = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<span>...</span>';
+
   const result = await DB.sendOTP(phone);
-  btn.disabled = false; btn.innerHTML = t('continue');
+  btn.disabled = false; btn.innerHTML = originalHTML;
+
   if (!result.success) { showToast(t('sendFailed')); return; }
   currentOTPPhone = phone;
   showToast('📱 ' + t('codeSent') + ': ' + result.code);
@@ -123,8 +134,10 @@ async function handleVerifyOTP() {
   const inputs = document.querySelectorAll('.otp-input');
   const code = Array.from(inputs).map(i => i.value).join('');
   if (code.length !== 4) { showToast(t('enterFullCode')); return; }
+
   const btn = document.getElementById('verifyBtn');
   btn.disabled = true; btn.innerHTML = '<span>...</span>';
+
   const result = await DB.verifyOTP(currentOTPPhone, code);
   if (!result.success) {
     btn.disabled = false; btn.innerHTML = t('verify');
@@ -132,15 +145,18 @@ async function handleVerifyOTP() {
     inputs.forEach(i => i.value = ''); inputs[0].focus();
     return;
   }
+
   const userResult = await DB.getUserByPhone(currentOTPPhone);
   if (userResult.success && userResult.user) {
     currentUser = userResult.user;
     localStorage.setItem(CONFIG.STORAGE_KEYS.user, JSON.stringify(currentUser));
+    
     if (currentUser.role === 'driver') {
       document.body.classList.add('role-driver');
     } else {
       document.body.classList.remove('role-driver');
     }
+    
     showToast(t('welcomeUser') + ' ' + currentUser.name);
     setTimeout(() => {
       if (currentUser.role === 'driver') { showScreen('driverScreen'); loadDriverData(); }
@@ -187,32 +203,42 @@ async function handleRegister(e) {
   const password = document.getElementById('registerPassword').value;
   const vehicle = document.getElementById('registerVehicle')?.value;
   const terms = document.getElementById('termsCheckbox').checked;
+
   if (!name || name.length < 3) { showToast(t('nameTooShort')); return; }
   if (!validatePhone(phone)) { showToast(t('invalidPhone')); return; }
   if (password.length < 6) { showToast(t('passwordMin')); return; }
   if (currentRole === 'driver' && !vehicle) { showToast(t('selectVehicleType')); return; }
   if (!terms) { showToast(t('agreeTermsFirst')); return; }
+
   const existing = await DB.getUserByPhone(phone);
   if (existing.success && existing.user) { showToast(t('phoneRegistered')); return; }
+
   const btn = document.getElementById('registerBtn');
   btn.disabled = true; btn.innerHTML = '<span>...</span>';
+
   const result = await DB.createUser({ name, phone, role: currentRole });
   if (!result.success) {
     btn.disabled = false; btn.innerHTML = t('createAccount');
     showToast(t('registerFailed') + ': ' + result.error); return;
   }
+
   if (currentRole === 'driver') await DB.createDriverProfile(result.user.id, vehicle);
   else if (currentRole === 'store') await DB.createStoreProfile(result.user.id, { name, phone, category: 'general' });
+
   await DB.getWallet(result.user.id);
+
   currentUser = result.user;
   localStorage.setItem(CONFIG.STORAGE_KEYS.user, JSON.stringify(currentUser));
+  
   if (currentUser.role === 'driver') {
     document.body.classList.add('role-driver');
   } else {
     document.body.classList.remove('role-driver');
   }
+
   btn.disabled = false; btn.innerHTML = t('createAccount');
   showToast(t('accountCreated'));
+
   setTimeout(() => {
     if (currentRole === 'driver') { showScreen('driverScreen'); loadDriverData(); }
     else if (currentRole === 'store') { showToast(t('storeCreated')); showScreen('homeScreen'); loadHomeData(); }
@@ -265,8 +291,8 @@ function openProfile() {
   document.getElementById('profileRating').textContent = currentUser.rating || '5.0';
 }
 // ============================================
-// ⚙️ SCRIPT.JS — Wassilha v7.0 (Part 2/2)
-// Map + Orders + Chat + Driver + Settings + Utils
+// ⚙️ SCRIPT.JS — Wassilha v8.0 (Part 2/2)
+// Map + Orders + Chat + Driver + Settings + Blind Acceptance + Subscription
 // ============================================
 
 // ═══ Map Picker ═══
@@ -452,17 +478,14 @@ async function submitOrder() {
   await DB.createNotification(currentUser.id, '🛵 ' + t('orderSent'), t('willContact'), 'order');
   setTimeout(() => openTracking(result.order.id), 1000);
 }
-// ═══ Tracking (Blind Acceptance Logic) ═══
-let blindTimerInterval = null;
 
+// ═══ Tracking (مع القبول الأعمى) ═══
 async function openTracking(orderId) {
   if (!currentUser) return;
   showScreen('trackingScreen');
-  
   const result = await DB.getOrderById(orderId);
   const order = result.order;
   if (!order) { showToast(t('orderNotFound')); goHome(); return; }
-  
   currentOrder = order;
   document.getElementById('trackingOrderId').textContent = order.order_number || '—';
 
@@ -470,25 +493,20 @@ async function openTracking(orderId) {
   const blindContainer = document.getElementById('blindAcceptContainer');
   const normalContainer = document.getElementById('normalTrackingContainer');
 
-  // تنظيف أي عداد سابق
   if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
 
-  // 🟢 الحالة 1: المندوب يرى طلباً جديداً (Blind Acceptance)
+  // 1️⃣ المندوب يرى طلباً جديداً (قبول أعمى)
   if (isDriver && order.status === 'pending') {
     blindContainer.classList.add('active');
     normalContainer.style.display = 'none';
-    
-    // تعبئة بيانات الطلب
     document.getElementById('blindOrderId').textContent = '#' + (order.order_number || '—');
     document.getElementById('blindRestaurantName').textContent = 'مطعم برجر هاوس'; 
     document.getElementById('blindCustomerAddress').textContent = order.dropoff_address || 'سيظهر بعد القبول';
     document.getElementById('blindEarnings').textContent = (order.driver_share || 4500).toLocaleString();
     
-    // بدء العداد التنازلي (45 ثانية)
     let timeLeft = 45;
     const timerEl = document.getElementById('blindTimer');
     timerEl.textContent = timeLeft;
-    
     blindTimerInterval = setInterval(() => {
       timeLeft--;
       timerEl.textContent = timeLeft;
@@ -498,19 +516,15 @@ async function openTracking(orderId) {
         showToast('⏰ انتهى الوقت، تم إعادة توجيه الطلب لمندوب آخر');
       }
     }, 1000);
-    
     return;
   }
 
-  // 🟢 الحالة 2: المندوب قبل الطلب (يرى تفاصيل العميل)
+  // 2️⃣ المندوب قبل الطلب (يرى تفاصيل العميل)
   if (isDriver && order.status !== 'pending') {
     blindContainer.classList.remove('active');
     normalContainer.style.display = 'block';
-    
     const customerCard = document.getElementById('driverIdentityCard');
     customerCard.style.display = 'block';
-    
-    // جلب بيانات العميل من جدول users
     const customerResult = await DB.getUserById(order.customer_id);
     if (customerResult.success && customerResult.user) {
       const customer = customerResult.user;
@@ -523,11 +537,10 @@ async function openTracking(orderId) {
       customerCard.dataset.driverName = customer.name;
     }
   } 
-  // 🟢 الحالة 3: العميل يرى طلبه (يرى المندوب)
+  // 3️⃣ العميل يرى طلبه
   else if (!isDriver) {
     blindContainer.classList.remove('active');
     normalContainer.style.display = 'block';
-    
     if (order.driver_id) {
       await renderDriverIdentity(order);
     } else {
@@ -550,34 +563,6 @@ async function openTracking(orderId) {
   setTimeout(() => initTrackingMap(order), 300);
 }
 
-// ═══ Blind Accept / Reject Functions ═══
-async function acceptOrderBlind() {
-  if (!currentOrder || !currentUser) return;
-  
-  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
-  
-  const result = await DB.acceptOrder(currentOrder.id, currentUser.id);
-  if (result.success) {
-    showToast('✅ تم قبول الطلب! توجه إلى المطعم');
-    
-    await DB.createNotification(
-      currentOrder.customer_id,
-      '✅ تم قبول طلبك',
-      currentUser.name + ' في الطريق إليك',
-      'order'
-    );
-    
-    openTracking(currentOrder.id);
-  } else {
-    showToast('❌ فشل قبول الطلب');
-  }
-}
-
-function rejectOrderBlind() {
-  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
-  showToast('تم رفض الطلب');
-  goHome();
-}
 async function renderDriverIdentity(order) {
   const card = document.getElementById('driverIdentityCard');
   if (!card) return;
@@ -618,6 +603,26 @@ async function cancelOrder() {
   }
 }
 
+// ═══ القبول والرفض الأعمى ═══
+async function acceptOrderBlind() {
+  if (!currentOrder || !currentUser) return;
+  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
+  const result = await DB.acceptOrder(currentOrder.id, currentUser.id);
+  if (result.success) {
+    showToast('✅ تم قبول الطلب! توجه إلى المطعم');
+    await DB.createNotification(currentOrder.customer_id, '✅ تم قبول طلبك', currentUser.name + ' في الطريق إليك', 'order');
+    openTracking(currentOrder.id);
+  } else {
+    showToast('❌ فشل قبول الطلب');
+  }
+}
+
+function rejectOrderBlind() {
+  if (blindTimerInterval) { clearInterval(blindTimerInterval); blindTimerInterval = null; }
+  showToast('تم رفض الطلب');
+  goHome();
+}
+
 // ═══ Communication ═══
 function callDriver() {
   const phone = document.getElementById('driverIdentityCard')?.dataset.driverPhone;
@@ -638,7 +643,8 @@ function whatsappDriver() {
 
 async function chatWithDriver() {
   if (!currentOrder || !currentOrder.driver_id) { showToast('⚠️'); return; }
-  openChat(currentOrder.id, currentOrder.driver_id, document.getElementById('driverIdName').textContent);
+  const otherName = document.getElementById('driverIdName').textContent;
+  openChat(currentOrder.id, currentOrder.driver_id, otherName);
 }
 
 function openChat(orderId, otherUserId, otherUserName) {
@@ -691,7 +697,7 @@ function closeChat() {
   openTracking(currentOrder?.id);
 }
 
-// ═══ Driver ═══
+// ═══ Driver Dashboard ═══
 async function loadDriverData() {
   if (!currentUser) return;
   document.getElementById('driverName').textContent = currentUser.name;
@@ -702,6 +708,7 @@ async function loadDriverData() {
     updateDriverToggleUI();
   }
   await loadAvailableOrders();
+  await checkTrialBanner();
 }
 
 function updateDriverToggleUI() {
@@ -726,17 +733,75 @@ function updateDriverToggleUI() {
 }
 
 async function toggleDriverOnline() {
-  driverOnline = !driverOnline;
-  updateDriverToggleUI();
+  // إذا كان متصلاً، أوقف الاتصال
   if (driverOnline) {
-    showToast('✅ ' + t('online'));
-    await DB.updateDriverStatus(currentUser.id, true, 33.3152, 44.3661);
-    setTimeout(() => { if (driverOnline) loadAvailableOrders(); }, 2000);
-  } else {
+    driverOnline = false;
+    updateDriverToggleUI();
     showToast('⏹️ ' + t('offline'));
     await DB.updateDriverStatus(currentUser.id, false);
     if (typeof stopOrderSound === 'function') stopOrderSound();
+    return;
   }
+
+  // فحص الاشتراك قبل بدء العمل
+  const sb = window.sb;
+  try {
+    const { data: driver, error } = await sb.from('drivers')
+      .select('is_subscribed, subscription_end_date, trial_end_date, is_trial_used')
+      .eq('user_id', currentUser.id).single();
+    if (error) throw error;
+    const now = new Date();
+
+    // 1. مشترك مدفوع وفعال
+    if (driver.is_subscribed && driver.subscription_end_date && new Date(driver.subscription_end_date) > now) {
+      // مسموح
+    }
+    // 2. الفترة التجريبية فعالة
+    else if (driver.is_trial_used && driver.trial_end_date && new Date(driver.trial_end_date) > now) {
+      const daysLeft = Math.ceil((new Date(driver.trial_end_date) - now) / (1000 * 60 * 60 * 24));
+      showToast(`🎁 لديك ${daysLeft} أيام مجانية متبقية`);
+    }
+    // 3. لم يستخدم الفترة التجريبية
+    else if (!driver.is_trial_used) {
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 3);
+      await sb.from('drivers').update({
+        is_trial_used: true,
+        trial_start_date: now.toISOString(),
+        trial_end_date: trialEnd.toISOString()
+      }).eq('user_id', currentUser.id);
+      showToast('🎉 مرحباً بك! لديك 3 أيام تجريبية مجانية');
+    }
+    // 4. انتهى الاشتراك والفترة
+    else {
+      showToast('⚠️ انتهى اشتراكك. يرجى الاشتراك للاستمرار');
+      setTimeout(() => goToSubscription(), 1500);
+      return;
+    }
+  } catch (err) {
+    console.error('Subscription check failed:', err);
+    showToast('❌ حدث خطأ في التحقق من الاشتراك');
+    return;
+  }
+
+  // ✅ مسموح
+  driverOnline = true;
+  updateDriverToggleUI();
+  showToast('✅ ' + t('online'));
+
+  let lat = CONFIG.MAPS.defaultCenter.lat;
+  let lng = CONFIG.MAPS.defaultCenter.lng;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => { lat = pos.coords.latitude; lng = pos.coords.longitude; await DB.updateDriverStatus(currentUser.id, true, lat, lng); },
+      async () => await DB.updateDriverStatus(currentUser.id, true, lat, lng),
+      { enableHighAccuracy: false, timeout: 5000 }
+    );
+  } else {
+    await DB.updateDriverStatus(currentUser.id, true, lat, lng);
+  }
+
+  setTimeout(() => { if (driverOnline) loadAvailableOrders(); }, 2000);
 }
 
 async function loadAvailableOrders() {
@@ -751,7 +816,7 @@ async function loadAvailableOrders() {
   }
   if (count) count.textContent = result.orders.length;
   if (driverOnline && result.orders.length > 0 && typeof playOrderSound === 'function') playOrderSound(true);
-  list.innerHTML = result.orders.map(o => `<div class="available-order-card"><div class="order-card-header"><div><div class="order-card-number">${t('order')} #${o.order_number || '—'}</div><div class="order-card-date">${formatDate(o.created_at)}</div></div></div><div class="order-route"><div class="order-route-item">📍 <strong>${o.pickup_address || '—'}</strong></div><div class="order-route-item">🎯 <strong>${o.dropoff_address || '—'}</strong></div></div><div class="order-card-footer"><span class="order-price">${(o.total_price || 0).toLocaleString()}<small> ${t('balance')}</small></span><button class="order-action-btn primary" onclick="acceptOrder('${o.id}')">${t('accept')}</button></div></div>`).join('');
+  list.innerHTML = result.orders.map(o => `<div class="available-order-card"><div class="order-card-header"><div><div class="order-card-number">${t('order')} #${o.order_number || '—'}</div><div class="order-card-date">${formatDate(o.created_at)}</div></div></div><div class="order-route"><div class="order-route-item">📍 <strong>${o.pickup_address || '—'}</strong></div><div class="order-route-item">🎯 <strong>${o.dropoff_address || '—'}</strong></div></div><div class="order-card-footer"><span class="order-price">${(o.total_price || 0).toLocaleString()}<small> ${t('balance')}</small></span><button class="order-action-btn primary" onclick="openTracking('${o.id}')">${t('accept')}</button></div></div>`).join('');
 }
 
 async function acceptOrder(orderId) {
@@ -765,7 +830,7 @@ async function acceptOrder(orderId) {
   await loadAvailableOrders();
 }
 
-// ═══ Settings (مع إخفاء الأصوات لغير المندوبين) ═══
+// ═══ Settings ═══
 function openSettings() {
   showScreen('settingsScreen');
   document.querySelectorAll('[data-lang-btn]').forEach(btn => {
@@ -779,17 +844,13 @@ function openSettings() {
   if (notifToggle) notifToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.notifications) !== 'false';
   const soundToggle = document.getElementById('soundToggle');
   if (soundToggle) soundToggle.checked = localStorage.getItem(CONFIG.STORAGE_KEYS.sound) !== 'false';
-  
   if (typeof updateSoundValues === 'function') updateSoundValues();
+  
   // إظهار زر الاشتراك للمندوب فقط
-const subRow = document.getElementById('subscriptionRow');
-if (subRow) {
-  if (currentUser && currentUser.role === 'driver') {
-    subRow.style.display = 'flex';
-  } else {
-    subRow.style.display = 'none';
+  const subRow = document.getElementById('subscriptionRow');
+  if (subRow) {
+    subRow.style.display = (currentUser && currentUser.role === 'driver') ? 'flex' : 'none';
   }
-}
 }
 
 function setTheme(theme, btn) {
@@ -802,9 +863,7 @@ function setTheme(theme, btn) {
 
 function applyTheme(theme) {
   let applied = theme;
-  if (theme === 'auto') {
-    applied = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
+  if (theme === 'auto') applied = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', applied);
 }
 
@@ -926,7 +985,6 @@ function openDriverEarnings() { showToast(t('comingSoon')); }
 function openRateApp() { showToast('⭐ ' + t('thanksForRating')); }
 function shareApp() { if (navigator.share) navigator.share({ title: 'وصّلها', url: window.location.origin }); }
 
-// ═══ Search / Category ═══
 function openSearchScreen() { showScreen('searchScreen'); document.getElementById('mainSearchInput').value = ''; }
 function closeSearch() { goHome(); }
 function handleMainSearch(e) {
@@ -951,6 +1009,86 @@ function openNewOrder() {
 }
 function selectPackageType(t, b) { selectedPackageType = t; document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('active')); b.classList.add('active'); }
 
+// ═══ Subscription & Free Trial ═══
+function goToSubscription() { showScreen('subscriptionScreen'); }
+
+async function activateFreeTrial() {
+  if (!currentUser) return;
+  if (!confirm('🎁 هل تريد تفعيل التجربة المجانية لمدة 3 أيام؟')) return;
+  showToast('⏳ جاري التفعيل...');
+  try {
+    const sb = window.sb;
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 3);
+    const { error } = await sb.from('drivers').update({
+      is_trial_used: true,
+      trial_start_date: new Date().toISOString(),
+      trial_end_date: trialEnd.toISOString(),
+      is_subscribed: true,
+      subscription_plan: 'trial',
+      subscription_end_date: trialEnd.toISOString()
+    }).eq('user_id', currentUser.id);
+    if (error) throw error;
+    showScreen('successScreen');
+    setTimeout(() => launchConfetti(), 500);
+  } catch (err) {
+    console.error(err);
+    showToast('❌ فشل التفعيل: ' + err.message);
+  }
+}
+
+async function checkTrialBanner() {
+  if (!currentUser || currentUser.role !== 'driver') return;
+  try {
+    const sb = window.sb;
+    const { data: driver } = await sb.from('drivers').select('is_trial_used').eq('user_id', currentUser.id).single();
+    const banner = document.getElementById('trialBanner');
+    if (banner && driver && !driver.is_trial_used) {
+      banner.style.display = 'flex';
+    } else if (banner) {
+      banner.style.display = 'none';
+    }
+  } catch (err) { console.error(err); }
+}
+
+function openSupportForPlan(planName, price) {
+  const sheet = document.createElement('div');
+  sheet.className = 'modal-overlay active';
+  sheet.innerHTML = `
+    <div class="modal-sheet" style="padding: 24px; text-align: center;">
+      <div style="width: 64px; height: 64px; background: rgba(37, 211, 102, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>
+      <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 8px;">تفعيل باقة ${planName}</h3>
+      <p style="color: var(--text-2); margin-bottom: 24px; line-height: 1.6;">للاشتراك في <strong>${planName}</strong> بمبلغ <strong>${price.toLocaleString()} د.ع</strong>، يرجى التواصل مع الدعم عبر الواتساب لإتمام عملية الدفع.</p>
+      <button onclick="contactSupportWhatsApp('${planName}', ${price})" style="width: 100%; padding: 16px; background: #25D366; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; margin-bottom: 12px; cursor: pointer;">📱 التواصل عبر واتساب</button>
+      <button onclick="this.closest('.modal-overlay').remove()" style="width: 100%; padding: 16px; background: transparent; color: var(--text-2); border: none; font-size: 14px; font-weight: 700; cursor: pointer;">إلغاء</button>
+    </div>
+  `;
+  document.body.appendChild(sheet);
+}
+
+function contactSupportWhatsApp(planName, price) {
+  const message = encodeURIComponent(`مرحباً، أريد الاشتراك في تطبيق وصّلها.\n\n📋 الباقة: ${planName}\n💰 السعر: ${price.toLocaleString()} د.ع\n\nأرجو إرسال تفاصيل الدفع لتفعيل الاشتراك.`);
+  window.open(`https://wa.me/9647761090465?text=${message}`, '_blank');
+}
+
+function launchConfetti() {
+  const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
+  for (let i = 0; i < 100; i++) {
+    const confetti = document.createElement('div');
+    confetti.style.cssText = `
+      position: fixed; width: 10px; height: 10px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      left: ${Math.random() * 100}vw; top: -10px; z-index: 999999;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+      pointer-events: none; animation: fall ${Math.random() * 2 + 2}s linear forwards;
+    `;
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 4000);
+  }
+}
+
 // ═══ Language Listener ═══
 window.addEventListener('language-changed', (e) => {
   const lang = e.detail.lang;
@@ -960,7 +1098,7 @@ window.addEventListener('language-changed', (e) => {
 
 // ═══ Init ═══
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Wassilha v7.0 initialized');
+  console.log('🚀 Wassilha v8.0 initialized');
   const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.theme) || 'auto';
   applyTheme(savedTheme);
   initSystemThemeListener();
@@ -973,124 +1111,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══ Global Exports ═══
-['showScreen','handleLogin','handleRegister','handleVerifyOTP','handleResendOTP','goToRoleSelection','goToLogin','goHome','selectRole','switchTab','openNewOrder','openOrders','selectPackageType','submitOrder','filterOrders','openTracking','cancelOrder','chatWithDriver','callDriver','whatsappDriver','openChat','sendChatMessage','handleChatKeyPress','closeChat','openProfile','openAddresses','openPaymentMethods','openNotifications','toggleDriverOnline','acceptOrder','openDriverEarnings','openMapPicker','closeMapPicker','locateUserOnMap','handleMapSearch','selectMapSearchResult','confirmMapLocation','openSearchScreen','closeSearch','handleMainSearch','quickSearch','openCategory','filterCategory','applyFilter','openSettings','setTheme','toggleNotifications','toggleSound','openContactUs','openWhatsApp','openEmail','openTelegram','openAbout','openTerms','openPrivacy','openRateApp','shareApp','handleLogout','togglePassword','showToast','applyTheme','initSystemThemeListener'].forEach(fn => {
+['showScreen','handleLogin','handleRegister','handleVerifyOTP','handleResendOTP','goToRoleSelection','goToLogin','goHome','selectRole','switchTab','openNewOrder','openOrders','selectPackageType','submitOrder','filterOrders','openTracking','cancelOrder','chatWithDriver','callDriver','whatsappDriver','openChat','sendChatMessage','handleChatKeyPress','closeChat','openProfile','openAddresses','openPaymentMethods','openNotifications','toggleDriverOnline','acceptOrder','acceptOrderBlind','rejectOrderBlind','openDriverEarnings','openMapPicker','closeMapPicker','locateUserOnMap','handleMapSearch','selectMapSearchResult','confirmMapLocation','openSearchScreen','closeSearch','handleMainSearch','quickSearch','openCategory','filterCategory','applyFilter','openSettings','setTheme','toggleNotifications','toggleSound','openContactUs','openWhatsApp','openEmail','openTelegram','openAbout','openTerms','openPrivacy','openRateApp','shareApp','handleLogout','togglePassword','showToast','applyTheme','initSystemThemeListener','goToSubscription','activateFreeTrial','checkTrialBanner','openSupportForPlan','contactSupportWhatsApp','launchConfetti'].forEach(fn => {
   if (typeof window[fn] === 'function' || typeof eval(fn) === 'function') window[fn] = eval(fn);
 });
 
-console.log('✅ Script.js loaded — Wassilha v7.0');
-// ═══════════════════════════════════════
-// ⭐ Subscription System (نظام الاشتراكات)
-// ═══════════════════════════════════════
-
-let selectedPlan = null;
-
-// فتح شاشة الباقات
-function openSubscription() {
-  showScreen('subscriptionScreen');
-}
-
-// اختيار باقة والانتقال للدفع
-function selectPlan(planId, price, name, days) {
-  selectedPlan = { id: planId, price: price, name: name, days: days };
-  
-  // تعبئة بيانات شاشة الدفع
-  document.getElementById('payPlanName').textContent = name;
-  document.getElementById('payPlanPrice').textContent = price.toLocaleString() + ' د.ع';
-  document.getElementById('payTotal').textContent = price.toLocaleString() + ' د.ع';
-  
-  showScreen('paymentScreen');
-}
-
-// الدفع عبر ZainCash
-async function payWithZainCash() {
-  const phone = document.getElementById('zcPhone').value.trim();
-  const pin = document.getElementById('zcPin').value.trim();
-  
-  if (phone.length < 10) { showToast('⚠️ أدخل رقم الهاتف بشكل صحيح'); return; }
-  if (pin.length !== 4) { showToast('⚠️ أدخل الرقم السري (4 أرقام)'); return; }
-  
-  showToast('⏳ جاري الاتصال بـ ZainCash...');
-  
-  // محاكاة الاتصال بالسيرفر (تأخير ثانيتين)
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // محاكاة النجاح وتفعيل الاشتراك
-  await activateSubscription('ZainCash');
-}
-
-// الدفع عبر MasterCard
-async function payWithMasterCard() {
-  const number = document.getElementById('ccNumber').value.replace(/\s/g, '');
-  const expiry = document.getElementById('ccExpiry').value;
-  const cvv = document.getElementById('ccCvv').value;
-  const name = document.getElementById('ccName').value.trim();
-  
-  if (number.length !== 16) { showToast('⚠️ رقم البطاقة يجب أن يكون 16 رقماً'); return; }
-  if (!/^\d{2}\/\d{2}$/.test(expiry)) { showToast('⚠️ تاريخ الانتهاء غير صحيح (MM/YY)'); return; }
-  if (cvv.length !== 3) { showToast('⚠️ CVV يجب أن يكون 3 أرقام'); return; }
-  if (!name) { showToast('⚠️ أدخل اسم حامل البطاقة'); return; }
-  
-  showToast('⏳ جاري الاتصال بالبنك...');
-  
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  await activateSubscription('MasterCard');
-}
-
-// تفعيل الاشتراك في Supabase
-async function activateSubscription(method) {
-  if (!currentUser || !selectedPlan) return;
-  
-  const startDate = new Date();
-  const endDate = new Date();
-  endDate.setDate(startDate.getDate() + selectedPlan.days);
-  
-  try {
-    const sb = window.sb;
-    
-    // تحديث بيانات المندوب في قاعدة البيانات
-    const { error } = await sb.from('drivers').update({
-      is_subscribed: true,
-      subscription_end_date: endDate.toISOString(),
-      subscription_plan: selectedPlan.id,
-      subscription_method: method,
-      subscription_amount: selectedPlan.price
-    }).eq('user_id', currentUser.id);
-    
-    if (error) throw error;
-    
-    // إشعار نجاح
-    showToast(`✅ تم تفعيل ${selectedPlan.name} بنجاح!`);
-    
-    // إعادة توجيه للشاشة الرئيسية بعد ثانيتين
-    setTimeout(() => goHome(), 2000);
-    
-  } catch (error) {
-    console.error('Subscription error:', error);
-    showToast('❌ فشل تفعيل الاشتراك: ' + error.message);
-  }
-}
-
-// تنسيق رقم البطاقة (إضافة مسافات)
-function formatCardNumber(input) {
-  let value = input.value.replace(/\s/g, '').replace(/\D/g, '');
-  let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-  input.value = formattedValue;
-}
-
-// تنسيق تاريخ الانتهاء (إضافة /)
-function formatExpiry(input) {
-  let value = input.value.replace(/\D/g, '');
-  if (value.length >= 3) {
-    value = value.slice(0, 2) + '/' + value.slice(2, 4);
-  }
-  input.value = value;
-}
-
-// تصدير الدوال لتصبح متاحة من HTML
-window.openSubscription = openSubscription;
-window.selectPlan = selectPlan;
-window.payWithZainCash = payWithZainCash;
-window.payWithMasterCard = payWithMasterCard;
-window.formatCardNumber = formatCardNumber;
-window.formatExpiry = formatExpiry;
+console.log('✅ Script.js loaded — Wassilha v8.0');
