@@ -1102,5 +1102,23 @@ document.addEventListener('DOMContentLoaded', () => {
 ['showScreen','handleLogin','handleRegister','handleVerifyOTP','handleResendOTP','goToRoleSelection','goToLogin','goHome','selectRole','switchTab','openNewOrder','openOrders','selectPackageType','submitOrder','filterOrders','openTracking','cancelOrder','chatWithDriver','callDriver','whatsappDriver','openChat','sendChatMessage','handleChatKeyPress','closeChat','openProfile','openAddresses','openPaymentMethods','openNotifications','toggleDriverOnline','acceptOrder','acceptOrderBlind','rejectOrderBlind','openDriverEarnings','openMapPicker','closeMapPicker','locateUserOnMap','handleMapSearch','selectMapSearchResult','confirmMapLocation','openSearchScreen','closeSearch','handleMainSearch','quickSearch','openCategory','filterCategory','applyFilter','openSettings','setTheme','toggleNotifications','toggleSound','openContactUs','openWhatsApp','openEmail','openTelegram','openAbout','openTerms','openPrivacy','openRateApp','shareApp','handleLogout','togglePassword','showToast','applyTheme','initSystemThemeListener','goToSubscription','activateFreeTrial','checkTrialBanner','openSupportForPlan','contactSupportWhatsApp','launchConfetti'].forEach(fn => {
   if (typeof window[fn] === 'function' || typeof eval(fn) === 'function') window[fn] = eval(fn);
 });
+// ═══ Accordion Logic ═══
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.acc-arrow');
+  const item = header.parentElement;
 
+  // إغلاق الباقي (اختياري)
+  document.querySelectorAll('.accordion-body.active').forEach(el => {
+    if (el !== body) {
+      el.classList.remove('active');
+      el.parentElement.querySelector('.acc-arrow').style.transform = 'rotate(0deg)';
+    }
+  });
+
+  body.classList.toggle('active');
+  arrow.style.transform = body.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+window.toggleAccordion = toggleAccordion;
 console.log('✅ Script.js loaded — Wassilha v9.0');
